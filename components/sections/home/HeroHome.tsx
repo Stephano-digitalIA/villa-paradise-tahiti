@@ -29,10 +29,10 @@ export function HeroHome({ children }: HeroHomeProps) {
   const videoUrl = mockVilla.heroVideoUrl
 
   return (
-    <div className="relative h-[160vh]" aria-label="Villa Paradise Tahiti hero">
+    <div className="relative h-[320vh]" aria-label="Villa Paradise Tahiti hero">
 
       {/* ── Layer 1: Video — sticky, stays at top while content scrolls ── */}
-      <div className="sticky top-0 h-[50vh] w-full overflow-hidden bg-midnight">
+      <div className="sticky top-0 h-screen w-full overflow-hidden bg-midnight">
         {videoUrl ? (
           <HeroVideo videoUrl={videoUrl} posterUrl={posterUrl} />
         ) : (
@@ -53,7 +53,7 @@ export function HeroHome({ children }: HeroHomeProps) {
       </div>
 
       {/* ── Layer 2: Text — absolute in outer container, scrolls over the video ── */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 z-10 flex h-[50vh] flex-col justify-end pb-8 pt-20 text-pearl sm:pb-12 lg:pb-16">
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-10 flex h-screen flex-col justify-end pb-16 pt-32 text-pearl sm:pb-20 lg:pb-28">
         <Container className="pointer-events-auto">
           <div className="max-w-3xl">
             <p className="mb-6 flex items-center gap-3 font-sans text-eyebrow font-medium uppercase tracking-widest2 text-gold">
@@ -105,7 +105,7 @@ export function HeroHome({ children }: HeroHomeProps) {
 
       {/* ── Layer 3: Children — absolute, starts below the hero text, scrolls over video ── */}
       {children && (
-        <div className="pointer-events-none absolute inset-x-0 top-[50vh] z-10">
+        <div className="pointer-events-none absolute inset-x-0 top-[100vh] z-10">
           <div className="pointer-events-auto">
             {children}
           </div>
