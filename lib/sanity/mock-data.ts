@@ -58,10 +58,11 @@ export const mockVilla: Villa = {
   name: 'Villa Paradise Tahiti',
   tagline: 'Your private paradise in the heart of French Polynesia.',
   description: [
-    'Set on a quiet stretch of black-sand coast, Villa Paradise opens directly onto the turquoise lagoon of Tahiti. Days begin with the soft hush of the reef, drift through hours under the bougainvilleas, and end with a Pacific sunset bleeding into the horizon.',
-    'Inside, four light-filled bedrooms unfold around an open-plan living space dressed in pale wood, woven rattan and natural linen. Floor-to-ceiling windows pivot open onto the terrace, blurring the line between the villa and the garden beyond.',
-    'The infinity pool sits flush with the lagoon, framed by tropical palms and the silhouette of Moorea on the horizon. A private path winds through the garden down to the water, where kayaks and snorkeling gear wait under a thatched fare.',
-    'Beyond the villa, our concierge curates the experiences that turn a stay into a memory: a sunset sail past the reef, a private chef preparing poisson cru on the terrace, a guided dive through coral gardens. We handle every detail so you can simply be here.',
+    'Perched high above Tahiti on a peaceful mountainside at nearly 1,640 feet above sea level, Villa Paradise overlooks the vast Pacific Ocean in an atmosphere of rare calm and serenity. Here, the air feels fresher, purer, carried by the trade winds and the scent of tropical vegetation. From the very first light of day, the ocean\'s glow wraps the villa in an almost dreamlike softness.',
+    'The infinity pool appears to merge seamlessly with the turquoise lagoon and the endless horizon of the Pacific, creating the illusion that the villa\'s waters and the ocean itself are one. From the terrace, the eye drifts effortlessly between the deep blue sky, Tahiti\'s lush mountain landscapes, and the ever-changing reflections of the sea.',
+    'Inside, four light-filled bedrooms unfold around a spacious open-plan living area dressed in pale wood, woven rattan, and natural linen. Expansive floor-to-ceiling openings blur the boundaries between indoors and outdoors, welcoming natural light, cool mountain breezes, and uninterrupted ocean views into every space.',
+    'Despite its feeling of secluded elevation, the lagoon and coastline remain only a few minutes away by car from the villa. This unique location offers the perfect balance between privacy, the refreshing climate of the mountains, and immediate access to the sea.',
+    'Beyond the villa, our concierge curates the experiences that turn a stay into a memory: a sunset sail beyond the reef, a private chef preparing poisson cru on the terrace, or a guided dive through coral gardens. We handle every detail so you can simply be here.',
   ].join('\n\n'),
   heroVideoUrl: '/images/villa/hero.mp4',
   heroImage: img(

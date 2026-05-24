@@ -22,7 +22,7 @@ export function VillaDescription({ villa }: VillaDescriptionProps) {
               The Story
             </p>
             <h2 className="font-heading text-h2-luxe font-medium leading-tight text-midnight">
-              A villa shaped by the light, the lagoon and the trade winds.
+              A villa suspended between sky, mountains, and ocean.
             </h2>
           </div>
           <div>
