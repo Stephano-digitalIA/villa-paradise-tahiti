@@ -33,7 +33,7 @@ export function HeroVideo({ videoUrl, posterUrl }: HeroVideoProps) {
         muted
         loop
         playsInline
-        preload="metadata"
+        preload="auto"
         aria-hidden="true"
       >
         <source src={videoUrl} type="video/mp4" />
