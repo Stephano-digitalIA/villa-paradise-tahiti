@@ -65,8 +65,8 @@ export const mockVilla: Villa = {
   ].join('\n\n'),
   heroVideoUrl: '/images/villa/hero.mp4',
   heroImage: img(
-    '/images/villa/hero-aerial.jpg',
-    'Aerial view of Villa Paradise Tahiti with turquoise lagoon and tropical garden',
+    '/images/villa/hero-villa.jpg',
+    'Master bedroom of Villa Paradise Tahiti',
   ),
   gallery: [
     {
