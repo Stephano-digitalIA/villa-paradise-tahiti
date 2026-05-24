@@ -15,6 +15,7 @@ interface HeroVideoProps {
 export function HeroVideo({ videoUrl, posterUrl }: HeroVideoProps) {
   const videoRef = useRef<HTMLVideoElement>(null)
   const [muted, setMuted] = useState(true)
+  const [ready, setReady] = useState(false)
 
   function toggleSound() {
     const video = videoRef.current
@@ -27,13 +28,14 @@ export function HeroVideo({ videoUrl, posterUrl }: HeroVideoProps) {
     <div className="absolute inset-0">
       <video
         ref={videoRef}
-        className="h-full w-full object-cover"
+        className={`h-full w-full object-cover transition-opacity duration-1000 ${ready ? 'opacity-100' : 'opacity-0'}`}
         poster={posterUrl}
         autoPlay
         muted
         loop
         playsInline
         preload="auto"
+        onCanPlay={() => setReady(true)}
         aria-hidden="true"
       >
         <source src={videoUrl} type="video/mp4" />
