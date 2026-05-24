@@ -1,0 +1,1824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Villa Paradise Tahiti — Booking First Template</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue:      #2C5F8A;
+      --blue-dark: #1A3A50;
+      --blue-deep: #0F2535;
+      --gold:      #F4C842;
+      --gold-dark: #D4A820;
+      --green:     #2D9E6B;
+      --red:       #E05252;
+      --bg:        #F8F9FA;
+      --white:     #FFFFFF;
+      --surface:   #EEF2F7;
+      --text:      #1C2B3A;
+      --muted:     #6B7C8D;
+      --border:    #D8E2EC;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 0 4rem;
+      height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 16px rgba(44,95,138,0.06);
+    }
+
+    .nav-logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.25rem;
+      color: var(--blue-dark);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .nav-logo .dot {
+      width: 8px; height: 8px;
+      background: var(--gold);
+      border-radius: 50%;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--blue); }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .nav-phone {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .btn-nav {
+      background: var(--gold);
+      color: var(--text);
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      padding: 0.6rem 1.4rem;
+      text-decoration: none;
+      border-radius: 2px;
+      transition: background 0.2s, transform 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .btn-nav:hover { background: var(--gold-dark); transform: translateY(-1px); }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      height: 92vh;
+      min-height: 620px;
+      display: flex;
+      align-items: stretch;
+      overflow: hidden;
+    }
+
+    .hero-left {
+      flex: 1;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 5rem 4rem 5rem 4rem;
+      background: var(--blue-deep);
+      z-index: 2;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(244,200,66,0.12);
+      border: 1px solid rgba(244,200,66,0.3);
+      padding: 0.4rem 1rem;
+      border-radius: 2px;
+      margin-bottom: 2rem;
+      width: fit-content;
+    }
+    .hero-badge span {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+    .hero-badge .star { color: var(--gold); font-size: 0.8rem; }
+
+    .hero-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(2.8rem, 4.5vw, 5rem);
+      font-weight: 400;
+      line-height: 1.1;
+      color: var(--white);
+      margin-bottom: 1.2rem;
+    }
+    .hero-title em { font-style: italic; color: var(--gold); }
+
+    .hero-sub {
+      font-size: 1rem;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.7;
+      margin-bottom: 2.5rem;
+      max-width: 440px;
+    }
+
+    .hero-trust {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      margin-bottom: 2.5rem;
+    }
+    .trust-chip {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 0.4rem 0.8rem;
+      border-radius: 2px;
+      font-size: 0.72rem;
+      color: rgba(255,255,255,0.7);
+    }
+    .trust-chip .icon { font-size: 0.85rem; }
+
+    .hero-cta-row {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      background: var(--gold);
+      color: var(--text);
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      padding: 1rem 2.2rem;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .btn-primary:hover { background: var(--gold-dark); transform: translateY(-2px); }
+
+    .btn-secondary {
+      background: transparent;
+      color: rgba(255,255,255,0.7);
+      font-size: 0.82rem;
+      font-weight: 500;
+      padding: 1rem 2rem;
+      border: 1px solid rgba(255,255,255,0.2);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-secondary:hover { border-color: rgba(255,255,255,0.5); color: var(--white); }
+
+    /* ── BOOKING WIDGET ── */
+    .hero-right {
+      width: 420px;
+      flex-shrink: 0;
+      background: var(--white);
+      display: flex;
+      flex-direction: column;
+      box-shadow: -8px 0 40px rgba(0,0,0,0.2);
+      z-index: 3;
+      overflow-y: auto;
+    }
+
+    .booking-widget {
+      padding: 2.5rem;
+      flex: 1;
+    }
+
+    .widget-header {
+      text-align: center;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1.5rem;
+    }
+    .widget-price {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2.4rem;
+      color: var(--blue-dark);
+      line-height: 1;
+    }
+    .widget-price sup { font-size: 1.2rem; vertical-align: super; }
+    .widget-price-label {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 0.3rem;
+    }
+    .widget-score {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      margin-top: 0.5rem;
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+    .widget-score .stars { color: var(--gold-dark); }
+
+    .widget-field { margin-bottom: 1rem; }
+    .widget-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.4rem;
+      display: block;
+    }
+    .widget-input {
+      width: 100%;
+      border: 1.5px solid var(--border);
+      padding: 0.8rem 1rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      color: var(--text);
+      background: var(--white);
+      outline: none;
+      transition: border-color 0.2s;
+      border-radius: 2px;
+    }
+    .widget-input:focus { border-color: var(--blue); }
+
+    .widget-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+
+    .avail-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.7rem 1rem;
+      background: rgba(45,158,107,0.08);
+      border: 1px solid rgba(45,158,107,0.2);
+      border-radius: 2px;
+      margin-bottom: 1rem;
+    }
+    .avail-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(45,158,107,0.4); }
+      50% { box-shadow: 0 0 0 6px rgba(45,158,107,0); }
+    }
+    .avail-text {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--green);
+    }
+
+    .price-breakdown {
+      background: var(--surface);
+      border-radius: 2px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    .pb-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+    }
+    .pb-row:last-child { margin-bottom: 0; }
+    .pb-row.total {
+      border-top: 1px solid var(--border);
+      padding-top: 0.7rem;
+      margin-top: 0.5rem;
+      font-weight: 700;
+      color: var(--text);
+      font-size: 0.9rem;
+    }
+    .pb-row.deposit {
+      color: var(--blue);
+      font-weight: 600;
+    }
+
+    .btn-book-now {
+      width: 100%;
+      padding: 1rem;
+      background: var(--blue);
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      border: none;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: background 0.2s;
+      margin-bottom: 0.8rem;
+    }
+    .btn-book-now:hover { background: var(--blue-dark); }
+
+    .btn-inquire {
+      width: 100%;
+      padding: 0.9rem;
+      background: transparent;
+      color: var(--blue);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      border: 1.5px solid var(--blue);
+      cursor: pointer;
+      border-radius: 2px;
+      transition: background 0.2s;
+      margin-bottom: 1rem;
+    }
+    .btn-inquire:hover { background: rgba(44,95,138,0.05); }
+
+    .widget-secure {
+      text-align: center;
+      font-size: 0.68rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .payment-logos {
+      display: flex;
+      justify-content: center;
+      gap: 0.8rem;
+      margin-top: 0.6rem;
+      flex-wrap: wrap;
+    }
+    .pay-badge {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 0.2rem 0.7rem;
+      border-radius: 2px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+    }
+
+    /* ── TRUST BAR ── */
+    .trust-bar {
+      background: var(--blue-dark);
+      padding: 1rem 4rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      flex-wrap: wrap;
+    }
+    .tb-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0 2.5rem;
+      border-right: 1px solid rgba(255,255,255,0.12);
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.75);
+    }
+    .tb-item:last-child { border-right: none; }
+    .tb-icon { font-size: 1rem; }
+    .tb-item strong { color: var(--white); }
+
+    /* ── PHOTO STRIP ── */
+    .photo-strip {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      grid-template-rows: 300px 220px;
+      gap: 4px;
+    }
+    .ps-main { grid-row: 1 / 3; overflow: hidden; cursor: pointer; }
+    .ps-sm { overflow: hidden; cursor: pointer; }
+    .ps-sm img, .ps-main img { transition: transform 0.5s; }
+    .ps-sm:hover img, .ps-main:hover img { transform: scale(1.05); }
+
+    .photo-strip-cta {
+      grid-column: 3 / 4;
+      grid-row: 2 / 3;
+      background: var(--blue-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 0.5rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .photo-strip-cta:hover { background: var(--blue); }
+    .photo-strip-cta .count {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2rem;
+      color: var(--white);
+    }
+    .photo-strip-cta .label {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    /* ── SECTIONS ── */
+    .section { padding: 6rem 4rem; }
+    .container { max-width: 1180px; margin: 0 auto; }
+
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      margin-bottom: 0.8rem;
+    }
+    .section-label .line { width: 28px; height: 2px; background: var(--gold); }
+    .section-label span {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--blue);
+    }
+
+    .section h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(2.2rem, 3.5vw, 3.5rem);
+      font-weight: 400;
+      line-height: 1.15;
+      color: var(--text);
+      margin-bottom: 1rem;
+    }
+    .section h2 em { font-style: italic; color: var(--blue); }
+
+    /* ── VILLA INFO ── */
+    .villa-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: start;
+    }
+
+    .villa-desc p {
+      font-size: 0.95rem;
+      line-height: 1.85;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+
+    .amenities-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.8rem;
+      margin: 2rem 0;
+    }
+    .amenity {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      padding: 0.8rem 1rem;
+      background: var(--surface);
+      border-radius: 2px;
+      font-size: 0.82rem;
+      font-weight: 500;
+    }
+    .amenity .ico { font-size: 1.1rem; }
+
+    .villa-specs-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--border);
+      margin: 2rem 0;
+    }
+    .vs-item {
+      background: var(--white);
+      padding: 1.5rem;
+      text-align: center;
+    }
+    .vs-num {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2rem;
+      color: var(--blue);
+      line-height: 1;
+    }
+    .vs-lbl {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 0.3rem;
+    }
+
+    .villa-images-stack {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.8rem;
+    }
+    .vi-big { grid-column: 1 / -1; height: 280px; overflow: hidden; border-radius: 2px; }
+    .vi-sm { height: 180px; overflow: hidden; border-radius: 2px; }
+    .vi-big img, .vi-sm img { transition: transform 0.5s; }
+    .vi-big:hover img, .vi-sm:hover img { transform: scale(1.04); }
+
+    /* ── EXPERIENCES ── */
+    .exp-section { background: var(--surface); }
+
+    .exp-tabs {
+      display: flex;
+      gap: 0;
+      margin-bottom: 2.5rem;
+      border-bottom: 2px solid var(--border);
+    }
+    .exp-tab {
+      padding: 0.8rem 1.8rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      transition: color 0.2s, border-color 0.2s;
+      user-select: none;
+    }
+    .exp-tab.active { color: var(--blue); border-bottom-color: var(--blue); }
+
+    .exp-content { display: none; }
+    .exp-content.active { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+
+    .exp-card {
+      background: var(--white);
+      border-radius: 2px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      transition: box-shadow 0.25s, transform 0.25s;
+    }
+    .exp-card:hover {
+      box-shadow: 0 8px 32px rgba(44,95,138,0.12);
+      transform: translateY(-3px);
+    }
+    .exp-card-img { height: 200px; overflow: hidden; }
+    .exp-card-img img { transition: transform 0.5s; }
+    .exp-card:hover .exp-card-img img { transform: scale(1.05); }
+
+    .exp-card-body { padding: 1.5rem; }
+    .exp-card-tag {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--blue);
+      margin-bottom: 0.5rem;
+    }
+    .exp-card-name {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.3rem;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
+    .exp-card-desc {
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.65;
+      margin-bottom: 1rem;
+    }
+    .exp-card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .exp-price-tag {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--blue-dark);
+    }
+    .exp-add-btn {
+      background: var(--gold);
+      color: var(--text);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.4rem 0.9rem;
+      border: none;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: background 0.2s;
+    }
+    .exp-add-btn:hover { background: var(--gold-dark); }
+
+    /* ── CALCULATOR ── */
+    .calc-section { background: var(--white); }
+
+    .calc-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    .calc-header {
+      background: var(--blue-dark);
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .calc-header h3 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.4rem;
+      color: var(--white);
+    }
+    .calc-header .nights-badge {
+      background: var(--gold);
+      color: var(--text);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.3rem 0.8rem;
+      border-radius: 2px;
+    }
+
+    .calc-body { padding: 2rem; }
+
+    .calc-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .calc-line:last-child { border-bottom: none; }
+    .calc-line-left { display: flex; flex-direction: column; gap: 0.2rem; }
+    .calc-line-name { font-size: 0.9rem; font-weight: 600; }
+    .calc-line-detail { font-size: 0.78rem; color: var(--muted); }
+    .calc-line-price { font-size: 0.95rem; font-weight: 700; color: var(--blue-dark); }
+    .calc-line-add {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .qty-btn {
+      width: 28px; height: 28px;
+      border: 1.5px solid var(--border);
+      background: var(--white);
+      color: var(--text);
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 2px;
+      transition: border-color 0.2s;
+    }
+    .qty-btn:hover { border-color: var(--blue); color: var(--blue); }
+    .qty-val { font-size: 0.9rem; font-weight: 700; min-width: 20px; text-align: center; }
+
+    .calc-footer {
+      background: var(--blue-deep);
+      padding: 1.5rem 2rem;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 1rem;
+      align-items: center;
+    }
+    .calc-total-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 0.3rem;
+    }
+    .calc-total-amount {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2.2rem;
+      color: var(--white);
+    }
+    .calc-deposit {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.5);
+      margin-top: 0.2rem;
+    }
+    .btn-calc-book {
+      background: var(--gold);
+      color: var(--text);
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      padding: 1rem 2.5rem;
+      border: none;
+      cursor: pointer;
+      border-radius: 2px;
+      white-space: nowrap;
+      transition: background 0.2s;
+    }
+    .btn-calc-book:hover { background: var(--gold-dark); }
+
+    /* ── REVIEWS ── */
+    .reviews-section { background: var(--bg); }
+
+    .reviews-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 2.5rem;
+    }
+    .overall-score {
+      text-align: right;
+    }
+    .score-big {
+      font-family: 'DM Serif Display', serif;
+      font-size: 4rem;
+      color: var(--blue-dark);
+      line-height: 1;
+    }
+    .score-stars { color: var(--gold-dark); font-size: 1.1rem; }
+    .score-label { font-size: 0.78rem; color: var(--muted); margin-top: 0.3rem; }
+
+    .review-bars {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin: 1rem 0 2rem;
+    }
+    .rbar {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      font-size: 0.78rem;
+    }
+    .rbar-label { width: 80px; color: var(--muted); }
+    .rbar-track {
+      flex: 1;
+      height: 6px;
+      background: var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .rbar-fill {
+      height: 100%;
+      background: var(--gold-dark);
+      border-radius: 3px;
+    }
+    .rbar-val { width: 30px; font-weight: 700; color: var(--text); }
+
+    .reviews-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+
+    .review-card {
+      background: var(--white);
+      padding: 2rem;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      transition: box-shadow 0.25s;
+    }
+    .review-card:hover { box-shadow: 0 6px 24px rgba(44,95,138,0.1); }
+
+    .review-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+    .reviewer {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+    }
+    .reviewer-avatar {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: var(--blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--white);
+      flex-shrink: 0;
+    }
+    .reviewer-name { font-size: 0.88rem; font-weight: 700; }
+    .reviewer-loc { font-size: 0.72rem; color: var(--muted); }
+    .review-rating { color: var(--gold-dark); font-size: 0.75rem; }
+
+    .review-text {
+      font-size: 0.88rem;
+      line-height: 1.7;
+      color: var(--muted);
+    }
+    .review-date { font-size: 0.72rem; color: var(--muted); margin-top: 0.8rem; }
+    .review-platform {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      margin-top: 0.5rem;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* ── FAQ ── */
+    .faq-section { background: var(--white); }
+
+    .faq-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+    }
+    .faq-item {
+      padding: 1.5rem;
+      border: 1px solid var(--border);
+      margin-top: -1px;
+      margin-left: -1px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .faq-item:hover { background: var(--surface); }
+    .faq-q {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+    .faq-q .toggle { color: var(--blue); font-size: 1.2rem; flex-shrink: 0; }
+    .faq-a {
+      font-size: 0.84rem;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-top: 0.8rem;
+    }
+
+    /* ── MAP / LOCATION ── */
+    .location-section { background: var(--surface); }
+
+    .location-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    .map-placeholder {
+      height: 380px;
+      background: #d8e2ec;
+      border-radius: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+    .map-placeholder img { object-fit: cover; }
+    .map-pin {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 48px; height: 48px;
+      background: var(--blue);
+      border-radius: 50% 50% 50% 0;
+      transform: translate(-50%, -50%) rotate(-45deg);
+      box-shadow: 0 4px 16px rgba(44,95,138,0.4);
+    }
+    .map-pin::after {
+      content: '';
+      width: 18px; height: 18px;
+      background: var(--white);
+      border-radius: 50%;
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .distances { margin-top: 1.5rem; }
+    .dist-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.8rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.85rem;
+    }
+    .dist-item:last-child { border-bottom: none; }
+    .dist-place { display: flex; align-items: center; gap: 0.6rem; color: var(--text); font-weight: 500; }
+    .dist-time { color: var(--blue); font-weight: 700; }
+
+    /* ── CTA FINAL ── */
+    .cta-section {
+      background: var(--blue-deep);
+      padding: 6rem 4rem;
+      text-align: center;
+    }
+    .cta-section h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(2.5rem, 4vw, 4rem);
+      color: var(--white);
+      margin-bottom: 1rem;
+    }
+    .cta-section h2 em { font-style: italic; color: var(--gold); }
+    .cta-section p {
+      color: rgba(255,255,255,0.6);
+      font-size: 1rem;
+      max-width: 540px;
+      margin: 0 auto 2.5rem;
+      line-height: 1.75;
+    }
+    .cta-row {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--blue-deep);
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding: 4rem;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 3rem;
+      max-width: 1180px;
+      margin: 0 auto 3rem;
+    }
+    .footer-logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.3rem;
+      color: var(--white);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .footer-logo .dot { width: 8px; height: 8px; background: var(--gold); border-radius: 50%; }
+    .footer-desc { font-size: 0.85rem; color: rgba(255,255,255,0.4); line-height: 1.75; margin-bottom: 1.5rem; }
+    .footer-col h4 {
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+      margin-bottom: 1.2rem;
+    }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 0.7rem; }
+    .footer-col a { font-size: 0.84rem; color: rgba(255,255,255,0.45); text-decoration: none; transition: color 0.2s; }
+    .footer-col a:hover { color: var(--gold); }
+    .footer-bottom {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer-copy { font-size: 0.72rem; color: rgba(255,255,255,0.2); }
+    .footer-copy a { color: var(--gold); text-decoration: none; }
+    .footer-social { display: flex; gap: 1.2rem; }
+    .footer-social a { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.2); text-decoration: none; transition: color 0.2s; }
+    .footer-social a:hover { color: var(--gold); }
+
+    /* ── WHATSAPP ── */
+    .wa {
+      position: fixed; bottom: 2rem; right: 2rem; z-index: 300;
+      width: 56px; height: 56px;
+      background: #25D366; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 20px rgba(37,211,102,0.45);
+      text-decoration: none;
+      transition: transform 0.3s;
+    }
+    .wa:hover { transform: scale(1.1); }
+    .wa svg { width: 28px; height: 28px; fill: white; }
+
+    /* ── ANIMATIONS ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .reveal.in { opacity: 1; transform: translateY(0); }
+    .d1 { transition-delay: 0.1s; }
+    .d2 { transition-delay: 0.2s; }
+    .d3 { transition-delay: 0.3s; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 1100px) {
+      nav { padding: 0 2rem; }
+      .nav-links { display: none; }
+      .hero { flex-direction: column; height: auto; }
+      .hero-left { padding: 3rem 2rem; min-height: 60vh; }
+      .hero-right { width: 100%; }
+      .trust-bar { padding: 1rem 2rem; gap: 0; }
+      .section { padding: 4rem 2rem; }
+      .villa-layout { grid-template-columns: 1fr; gap: 2rem; }
+      .exp-content.active { grid-template-columns: 1fr 1fr; }
+      .reviews-grid { grid-template-columns: 1fr 1fr; }
+      .faq-grid { grid-template-columns: 1fr; }
+      .location-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+      .footer-bottom { flex-direction: column; gap: 1rem; text-align: center; }
+      footer { padding: 3rem 2rem; }
+      .calc-footer { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 768px) {
+      .hero-title { font-size: 2.5rem; }
+      .photo-strip { grid-template-columns: 1fr 1fr; grid-template-rows: 240px 180px; }
+      .ps-main { grid-column: 1 / -1; grid-row: 1 / 2; }
+      .exp-content.active { grid-template-columns: 1fr; }
+      .reviews-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .villa-specs-bar { grid-template-columns: 1fr 1fr; }
+      .cta-section { padding: 4rem 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#" class="nav-logo">
+      <div class="dot"></div>
+      Villa Paradise Tahiti
+    </a>
+    <ul class="nav-links">
+      <li><a href="#villa">The Villa</a></li>
+      <li><a href="#experiences">Experiences</a></li>
+      <li><a href="#calculator">Build Your Stay</a></li>
+      <li><a href="#reviews">Reviews</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ul>
+    <div class="nav-right">
+      <div class="nav-phone">💬 Responds in &lt;1h</div>
+      <a href="#book" class="btn-nav">🔒 Book Now</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="home">
+    <div class="hero-left">
+      <div class="hero-badge">
+        <span class="star">★</span>
+        <span>4.97 · 47 Reviews · Superhost</span>
+      </div>
+      <h1 class="hero-title">
+        Your Private<br>
+        <em>Paradise</em><br>
+        in Tahiti
+      </h1>
+      <p class="hero-sub">
+        Luxury villa · Private infinity pool · Lagoon view · Tailored experiences · Book direct and save up to 15%
+      </p>
+      <div class="hero-trust">
+        <div class="trust-chip"><span class="icon">🔒</span>Secure payment</div>
+        <div class="trust-chip"><span class="icon">⚡</span>Instant confirmation</div>
+        <div class="trust-chip"><span class="icon">✓</span>Free cancellation options</div>
+        <div class="trust-chip"><span class="icon">💵</span>Price in USD</div>
+      </div>
+      <div class="hero-cta-row">
+        <a href="#book" class="btn-primary">🗓 Check Availability</a>
+        <a href="#villa" class="btn-secondary">↓ Explore the Villa</a>
+      </div>
+    </div>
+
+    <!-- BOOKING WIDGET -->
+    <div class="hero-right" id="book">
+      <div class="booking-widget">
+        <div class="widget-header">
+          <div class="widget-price">
+            <sup>$</sup>690
+          </div>
+          <div class="widget-price-label">per night · 3 night minimum</div>
+          <div class="widget-score">
+            <span class="stars">★★★★★</span>
+            <span>4.97 (47 reviews)</span>
+          </div>
+        </div>
+
+        <div class="widget-field">
+          <label class="widget-label">Check-in Date</label>
+          <input type="date" class="widget-input" id="wci" />
+        </div>
+        <div class="widget-field">
+          <label class="widget-label">Check-out Date</label>
+          <input type="date" class="widget-input" id="wco" />
+        </div>
+        <div class="widget-row">
+          <div class="widget-field">
+            <label class="widget-label">Adults</label>
+            <select class="widget-input">
+              <option>1</option>
+              <option selected>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option>5+</option>
+            </select>
+          </div>
+          <div class="widget-field">
+            <label class="widget-label">Children</label>
+            <select class="widget-input">
+              <option selected>0</option>
+              <option>1</option>
+              <option>2</option>
+              <option>3+</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="avail-indicator">
+          <div class="avail-dot"></div>
+          <span class="avail-text">Available — select your dates</span>
+        </div>
+
+        <div class="price-breakdown" id="priceBreakdown" style="display:none;">
+          <div class="pb-row">
+            <span id="nightsLabel">7 nights × $690</span>
+            <span id="nightsTotal">$4,830</span>
+          </div>
+          <div class="pb-row">
+            <span>Cleaning fee</span>
+            <span>$150</span>
+          </div>
+          <div class="pb-row">
+            <span>Taxes & fees (~10%)</span>
+            <span id="taxAmt">$498</span>
+          </div>
+          <div class="pb-row total">
+            <span>Total</span>
+            <span id="grandTotal">$5,478</span>
+          </div>
+          <div class="pb-row deposit">
+            <span>Deposit due today (30%)</span>
+            <span id="depositAmt">$1,643</span>
+          </div>
+        </div>
+
+        <button class="btn-book-now">Reserve Now — Pay 30% Deposit</button>
+        <button class="btn-inquire">Send an Inquiry</button>
+
+        <div class="widget-secure">
+          Your payment is 100% secure. No card details stored.
+          <div class="payment-logos">
+            <div class="pay-badge">STRIPE</div>
+            <div class="pay-badge">PAYPAL</div>
+            <div class="pay-badge">256-BIT SSL</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRUST BAR -->
+  <div class="trust-bar">
+    <div class="tb-item"><span class="tb-icon">★</span><span><strong>4.97/5</strong> · 47 reviews</span></div>
+    <div class="tb-item"><span class="tb-icon">🏆</span><span><strong>Superhost</strong> since 2019</span></div>
+    <div class="tb-item"><span class="tb-icon">💵</span><span>All prices in <strong>USD</strong></span></div>
+    <div class="tb-item"><span class="tb-icon">⚡</span><span><strong>Instant</strong> confirmation</span></div>
+    <div class="tb-item"><span class="tb-icon">🔒</span><span><strong>Stripe</strong> & PayPal</span></div>
+    <div class="tb-item"><span class="tb-icon">💬</span><span>Response in <strong>&lt; 1 hour</strong></span></div>
+  </div>
+
+  <!-- PHOTO STRIP -->
+  <div class="photo-strip">
+    <div class="ps-main">
+      <img src="https://images.unsplash.com/photo-1589394815804-964ed0be2eb5?w=1200&q=80" alt="Lagoon view" />
+    </div>
+    <div class="ps-sm">
+      <img src="https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?w=700&q=80" alt="Pool" />
+    </div>
+    <div class="ps-sm">
+      <img src="https://images.unsplash.com/photo-1540202403-b7abd6747a18?w=700&q=80" alt="Interior" />
+    </div>
+    <div class="ps-sm">
+      <img src="https://images.unsplash.com/photo-1573843981267-be1999ff37cd?w=700&q=80" alt="Beach" />
+    </div>
+    <div class="photo-strip-cta">
+      <div class="count">+42</div>
+      <div class="label">Show all photos</div>
+    </div>
+  </div>
+
+  <!-- THE VILLA -->
+  <section class="section" id="villa">
+    <div class="container">
+      <div class="villa-specs-bar reveal">
+        <div class="vs-item">
+          <div class="vs-num">3</div>
+          <div class="vs-lbl">Bedrooms</div>
+        </div>
+        <div class="vs-item">
+          <div class="vs-num">8</div>
+          <div class="vs-lbl">Max Guests</div>
+        </div>
+        <div class="vs-item">
+          <div class="vs-num">∞</div>
+          <div class="vs-lbl">Private Pool</div>
+        </div>
+        <div class="vs-item">
+          <div class="vs-num">270°</div>
+          <div class="vs-lbl">Lagoon View</div>
+        </div>
+      </div>
+
+      <div class="villa-layout" style="margin-top:3rem;">
+        <div class="villa-desc reveal">
+          <div class="section-label"><div class="line"></div><span>The Villa</span></div>
+          <h2>Everything you need<br>for the <em>perfect stay</em></h2>
+          <p>Villa Paradise is a private 3-bedroom luxury villa on the shores of Tahiti's most pristine lagoon. With your own infinity pool, panoramic ocean views, and a dedicated concierge team, this is the perfect base for an unforgettable French Polynesian experience.</p>
+          <p>The villa accommodates up to 8 guests across three airy bedrooms — making it ideal for couples, honeymoons, families, or small groups of friends.</p>
+
+          <div class="amenities-grid">
+            <div class="amenity"><span class="ico">🏊</span>Private Infinity Pool</div>
+            <div class="amenity"><span class="ico">❄️</span>AC in All Rooms</div>
+            <div class="amenity"><span class="ico">🌊</span>Direct Lagoon Access</div>
+            <div class="amenity"><span class="ico">📶</span>High-Speed WiFi</div>
+            <div class="amenity"><span class="ico">🍳</span>Full Kitchen</div>
+            <div class="amenity"><span class="ico">🔥</span>Outdoor BBQ</div>
+            <div class="amenity"><span class="ico">🚗</span>Free Parking</div>
+            <div class="amenity"><span class="ico">🌴</span>Tropical Garden</div>
+          </div>
+
+          <a href="#" style="display:inline-flex;align-items:center;gap:0.5rem;font-size:0.82rem;font-weight:700;color:var(--blue);text-decoration:none;border-bottom:2px solid var(--gold);padding-bottom:0.2rem;">
+            View all amenities →
+          </a>
+        </div>
+
+        <div class="villa-images-stack reveal d2">
+          <div class="vi-big">
+            <img src="https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?w=900&q=80" alt="Pool" />
+          </div>
+          <div class="vi-sm">
+            <img src="https://images.unsplash.com/photo-1540202403-b7abd6747a18?w=600&q=80" alt="Interior" />
+          </div>
+          <div class="vi-sm">
+            <img src="https://images.unsplash.com/photo-1573843981267-be1999ff37cd?w=600&q=80" alt="View" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPERIENCES -->
+  <section class="section exp-section" id="experiences">
+    <div class="container">
+      <div class="section-label reveal"><div class="line"></div><span>Curated Experiences</span></div>
+      <h2 class="reveal" style="margin-bottom:2rem;">Add <em>unforgettable moments</em><br>to your stay</h2>
+
+      <div class="exp-tabs reveal">
+        <div class="exp-tab active" data-tab="day">🌞 Day Experiences</div>
+        <div class="exp-tab" data-tab="night">🌙 Evening Experiences</div>
+        <div class="exp-tab" data-tab="food">🍽 Catering & Dining</div>
+      </div>
+
+      <div class="exp-content active" id="tab-day">
+        <div class="exp-card">
+          <div class="exp-card-img">
+            <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=700&q=80" alt="Snorkeling" />
+          </div>
+          <div class="exp-card-body">
+            <div class="exp-card-tag">Half Day · All levels</div>
+            <div class="exp-card-name">Lagoon Snorkeling Tour</div>
+            <div class="exp-card-desc">Guided snorkeling in Moorea's crystal lagoon. Manta rays, sharks, vibrant coral reefs. Equipment included.</div>
+            <div class="exp-card-footer">
+              <div class="exp-price-tag">$150 / person</div>
+              <button class="exp-add-btn">+ Add to Stay</button>
+            </div>
+          </div>
+        </div>
+        <div class="exp-card">
+          <div class="exp-card-img">
+            <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=700&q=80" alt="4x4" />
+          </div>
+          <div class="exp-card-body">
+            <div class="exp-card-tag">Full Day · Adventure</div>
+            <div class="exp-card-name">4×4 Island Discovery</div>
+            <div class="exp-card-desc">Off-road adventure through Tahiti's highlands. Ancient temples, waterfalls, panoramic viewpoints. Lunch included.</div>
+            <div class="exp-card-footer">
+              <div class="exp-price-tag">$150 / person</div>
+              <button class="exp-add-btn">+ Add to Stay</button>
+            </div>
+          </div>
+        </div>
+        <div class="exp-card">
+          <div class="exp-card-img">
+            <img src="https://images.unsplash.com/photo-1559494007-9f5847c49d94?w=700&q=80" alt="Whale" />
+          </div>
+          <div class="exp-card-body">
+            <div class="exp-card-tag">3 Hours · Seasonal Jul–Oct</div>
+            <div class="exp-card-name">Whale Watching Cruise</div>
+            <div class="exp-card-desc">Eco-certified boat trip to observe humpback whales in their natural habitat. Unforgettable for the whole family.</div>
+            <div class="exp-card-footer">
+              <div class="exp-price-tag">$150 / person</div>
+              <button class="exp-add-btn">+ Add to Stay</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="exp-content" id="tab-night">
+        <div class="exp-card">
+          <div class="exp-card-img">
+            <img src="https://images.unsplash.com/photo-1530789253388-582c481c54b0?w=700&q=80" alt="Sailing" />
+          </div>
+          <div class="exp-card-body">
+            <div class="exp-card-tag">2 Hours · Champagne included</div>
+            <div class="exp-card-name">Sunset Sailing Cruise</div>
+            <div class="exp-card-desc">Private sailing yacht around Tahiti's coast as the sun dips below the horizon. Champagne and canapés served.</div>
+            <div class="exp-card-footer">
+              <div class="exp-price-tag">$150 / person</div>
+              <button class="exp-add-btn">+ Add to Stay</button>
+            </div>
+          </div>
+        </div>
+        <div class="exp-card">
+          <div class="exp-card-img">
+            <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=700&q=80" alt="Lagoon dinner" />
+          </div>
+          <div class="exp-card-body">
+            <div class="exp-card-tag">At villa · Min 2 guests</div>
+            <div class="exp-card-name">Private Lagoon Dinner</div>
+            <div class="exp-card-desc">Romantic dinner served on a floating platform in the lagoon. Polynesian-French fusion cuisine with wine pairing.</div>
+            <div class="exp-card-footer">
+              <div class="exp-price-tag">$150 / person</div>
+              <button class="exp-add-btn">+ Add to Stay</button>
+            </div>
+          </div>
+        </div>
+        <div class="exp-card">
+          <div class="exp-card-img">
+            <img src="https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=700&q=80" alt="Stargazing" />
+          </div>
+          <div class="exp-card-body">
+            <div class="exp-card-tag">2 Hours · All year</div>
+            <div class="exp-card-name">Stargazing Experience</div>
+            <div class="exp-card-desc">Night astronomy session at the villa with a local expert guide and telescope. The Pacific sky is unlike anything else.</div>
+            <div class="exp-card-footer">
+              <div class="exp-price-tag">$150 / person</div>
+              <button class="exp-add-btn">+ Add to Stay</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="exp-content" id="tab-food">
+        <div class="exp-card">
+          <div class="exp-card-img">
+            <img src="https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=700&q=80" alt="Breakfast" />
+          </div>
+          <div class="exp-card-body">
+            <div class="exp-card-tag">Daily · 8am–10am</div>
+            <div class="exp-card-name">Daily Breakfast Service</div>
+            <div class="exp-card-desc">Fresh croissants, tropical fruits, eggs, local coffee and juices — served at the villa every morning of your stay.</div>
+            <div class="exp-card-footer">
+              <div class="exp-price-tag">$150 / person</div>
+              <button class="exp-add-btn">+ Add to Stay</button>
+            </div>
+          </div>
+        </div>
+        <div class="exp-card">
+          <div class="exp-card-img">
+            <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=700&q=80" alt="BBQ" />
+          </div>
+          <div class="exp-card-body">
+            <div class="exp-card-tag">At villa · Min 4 guests</div>
+            <div class="exp-card-name">Polynesian BBQ Evening</div>
+            <div class="exp-card-desc">Traditional Tahitian feast: poisson cru, grilled fish, taro, poi. Private chef included. An authentic local experience.</div>
+            <div class="exp-card-footer">
+              <div class="exp-price-tag">$150 / person</div>
+              <button class="exp-add-btn">+ Add to Stay</button>
+            </div>
+          </div>
+        </div>
+        <div class="exp-card">
+          <div class="exp-card-img">
+            <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=700&q=80" alt="Gourmet" />
+          </div>
+          <div class="exp-card-body">
+            <div class="exp-card-tag">5-course · Wine pairing available</div>
+            <div class="exp-card-name">Private Gourmet Dinner</div>
+            <div class="exp-card-desc">Polynesian-French fusion menu by your private chef. Served at the villa under the stars. Pure luxury.</div>
+            <div class="exp-card-footer">
+              <div class="exp-price-tag">$150 / person</div>
+              <button class="exp-add-btn">+ Add to Stay</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CALCULATOR -->
+  <section class="section calc-section" id="calculator">
+    <div class="container">
+      <div class="section-label reveal"><div class="line"></div><span>Stay Calculator</span></div>
+      <h2 class="reveal" style="margin-bottom:2.5rem;">Build your <em>perfect stay</em></h2>
+
+      <div class="calc-box reveal">
+        <div class="calc-header">
+          <h3>Your Stay Summary</h3>
+          <span class="nights-badge">Jan 15–22, 2027 · 7 nights</span>
+        </div>
+        <div class="calc-body">
+          <div class="calc-line">
+            <div class="calc-line-left">
+              <div class="calc-line-name">Villa Paradise</div>
+              <div class="calc-line-detail">7 nights × $690/night · 2 guests</div>
+            </div>
+            <div class="calc-line-price">$4,830</div>
+          </div>
+          <div class="calc-line">
+            <div class="calc-line-left">
+              <div class="calc-line-name">Cleaning Fee</div>
+              <div class="calc-line-detail">One-time fee</div>
+            </div>
+            <div class="calc-line-price">$150</div>
+          </div>
+          <div class="calc-line">
+            <div class="calc-line-left">
+              <div class="calc-line-name">Lagoon Snorkeling Tour</div>
+              <div class="calc-line-detail">Jan 16 · $150/person</div>
+            </div>
+            <div class="calc-line-add">
+              <button class="qty-btn">−</button>
+              <span class="qty-val">2</span>
+              <button class="qty-btn">+</button>
+              <span class="calc-line-price">$300</span>
+            </div>
+          </div>
+          <div class="calc-line">
+            <div class="calc-line-left">
+              <div class="calc-line-name">Sunset Sailing Cruise</div>
+              <div class="calc-line-detail">Jan 18 · $150/person</div>
+            </div>
+            <div class="calc-line-add">
+              <button class="qty-btn">−</button>
+              <span class="qty-val">2</span>
+              <button class="qty-btn">+</button>
+              <span class="calc-line-price">$300</span>
+            </div>
+          </div>
+          <div class="calc-line">
+            <div class="calc-line-left">
+              <div class="calc-line-name">Private Gourmet Dinner</div>
+              <div class="calc-line-detail">Jan 17 · $150/person</div>
+            </div>
+            <div class="calc-line-add">
+              <button class="qty-btn">−</button>
+              <span class="qty-val">2</span>
+              <button class="qty-btn">+</button>
+              <span class="calc-line-price">$300</span>
+            </div>
+          </div>
+          <div class="calc-line">
+            <div class="calc-line-left">
+              <div class="calc-line-name">Taxes & Fees (~10%)</div>
+              <div class="calc-line-detail">Applied to subtotal</div>
+            </div>
+            <div class="calc-line-price">$588</div>
+          </div>
+        </div>
+        <div class="calc-footer">
+          <div>
+            <div class="calc-total-label">Total Stay</div>
+            <div class="calc-total-amount">$6,468</div>
+            <div class="calc-deposit">Deposit due today (30%): <strong style="color:var(--gold);">$1,940</strong> · Balance at check-in</div>
+          </div>
+          <button class="btn-calc-book">🔒 Book Now — Pay Deposit</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REVIEWS -->
+  <section class="section reviews-section" id="reviews">
+    <div class="container">
+      <div class="reviews-header reveal">
+        <div>
+          <div class="section-label"><div class="line"></div><span>Guest Reviews</span></div>
+          <h2>What our <em>guests say</em></h2>
+          <div class="review-bars">
+            <div class="rbar"><span class="rbar-label">Cleanliness</span><div class="rbar-track"><div class="rbar-fill" style="width:99%"></div></div><span class="rbar-val">4.9</span></div>
+            <div class="rbar"><span class="rbar-label">Location</span><div class="rbar-track"><div class="rbar-fill" style="width:100%"></div></div><span class="rbar-val">5.0</span></div>
+            <div class="rbar"><span class="rbar-label">Value</span><div class="rbar-track"><div class="rbar-fill" style="width:96%"></div></div><span class="rbar-val">4.8</span></div>
+            <div class="rbar"><span class="rbar-label">Host</span><div class="rbar-track"><div class="rbar-fill" style="width:100%"></div></div><span class="rbar-val">5.0</span></div>
+          </div>
+        </div>
+        <div class="overall-score">
+          <div class="score-big">4.97</div>
+          <div class="score-stars">★★★★★</div>
+          <div class="score-label">Based on 47 verified reviews</div>
+        </div>
+      </div>
+
+      <div class="reviews-grid">
+        <div class="review-card reveal d1">
+          <div class="review-top">
+            <div class="reviewer">
+              <div class="reviewer-avatar">SJ</div>
+              <div>
+                <div class="reviewer-name">Sarah & James M.</div>
+                <div class="reviewer-loc">New York, NY</div>
+              </div>
+            </div>
+            <div class="review-rating">★★★★★</div>
+          </div>
+          <div class="review-text">"The most beautiful place we've ever stayed. The lagoon view from our bedroom was absolutely unreal. The private chef dinner was the most romantic evening of our lives."</div>
+          <div class="review-date">October 2025</div>
+          <div class="review-platform">✓ Verified Airbnb Guest</div>
+        </div>
+
+        <div class="review-card reveal d2">
+          <div class="review-top">
+            <div class="reviewer">
+              <div class="reviewer-avatar" style="background:var(--green);">EC</div>
+              <div>
+                <div class="reviewer-name">Emily & Chris R.</div>
+                <div class="reviewer-loc">San Francisco, CA</div>
+              </div>
+            </div>
+            <div class="review-rating">★★★★★</div>
+          </div>
+          <div class="review-text">"Perfect honeymoon. The host responded within minutes every time. We felt completely alone in paradise. 100% recommend booking direct — the service was unmatched."</div>
+          <div class="review-date">February 2025</div>
+          <div class="review-platform">✓ Verified Direct Booking</div>
+        </div>
+
+        <div class="review-card reveal d3">
+          <div class="review-top">
+            <div class="reviewer">
+              <div class="reviewer-avatar" style="background:var(--blue-dark);">TF</div>
+              <div>
+                <div class="reviewer-name">Thompson Family</div>
+                <div class="reviewer-loc">Austin, TX</div>
+              </div>
+            </div>
+            <div class="review-rating">★★★★★</div>
+          </div>
+          <div class="review-text">"Perfect for our family of 6. The kids loved snorkeling, the adults loved the privacy and the pool. The island 4×4 tour was a highlight. We're already planning to come back."</div>
+          <div class="review-date">July 2025</div>
+          <div class="review-platform">✓ Verified VRBO Guest</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section faq-section" id="faq">
+    <div class="container">
+      <div class="section-label reveal"><div class="line"></div><span>FAQ</span></div>
+      <h2 class="reveal" style="margin-bottom:2.5rem;">Frequently asked <em>questions</em></h2>
+
+      <div class="faq-grid reveal">
+        <div class="faq-item">
+          <div class="faq-q">Do US citizens need a visa to visit French Polynesia?<span class="toggle">+</span></div>
+          <div class="faq-a">No visa required for US citizens for stays up to 90 days. Just a valid US passport and a return ticket.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">What is your cancellation policy?<span class="toggle">+</span></div>
+          <div class="faq-a">Cancel 60+ days before check-in for a full refund of the deposit. 30–59 days: 50% refund. Less than 30 days: non-refundable. Contact us for special circumstances.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">How far is the villa from Tahiti Airport?<span class="toggle">+</span></div>
+          <div class="faq-a">The villa is approximately 25 minutes by car from Fa'a'ā International Airport. We offer complimentary airport pickup for direct bookings.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">Is the 30% deposit refundable?<span class="toggle">+</span></div>
+          <div class="faq-a">Yes, if you cancel 60+ days before your check-in date. See our full cancellation policy for details.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">What currency do you accept? Can I pay in USD?<span class="toggle">+</span></div>
+          <div class="faq-a">All prices are in USD. We accept Visa, Mastercard, Amex via Stripe, and PayPal. No hidden currency conversion fees.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">Is the infinity pool heated?<span class="toggle">+</span></div>
+          <div class="faq-a">The pool is not heated — but water temperature in Tahiti is naturally between 78–84°F (26–29°C) year-round, so no heater needed!</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LOCATION -->
+  <section class="section location-section" id="location">
+    <div class="container">
+      <div class="location-grid">
+        <div class="reveal">
+          <div class="section-label"><div class="line"></div><span>Location</span></div>
+          <h2>In the <em>heart</em> of paradise</h2>
+          <p style="color:var(--muted);font-size:0.95rem;line-height:1.8;margin-bottom:1.5rem;">The villa is perfectly situated on Tahiti's west coast, giving you easy access to the island's best attractions while remaining completely private and secluded.</p>
+          <div class="distances">
+            <div class="dist-item">
+              <div class="dist-place">✈️ <span>Fa'a'ā International Airport</span></div>
+              <div class="dist-time">25 min</div>
+            </div>
+            <div class="dist-item">
+              <div class="dist-place">🐠 <span>Lagoon Beach</span></div>
+              <div class="dist-time">2 min walk</div>
+            </div>
+            <div class="dist-item">
+              <div class="dist-place">🛥️ <span>Marina Papeete</span></div>
+              <div class="dist-time">20 min</div>
+            </div>
+            <div class="dist-item">
+              <div class="dist-place">🍽️ <span>Restaurants & Shops</span></div>
+              <div class="dist-time">10 min</div>
+            </div>
+            <div class="dist-item">
+              <div class="dist-place">🌺 <span>Papeete Market</span></div>
+              <div class="dist-time">25 min</div>
+            </div>
+          </div>
+        </div>
+        <div class="map-placeholder reveal d2">
+          <img src="https://images.unsplash.com/photo-1589394815804-964ed0be2eb5?w=900&q=60" alt="Location" style="opacity:0.3;" />
+          <div class="map-pin"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA FINAL -->
+  <section class="cta-section">
+    <h2>Ready to book your<br><em>dream escape?</em></h2>
+    <p>Book directly with us for the best price, personalized service, and instant confirmation. Your private paradise awaits.</p>
+    <div class="cta-row">
+      <a href="#book" class="btn-primary" style="background:var(--gold);color:var(--text);">🗓 Check Availability & Book</a>
+      <a href="mailto:hello@villaparadisetahiti.com" class="btn-secondary">✉ Send an Inquiry</a>
+    </div>
+    <div style="margin-top:2rem;font-size:0.78rem;color:rgba(255,255,255,0.35);letter-spacing:0.06em;">
+      🔒 Secure Stripe & PayPal &nbsp;·&nbsp; Instant Confirmation &nbsp;·&nbsp; Best Price Direct
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo"><div class="dot"></div>Villa Paradise Tahiti</div>
+        <div class="footer-desc">Your private sanctuary in the heart of French Polynesia. Book direct for the best price, personalized service, and an unforgettable stay.</div>
+        <div style="font-family:'DM Serif Display',serif;font-style:italic;font-size:0.95rem;color:var(--gold);">"Ia ora na" — Welcome to Paradise</div>
+      </div>
+      <div class="footer-col">
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="#">The Villa</a></li>
+          <li><a href="#">Experiences</a></li>
+          <li><a href="#">Gallery</a></li>
+          <li><a href="#">Rates & Booking</a></li>
+          <li><a href="#">Reviews</a></li>
+          <li><a href="#">Blog</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Experiences</h4>
+        <ul>
+          <li><a href="#">Lagoon Snorkeling</a></li>
+          <li><a href="#">Sunset Sailing</a></li>
+          <li><a href="#">Private Chef Dinner</a></li>
+          <li><a href="#">Island 4×4 Tour</a></li>
+          <li><a href="#">Whale Watching</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="mailto:hello@villaparadisetahiti.com">✉ hello@villaparadisetahiti.com</a></li>
+          <li><a href="#">💬 WhatsApp</a></li>
+          <li><a href="#">📍 Tahiti, French Polynesia</a></li>
+          <li><a href="#">FAQ</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms & Conditions</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copy">© 2026 Villa Paradise Tahiti · All rights reserved · Designed by <a href="#">TahitiTechDigital</a></p>
+      <div class="footer-social">
+        <a href="#">Instagram</a>
+        <a href="#">Facebook</a>
+        <a href="#">TripAdvisor</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- WHATSAPP -->
+  <a href="https://wa.me/68900000000" class="wa" target="_blank" aria-label="WhatsApp">
+    <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  </a>
+
+  <script>
+    // Reveal
+    const revs = document.querySelectorAll('.reveal');
+    new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+    }, { threshold: 0.08, rootMargin: '0px 0px -50px 0px' }).observe
+    ? new IntersectionObserver(entries => {
+        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+      }, { threshold: 0.08 }).observe(document.body)
+    : null;
+    revs.forEach(el => new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+    }, { threshold: 0.08 }).observe(el));
+
+    // Tabs
+    document.querySelectorAll('.exp-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.exp-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.exp-content').forEach(c => c.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+      });
+    });
+
+    // Booking widget price calc
+    const wci = document.getElementById('wci');
+    const wco = document.getElementById('wco');
+    function calcWidget() {
+      if (!wci.value || !wco.value) return;
+      const nights = Math.round((new Date(wco.value) - new Date(wci.value)) / 86400000);
+      if (nights < 1) return;
+      const base = nights * 690;
+      const cleaning = 150;
+      const tax = Math.round((base + cleaning) * 0.1);
+      const total = base + cleaning + tax;
+      const deposit = Math.round(total * 0.3);
+      document.getElementById('priceBreakdown').style.display = 'block';
+      document.getElementById('nightsLabel').textContent = nights + ' night' + (nights > 1 ? 's' : '') + ' × $690';
+      document.getElementById('nightsTotal').textContent = '$' + base.toLocaleString();
+      document.getElementById('taxAmt').textContent = '$' + tax.toLocaleString();
+      document.getElementById('grandTotal').textContent = '$' + total.toLocaleString();
+      document.getElementById('depositAmt').textContent = '$' + deposit.toLocaleString();
+    }
+    wci?.addEventListener('change', calcWidget);
+    wco?.addEventListener('change', calcWidget);
+
+    // FAQ toggle
+    document.querySelectorAll('.faq-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const a = item.querySelector('.faq-a');
+        const t = item.querySelector('.toggle');
+        const isOpen = a.style.display === 'block';
+        a.style.display = isOpen ? 'none' : 'block';
+        t.textContent = isOpen ? '+' : '−';
+      });
+    });
+  </script>
+</body>
+</html>

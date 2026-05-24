@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" role="img" aria-label="Villa Paradise Tahiti placeholder">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3b82f6"/>
+      <stop offset="60%" stop-color="#0ea5e9"/>
+      <stop offset="100%" stop-color="#14b8a6"/>
+    </linearGradient>
+    <linearGradient id="sand" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fde68a"/>
+      <stop offset="100%" stop-color="#fcd34d"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#sky)"/>
+  <ellipse cx="800" cy="950" rx="1200" ry="220" fill="url(#sand)"/>
+  <circle cx="1300" cy="220" r="90" fill="#fef3c7" opacity="0.9"/>
+  <g fill="#0f766e" opacity="0.85">
+    <path d="M280 760 Q300 600 260 480 Q330 540 360 620 Q330 700 280 760 Z"/>
+    <path d="M280 760 Q340 660 460 640 Q380 720 280 760 Z"/>
+    <path d="M280 760 Q220 660 100 640 Q180 720 280 760 Z"/>
+  </g>
+  <text x="800" y="460" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="64" fill="#ffffff" letter-spacing="6">Villa Paradise Tahiti</text>
+  <text x="800" y="510" text-anchor="middle" font-family="Georgia, serif" font-size="22" fill="#ffffff" opacity="0.9" letter-spacing="3">PLACEHOLDER IMAGE</text>
+</svg>

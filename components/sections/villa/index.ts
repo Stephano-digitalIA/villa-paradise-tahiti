@@ -1,0 +1,7 @@
+export { HeroVilla } from './HeroVilla'
+export { VillaDescription } from './VillaDescription'
+export { SpecsGrid } from './SpecsGrid'
+export { Amenities } from './Amenities'
+export { Location } from './Location'
+export { GalleryTeaser } from './GalleryTeaser'
+export { BookingCTA } from './BookingCTA'

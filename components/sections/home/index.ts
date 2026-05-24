@@ -1,0 +1,7 @@
+export { HeroHome } from './HeroHome'
+export { KeyFeatures } from './KeyFeatures'
+export { VillaPreview } from './VillaPreview'
+export { ExperiencesTeaser } from './ExperiencesTeaser'
+export { ReviewsGlimpse } from './ReviewsGlimpse'
+export { WhyDirectBooking } from './WhyDirectBooking'
+export { FinalCTA } from './FinalCTA'

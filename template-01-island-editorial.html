@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Villa Paradise Tahiti — Island Editorial Template</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Jost:wght@300;400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── RESET & BASE ─────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #FAFAF7;
+      --surface:   #F0EDE6;
+      --text:      #1A1A1A;
+      --muted:     #6B6660;
+      --gold:      #C9A96E;
+      --gold-dark: #A8854A;
+      --coral:     #E8896A;
+      --border:    #E2DDD6;
+      --white:     #FFFFFF;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    img { display: block; width: 100%; object-fit: cover; }
+
+    /* ── TYPOGRAPHY ───────────────────────────────── */
+    .f-serif       { font-family: 'Cormorant Garamond', serif; }
+    .f-sans        { font-family: 'Jost', sans-serif; }
+    .f-body        { font-family: 'Inter', sans-serif; }
+
+    /* ── NAV ──────────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.5rem 4rem;
+      transition: background 0.4s ease, box-shadow 0.4s ease;
+    }
+    nav.scrolled {
+      background: rgba(250,250,247,0.96);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 1px 0 var(--border);
+    }
+
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      color: var(--white);
+      text-decoration: none;
+      transition: color 0.4s;
+    }
+    nav.scrolled .nav-logo { color: var(--text); }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2.5rem;
+      list-style: none;
+    }
+    .nav-links a {
+      font-family: 'Jost', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.85);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    nav.scrolled .nav-links a { color: var(--muted); }
+    .nav-links a:hover { color: var(--gold) !important; }
+
+    .nav-cta {
+      font-family: 'Jost', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text) !important;
+      background: var(--gold);
+      padding: 0.6rem 1.6rem;
+      text-decoration: none;
+      transition: background 0.3s, transform 0.2s;
+    }
+    .nav-cta:hover { background: var(--gold-dark) !important; transform: translateY(-1px); }
+
+    /* ── HERO ─────────────────────────────────────── */
+    .hero {
+      position: relative;
+      height: 100vh;
+      min-height: 700px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background: #0d1b2a;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background: url('https://images.unsplash.com/photo-1589394815804-964ed0be2eb5?w=1920&q=80') center/cover no-repeat;
+      transform: scale(1.05);
+      animation: heroZoom 12s ease-out forwards;
+    }
+    @keyframes heroZoom {
+      from { transform: scale(1.05); }
+      to   { transform: scale(1.0); }
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(10,18,28,0.3) 0%,
+        rgba(10,18,28,0.15) 40%,
+        rgba(10,18,28,0.55) 100%
+      );
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      color: var(--white);
+      padding: 0 2rem;
+      max-width: 860px;
+    }
+
+    .hero-eyebrow {
+      font-family: 'Jost', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.4s ease forwards;
+    }
+
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3.5rem, 8vw, 7rem);
+      font-weight: 300;
+      line-height: 1.05;
+      letter-spacing: -0.01em;
+      margin-bottom: 1.2rem;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.7s ease forwards;
+    }
+    .hero-title em { font-style: italic; color: var(--gold); }
+
+    .hero-sub {
+      font-family: 'Jost', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 300;
+      letter-spacing: 0.06em;
+      color: rgba(255,255,255,0.8);
+      margin-bottom: 3rem;
+      opacity: 0;
+      animation: fadeUp 0.8s 1s ease forwards;
+    }
+
+    .hero-cta-group {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeUp 0.8s 1.2s ease forwards;
+    }
+
+    .btn-primary {
+      display: inline-block;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text);
+      background: var(--gold);
+      padding: 1rem 2.4rem;
+      text-decoration: none;
+      transition: background 0.3s, transform 0.2s;
+    }
+    .btn-primary:hover { background: var(--gold-dark); transform: translateY(-2px); }
+
+    .btn-ghost {
+      display: inline-block;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--white);
+      border: 1px solid rgba(255,255,255,0.5);
+      padding: 1rem 2.4rem;
+      text-decoration: none;
+      transition: border-color 0.3s, background 0.3s;
+    }
+    .btn-ghost:hover { border-color: var(--white); background: rgba(255,255,255,0.08); }
+
+    .hero-scroll {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      opacity: 0;
+      animation: fadeUp 0.8s 1.6s ease forwards;
+    }
+    .hero-scroll span {
+      font-family: 'Jost', sans-serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.6);
+    }
+    .scroll-line {
+      width: 1px;
+      height: 48px;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.6), transparent);
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.6; transform: scaleY(1); }
+      50% { opacity: 1; transform: scaleY(1.2); }
+    }
+
+    /* ── TRUST BAR ────────────────────────────────── */
+    .trust-bar {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 1.2rem 4rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 3rem;
+      flex-wrap: wrap;
+    }
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+    }
+    .trust-item .stars { color: var(--gold); font-size: 0.9rem; }
+    .trust-sep { width: 1px; height: 20px; background: var(--border); }
+
+    /* ── SECTION BASE ─────────────────────────────── */
+    section { padding: 7rem 4rem; }
+    .container { max-width: 1280px; margin: 0 auto; }
+    .section-eyebrow {
+      font-family: 'Jost', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1rem;
+    }
+
+    /* ── VILLA SECTION ────────────────────────────── */
+    .villa-section { background: var(--bg); }
+
+    .villa-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: center;
+    }
+
+    .villa-text h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.8rem, 4vw, 4.5rem);
+      font-weight: 300;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+    }
+    .villa-text h2 em { font-style: italic; color: var(--gold); }
+
+    .villa-text p {
+      font-size: 1rem;
+      line-height: 1.85;
+      color: var(--muted);
+      margin-bottom: 1.2rem;
+    }
+
+    .villa-specs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin: 2rem 0;
+      padding: 2rem;
+      background: var(--surface);
+      border-left: 3px solid var(--gold);
+    }
+    .spec-item { display: flex; flex-direction: column; gap: 0.2rem; }
+    .spec-label {
+      font-family: 'Jost', sans-serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+    .spec-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem;
+      font-weight: 500;
+    }
+
+    .btn-outlined {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text);
+      border-bottom: 2px solid var(--gold);
+      padding-bottom: 0.3rem;
+      text-decoration: none;
+      transition: color 0.3s, border-color 0.3s;
+    }
+    .btn-outlined:hover { color: var(--gold); }
+    .btn-outlined::after { content: '→'; transition: transform 0.3s; }
+    .btn-outlined:hover::after { transform: translateX(4px); }
+
+    .villa-images {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto auto;
+      gap: 1rem;
+    }
+    .villa-img-main {
+      grid-column: 1 / -1;
+      height: 360px;
+      overflow: hidden;
+    }
+    .villa-img-main img,
+    .villa-img-sm img {
+      height: 100%;
+      transition: transform 0.6s ease;
+    }
+    .villa-img-main:hover img,
+    .villa-img-sm:hover img { transform: scale(1.04); }
+    .villa-img-sm { height: 200px; overflow: hidden; }
+
+    /* ── EXPERIENCES ──────────────────────────────── */
+    .exp-section { background: var(--surface); }
+
+    .exp-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 4rem;
+    }
+    .exp-header h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.5rem, 3.5vw, 4rem);
+      font-weight: 300;
+      line-height: 1.1;
+    }
+    .exp-header h2 em { font-style: italic; color: var(--gold); }
+    .exp-header p {
+      max-width: 360px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.7;
+      text-align: right;
+    }
+
+    .exp-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+
+    .exp-card {
+      background: var(--white);
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+    }
+    .exp-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+    }
+
+    .exp-card-img {
+      height: 260px;
+      overflow: hidden;
+      position: relative;
+    }
+    .exp-card-img img { height: 100%; transition: transform 0.6s ease; }
+    .exp-card:hover .exp-card-img img { transform: scale(1.06); }
+    .exp-card-tag {
+      position: absolute;
+      top: 1rem; left: 1rem;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      background: var(--gold);
+      color: var(--text);
+      padding: 0.3rem 0.8rem;
+    }
+
+    .exp-card-body { padding: 2rem; }
+    .exp-card-body h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.7rem;
+      font-weight: 500;
+      margin-bottom: 0.6rem;
+    }
+    .exp-card-body p {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 1.2rem;
+    }
+    .exp-price {
+      font-family: 'Jost', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--gold);
+      letter-spacing: 0.06em;
+    }
+
+    /* ── GALLERY ──────────────────────────────────── */
+    .gallery-section { padding: 0; overflow: hidden; }
+
+    .gallery-header {
+      padding: 7rem 4rem 3rem;
+      text-align: center;
+    }
+    .gallery-header h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.5rem, 3.5vw, 4rem);
+      font-weight: 300;
+    }
+    .gallery-header h2 em { font-style: italic; color: var(--gold); }
+
+    .gallery-masonry {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      grid-template-rows: 280px 280px;
+      gap: 6px;
+    }
+    .gal-1 { grid-column: 1 / 6; grid-row: 1 / 3; }
+    .gal-2 { grid-column: 6 / 9; grid-row: 1 / 2; }
+    .gal-3 { grid-column: 9 / 13; grid-row: 1 / 2; }
+    .gal-4 { grid-column: 6 / 10; grid-row: 2 / 3; }
+    .gal-5 { grid-column: 10 / 13; grid-row: 2 / 3; }
+
+    .gal-item {
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .gal-item img {
+      height: 100%;
+      transition: transform 0.6s ease;
+    }
+    .gal-item:hover img { transform: scale(1.06); }
+
+    .gallery-cta {
+      padding: 2.5rem;
+      text-align: center;
+      background: var(--surface);
+    }
+
+    /* ── REVIEWS ──────────────────────────────────── */
+    .reviews-section { background: var(--white); }
+
+    .reviews-header { text-align: center; margin-bottom: 4rem; }
+    .reviews-header h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.5rem, 3.5vw, 4rem);
+      font-weight: 300;
+      margin-bottom: 0.5rem;
+    }
+    .reviews-header h2 em { font-style: italic; color: var(--gold); }
+    .reviews-score {
+      font-family: 'Jost', sans-serif;
+      font-size: 0.82rem;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+    }
+    .reviews-score .stars { color: var(--gold); }
+
+    .reviews-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    .review-card {
+      padding: 2.5rem;
+      border: 1px solid var(--border);
+      position: relative;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .review-card:hover {
+      border-color: var(--gold);
+      box-shadow: 0 8px 40px rgba(201,169,110,0.1);
+    }
+
+    .review-quote {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 4rem;
+      color: var(--gold);
+      line-height: 0.5;
+      margin-bottom: 1.2rem;
+    }
+    .review-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.15rem;
+      font-style: italic;
+      line-height: 1.7;
+      color: var(--text);
+      margin-bottom: 1.5rem;
+    }
+    .review-stars { color: var(--gold); font-size: 0.85rem; margin-bottom: 1rem; }
+    .review-author {
+      font-family: 'Jost', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .review-meta {
+      font-family: 'Jost', sans-serif;
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-top: 0.2rem;
+    }
+    .review-badge {
+      position: absolute;
+      top: 1.5rem; right: 1.5rem;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 0.2rem 0.6rem;
+    }
+
+    /* ── BOOKING CTA SECTION ──────────────────────── */
+    .booking-section {
+      padding: 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .booking-bg {
+      position: absolute;
+      inset: 0;
+      background: url('https://images.unsplash.com/photo-1540202403-b7abd6747a18?w=1920&q=80') center/cover no-repeat;
+    }
+    .booking-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(10,18,28,0.85) 0%, rgba(10,18,28,0.65) 100%);
+    }
+
+    .booking-content {
+      position: relative;
+      z-index: 2;
+      padding: 8rem 4rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .booking-text { color: var(--white); }
+    .booking-text .section-eyebrow { margin-bottom: 1rem; }
+    .booking-text h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.8rem, 4vw, 4.5rem);
+      font-weight: 300;
+      line-height: 1.05;
+      margin-bottom: 1.5rem;
+    }
+    .booking-text h2 em { font-style: italic; color: var(--gold); }
+    .booking-text p {
+      font-size: 1rem;
+      line-height: 1.8;
+      color: rgba(255,255,255,0.75);
+      margin-bottom: 2rem;
+    }
+
+    .booking-card {
+      background: rgba(250,250,247,0.97);
+      padding: 3rem;
+      backdrop-filter: blur(20px);
+    }
+
+    .booking-card h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem;
+      font-weight: 500;
+      margin-bottom: 0.3rem;
+    }
+    .booking-card .price-line {
+      font-family: 'Jost', sans-serif;
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 2rem;
+    }
+    .booking-card .price-line strong {
+      font-size: 1.3rem;
+      color: var(--gold);
+      font-family: 'Cormorant Garamond', serif;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+    .form-group label {
+      font-family: 'Jost', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .form-group input,
+    .form-group select {
+      border: 1px solid var(--border);
+      background: var(--bg);
+      padding: 0.8rem 1rem;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      color: var(--text);
+      width: 100%;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+    .form-group input:focus,
+    .form-group select:focus { border-color: var(--gold); }
+
+    .booking-total {
+      background: var(--surface);
+      padding: 1.2rem;
+      margin: 1.5rem 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .booking-total .label {
+      font-family: 'Jost', sans-serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .booking-total .amount {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem;
+      font-weight: 500;
+    }
+    .booking-total .per-night {
+      font-family: 'Jost', sans-serif;
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+
+    .btn-book {
+      display: block;
+      width: 100%;
+      padding: 1.1rem;
+      background: var(--gold);
+      color: var(--text);
+      font-family: 'Jost', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+    }
+    .btn-book:hover { background: var(--gold-dark); transform: translateY(-1px); }
+
+    .booking-secure {
+      margin-top: 1rem;
+      text-align: center;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.7rem;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+    }
+    .booking-secure span { margin: 0 0.3rem; }
+
+    /* ── FOOTER ───────────────────────────────────── */
+    footer {
+      background: #0D1B2A;
+      color: rgba(255,255,255,0.7);
+      padding: 5rem 4rem 3rem;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 3rem;
+      max-width: 1280px;
+      margin: 0 auto 4rem;
+    }
+
+    .footer-brand .logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem;
+      font-weight: 400;
+      color: var(--white);
+      margin-bottom: 1rem;
+    }
+    .footer-brand p {
+      font-size: 0.88rem;
+      line-height: 1.7;
+      margin-bottom: 1.5rem;
+    }
+    .footer-brand .tagline {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1rem;
+      color: var(--gold);
+    }
+
+    .footer-col h4 {
+      font-family: 'Jost', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--white);
+      margin-bottom: 1.5rem;
+    }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 0.7rem; }
+    .footer-col ul a {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.55);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .footer-col ul a:hover { color: var(--gold); }
+
+    .footer-bottom {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer-bottom p { font-size: 0.78rem; color: rgba(255,255,255,0.35); }
+    .footer-social {
+      display: flex;
+      gap: 1.2rem;
+    }
+    .footer-social a {
+      font-family: 'Jost', sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .footer-social a:hover { color: var(--gold); }
+
+    /* ── WHATSAPP BUTTON ──────────────────────────── */
+    .whatsapp-btn {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      z-index: 50;
+      width: 56px;
+      height: 56px;
+      background: #25D366;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 20px rgba(37,211,102,0.4);
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+      text-decoration: none;
+    }
+    .whatsapp-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 28px rgba(37,211,102,0.5);
+    }
+    .whatsapp-btn svg { width: 28px; height: 28px; fill: white; }
+
+    /* ── ANIMATIONS ───────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+
+    /* ── RESPONSIVE ───────────────────────────────── */
+    @media (max-width: 1024px) {
+      nav { padding: 1.2rem 2rem; }
+      section { padding: 5rem 2rem; }
+      .villa-grid { grid-template-columns: 1fr; gap: 3rem; }
+      .exp-grid { grid-template-columns: 1fr 1fr; }
+      .reviews-grid { grid-template-columns: 1fr 1fr; }
+      .booking-content { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .exp-grid { grid-template-columns: 1fr; }
+      .reviews-grid { grid-template-columns: 1fr; }
+      .gallery-masonry {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 200px 200px 200px;
+      }
+      .gal-1 { grid-column: 1 / -1; grid-row: 1 / 2; }
+      .gal-2 { grid-column: 1 / 2; grid-row: 2 / 3; }
+      .gal-3 { grid-column: 2 / 3; grid-row: 2 / 3; }
+      .gal-4 { grid-column: 1 / 2; grid-row: 3 / 4; }
+      .gal-5 { grid-column: 2 / 3; grid-row: 3 / 4; }
+      .trust-bar { padding: 1rem; gap: 1rem; }
+      .trust-sep { display: none; }
+      .booking-content { padding: 4rem 1.5rem; }
+      footer { padding: 3rem 1.5rem; }
+      .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
+      .footer-bottom { flex-direction: column; gap: 1rem; text-align: center; }
+      .exp-header { flex-direction: column; align-items: flex-start; }
+      .exp-header p { text-align: left; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── NAVIGATION ─────────────────────────────── -->
+  <nav id="navbar">
+    <a href="#" class="nav-logo">Villa Paradise Tahiti</a>
+    <ul class="nav-links">
+      <li><a href="#villa">The Villa</a></li>
+      <li><a href="#experiences">Experiences</a></li>
+      <li><a href="#gallery">Gallery</a></li>
+      <li><a href="#reviews">Reviews</a></li>
+      <li><a href="#blog">Blog</a></li>
+      <li><a href="#book" class="nav-cta">Book Now</a></li>
+    </ul>
+  </nav>
+
+  <!-- ── HERO ───────────────────────────────────── -->
+  <section class="hero" id="home">
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <p class="hero-eyebrow">French Polynesia · Private Villa</p>
+      <h1 class="hero-title f-serif">
+        Your Private <em>Paradise</em><br>in Tahiti
+      </h1>
+      <p class="hero-sub f-sans">
+        Private villa · Lagoon view · Tailored experiences · Direct booking
+      </p>
+      <div class="hero-cta-group">
+        <a href="#book" class="btn-primary">Check Availability</a>
+        <a href="#villa" class="btn-ghost">Explore the Villa</a>
+      </div>
+    </div>
+    <div class="hero-scroll">
+      <span class="f-sans">Discover</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- ── TRUST BAR ──────────────────────────────── -->
+  <div class="trust-bar">
+    <div class="trust-item f-sans">
+      <span class="stars">★★★★★</span>
+      <span>4.97 · 47 Reviews</span>
+    </div>
+    <div class="trust-sep"></div>
+    <div class="trust-item f-sans">
+      <span>✓</span>
+      <span>Superhost since 2019</span>
+    </div>
+    <div class="trust-sep"></div>
+    <div class="trust-item f-sans">
+      <span>🔒</span>
+      <span>Secure Stripe & PayPal</span>
+    </div>
+    <div class="trust-sep"></div>
+    <div class="trust-item f-sans">
+      <span>⚡</span>
+      <span>Instant Confirmation</span>
+    </div>
+    <div class="trust-sep"></div>
+    <div class="trust-item f-sans">
+      <span>💬</span>
+      <span>Responds within 1 hour</span>
+    </div>
+  </div>
+
+  <!-- ── THE VILLA ───────────────────────────────── -->
+  <section class="villa-section" id="villa">
+    <div class="container">
+      <div class="villa-grid">
+
+        <div class="villa-text reveal">
+          <p class="section-eyebrow f-sans">The Villa</p>
+          <h2 class="f-serif">
+            Where the Pacific<br><em>meets luxury</em>
+          </h2>
+          <p>Nestled on the shores of Tahiti's most pristine lagoon, Villa Paradise is a sanctuary of calm, beauty, and authentic Polynesian hospitality — entirely yours.</p>
+          <p>Three airy bedrooms, a private infinity pool overlooking the turquoise water, and a team dedicated to making every moment of your stay unforgettable.</p>
+
+          <div class="villa-specs">
+            <div class="spec-item">
+              <span class="spec-label f-sans">Bedrooms</span>
+              <span class="spec-value f-serif">3</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label f-sans">Guests</span>
+              <span class="spec-value f-serif">Up to 8</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label f-sans">Pool</span>
+              <span class="spec-value f-serif">Private ∞</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label f-sans">From</span>
+              <span class="spec-value f-serif">$690 / night</span>
+            </div>
+          </div>
+
+          <a href="#" class="btn-outlined f-sans">Explore the Villa</a>
+        </div>
+
+        <div class="villa-images reveal reveal-delay-2">
+          <div class="villa-img-main">
+            <img src="https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?w=900&q=80" alt="Villa Paradise pool" />
+          </div>
+          <div class="villa-img-sm">
+            <img src="https://images.unsplash.com/photo-1540202403-b7abd6747a18?w=600&q=80" alt="Villa interior" />
+          </div>
+          <div class="villa-img-sm">
+            <img src="https://images.unsplash.com/photo-1573843981267-be1999ff37cd?w=600&q=80" alt="Lagoon view" />
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── EXPERIENCES ────────────────────────────── -->
+  <section class="exp-section" id="experiences">
+    <div class="container">
+      <div class="exp-header reveal">
+        <div>
+          <p class="section-eyebrow f-sans">Curated Experiences</p>
+          <h2 class="f-serif">Beyond the <em>ordinary</em></h2>
+        </div>
+        <p>Snorkel with manta rays, feast on a private lagoon platform, or do absolutely nothing. We've curated Tahiti's finest experiences — just for you.</p>
+      </div>
+
+      <div class="exp-grid">
+
+        <div class="exp-card reveal reveal-delay-1">
+          <div class="exp-card-img">
+            <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=700&q=80" alt="Snorkeling" />
+            <span class="exp-card-tag f-sans">Day</span>
+          </div>
+          <div class="exp-card-body">
+            <h3 class="f-serif">Lagoon Snorkeling Tour</h3>
+            <p>Guided half-day in Moorea's crystal-clear lagoon. Equipment included. Manta rays, sharks, and vibrant coral reefs await.</p>
+            <span class="exp-price f-sans">From $150 / person</span>
+          </div>
+        </div>
+
+        <div class="exp-card reveal reveal-delay-2">
+          <div class="exp-card-img">
+            <img src="https://images.unsplash.com/photo-1530789253388-582c481c54b0?w=700&q=80" alt="Sunset sail" />
+            <span class="exp-card-tag f-sans">Evening</span>
+          </div>
+          <div class="exp-card-body">
+            <h3 class="f-serif">Sunset Sailing Cruise</h3>
+            <p>Two hours of pure bliss aboard a private sailing yacht. Champagne, canapés, and Tahiti's legendary sunsets — exclusively yours.</p>
+            <span class="exp-price f-sans">From $150 / person</span>
+          </div>
+        </div>
+
+        <div class="exp-card reveal reveal-delay-3">
+          <div class="exp-card-img">
+            <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=700&q=80" alt="Private dinner" />
+            <span class="exp-card-tag f-sans">Dining</span>
+          </div>
+          <div class="exp-card-body">
+            <h3 class="f-serif">Private Gourmet Dinner</h3>
+            <p>A 5-course Polynesian-French fusion menu prepared by your private chef. Served at the villa, under the stars, with wine pairing.</p>
+            <span class="exp-price f-sans">From $150 / person</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div style="text-align:center; margin-top:3rem;" class="reveal">
+        <a href="#" class="btn-outlined f-sans">View All Experiences</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── GALLERY ────────────────────────────────── -->
+  <section class="gallery-section" id="gallery">
+    <div class="gallery-header reveal">
+      <p class="section-eyebrow f-sans">Gallery</p>
+      <h2 class="f-serif">See your <em>paradise</em></h2>
+    </div>
+    <div class="gallery-masonry">
+      <div class="gal-item gal-1">
+        <img src="https://images.unsplash.com/photo-1589394815804-964ed0be2eb5?w=900&q=80" alt="Lagoon view" />
+      </div>
+      <div class="gal-item gal-2">
+        <img src="https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?w=700&q=80" alt="Pool" />
+      </div>
+      <div class="gal-item gal-3">
+        <img src="https://images.unsplash.com/photo-1540202403-b7abd6747a18?w=700&q=80" alt="Interior" />
+      </div>
+      <div class="gal-item gal-4">
+        <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=700&q=80" alt="Snorkel" />
+      </div>
+      <div class="gal-item gal-5">
+        <img src="https://images.unsplash.com/photo-1573843981267-be1999ff37cd?w=700&q=80" alt="Beach" />
+      </div>
+    </div>
+    <div class="gallery-cta">
+      <a href="#" class="btn-outlined f-sans">View Full Gallery</a>
+    </div>
+  </section>
+
+  <!-- ── REVIEWS ────────────────────────────────── -->
+  <section class="reviews-section" id="reviews">
+    <div class="container">
+      <div class="reviews-header reveal">
+        <p class="section-eyebrow f-sans">Guest Reviews</p>
+        <h2 class="f-serif">Stories from our <em>guests</em></h2>
+        <p class="reviews-score">
+          <span class="stars">★★★★★</span>&nbsp; 4.97 out of 5 · 47 verified reviews
+        </p>
+      </div>
+
+      <div class="reviews-grid">
+
+        <div class="review-card reveal reveal-delay-1">
+          <div class="review-quote f-serif">"</div>
+          <p class="review-text f-serif">"The most beautiful place we've ever stayed. The lagoon view from the bedroom is absolutely unreal — we woke up every morning thinking we were dreaming."</p>
+          <div class="review-stars">★★★★★</div>
+          <p class="review-author f-sans">Sarah & James M.</p>
+          <p class="review-meta f-sans">New York, NY · October 2025</p>
+          <span class="review-badge f-sans">Verified Airbnb Guest</span>
+        </div>
+
+        <div class="review-card reveal reveal-delay-2">
+          <div class="review-quote f-serif">"</div>
+          <p class="review-text f-serif">"We came for our honeymoon and left with memories for a lifetime. The private dinner by the pool was the most romantic evening we've ever experienced."</p>
+          <div class="review-stars">★★★★★</div>
+          <p class="review-author f-sans">Emily & Chris R.</p>
+          <p class="review-meta f-sans">San Francisco, CA · February 2025</p>
+          <span class="review-badge f-sans">Verified Direct Booking</span>
+        </div>
+
+        <div class="review-card reveal reveal-delay-3">
+          <div class="review-quote f-serif">"</div>
+          <p class="review-text f-serif">"Perfect for our family of six. The kids loved the snorkeling, the adults loved the privacy. The host responded within minutes every time. 10/10."</p>
+          <div class="review-stars">★★★★★</div>
+          <p class="review-author f-sans">The Thompson Family</p>
+          <p class="review-meta f-sans">Austin, TX · July 2025</p>
+          <span class="review-badge f-sans">Verified VRBO Guest</span>
+        </div>
+
+      </div>
+
+      <div style="text-align:center;" class="reveal">
+        <a href="#" class="btn-outlined f-sans">Read All 47 Reviews</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── BOOKING CTA ─────────────────────────────── -->
+  <section class="booking-section" id="book">
+    <div class="booking-bg"></div>
+    <div class="booking-overlay"></div>
+    <div class="booking-content">
+
+      <div class="booking-text reveal">
+        <p class="section-eyebrow f-sans">Reserve Your Stay</p>
+        <h2 class="f-serif">
+          Plan your <em>dream</em><br>escape
+        </h2>
+        <p>Book directly with us for the best rates, personalized service, and a seamless experience from the moment you arrive to the moment you leave.</p>
+        <div style="display:flex; flex-direction:column; gap:0.8rem; margin-top:1.5rem;">
+          <div class="trust-item f-sans" style="color:rgba(255,255,255,0.7);">✓&nbsp; No Airbnb fees — best price direct</div>
+          <div class="trust-item f-sans" style="color:rgba(255,255,255,0.7);">✓&nbsp; Flexible payment — 30% deposit, rest at check-in</div>
+          <div class="trust-item f-sans" style="color:rgba(255,255,255,0.7);">✓&nbsp; Secure Stripe & PayPal payment</div>
+          <div class="trust-item f-sans" style="color:rgba(255,255,255,0.7);">✓&nbsp; Instant booking confirmation by email</div>
+        </div>
+      </div>
+
+      <div class="booking-card reveal reveal-delay-2">
+        <h3 class="f-serif">Check Availability</h3>
+        <p class="price-line f-sans">From <strong>$690</strong> / night · 3 night minimum</p>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="f-sans">Check-in</label>
+            <input type="date" />
+          </div>
+          <div class="form-group">
+            <label class="f-sans">Check-out</label>
+            <input type="date" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="f-sans">Adults</label>
+            <select>
+              <option>1 adult</option>
+              <option selected>2 adults</option>
+              <option>3 adults</option>
+              <option>4 adults</option>
+              <option>5+ adults</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="f-sans">Children</label>
+            <select>
+              <option selected>None</option>
+              <option>1 child</option>
+              <option>2 children</option>
+              <option>3+ children</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="booking-total">
+          <div>
+            <div class="label f-sans">7 nights · 2 guests</div>
+            <div class="amount f-serif">$4,830</div>
+          </div>
+          <div class="per-night f-sans" style="text-align:right;">
+            + experiences<br>& catering
+          </div>
+        </div>
+
+        <button class="btn-book f-sans">Check Availability & Book</button>
+
+        <p class="booking-secure f-sans">
+          <span>🔒 SSL Encrypted</span>
+          <span>·</span>
+          <span>Stripe</span>
+          <span>·</span>
+          <span>PayPal</span>
+          <span>·</span>
+          <span>Free cancellation options</span>
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── FOOTER ──────────────────────────────────── -->
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo f-serif">Villa Paradise Tahiti</div>
+        <p>Your private sanctuary in the heart of French Polynesia. Direct bookings, personalized service, and unforgettable experiences — exclusively yours.</p>
+        <p class="tagline f-serif">"Ia ora na" — Welcome to Paradise</p>
+      </div>
+
+      <div class="footer-col">
+        <h4 class="f-sans">Explore</h4>
+        <ul>
+          <li><a href="#" class="f-sans">The Villa</a></li>
+          <li><a href="#" class="f-sans">Experiences</a></li>
+          <li><a href="#" class="f-sans">Gallery</a></li>
+          <li><a href="#" class="f-sans">Rates & Booking</a></li>
+          <li><a href="#" class="f-sans">Reviews</a></li>
+          <li><a href="#" class="f-sans">Blog</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4 class="f-sans">Experiences</h4>
+        <ul>
+          <li><a href="#" class="f-sans">Lagoon Snorkeling</a></li>
+          <li><a href="#" class="f-sans">Sunset Sailing</a></li>
+          <li><a href="#" class="f-sans">Private Chef Dinner</a></li>
+          <li><a href="#" class="f-sans">Island 4×4 Tour</a></li>
+          <li><a href="#" class="f-sans">Whale Watching</a></li>
+          <li><a href="#" class="f-sans">All Experiences</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4 class="f-sans">Contact</h4>
+        <ul>
+          <li><a href="mailto:hello@villaparadisetahiti.com" class="f-sans">✉ hello@villaparadisetahiti.com</a></li>
+          <li><a href="#" class="f-sans">💬 WhatsApp +689 XX XX XX</a></li>
+          <li><a href="#" class="f-sans">📍 Tahiti, French Polynesia</a></li>
+          <li><a href="#" class="f-sans">FAQ</a></li>
+          <li><a href="#" class="f-sans">Privacy Policy</a></li>
+          <li><a href="#" class="f-sans">Terms & Conditions</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p class="f-sans">© 2026 Villa Paradise Tahiti · All rights reserved · Designed by <a href="#" style="color:var(--gold);text-decoration:none;">TahitiTechDigital</a></p>
+      <div class="footer-social">
+        <a href="#" class="f-sans">Instagram</a>
+        <a href="#" class="f-sans">Facebook</a>
+        <a href="#" class="f-sans">TripAdvisor</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ── WHATSAPP FLOATING BUTTON ────────────────── -->
+  <a href="https://wa.me/68900000000" class="whatsapp-btn" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+    </svg>
+  </a>
+
+  <!-- ── SCRIPTS ─────────────────────────────────── -->
+  <script>
+    // Nav scroll effect
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 60) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+    });
+
+    // Scroll reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+    reveals.forEach(el => observer.observe(el));
+
+    // Booking price calculator (demo)
+    const checkIn = document.querySelector('input[type="date"]:first-of-type');
+    const checkOut = document.querySelector('input[type="date"]:last-of-type');
+    const totalEl = document.querySelector('.booking-total .amount');
+    const labelEl = document.querySelector('.booking-total .label');
+
+    function calcTotal() {
+      if (!checkIn.value || !checkOut.value) return;
+      const d1 = new Date(checkIn.value);
+      const d2 = new Date(checkOut.value);
+      const nights = Math.round((d2 - d1) / (1000 * 60 * 60 * 24));
+      if (nights > 0) {
+        const total = nights * 690;
+        totalEl.textContent = '$' + total.toLocaleString();
+        labelEl.textContent = nights + ' night' + (nights > 1 ? 's' : '') + ' · villa only';
+      }
+    }
+
+    checkIn?.addEventListener('change', calcTotal);
+    checkOut?.addEventListener('change', calcTotal);
+  </script>
+
+</body>
+</html>

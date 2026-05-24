@@ -1,0 +1,80 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  html,
+  body {
+    height: 100%;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-pearl font-sans text-midnight antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2 {
+    @apply font-heading text-midnight;
+  }
+
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-sans font-semibold text-midnight;
+  }
+
+  /* Focus ring luxe — visible et conforme WCAG */
+  :focus-visible {
+    @apply outline-none ring-2 ring-gold ring-offset-2 ring-offset-pearl;
+  }
+
+  /* Sélection texte */
+  ::selection {
+    @apply bg-gold/30 text-midnight;
+  }
+
+  /* Respect prefers-reduced-motion */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* Container luxe centré — pour wrapping principal des sections */
+  .container-luxe {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Padding vertical section standard (responsive) */
+  .section-y {
+    @apply py-16 sm:py-24 lg:py-32;
+  }
+
+  /* Padding vertical section compact */
+  .section-y-sm {
+    @apply py-12 sm:py-16 lg:py-20;
+  }
+
+  /* Eyebrow label : petits titres uppercase au-dessus des H1/H2 */
+  .eyebrow {
+    @apply text-eyebrow font-medium uppercase text-gold;
+  }
+}
