@@ -43,7 +43,7 @@ export const galleryImages: GalleryImage[] = [
     category: 'exterior',
     width: 4032,
     height: 3024,
-    caption: 'Vue aérienne — la villa, le jardin et le lagon en arrière-plan.',
+    caption: 'Aerial view — the villa, the garden, and the lagoon in the background.',
   },
   {
     id: 'gal-ext-2',
@@ -52,7 +52,7 @@ export const galleryImages: GalleryImage[] = [
     category: 'exterior',
     width: 1920,
     height: 1080,
-    caption: 'La terrasse lumineuse — conçue pour les longues matinées polynésiennes.',
+    caption: 'The sun-filled terrace — made for long Polynesian mornings.',
   },
   {
     id: 'gal-ext-3',
@@ -61,7 +61,7 @@ export const galleryImages: GalleryImage[] = [
     category: 'exterior',
     width: 1920,
     height: 1080,
-    caption: 'Terrasse et piscine — le lagon à perte de vue.',
+    caption: 'Terrace and pool — the lagoon stretching to the horizon.',
   },
   {
     id: 'gal-ext-4',
@@ -70,7 +70,7 @@ export const galleryImages: GalleryImage[] = [
     category: 'exterior',
     width: 1920,
     height: 1080,
-    caption: 'Le deck extérieur — ombragé et ouvert sur la nature.',
+    caption: 'The outdoor deck — shaded and open to the tropical garden.',
   },
 
   // ── Interior ────────────────────────────────────────────────────────────
@@ -81,7 +81,7 @@ export const galleryImages: GalleryImage[] = [
     category: 'interior',
     width: 3024,
     height: 4032,
-    caption: 'La cuisine ouverte — équipée pour un chef privé ou vos propres créations.',
+    caption: 'The open kitchen — fully equipped for a private chef or your own creations.',
   },
   {
     id: 'gal-int-2',
@@ -90,7 +90,7 @@ export const galleryImages: GalleryImage[] = [
     category: 'interior',
     width: 1600,
     height: 1200,
-    caption: 'Le coin bar — pour les apéritifs avant le coucher du soleil.',
+    caption: 'The bar corner — perfect for sunset aperitifs.',
   },
   {
     id: 'gal-int-3',
@@ -99,7 +99,7 @@ export const galleryImages: GalleryImage[] = [
     category: 'interior',
     width: 3024,
     height: 4032,
-    caption: 'La salle à manger — ouverture totale sur le jardin tropical.',
+    caption: 'The dining room — fully open onto the tropical garden.',
   },
   {
     id: 'gal-int-4',
@@ -108,7 +108,7 @@ export const galleryImages: GalleryImage[] = [
     category: 'interior',
     width: 3024,
     height: 4032,
-    caption: 'Le salon TV — DVD, chaînes satellite et streaming.',
+    caption: 'The TV lounge — DVD, satellite channels, and streaming.',
   },
   {
     id: 'gal-int-5',
@@ -117,7 +117,7 @@ export const galleryImages: GalleryImage[] = [
     category: 'interior',
     width: 3024,
     height: 4032,
-    caption: "La salle de bain parentale — baignoire et douche à l'italienne.",
+    caption: 'The master bathroom — soaking tub and walk-in shower.',
   },
   {
     id: 'gal-int-6',
@@ -126,7 +126,7 @@ export const galleryImages: GalleryImage[] = [
     category: 'interior',
     width: 1600,
     height: 1200,
-    caption: 'Salle de bain extérieure — entre jardin et ciel ouvert.',
+    caption: 'Outdoor bathroom — surrounded by tropical plants under an open sky.',
   },
 
   // ── Pool & garden ───────────────────────────────────────────────────────
@@ -137,7 +137,7 @@ export const galleryImages: GalleryImage[] = [
     category: 'pool',
     width: 3840,
     height: 1080,
-    caption: 'Le deck piscine — vue panoramique sur le lagon.',
+    caption: 'The pool deck — panoramic view over the lagoon.',
   },
   {
     id: 'gal-pool-2',
@@ -146,7 +146,7 @@ export const galleryImages: GalleryImage[] = [
     category: 'pool',
     width: 4032,
     height: 3024,
-    caption: 'Vue drone — la piscine à débordement dans son écrin tropical.',
+    caption: 'Drone view — the infinity pool nestled in its tropical setting.',
   },
   {
     id: 'gal-pool-3',
@@ -155,7 +155,7 @@ export const galleryImages: GalleryImage[] = [
     category: 'pool',
     width: 4032,
     height: 3024,
-    caption: "La piscine avec Moorea en silhouette à l'horizon.",
+    caption: 'The pool with Moorea silhouetted on the horizon.',
   },
   {
     id: 'gal-pool-4',
@@ -164,7 +164,7 @@ export const galleryImages: GalleryImage[] = [
     category: 'pool',
     width: 3024,
     height: 4032,
-    caption: "L'eau turquoise de la piscine — au niveau du jardin.",
+    caption: 'Crystal-clear turquoise water — at garden level.',
   },
 
   // ── Lagoon ──────────────────────────────────────────────────────────────
@@ -175,7 +175,7 @@ export const galleryImages: GalleryImage[] = [
     category: 'lagoon',
     width: 2400,
     height: 1600,
-    caption: "Moorea — l'île sœur à 17km, visible depuis la villa.",
+    caption: 'Moorea — the sister island 17 km away, visible from the villa.',
   },
   {
     id: 'gal-lag-2',
@@ -184,7 +184,7 @@ export const galleryImages: GalleryImage[] = [
     category: 'lagoon',
     width: 4032,
     height: 3024,
-    caption: 'Le lagon vu du ciel — 50 nuances de bleu.',
+    caption: 'The lagoon from above — fifty shades of blue.',
   },
   {
     id: 'gal-lag-3',
@@ -193,7 +193,7 @@ export const galleryImages: GalleryImage[] = [
     category: 'lagoon',
     width: 4032,
     height: 3024,
-    caption: 'La passe du récif — entre lagon et océan Pacifique.',
+    caption: 'The reef pass — where the lagoon meets the Pacific Ocean.',
   },
   {
     id: 'gal-lag-4',
@@ -202,7 +202,7 @@ export const galleryImages: GalleryImage[] = [
     category: 'lagoon',
     width: 3024,
     height: 4032,
-    caption: "Piscine et lagon — une ligne d'horizon sans fin.",
+    caption: 'Pool and lagoon — an endless horizon.',
   },
 
   // ── Sunset ──────────────────────────────────────────────────────────────
@@ -213,7 +213,7 @@ export const galleryImages: GalleryImage[] = [
     category: 'sunset',
     width: 4032,
     height: 3024,
-    caption: 'Le coucher de soleil sur Tahiti — un rituel quotidien.',
+    caption: 'Sunset over Tahiti — a daily ritual.',
   },
   {
     id: 'gal-sun-2',
@@ -222,7 +222,7 @@ export const galleryImages: GalleryImage[] = [
     category: 'sunset',
     width: 4032,
     height: 3024,
-    caption: 'La terrasse éclairée au crépuscule — heure dorée.',
+    caption: 'The terrace lit at dusk — golden hour.',
   },
   {
     id: 'gal-sun-3',
@@ -231,7 +231,7 @@ export const galleryImages: GalleryImage[] = [
     category: 'sunset',
     width: 4032,
     height: 3024,
-    caption: 'Le soleil se couche sur le Pacifique — depuis votre terrasse.',
+    caption: 'The sun setting over the Pacific — from your own terrace.',
   },
 
   // ── Experiences ────────────────────────────────────────────────────────
@@ -242,7 +242,7 @@ export const galleryImages: GalleryImage[] = [
     category: 'experiences',
     width: 1600,
     height: 1100,
-    caption: "Dîner privé sur le lagon — cinq services sur l'eau.",
+    caption: 'Private dinner on the lagoon — five courses over the water.',
   },
   {
     id: 'gal-exp-2',
@@ -251,7 +251,7 @@ export const galleryImages: GalleryImage[] = [
     category: 'experiences',
     width: 1600,
     height: 1100,
-    caption: 'BBQ polynésien sur la terrasse — poisson du lagon et fruits locaux.',
+    caption: 'Polynesian BBQ on the terrace — lagoon fish and local produce.',
   },
   {
     id: 'gal-exp-3',
@@ -260,7 +260,7 @@ export const galleryImages: GalleryImage[] = [
     category: 'experiences',
     width: 1600,
     height: 2000,
-    caption: 'Taurumi — le massage traditionnel polynésien à domicile.',
+    caption: 'Taurumi — traditional Polynesian massage in the comfort of the villa.',
   },
   {
     id: 'gal-exp-4',
@@ -269,7 +269,7 @@ export const galleryImages: GalleryImage[] = [
     category: 'experiences',
     width: 1600,
     height: 1100,
-    caption: 'Tour 4x4 — cascades cachées dans les vallées de Tahiti.',
+    caption: '4x4 island tour — hidden waterfalls deep in the valleys of Tahiti.',
   },
 ]
 
