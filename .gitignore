@@ -37,6 +37,12 @@ yarn-error.log*
 # netlify
 .netlify
 
+# Raw client assets (processed versions live in public/images/villa/)
+docs/assets2-clients/
+villa-paradise-tahiti-docs.zip
+zip-docs.sh
+template-*.html
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
