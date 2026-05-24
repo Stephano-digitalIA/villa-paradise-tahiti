@@ -78,10 +78,10 @@ export async function VillaPreview() {
               {villa.tagline}
             </p>
             <p className="mt-4 max-w-prose font-sans text-body-md text-midnight-400">
-              Set behind a discreet garden wall on the Punaauia coast, Villa Paradise opens
-              onto a private terrace, a heated infinity pool and direct access to the
-              turquoise lagoon. Inside, four light-filled bedrooms wrap around an open-plan
-              living space dressed in pale wood, woven rattan and natural linen.
+              Behind a discreet garden wall on Tahiti&apos;s west coast, Villa Paradise opens onto a
+              private terrace and a heated infinity pool overlooking a turquoise lagoon. Inside,
+              four light-filled bedrooms are arranged around a spacious open-plan living area,
+              styled with pale wood, woven rattan, and natural linen.
             </p>
 
             {/* Stats grid */}
