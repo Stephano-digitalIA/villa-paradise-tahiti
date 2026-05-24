@@ -120,15 +120,6 @@ export const galleryImages: GalleryImage[] = [
     caption: 'The master bathroom — soaking tub and walk-in shower.',
   },
   {
-    id: 'gal-int-6',
-    url: '/images/villa/interior-bathroom-outdoor.jpg',
-    alt: 'Shower room at Villa Paradise Tahiti',
-    category: 'interior',
-    width: 4032,
-    height: 3024,
-    caption: 'The shower room — clean lines and natural finishes.',
-  },
-  {
     id: 'gal-int-7',
     url: '/images/villa/interior-dining-drone.jpg',
     alt: 'Aerial view of the open-plan dining and living area at Villa Paradise Tahiti',
@@ -199,6 +190,15 @@ export const galleryImages: GalleryImage[] = [
     width: 4032,
     height: 3024,
     caption: 'Villa Paradise Tahiti — light, space, and Polynesian warmth.',
+  },
+  {
+    id: 'gal-int-15',
+    url: '/images/villa/interior-kitchen2.jpg',
+    alt: 'Kitchen detail at Villa Paradise Tahiti',
+    category: 'interior',
+    width: 914,
+    height: 1920,
+    caption: 'The kitchen — fully equipped for a private chef or your own creations.',
   },
 
   // ── Pool & garden ───────────────────────────────────────────────────────
