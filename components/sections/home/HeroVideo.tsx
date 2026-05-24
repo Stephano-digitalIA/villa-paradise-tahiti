@@ -24,7 +24,7 @@ export function HeroVideo({ videoUrl, posterUrl }: HeroVideoProps) {
   }
 
   return (
-    <div className="absolute inset-0 -z-10">
+    <div className="absolute inset-0">
       <video
         ref={videoRef}
         className="h-full w-full object-cover"
