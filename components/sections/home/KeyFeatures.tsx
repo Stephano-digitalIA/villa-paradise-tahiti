@@ -2,13 +2,6 @@ import { Home, Waves, Mountain, Car } from 'lucide-react'
 
 import { Container, Section } from '@/components/ui'
 
-/**
- * Key features / USP section — Homepage.
- *
- * Four-column grid summarising the unique value props for first-time
- * visitors. Designed to be scannable in under five seconds.
- */
-
 interface Feature {
   Icon: typeof Home
   title: string
@@ -42,7 +35,51 @@ const features: Feature[] = [
   },
 ]
 
-export function KeyFeatures() {
+interface KeyFeaturesProps {
+  /** Render with transparent background and light colours for use over the hero video */
+  onVideo?: boolean
+}
+
+export function KeyFeatures({ onVideo = false }: KeyFeaturesProps) {
+  if (onVideo) {
+    return (
+      <div className="w-full py-20 lg:py-28">
+        <Container>
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="mb-4 flex items-center justify-center gap-3 font-sans text-eyebrow font-medium uppercase tracking-widest2 text-gold">
+              <span className="h-px w-8 bg-gold" aria-hidden="true" />
+              Why Villa Paradise
+              <span className="h-px w-8 bg-gold" aria-hidden="true" />
+            </p>
+            <h2 className="font-heading text-h2-luxe font-medium leading-tight text-pearl">
+              Four reasons travelers choose us over the resort
+            </h2>
+          </div>
+
+          <ul className="mt-16 grid gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
+            {features.map(({ Icon, title, body }) => (
+              <li
+                key={title}
+                className="group flex flex-col items-start gap-4 border-t border-pearl/25 pt-8 transition-colors duration-300 hover:border-gold"
+              >
+                <span
+                  className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-midnight/50 text-gold backdrop-blur-sm"
+                  aria-hidden="true"
+                >
+                  <Icon className="h-5 w-5" strokeWidth={1.5} />
+                </span>
+                <h3 className="font-heading text-h3-luxe font-medium text-pearl">
+                  {title}
+                </h3>
+                <p className="font-sans text-body-md text-pearl/75">{body}</p>
+              </li>
+            ))}
+          </ul>
+        </Container>
+      </div>
+    )
+  }
+
   return (
     <Section tone="pearl" spacing="default">
       <Container>

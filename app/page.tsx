@@ -54,8 +54,9 @@ export default async function HomePage() {
       <JsonLd data={organizationSchema()} />
       <JsonLd data={websiteSchema()} />
       {villa ? <JsonLd data={vacationRentalSchema(villa)} /> : null}
-      <HeroHome />
-      <KeyFeatures />
+      <HeroHome>
+        <KeyFeatures onVideo />
+      </HeroHome>
       <VillaPreview />
       <ExperiencesTeaser />
       <ReviewsGlimpse />

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { Menu, Palmtree } from 'lucide-react'
 import { Button } from '@/components/ui'
 import { bookingHref, mainNav } from '@/lib/navigation'
@@ -27,12 +28,18 @@ import { MobileDrawer } from './MobileDrawer'
  * Hauteurs : ~80px desktop, ~64px mobile (cf. spec B2).
  */
 export function Header() {
+  const pathname = usePathname()
+  const isHome = pathname === '/'
   const [scrolled, setScrolled] = useState(false)
   const [drawerOpen, setDrawerOpen] = useState(false)
   const burgerRef = useRef<HTMLButtonElement>(null)
 
+  // On non-home pages the header is always opaque; on home it becomes opaque after 60px scroll
+  const opaque = !isHome || scrolled
+
   // Détection du scroll — bascule l'opacité du fond après 60px (alignement template fusion)
   useEffect(() => {
+    if (!isHome) return
     function handleScroll() {
       setScrolled(window.scrollY > 60)
     }
@@ -56,7 +63,7 @@ export function Header() {
         className={cn(
           'fixed inset-x-0 top-0 z-50',
           'transition-all duration-400 ease-luxe',
-          scrolled
+          opaque
             ? 'bg-pearl/95 shadow-soft backdrop-blur-md'
             : 'bg-transparent'
         )}
@@ -67,7 +74,7 @@ export function Header() {
             'px-4 sm:px-6 lg:px-8',
             // Hauteur : ~64px mobile, ~80px desktop (shrink légèrement au scroll)
             'transition-all duration-300 ease-luxe',
-            scrolled ? 'h-16 lg:h-[72px]' : 'h-16 lg:h-20'
+            opaque ? 'h-16 lg:h-[72px]' : 'h-16 lg:h-20'
           )}
         >
           {/* Logo — texte display + icône palmier */}
@@ -76,7 +83,7 @@ export function Header() {
             aria-label="Villa Paradise Tahiti — Home"
             className={cn(
               'group inline-flex items-center gap-2 transition-colors duration-300',
-              scrolled ? 'text-midnight' : 'text-pearl'
+              opaque ? 'text-midnight' : 'text-pearl'
             )}
           >
             <Palmtree
@@ -87,7 +94,7 @@ export function Header() {
               aria-hidden="true"
             />
             <span className="font-display text-lg italic tracking-wider sm:text-xl">
-              Villa Paradise
+              Villa Paradise Tahiti
             </span>
           </Link>
 
@@ -105,7 +112,7 @@ export function Header() {
                       'relative inline-flex items-center px-2 py-2 lg:px-3',
                       'font-sans text-[0.72rem] font-medium uppercase tracking-wider2',
                       'transition-colors duration-200',
-                      scrolled
+                      opaque
                         ? 'text-midnight-400 hover:text-gold'
                         : 'text-pearl/85 hover:text-gold',
                       // Underline animé doré au hover (cf. template fusion)
@@ -126,7 +133,7 @@ export function Header() {
           {/* Cluster droit : LanguageSwitcher (desktop) + CTA Book Now + Burger (mobile) */}
           <div className="flex items-center gap-2 sm:gap-3">
             <div className="hidden md:block">
-              <LanguageSwitcher variant={scrolled ? 'default' : 'light'} />
+              <LanguageSwitcher variant={opaque ? 'default' : 'light'} />
             </div>
 
             {/* CTA Book Now — visible desktop, masqué mobile pour laisser place au burger */}
@@ -150,11 +157,11 @@ export function Header() {
               className={cn(
                 'inline-flex h-10 w-10 items-center justify-center rounded-md md:hidden',
                 'transition-colors duration-200',
-                scrolled
+                opaque
                   ? 'text-midnight hover:bg-sand'
                   : 'text-pearl hover:bg-pearl/10',
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2',
-                scrolled ? 'focus-visible:ring-offset-pearl' : 'focus-visible:ring-offset-midnight'
+                opaque ? 'focus-visible:ring-offset-pearl' : 'focus-visible:ring-offset-midnight'
               )}
             >
               <Menu className="h-5 w-5" aria-hidden="true" />

@@ -515,8 +515,8 @@ export const mockPosts: Post[] = [
     excerpt:
       'Both islands sit in French Polynesia, but the experience is wildly different. A practical comparison from someone who lives here.',
     coverImage: img(
-      '/images/villa/lagoon-moorea.png',
-      'Moorea island seen from Tahiti across the turquoise lagoon',
+      'https://images.unsplash.com/photo-1589197331516-4d84b72ebde3?auto=format&fit=crop&w=1600&q=80',
+      'Aerial view of Bora Bora island and its turquoise lagoon, French Polynesia',
     ),
     body: [
       block('Tahiti vs Bora Bora — the question we get more than any other.', 'h2'),
