@@ -13,7 +13,7 @@ export const SITE_URL: string =
 export const SITE_NAME = 'Villa Paradise Tahiti'
 
 export const SITE_DESCRIPTION =
-  'A private luxury villa retreat in Tahiti, French Polynesia. Direct booking with curated experiences and concierge services.'
+  'A private luxury villa retreat in Tahiti, French Polynesia — the alternative to hotels. Direct booking with curated experiences and concierge services. Better than any hotel in Tahiti.'
 
 /** Locale of all marketing copy. */
 export const SITE_LOCALE = 'en_US'
@@ -26,8 +26,8 @@ export const SITE_TWITTER_HANDLE = ''
 
 /** Brand contact metadata used in Organization JSON-LD. */
 export const ORG_CONTACT = {
-  email: 'hello@villaparadisetahiti.com',
-  phone: '+689 87 12 34 56',
+  email: 'villaparadisetahiti@gmail.com',
+  phone: '+689 89 21 00 53',
   streetAddress: 'Punaauia Coast Road',
   city: 'Punaauia',
   region: 'Tahiti',

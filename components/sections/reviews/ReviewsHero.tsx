@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { Container, Section } from '@/components/ui'
 import { StarRating } from '@/components/sections/_shared/StarRating'
 
@@ -46,7 +47,12 @@ export function ReviewsHero({ averageRating, totalReviews }: ReviewsHeroProps) {
             <p className="font-sans text-body-md text-midnight">
               <span className="font-semibold text-midnight">{rounded}/5</span>{' '}
               <span className="text-midnight-400">
-                from {totalReviews}+ reviews on Airbnb, VRBO &amp; Google
+                from {totalReviews}+ reviews on{' '}
+                <Link href="https://www.airbnb.com" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-gold transition-colors">Airbnb</Link>
+                {', '}
+                <Link href="https://www.booking.com" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-gold transition-colors">Booking</Link>
+                {' & '}
+                <Link href="https://www.vrbo.com" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-gold transition-colors">VRBO</Link>
               </span>
             </p>
           </div>

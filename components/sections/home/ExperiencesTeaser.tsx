@@ -19,7 +19,7 @@ export async function ExperiencesTeaser() {
   const experiences = await sanityFetch<Experience[]>(featuredExperiencesQuery)
   if (!experiences || experiences.length === 0) return null
 
-  const featured = experiences.slice(0, 3)
+  const featured = experiences.slice(0, 4)
 
   const priceLabel = (exp: Experience) => {
     const unit =
@@ -34,19 +34,18 @@ export async function ExperiencesTeaser() {
   return (
     <Section tone="pearl" spacing="default">
       <Container>
-        <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
-          <div className="max-w-2xl">
-            <p className="eyebrow mb-4 flex items-center gap-3">
-              <span className="h-px w-8 bg-gold" aria-hidden="true" />
-              Curated Experiences
-            </p>
-            <h2 className="font-heading text-h2-luxe font-medium leading-tight text-midnight">
-              The moments your guests will still talk about a year from now
-            </h2>
-          </div>
+        <div className="mx-auto max-w-2xl text-center">
+          <p className="eyebrow mb-4 flex items-center justify-center gap-3">
+            <span className="h-px w-8 bg-gold" aria-hidden="true" />
+            Curated Experiences
+            <span className="h-px w-8 bg-gold" aria-hidden="true" />
+          </p>
+          <h2 className="font-heading text-h2-luxe font-medium leading-tight text-midnight">
+            The moments your guests will still talk about a year from now
+          </h2>
           <Link
             href="/experiences"
-            className="group inline-flex items-center gap-2 self-start font-sans text-sm font-bold uppercase tracking-luxe text-midnight transition-colors hover:text-gold sm:self-end"
+            className="group mt-4 inline-flex items-center gap-2 font-sans text-sm font-bold uppercase tracking-luxe text-midnight transition-colors hover:text-gold"
           >
             Explore all
             <ArrowRight
@@ -56,7 +55,7 @@ export async function ExperiencesTeaser() {
           </Link>
         </div>
 
-        <ul className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
+        <ul className="mt-12 grid grid-cols-2 gap-6 lg:gap-8">
           {featured.map((exp) => {
             const imageUrl = exp.coverImage.url ?? ''
             return (
@@ -98,7 +97,7 @@ export async function ExperiencesTeaser() {
           })}
         </ul>
 
-        <div className="mt-12 flex justify-center">
+        <div className="mt-12 flex justify-start">
           <Button asChild variant="outline" size="lg">
             <Link href="/experiences">Browse All Experiences</Link>
           </Button>

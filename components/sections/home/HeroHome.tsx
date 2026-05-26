@@ -1,117 +1,61 @@
 import Link from 'next/link'
 import { Star } from 'lucide-react'
 
-import { Button, Container } from '@/components/ui'
+import { Button } from '@/components/ui'
 import { bookingHref } from '@/lib/navigation'
-import { mockVilla } from '@/lib/sanity'
-import { HeroVideo } from './HeroVideo'
 
-/**
- * Hero section — Homepage.
- *
- * Two-layer sticky scroll effect:
- *  - Layer 1 (sticky): video stays pinned at the top throughout the scroll zone.
- *  - Layer 2 (absolute): hero text scrolls upward OVER the pinned video.
- *  - Layer 3 (absolute): children render below the text, also over the video.
- *
- * The outer container is h-[320vh]:
- *  - 0–100vh   → hero text is visible and scrolls over the video.
- *  - 100–220vh → children (e.g. KeyFeatures) scroll over the pinned video.
- *  - 220–320vh → breathing room before video unpins.
- *  - After 320vh → video unpins, next section appears below, no overlap.
- */
-interface HeroHomeProps {
-  children?: React.ReactNode
-}
-
-export function HeroHome({ children }: HeroHomeProps) {
-  const posterUrl = mockVilla.heroImage.url ?? ''
-  const videoUrl = mockVilla.heroVideoUrl
-
+export function HeroHome() {
   return (
-    <div className="relative h-[320vh]" aria-label="Villa Paradise Tahiti hero">
+    <section
+      className="mx-4 flex min-h-screen flex-col items-center justify-center rounded-3xl bg-sand px-8 pb-16 pt-16 text-center sm:px-12 lg:mx-8 lg:mt-[5.5rem] lg:px-16 xl:px-20"
+      aria-label="Villa Paradise Tahiti hero"
+    >
+      <div className="w-full max-w-2xl">
+        <p className="mb-6 flex items-center justify-center gap-3 font-sans text-eyebrow font-medium uppercase tracking-widest2 text-gold">
+          <span className="h-px w-10 bg-gold" aria-hidden="true" />
+          Tahiti · French Polynesia
+          <span className="h-px w-10 bg-gold" aria-hidden="true" />
+        </p>
 
-      {/* ── Layer 1: Video — sticky, stays at top while content scrolls ── */}
-      <div className="sticky top-0 h-screen w-full overflow-hidden bg-midnight">
-        {videoUrl ? (
-          <HeroVideo videoUrl={videoUrl} posterUrl={posterUrl} />
-        ) : (
-          <div className="absolute inset-0">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={posterUrl}
-              alt=""
-              className="h-full w-full object-cover"
-              aria-hidden="true"
-            />
-            <div
-              className="absolute inset-0 bg-gradient-to-t from-midnight/90 via-midnight/40 to-midnight/20"
-              aria-hidden="true"
-            />
-          </div>
-        )}
-      </div>
+        <h1 className="font-display text-hero-sm font-light italic leading-[1.02] text-midnight sm:text-hero-md lg:text-hero-lg">
+          Your Private Paradise
+          <span className="block not-italic font-heading font-normal text-gold">
+            in the Heart of French Polynesia
+          </span>
+        </h1>
 
-      {/* ── Layer 2: Text — absolute in outer container, scrolls over the video ── */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 z-10 flex h-screen flex-col justify-end pb-16 pt-32 text-pearl sm:pb-20 lg:pb-28">
-        <Container className="pointer-events-auto">
-          <div className="max-w-3xl">
-            <p className="mb-6 flex items-center gap-3 font-sans text-eyebrow font-medium uppercase tracking-widest2 text-gold">
-              <span className="h-px w-10 bg-gold" aria-hidden="true" />
-              Tahiti · French Polynesia
-            </p>
+        <p className="mt-8 font-sans text-body-md text-midnight/70 sm:text-body-lg">
+          A private villa perched on the island&apos;s heights, where the Pacific stretches out
+          at your feet — a heated infinity pool, Moorea on the horizon, and a concierge
+          service curating every detail of your week in paradise.
+        </p>
 
-            <h1 className="font-display text-hero-sm font-light italic leading-[1.02] text-pearl sm:text-hero-md lg:text-hero-lg">
-              Your Private Paradise
-              <span className="block not-italic font-heading font-normal text-gold">
-                in the Heart of French Polynesia
-              </span>
-            </h1>
-
-            <p className="mt-8 max-w-2xl font-sans text-body-md text-pearl/80 sm:text-body-lg">
-              A private beachfront villa where the Pacific unfolds at your doorstep — a heated
-              infinity pool, Moorea on the horizon, and a concierge curating every detail of
-              your week in paradise.
-            </p>
-
-            <div className="mt-10 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
-              <Button asChild variant="primary" size="lg">
-                <Link href={bookingHref}>Check Availability</Link>
-              </Button>
-              <Button asChild variant="outline-light" size="lg">
-                <Link href="/villa">Discover the Villa</Link>
-              </Button>
-            </div>
-          </div>
-
-          {/* Trust strip */}
-          <div className="mt-16 flex flex-wrap items-center gap-x-8 gap-y-4 border-t border-pearl/20 pt-8 text-pearl/85">
-            <div className="flex items-center gap-2">
-              <div className="flex" aria-hidden="true">
-                {[0, 1, 2, 3, 4].map((i) => (
-                  <Star key={i} className="h-4 w-4 fill-gold text-gold" />
-                ))}
-              </div>
-              <span className="font-sans text-body-sm font-semibold">4.9</span>
-              <span className="font-sans text-body-sm text-pearl/65">on Airbnb</span>
-            </div>
-            <span className="hidden h-4 w-px bg-pearl/20 sm:block" aria-hidden="true" />
-            <span className="font-sans text-body-sm">100+ Verified Reviews</span>
-            <span className="hidden h-4 w-px bg-pearl/20 sm:block" aria-hidden="true" />
-            <span className="font-sans text-body-sm">Punaauia, Tahiti</span>
-          </div>
-        </Container>
-      </div>
-
-      {/* ── Layer 3: Children — absolute, starts below the hero text, scrolls over video ── */}
-      {children && (
-        <div className="pointer-events-none absolute inset-x-0 top-[100vh] z-10">
-          <div className="pointer-events-auto">
-            {children}
-          </div>
+        <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+          <Button asChild variant="primary" size="lg">
+            <Link href={bookingHref}>Book Now</Link>
+          </Button>
+          <Button asChild variant="outline" size="lg">
+            <Link href="/villa">Discover the Villa</Link>
+          </Button>
         </div>
-      )}
 
-    </div>
+        {/* Trust strip */}
+        <div className="mt-12 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 border-t border-midnight/15 pt-8 text-midnight/60">
+          <div className="flex items-center gap-2">
+            <div className="flex" aria-hidden="true">
+              {[0, 1, 2, 3, 4].map((i) => (
+                <Star key={i} className="h-4 w-4 fill-gold text-gold" />
+              ))}
+            </div>
+            <span className="font-sans text-body-sm font-semibold text-midnight">4.9</span>
+            <span className="font-sans text-body-sm">on Airbnb</span>
+          </div>
+          <span className="hidden h-4 w-px bg-midnight/20 sm:block" aria-hidden="true" />
+          <span className="font-sans text-body-sm">100+ Verified Reviews</span>
+          <span className="hidden h-4 w-px bg-midnight/20 sm:block" aria-hidden="true" />
+          <span className="font-sans text-body-sm">Punaauia, Tahiti</span>
+        </div>
+      </div>
+    </section>
   )
 }

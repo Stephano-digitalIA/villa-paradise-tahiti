@@ -17,6 +17,9 @@ export function HeroVideo({ videoUrl, posterUrl }: HeroVideoProps) {
   const [muted, setMuted] = useState(true)
   const [ready, setReady] = useState(false)
 
+  // Show video as soon as metadata is loaded (faster than onCanPlay for large files)
+  function handleReady() { setReady(true) }
+
   function toggleSound() {
     const video = videoRef.current
     if (!video) return
@@ -35,7 +38,8 @@ export function HeroVideo({ videoUrl, posterUrl }: HeroVideoProps) {
         loop
         playsInline
         preload="auto"
-        onCanPlay={() => setReady(true)}
+        onLoadedMetadata={handleReady}
+        onCanPlay={handleReady}
         aria-hidden="true"
       >
         <source src={videoUrl} type="video/mp4" />

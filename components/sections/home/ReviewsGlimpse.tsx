@@ -18,21 +18,20 @@ export async function ReviewsGlimpse() {
   const reviews = await sanityFetch<Review[]>(featuredReviewsQuery)
   if (!reviews || reviews.length === 0) return null
 
-  const featured = reviews.slice(0, 3)
+  const featured = reviews.slice(0, 4)
 
   return (
-    <Section tone="midnight" spacing="default">
+    <Section tone="midnight" spacing="default" className="mx-4 !w-auto rounded-3xl lg:mx-8">
       <Container>
-        <div className="mx-auto max-w-2xl text-center">
-          <p className="mb-4 flex items-center justify-center gap-3 font-sans text-eyebrow font-medium uppercase tracking-widest2 text-gold">
+        <div className="max-w-2xl">
+          <p className="mb-4 flex items-center gap-3 font-sans text-eyebrow font-medium uppercase tracking-widest2 text-gold">
             <span className="h-px w-8 bg-gold" aria-hidden="true" />
             Guest Stories
-            <span className="h-px w-8 bg-gold" aria-hidden="true" />
           </p>
           <h2 className="font-heading text-h2-luxe font-medium leading-tight text-pearl">
             Loved by couples, families and honeymooners from across the US
           </h2>
-          <div className="mt-6 flex items-center justify-center gap-2 text-pearl/85">
+          <div className="mt-6 flex items-center gap-2 text-pearl/85">
             <div className="flex" aria-label="Rated 4.9 out of 5 stars">
               {[0, 1, 2, 3, 4].map((i) => (
                 <Star key={i} className="h-4 w-4 fill-gold text-gold" aria-hidden="true" />
@@ -45,7 +44,7 @@ export async function ReviewsGlimpse() {
           </div>
         </div>
 
-        <ul className="mt-14 grid gap-6 lg:grid-cols-3 lg:gap-8">
+        <ul className="mt-14 grid grid-cols-2 gap-6 lg:gap-8">
           {featured.map((review) => (
             <li
               key={review._id}
@@ -78,7 +77,7 @@ export async function ReviewsGlimpse() {
           ))}
         </ul>
 
-        <div className="mt-12 flex justify-center">
+        <div className="mt-12 flex justify-start">
           <Link
             href="/reviews"
             className="group inline-flex items-center gap-2 font-sans text-sm font-bold uppercase tracking-luxe text-gold transition-colors hover:text-gold-300"

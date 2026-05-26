@@ -96,7 +96,7 @@ export default function GalleryPage() {
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Button variant="primary" size="lg" asChild>
-              <Link href={bookingHref}>Check Availability</Link>
+              <Link href={bookingHref}>Book Now</Link>
             </Button>
             <Button variant="outline-light" size="lg" asChild>
               <Link href="/villa">Discover the Villa</Link>

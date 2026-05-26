@@ -84,10 +84,10 @@ export function CancelPageClient() {
             <p className="text-xs text-midnight-400">
               Need help? Write to{' '}
               <a
-                href="mailto:hello@villaparadisetahiti.com"
+                href="mailto:villaparadisetahiti@gmail.com"
                 className="font-semibold text-lagoon underline-offset-2 hover:underline"
               >
-                hello@villaparadisetahiti.com
+                villaparadisetahiti@gmail.com
               </a>{' '}
               and a human will get back to you within the hour.
             </p>

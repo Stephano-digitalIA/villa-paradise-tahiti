@@ -79,13 +79,13 @@ export function RatesPolicy({ settings }: RatesPolicyProps) {
                     <span className="font-semibold text-midnight">
                       More than 60 days before check-in:
                     </span>{' '}
-                    full refund, no questions asked.
+                    50% refund.
                   </p>
                   <p>
                     <span className="font-semibold text-midnight">
                       30 to 60 days before check-in:
                     </span>{' '}
-                    50% refund.
+                    non-refundable.
                   </p>
                   <p>
                     <span className="font-semibold text-midnight">

@@ -27,15 +27,15 @@ export function ReviewsCta() {
         </h2>
 
         <p className="mx-auto mt-6 max-w-prose font-sans text-body-md text-pearl/70">
-          Eight days, four bedrooms, one private lagoon. Check availability
-          for your dates and lock in our direct rate — always lower than the
-          platforms above.
+          Eight days, four bedrooms, one private lagoon. Book directly and
+          lock in our best rate — always lower than Airbnb, VRBO or any
+          booking platform.
         </p>
 
         <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
           <Button asChild variant="primary" size="lg">
             <Link href={bookingHref}>
-              Check Availability
+              Book Now
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
           </Button>

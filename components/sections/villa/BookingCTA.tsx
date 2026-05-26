@@ -33,7 +33,7 @@ export function BookingCTA() {
 
           <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Button asChild variant="primary" size="lg">
-              <Link href={bookingHref}>Check Availability</Link>
+              <Link href={bookingHref}>Book Now</Link>
             </Button>
             <Button asChild variant="outline" size="lg">
               <Link href="/experiences">Browse Experiences</Link>

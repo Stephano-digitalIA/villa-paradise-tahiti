@@ -24,7 +24,7 @@ export function BlogArticleCta() {
         <div className="mt-8 flex flex-wrap justify-center gap-4">
           <Button asChild variant="primary" size="lg">
             <Link href={bookingHref}>
-              Check Availability
+              Book Now
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
           </Button>

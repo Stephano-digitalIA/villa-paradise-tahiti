@@ -34,7 +34,7 @@ export function GuestSelector({ className }: GuestSelectorProps) {
         </p>
       </div>
 
-      <div className="mt-4 flex items-center justify-between gap-4 rounded-xl border border-lagoon/20 bg-pearl px-4 py-3">
+      <div className="mt-4 flex items-center justify-between gap-4 rounded-xl border-2 border-midnight/25 bg-white px-4 py-3">
         <div className="flex items-center gap-3">
           <Users className="h-5 w-5 text-gold" aria-hidden="true" />
           <div>

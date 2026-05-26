@@ -43,41 +43,30 @@ export async function VillaPreview() {
     {
       Icon: Maximize,
       label: 'Size',
-      value: villa.specs.sizeSqm ? `${villa.specs.sizeSqm} m²` : '—',
+      value: villa.specs.sizeSqft ? `${villa.specs.sizeSqft.toLocaleString()} sq ft` : '—',
     },
   ]
 
   return (
-    <Section tone="sand" spacing="default">
+    <Section tone="sand" spacing="default" className="mx-4 !w-auto rounded-3xl lg:mx-8">
       <Container>
-        <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
-          {/* Image */}
-          <div className="relative aspect-[4/5] overflow-hidden rounded-2xl shadow-card sm:aspect-[3/4] lg:order-2 lg:aspect-[4/5]">
-            <Image
-              src={heroUrl}
-              alt={`${villa.name} — infinity pool overlooking the lagoon`}
-              fill
-              sizes="(min-width: 1024px) 50vw, 100vw"
-              className="object-cover"
-              priority={false}
-            />
-          </div>
-
+        <div className="mx-auto max-w-2xl text-center">
           {/* Text */}
-          <div className="lg:order-1">
-            <p className="eyebrow mb-4 flex items-center gap-3">
+          <div>
+            <p className="eyebrow mb-4 flex items-center justify-center gap-3">
               <span className="h-px w-8 bg-gold" aria-hidden="true" />
               The Villa
+              <span className="h-px w-8 bg-gold" aria-hidden="true" />
             </p>
             <h2 className="font-display text-hero-sm font-light italic leading-tight text-midnight sm:text-hero-md">
               A sanctuary of calm
               <span className="block font-heading not-italic">and quiet luxury.</span>
             </h2>
 
-            <p className="mt-6 max-w-prose font-sans text-body-lg text-midnight-400">
+            <p className="mt-6 font-sans text-body-lg text-midnight-400">
               {villa.tagline}
             </p>
-            <p className="mt-4 max-w-prose font-sans text-body-md text-midnight-400">
+            <p className="mt-4 font-sans text-body-md text-midnight-400">
               Behind a discreet garden wall on Tahiti&apos;s west coast, Villa Paradise opens onto a
               private terrace and a heated infinity pool overlooking a turquoise lagoon. Inside,
               four light-filled bedrooms are arranged around a spacious open-plan living area,
@@ -87,7 +76,7 @@ export async function VillaPreview() {
             {/* Stats grid */}
             <dl className="mt-10 grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-4">
               {stats.map(({ Icon, label, value }) => (
-                <div key={label} className="flex flex-col gap-1">
+                <div key={label} className="flex flex-col items-center gap-1">
                   <Icon
                     className="h-5 w-5 text-gold"
                     strokeWidth={1.5}
@@ -101,7 +90,7 @@ export async function VillaPreview() {
               ))}
             </dl>
 
-            <div className="mt-10">
+            <div className="mt-10 flex justify-center">
               <Link
                 href="/villa"
                 className="group inline-flex items-center gap-2 font-sans text-sm font-bold uppercase tracking-luxe text-midnight transition-colors hover:text-gold"
@@ -113,6 +102,18 @@ export async function VillaPreview() {
                 />
               </Link>
             </div>
+          </div>
+
+          {/* Image — centered below text */}
+          <div className="relative mt-12 aspect-[4/3] overflow-hidden rounded-2xl shadow-card">
+            <Image
+              src={heroUrl}
+              alt={`${villa.name} — infinity pool overlooking the lagoon`}
+              fill
+              sizes="(min-width: 1024px) 50vw, 100vw"
+              className="object-cover"
+              priority={false}
+            />
           </div>
         </div>
       </Container>

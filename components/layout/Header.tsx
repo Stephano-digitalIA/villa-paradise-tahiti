@@ -34,8 +34,8 @@ export function Header() {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const burgerRef = useRef<HTMLButtonElement>(null)
 
-  // On non-home pages the header is always opaque; on home it becomes opaque after 60px scroll
-  const opaque = !isHome || scrolled
+  // Always opaque — hero is now a light beige card, transparent white text was invisible
+  const opaque = true
 
   // Détection du scroll — bascule l'opacité du fond après 60px (alignement template fusion)
   useEffect(() => {

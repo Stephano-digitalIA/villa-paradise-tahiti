@@ -32,7 +32,7 @@ export function HeroVilla({ villa }: HeroVillaProps) {
           className="object-cover"
         />
         <div
-          className="absolute inset-0 bg-gradient-to-t from-midnight/85 via-midnight/40 to-midnight/20"
+          className="absolute inset-0 bg-gradient-to-t from-midnight/60 via-midnight/15 to-transparent"
           aria-hidden="true"
         />
       </div>

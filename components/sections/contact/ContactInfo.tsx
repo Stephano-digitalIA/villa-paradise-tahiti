@@ -14,9 +14,9 @@ interface ContactInfoProps {
   settings: Settings | null
 }
 
-const DEFAULT_EMAIL = 'hello@villaparadisetahiti.com'
-const DEFAULT_PHONE_DISPLAY = '+689 XX XX XX XX'
-const DEFAULT_PHONE_RAW = '+68900000000'
+const DEFAULT_EMAIL = 'villaparadisetahiti@gmail.com'
+const DEFAULT_PHONE_DISPLAY = '+689 89 21 00 53'
+const DEFAULT_PHONE_RAW = '+68989210053'
 const DEFAULT_ADDRESS = 'Punaauia, Tahiti, French Polynesia'
 const DEFAULT_INSTAGRAM = '#'
 const DEFAULT_FACEBOOK = '#'

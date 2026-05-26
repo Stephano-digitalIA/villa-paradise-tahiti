@@ -41,10 +41,9 @@ export function BlogArticleHero({ post }: BlogArticleHeroProps) {
             className="object-cover"
           />
         ) : null}
-        <div className="absolute inset-0 bg-hero-overlay" aria-hidden="true" />
       </div>
 
-      <Container className="-mt-32 pb-12">
+      <Container className="pb-12 pt-10">
         <div className="relative z-10 mx-auto max-w-3xl rounded-3xl border border-pearl-400 bg-pearl p-8 shadow-elevated sm:p-12">
           <Link
             href="/blog"

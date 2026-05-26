@@ -19,9 +19,9 @@ const INCLUDED: ReadonlyArray<{ title: string; detail: string }> = [
       'A small island car for the duration of the stay, fuel-efficient and parked at the villa.',
   },
   {
-    title: 'Airport transfer info',
+    title: 'Complimentary airport transfer',
     detail:
-      'Step-by-step instructions for the 25-minute ride from Faa&apos;a (PPT). Private transfer bookable on request.',
+      'Complimentary transfer by our partner taxi service for the 25-minute ride from Faaʻa International Airport (PPT).',
   },
   {
     title: 'High-speed Wi-Fi',
@@ -55,10 +55,10 @@ const EXTRAS: ReadonlyArray<{ title: string; detail: string; from: string }> = [
     from: 'from $150 / session',
   },
   {
-    title: 'Private airport transfer',
+    title: 'Thai massage at home',
     detail:
-      'Round-trip in a comfortable A/C vehicle for up to 4 guests with luggage.',
-    from: 'from $80 / way',
+      'In-villa taurumi massage with warm monoï oil by our certified partner therapist — booked on request.',
+    from: 'from $150 / session',
   },
 ]
 

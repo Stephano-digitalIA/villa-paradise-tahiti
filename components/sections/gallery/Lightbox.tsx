@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { ChevronLeft, ChevronRight, X } from 'lucide-react'
+import { ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { GalleryImage } from '@/lib/data/gallery-images'
 
@@ -112,20 +112,23 @@ export function Lightbox({ images, initialIndex, isOpen, onClose }: LightboxProp
         className="absolute inset-0 cursor-default"
       />
 
-      {/* Close button — top right. */}
+      {/* Close button — top left "← Back" */}
       <button
         ref={closeButtonRef}
         type="button"
         onClick={onClose}
-        aria-label="Close gallery (Esc)"
+        aria-label="Back to gallery (Esc)"
         className={cn(
-          'absolute right-4 top-4 z-10 flex h-12 w-12 items-center justify-center',
-          'rounded-full border border-pearl/30 bg-midnight/60 text-pearl backdrop-blur',
-          'transition hover:border-gold hover:bg-midnight/80 hover:text-gold',
+          'absolute left-4 top-4 z-10 flex items-center gap-2 px-4 h-10',
+          'rounded-full border border-pearl/50 bg-midnight text-pearl',
+          'font-sans text-sm font-semibold',
+          'transition-colors hover:border-gold hover:text-gold',
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold',
+          'sm:left-8',
         )}
       >
-        <X className="h-5 w-5" aria-hidden="true" />
+        <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+        Back
       </button>
 
       {/* Prev */}

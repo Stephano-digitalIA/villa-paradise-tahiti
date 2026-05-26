@@ -108,11 +108,11 @@ export function GalleryGrid({ images }: GalleryGridProps) {
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
                 className="block h-auto w-full bg-pearl-400 object-cover transition-transform duration-700 ease-luxe group-hover:scale-[1.04]"
               />
-              {/* Overlay caption on hover */}
+              {/* Caption overlay — hover only, no permanent darkening */}
               <div
                 className={cn(
                   'pointer-events-none absolute inset-0 flex items-end justify-start',
-                  'bg-gradient-to-t from-midnight/85 via-midnight/30 to-transparent',
+                  'bg-gradient-to-t from-midnight/60 via-midnight/20 to-transparent',
                   'opacity-0 transition-opacity duration-300 group-hover:opacity-100',
                 )}
               >

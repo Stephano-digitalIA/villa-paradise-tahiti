@@ -56,7 +56,7 @@ export function WhyDirectBooking() {
           </p>
         </div>
 
-        <ul className="mt-16 grid gap-8 lg:grid-cols-3 lg:gap-10">
+        <ul className="mt-16 grid grid-cols-2 gap-8 lg:gap-10">
           {reasons.map(({ Icon, title, body }) => (
             <li
               key={title}

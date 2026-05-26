@@ -94,11 +94,11 @@ export function KeyFeatures({ onVideo = false }: KeyFeaturesProps) {
           </h2>
         </div>
 
-        <ul className="mt-16 grid gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
+        <ul className="mt-16 grid grid-cols-2 gap-8 sm:grid-cols-4">
           {features.map(({ Icon, title, body }) => (
             <li
               key={title}
-              className="group flex flex-col items-start gap-4 border-t border-pearl-400 pt-8 transition-colors duration-300 hover:border-gold"
+              className="group flex flex-col items-center gap-4 border-t border-pearl-400 pt-8 text-center transition-colors duration-300 hover:border-gold"
             >
               <span
                 className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-sand text-gold-700"

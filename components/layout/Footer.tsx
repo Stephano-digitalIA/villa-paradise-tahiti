@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Facebook, Instagram, Palmtree } from 'lucide-react'
+import { Facebook, Instagram, MessageCircle, Palmtree } from 'lucide-react'
 import { Container } from '@/components/ui'
 import { exploreNav, informationNav, legalNav, type NavLink } from '@/lib/navigation'
 import { cn } from '@/lib/utils'
@@ -79,6 +79,11 @@ export function Footer() {
                 href="#"
                 label="Facebook"
                 icon={<Facebook className="h-4 w-4" aria-hidden="true" />}
+              />
+              <SocialLink
+                href="https://wa.me/68989210053"
+                label="WhatsApp"
+                icon={<MessageCircle className="h-4 w-4" aria-hidden="true" />}
               />
             </div>
           </div>

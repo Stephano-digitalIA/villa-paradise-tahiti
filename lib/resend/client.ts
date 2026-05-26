@@ -64,7 +64,7 @@ export function isResendConfigured(): boolean {
 export const FROM_EMAIL: string =
   readEnv('EMAIL_FROM') ??
   readEnv('RESEND_FROM_EMAIL') ??
-  'hello@villaparadisetahiti.com'
+  'villaparadisetahiti@gmail.com'
 
 /**
  * Owner inbox — where booking and contact notifications land.

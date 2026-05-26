@@ -174,7 +174,7 @@ export default async function ExperienceDetailPage({ params }: RouteParams) {
             className="object-cover"
           />
         ) : null}
-        <div className="absolute inset-0 bg-hero-overlay" aria-hidden="true" />
+        <div className="absolute inset-0 bg-gradient-to-t from-midnight/55 via-transparent to-transparent" aria-hidden="true" />
         <Container className="relative z-10 flex h-full flex-col justify-end pb-12 sm:pb-16">
           <div className="max-w-3xl">
             <div className="mb-5 flex flex-wrap items-center gap-2">

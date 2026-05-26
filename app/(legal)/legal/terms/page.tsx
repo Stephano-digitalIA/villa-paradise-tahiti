@@ -135,10 +135,16 @@ export default function TermsPage() {
       </p>
 
       <h2>5. Check-in, check-out, and access</h2>
+      <p>
+        Check-in and check-out are <strong>flexible 24 hours a day</strong>. We regularly
+        welcome guests arriving on overnight flights at 3:00–5:00 AM and accommodate
+        early departures just as easily. Simply share your flight details when booking
+        and we will coordinate everything.
+      </p>
       <ul>
-        <li>Check-in: 3:00 PM local time, with a personalized welcome by our concierge.</li>
-        <li>Check-out: 11:00 AM local time.</li>
-        <li>Early or late requests are subject to availability and may incur a half-day charge.</li>
+        <li>No fixed check-in or check-out time — we adapt to your schedule.</li>
+        <li>A personalized welcome by our concierge is provided at any hour of arrival.</li>
+        <li>Late-night and early-morning arrivals are standard practice for us.</li>
       </ul>
       <p>
         We may require identity documents at check-in to comply with French
@@ -241,8 +247,8 @@ export default function TermsPage() {
       <h2>14. Contact</h2>
       <p>
         Questions about these Terms can be sent to{' '}
-        <a href="mailto:legal@villaparadisetahiti.com">
-          legal@villaparadisetahiti.com
+        <a href="mailto:villaparadisetahiti@gmail.com">
+          villaparadisetahiti@gmail.com
         </a>{' '}
         or via the <a href="/contact">contact form</a>.
       </p>

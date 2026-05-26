@@ -121,10 +121,10 @@ export const mockVilla: Villa = {
   ],
   specs: {
     bedrooms: 4,
-    bathrooms: 3,
+    bathrooms: 4,
     maxGuests: 8,
-    sizeSqm: 320,
-    sizeSqft: 3445,
+    sizeSqm: 404,
+    sizeSqft: 4349,
     hasPool: true,
     hasJacuzzi: true,
     hasAC: true,
@@ -657,7 +657,7 @@ export const mockFaqs: FAQ[] = [
     category: 'tahiti',
     order: 30,
     question: 'How do I get from Faaa Airport to the villa?',
-    answer: 'We can arrange a private transfer for you (around $80 each way for up to 4 guests). Taxis are also available at the airport — the ride to the villa takes about 25 minutes.',
+    answer: 'A complimentary airport transfer is included with your stay, provided by our partner taxi service. The ride from Faaʻa International Airport (PPT) to the villa takes approximately 25 minutes. We coordinate everything — just share your flight details and your driver will be waiting.',
   },
   {
     _id: 'faq-4',
@@ -665,7 +665,7 @@ export const mockFaqs: FAQ[] = [
     category: 'villa',
     order: 10,
     question: 'What is the maximum occupancy of the villa?',
-    answer: 'The villa comfortably sleeps 8 guests across 4 bedrooms. We can accommodate additional guests with prior arrangement — please contact us before booking.',
+    answer: 'The villa sleeps up to 8 guests across 4 bedrooms, each with a king-size bed. For larger groups, a studio annex is available on request (contact us before booking). A 5th bedroom option with its own bathroom and king bed is also available for a supplement — inquire for pricing.',
   },
   {
     _id: 'faq-5',
@@ -713,7 +713,7 @@ export const mockFaqs: FAQ[] = [
     category: 'payment',
     order: 20,
     question: 'Is the 30% deposit refundable?',
-    answer: 'Yes, the deposit is fully refundable if you cancel more than 60 days before check-in. Between 30 and 60 days the deposit is non-refundable. Inside 30 days, the full amount is non-refundable. Travel insurance is strongly recommended.',
+    answer: 'If you cancel more than 60 days before check-in, 50% of the deposit is refunded. Between 30 and 60 days — and inside 30 days — the full amount is non-refundable. We strongly recommend travel insurance to cover unexpected cancellations.',
   },
   {
     _id: 'faq-11',
@@ -731,6 +731,22 @@ export const mockFaqs: FAQ[] = [
     question: 'What happens if weather cancels an outdoor experience?',
     answer: 'If the operator cancels for safety reasons (rough seas, storms), you receive a full refund or a free reschedule for another day of your stay. We handle the entire process for you.',
   },
+  {
+    _id: 'faq-13',
+    _type: 'faq',
+    category: 'booking',
+    order: 30,
+    question: 'Are check-in and check-out times flexible?',
+    answer: 'Yes — we offer fully flexible check-in and check-out, 24 hours a day. We regularly welcome guests arriving on overnight flights at 3–5 AM and accommodate early departures just as easily. Simply share your flight details and we will coordinate everything.',
+  },
+  {
+    _id: 'faq-14',
+    _type: 'faq',
+    category: 'villa',
+    order: 40,
+    question: 'What amenities does the villa have?',
+    answer: 'The villa features a private heated infinity pool, 2 private jacuzzis, a very large terrace with panoramic views over the valley, ocean, and waterfall (in season). All 4 bedrooms have individually controlled air conditioning. A fully equipped chef kitchen, kayaks, snorkeling gear and a compact island car are also included.',
+  },
 ]
 
 /* ---------------------------------------------------------------------------
@@ -743,9 +759,9 @@ export const mockSettings: Settings = {
   siteName: 'Villa Paradise Tahiti',
   siteDescription:
     'A private oceanfront villa in Tahiti, French Polynesia. Direct booking, lagoon views, curated experiences.',
-  contactEmail: 'hello@villaparadisetahiti.com',
-  contactPhone: '+689 87 12 34 56',
-  whatsappNumber: '68987123456',
+  contactEmail: 'villaparadisetahiti@gmail.com',
+  contactPhone: '+689 89 21 00 53',
+  whatsappNumber: '68989210053',
   socialLinks: {
     instagram: 'https://instagram.com/villaparadisetahiti',
     facebook: 'https://facebook.com/villaparadisetahiti',

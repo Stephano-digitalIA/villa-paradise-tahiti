@@ -245,6 +245,9 @@ export function ExperienceSelector() {
         <p className="font-sans text-body-sm text-midnight-400">
           Curated by our concierge. Quantities default to your guest count — adjust freely.
         </p>
+        <p className="font-sans text-xs text-midnight-400/70 italic">
+          Subject to availability — confirmation based on availability and weather conditions.
+        </p>
       </div>
 
       {available.length === 0 ? (
