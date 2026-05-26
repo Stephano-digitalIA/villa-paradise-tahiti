@@ -47,7 +47,8 @@
       "PowerShell(Get-ChildItem *)",
       "PowerShell(Test-Path *)",
       "PowerShell(node --version)",
-      "PowerShell(npm --version)"
+      "PowerShell(npm --version)",
+      "WebSearch"
     ],
     "deny": [
       "Bash(git push:*)",

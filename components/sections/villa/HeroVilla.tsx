@@ -31,10 +31,6 @@ export function HeroVilla({ villa }: HeroVillaProps) {
           priority
           className="object-cover"
         />
-        <div
-          className="absolute inset-0 bg-gradient-to-t from-midnight/60 via-midnight/15 to-transparent"
-          aria-hidden="true"
-        />
       </div>
 
       <Container className="relative z-10 flex flex-1 flex-col justify-end pb-16 pt-32 lg:pb-24">
