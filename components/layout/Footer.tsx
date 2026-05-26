@@ -64,7 +64,7 @@ export function Footer() {
                 &copy; {currentYear} Villa Paradise Tahiti. All rights reserved.
               </p>
               <p className="mt-1 font-sans text-xs text-pearl/40">
-                Designed in French Polynesia
+                Designed by TahitiTechDigital
               </p>
             </div>
 
