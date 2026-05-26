@@ -3,7 +3,7 @@
 > **Client :** Villa Paradise Tahiti (villaparadisetahiti.com)
 > **Agence :** TahitiTechDigital (TTD)
 > **Chef de projet :** Stephano Belleme-Atuahiva
-> **État au 2026-05-11 :** Phase 1 (scaffold + dev) livrée — prêt à déployer après livraison des assets client.
+> **État au 2026-05-26 :** Back-office admin (Phase G) livré — prêt à déployer après livraison des assets client.
 
 ---
 
@@ -23,6 +23,7 @@ augmenter les réservations directes et réduire la dépendance à Airbnb.
 | Langage | **TypeScript** strict |
 | UI | **Tailwind CSS 3.4** + composants maison + `lucide-react` |
 | CMS | **Sanity** (`next-sanity` embed à `/studio`) |
+| BDD / Auth admin | **Supabase** (PostgreSQL + Auth + Storage) |
 | Paiement | **Stripe** Checkout + **PayPal** Orders v2 |
 | Email | **Resend** + templates React Email |
 | Calendrier | **node-ical** + **ical-generator** (sync Airbnb / VRBO) |
@@ -37,7 +38,7 @@ augmenter les réservations directes et réduire la dépendance à Airbnb.
 ```bash
 npm install            # installation des dépendances
 npm run dev            # serveur de dev (http://localhost:3000)
-npm run build          # build production (39 routes)
+npm run build          # build production
 npm run start          # serveur prod local après build
 npm run lint           # next lint (eslint-config-next)
 npm run lint:fix       # auto-fix lint
@@ -45,7 +46,7 @@ npm run typecheck      # tsc --noEmit (TS strict)
 npm run format         # prettier --write .
 ```
 
-État au 2026-05-11 :
+État au 2026-05-11 (QA F3, pré-admin) :
 - `npm run typecheck` → 0 erreur
 - `npm run lint` → 0 warning, 0 erreur
 - `npm run build` → 39 routes générées, 0 erreur, First Load JS partagé = 88.2 kB
@@ -69,6 +70,7 @@ Bascules mock → live :
 | `AIRBNB_ICAL_URL` + `VRBO_ICAL_URL` absents | `lib/ical/mock.ts` fournit des plages factices |
 | `NEXT_PUBLIC_GA_ID` absent | Scripts GA non chargés, `/api/track` renvoie `not_configured` |
 | `NEXT_PUBLIC_HOTJAR_ID` absent | Hotjar non chargé |
+| `NEXT_PUBLIC_SUPABASE_URL` + `NEXT_PUBLIC_SUPABASE_ANON_KEY` absents | Admin `/admin/*` inaccessible (auth redirige vers `/admin/auth`, les server actions échouent silencieusement) |
 
 ---
 
@@ -78,6 +80,7 @@ Toute la doc projet vit dans `docs/`.
 
 | Fichier | Sujet |
 |---|---|
+| [PRD.md](docs/PRD.md) | Product Requirements Document — décisions client consolidées |
 | [01-vision-projet.md](docs/01-vision-projet.md) | Vision business, pain points, KPIs |
 | [02-design-identite.md](docs/02-design-identite.md) | Palette, typographie, moodboard |
 | [03-cible-marche-us.md](docs/03-cible-marche-us.md) | Personas US, trust signals |
@@ -94,19 +97,28 @@ Toute la doc projet vit dans `docs/`.
 ## Arborescence rapide
 
 ```
-app/                  # App Router (39 routes)
-  (legal)/            # privacy-policy, terms, cancellation
-  (marketing)/        # villa, gallery, experiences, rates, reviews, blog, faq, contact
-  api/                # 8 endpoints (booking, checkout, contact, ical, stripe, paypal, track)
-  booking/            # funnel : index + checkout + success/cancel + paypal/return
-  studio/             # Sanity Studio embed
+app/                    # App Router
+  (admin)/              # Back-office (protégé par middleware Supabase Auth)
+    admin/              # Dashboard, calendar, content, inquiries, reservations, settings
+  (legal)/              # privacy-policy, terms, cancellation
+  (marketing)/          # villa, gallery, experiences, rates, reviews, blog, faq, contact
+  actions/              # Server Actions (inquiries, reservations, settings)
+  api/                  # 10 endpoints (booking, checkout, contact, ical, stripe, paypal,
+                        #   paypal/capture+webhook, track, admin/blocked-dates,
+                        #   admin/reservations/export)
+  booking/              # Funnel : index + checkout + success/cancel + paypal/return
+  studio/               # Sanity Studio embed
 components/
   analytics/  booking/  layout/  sections/  seo/  ui/
 lib/
   analytics/  booking/  ical/  paypal/  resend/  sanity/  seo/  stripe/
-sanity/schemas/       # villa, experience, post, review, faq, settings, excursionProvider
-docs/                 # doc projet
-public/               # placeholder.svg (sera remplacé par les vrais assets)
+sanity/schemas/         # villa, experience, post, review, faq, settings, excursionProvider
+supabase/
+  migrations/           # 001_initial (schema complet), 002_rls, 003_storage
+  seed.sql
+middleware.ts           # Protège /admin/* — vérifie cookie Supabase Auth
+docs/                   # Doc projet
+public/                 # placeholder.svg (sera remplacé par les vrais assets)
 ```
 
 ---
@@ -118,12 +130,14 @@ public/               # placeholder.svg (sera remplacé par les vrais assets)
 ✅ Étape 2   Zip + contexte Claude Code
 ✅ Étape 3   Recommandation framework → Next.js 14
 ✅ Étape 4   5 pages template HTML (statiques)
-✅ Phase A-F2 Scaffold + dev + intégrations + QA
-🚧 Phase G   Livraison assets client + go-live
+✅ Phase A-F2 Scaffold + dev + intégrations + QA (audit F3, 2026-05-11)
+✅ Phase G   Back-office admin (Supabase Auth + dashboard opérateur)
+🚧 Phase H   Livraison assets client + Supabase vars + go-live
 ```
 
 Pour déployer : voir **[docs/12-deployment.md](docs/12-deployment.md)**.
-Pour le statut détaillé : voir **[docs/11-qa-final.md](docs/11-qa-final.md)**.
+Pour le statut technique : voir **[docs/11-qa-final.md](docs/11-qa-final.md)**.
+Assets et comptes restants : voir **[docs/10-todo-post-assets.md](docs/10-todo-post-assets.md)**.
 
 ---
 

@@ -17,6 +17,7 @@
 import * as React from 'react'
 import {
   Body,
+  Button,
   Container,
   Head,
   Heading,
@@ -74,7 +75,7 @@ interface Props {
 }
 
 export function BookingConfirmationGuest({ data, siteUrl }: Props) {
-  const { customer, booking, breakdown, selectedExperiences, reservationId } =
+  const { customer, booking, breakdown, selectedExperiences, reservationId, accessToken } =
     data
 
   return (
@@ -300,6 +301,32 @@ export function BookingConfirmationGuest({ data, siteUrl }: Props) {
               .
             </Text>
           </Section>
+
+          {/* View reservation CTA */}
+          {accessToken ? (
+            <>
+              <Hr style={{ borderColor: COLORS.sand, margin: '24px 0' }} />
+              <Section style={{ textAlign: 'center' }}>
+                <Button
+                  href={`${siteUrl}/booking/status?token=${accessToken}`}
+                  style={{
+                    backgroundColor: COLORS.gold,
+                    color: '#ffffff',
+                    fontFamily: FONT_SANS,
+                    fontSize: '14px',
+                    fontWeight: 600,
+                    letterSpacing: '0.08em',
+                    padding: '14px 32px',
+                    borderRadius: '4px',
+                    textDecoration: 'none',
+                    display: 'inline-block',
+                  }}
+                >
+                  View your reservation
+                </Button>
+              </Section>
+            </>
+          ) : null}
 
           {/* Footer */}
           <Hr style={{ borderColor: COLORS.sand, margin: '32px 0 16px' }} />

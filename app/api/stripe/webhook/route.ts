@@ -91,6 +91,7 @@ function buildEmailData(session: Stripe.Checkout.Session): BookingConfirmationDa
       balanceAmount: num(meta.balanceAmount),
     },
     selectedExperiences: parseExperiencesMetadata(meta.experiences),
+    accessToken: meta.accessToken,
   }
 }
 

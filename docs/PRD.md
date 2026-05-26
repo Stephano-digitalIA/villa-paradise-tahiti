@@ -100,8 +100,8 @@ Afficher ces options dans : FAQ, page Villa, section "Specs" de la page de rése
 
 | Champ | Action requise |
 |---|---|
-| Email | Confirmer l'adresse exacte (ex. VillaParadisoHaiti@gmail.com) — **@Propriétaire** |
-| Téléphone | Corriger le numéro erroné — **@Propriétaire** |
+| Email | Confirmer l'adresse exacte (ex. villaparadisetahiti@gmail.com) — **@Propriétaire** |
+| Téléphone | Corriger le numéro erroné — 89210053**@Propriétaire** |
 | WhatsApp | Ajouter comme canal de contact (bouton flottant + page Contact) |
 
 Fichiers : `lib/sanity/mock-data.ts`, `components/layout/Footer.tsx`, `app/(marketing)/contact/`
@@ -144,14 +144,8 @@ Fichiers : `components/gallery/`, `app/(marketing)/gallery/`
 
 ### 5.4 Vidéo hero
 
-- **Branding indépendant** : afficher "Villa Paradise" en overlay CSS (hors vidéo) dès le chargement
-- Éviter tout texte incrusté dans la vidéo (sinon il passerait derrière au scroll)
-- Format desktop : **16:9** (prioritaire) · ajustements mobile
-- Conserver le **contrôle du son** (bouton mute/unmute)
-- **Remplacer** le fichier actuel par la vidéo originale haute qualité — @Propriétaire : fournir le fichier
 - Étudier un **CDN** (Cloudflare Stream, Bunny.net, Supabase Storage) pour limiter la latence
 
-Fichiers : `components/sections/home/HeroVideo.tsx`, `app/page.tsx`, `public/images/villa/hero.mp4`
 
 ---
 
@@ -204,31 +198,17 @@ Fichiers : `app/(marketing)/experiences/`, `components/sections/experiences/`, `
 
 ---
 
-## 9. Dépendances — Actions propriétaire
 
-| # | Action | Responsable | Statut |
-|---|---|---|---|
-| 1 | Confirmer l'adresse email officielle | @Propriétaire | En attente |
-| 2 | Corriger le numéro de téléphone | @Propriétaire | En attente |
-| 3 | Fournir photos manquantes (piscine, expériences) | @Propriétaire | En attente |
-| 4 | Fournir vidéo hero originale haute qualité (sans texte incrusté) | @Propriétaire | En attente |
-| 5 | Valider les tarifs par saison (basse / haute / pic) | @Propriétaire | En attente |
-| 6 | Fournir liste complète expériences/partenaires + visuels | @Propriétaire | En attente |
-| 7 | Valider libellé exact de l'email de contact | @Propriétaire | En attente |
-
----
-
-## 10. Points ouverts
+## 09. Points ouverts
 
 - [ ] Confirmer si "Private airport transfer" reste en option payante ou est définitivement inclus
 - [ ] Définir la cartographie exacte mois → saison pour l'interface admin
 - [ ] Valider les tarifs précis par saison avant affichage public
-- [ ] Décider de la solution CDN vidéo (Cloudflare Stream vs Bunny.net vs Supabase Storage)
-- [ ] Calculer et valider la note moyenne globale (Airbnb + Booking + Vrbo) avant affichage
+- Calculer et valider la note moyenne globale (Airbnb + Booking + Vrbo) avant affichage
 
 ---
 
-## 11. Récapitulatif des actions @Webmaster
+## 10. Récapitulatif des actions @Webmaster
 
 - [ ] Mettre à jour la politique d'annulation (60j = 50% ; 30j = non remboursable)
 - [ ] Afficher capacité (8 pers., 4 lits king) + options extension dans FAQ et pages de vente
@@ -239,11 +219,9 @@ Fichiers : `app/(marketing)/experiences/`, `components/sections/experiences/`, `
 - [ ] Ajouter les mots-clés SEO "hotel" / "hotels"
 - [ ] Intégrer/mettre à jour la page Avis + liens Airbnb / Booking / Vrbo
 - [ ] Réorganiser la galerie (ordre + retouches + filtres + bouton Back)
-- [ ] Mettre en place l'overlay "Villa Paradise" indépendant de la vidéo
 - [ ] Uniformiser le CTA en "Book Now" sur tout le site
 - [ ] Corriger le comportement clic photo dans le flux de réservation
 - [ ] Relier le flux réservation aux pages de détail expériences + mention disponibilité
 - [ ] Corriger l'image Whale watching + enrichir le copywriting des expériences
 - [ ] Vérifier la cohérence des liens footer + supprimer les doublons transfert
-- [ ] Étudier et proposer une solution CDN pour la vidéo
 - [ ] Ajouter WhatsApp comme canal de contact

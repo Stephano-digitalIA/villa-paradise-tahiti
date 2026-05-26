@@ -68,6 +68,8 @@ export interface BookingConfirmationData {
     title: string
     quantity: number
   }>
+  /** 256-bit hex token — used to build the magic-link /booking/status URL. */
+  accessToken?: string
 }
 
 /* ---------------------------------------------------------------------------

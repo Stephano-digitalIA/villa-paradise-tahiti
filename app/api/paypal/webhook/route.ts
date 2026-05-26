@@ -228,9 +228,13 @@ export async function POST(request: Request) {
         try {
           const { data: res } = await adminClient
             .from('reservations')
-            .select('check_in, check_out')
+            .select('check_in, check_out, access_token')
             .eq('reservation_ref', reservationRef)
             .maybeSingle()
+
+          if (res?.access_token) {
+            emailData.accessToken = res.access_token
+          }
 
           if (res?.check_in && res?.check_out) {
             await adminClient.from('blocked_dates').insert({

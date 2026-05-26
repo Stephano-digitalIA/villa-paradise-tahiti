@@ -277,6 +277,7 @@ export type Reservation = {
   cancelled_at: string | null
   cancellation_reason: string | null
   internal_notes: string | null
+  access_token: string | null
   created_at: string
   updated_at: string
   // Joined
