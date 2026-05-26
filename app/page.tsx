@@ -45,7 +45,7 @@ export default async function HomePage() {
       <div className="relative lg:flex lg:pb-[calc(2.5vh+1rem)]">
 
         {/* Left column — all sections scroll normally */}
-        <div className="min-w-0 lg:w-[58%]">
+        <div className="min-w-0 lg:w-[55%]">
           <HeroHome />
           <KeyFeatures />
           <VillaPreview />
@@ -56,7 +56,7 @@ export default async function HomePage() {
         </div>
 
         {/* Right column — stretches to left column height, video sticky inside */}
-        <div className="hidden lg:block lg:w-[42%]">
+        <div className="hidden lg:block lg:w-[45%]">
           <div className="sticky top-0 flex h-screen w-full items-start justify-center px-4 pb-4 pt-[5.5rem]">
             <div className="relative aspect-square w-full overflow-hidden rounded-2xl shadow-2xl">
               {videoUrl ? (
