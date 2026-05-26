@@ -19,7 +19,7 @@ const features: Feature[] = [
     Icon: Waves,
     title: 'Heated Infinity Pool',
     body:
-      'A 12-meter pool flush with the lagoon, heated year-round and lit at night for evening swims.',
+      'A 39-foot infinity pool blending seamlessly into the lagoon, heated year-round and illuminated at night for evening swims.',
   },
   {
     Icon: Mountain,

@@ -272,8 +272,8 @@ export default function PrivacyPolicyPage() {
         <strong>Villa Paradise Tahiti &mdash; Privacy</strong>
         <br />
         Email:{' '}
-        <a href="mailto:privacy@villaparadisetahiti.com">
-          privacy@villaparadisetahiti.com
+        <a href="mailto:villaparadisetahiti@gmail.com">
+          villaparadisetahiti@gmail.com
         </a>
         <br />
         Postal: Punaauia, Tahiti, French Polynesia

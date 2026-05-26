@@ -292,10 +292,10 @@ export function BookingConfirmationGuest({ data, siteUrl }: Props) {
               In the meantime, our concierge team is at your service. Reply
               directly to this email or write to{' '}
               <Link
-                href="mailto:concierge@villaparadisetahiti.com"
+                href="mailto:villaparadisetahiti@gmail.com"
                 style={{ color: COLORS.lagoon, textDecoration: 'underline' }}
               >
-                concierge@villaparadisetahiti.com
+                villaparadisetahiti@gmail.com
               </Link>
               .
             </Text>

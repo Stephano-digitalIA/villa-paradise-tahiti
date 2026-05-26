@@ -159,7 +159,7 @@ export const mockVilla: Villa = {
     metaDescription:
       'A private 4-bedroom beachfront villa with infinity pool and lagoon views in Tahiti. Direct booking, best rate guaranteed.',
     ogImage: img(
-      '/images/villa/hero-aerial.jpg',
+      '/images/villa/pool-aerial.jpg',
       'Villa Paradise Tahiti',
     ),
   },
