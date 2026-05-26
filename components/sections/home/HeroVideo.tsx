@@ -58,11 +58,6 @@ export function HeroVideo({ videoUrl, posterUrl }: HeroVideoProps) {
         )}
       </button>
 
-      {/* Editorial gradient overlay */}
-      <div
-        className="absolute inset-0 bg-gradient-to-t from-midnight/90 via-midnight/40 to-midnight/20"
-        aria-hidden="true"
-      />
     </div>
   )
 }
