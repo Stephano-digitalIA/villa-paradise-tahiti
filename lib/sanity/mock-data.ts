@@ -64,7 +64,7 @@ export const mockVilla: Villa = {
     'Despite its feeling of secluded elevation, the lagoon and coastline remain only a few minutes away by car from the villa. This unique location offers the perfect balance between privacy, the refreshing climate of the mountains, and immediate access to the sea.',
     'Beyond the villa, our concierge curates the experiences that turn a stay into a memory: a sunset sail beyond the reef, a private chef preparing poisson cru on the terrace, or a guided dive through coral gardens. We handle every detail so you can simply be here.',
   ].join('\n\n'),
-  heroVideoUrl: '/images/villa/hero.mp4',
+  heroVideoUrl: 'https://mshhgpzrteaofivbckbl.supabase.co/storage/v1/object/public/villa-media/hero.mp4',
   heroImage: img(
     '/images/villa/hero-villa.png',
     'Panoramic view of the deck and infinity pool at Villa Paradise Tahiti',
