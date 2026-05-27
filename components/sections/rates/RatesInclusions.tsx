@@ -43,7 +43,7 @@ const EXTRAS: ReadonlyArray<{ title: string; detail: string; from: string }> = [
     from: 'from $150 / person',
   },
   {
-    title: 'Private chef & catering',
+    title: 'Private chef &amp; catering',
     detail:
       'Polynesian-French menus prepared on the terrace by a chef from our concierge network.',
     from: 'from $200 / dinner',
