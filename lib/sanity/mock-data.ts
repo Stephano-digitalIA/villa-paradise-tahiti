@@ -72,7 +72,7 @@ export const mockVilla: Villa = {
   gallery: [
     {
       ...img(
-        '/images/villa/pool-client.jpg',
+        '/images/villa/pool-aerial.jpg',
         'Piscine à débordement de Villa Paradise Tahiti vue du ciel',
         'La piscine à débordement se fond dans le lagon au coucher du soleil.',
       ),
@@ -159,7 +159,7 @@ export const mockVilla: Villa = {
     metaDescription:
       'A private 4-bedroom beachfront villa with infinity pool and lagoon views in Tahiti. Direct booking, best rate guaranteed.',
     ogImage: img(
-      '/images/villa/pool-client.jpg',
+      '/images/villa/pool-aerial.jpg',
       'Villa Paradise Tahiti',
     ),
   },

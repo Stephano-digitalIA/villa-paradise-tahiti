@@ -28,8 +28,6 @@
  *     the webhook rebuilds the email payload from it.
  */
 
-import crypto from 'crypto'
-
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
 
@@ -149,12 +147,10 @@ export async function POST(request: Request) {
   }
 
   const reservationId = generateReservationId()
-  const accessToken = crypto.randomBytes(32).toString('hex')
   const lineItems = buildLineItems(state, breakdown, experienceCatalog)
   const metadata = {
     ...buildBookingMetadata(state, customer, breakdown),
     reservationId,
-    accessToken,
   }
 
   /* ----- Persist to DB (best-effort — never blocks checkout) ------------ */
@@ -201,7 +197,6 @@ export async function POST(request: Request) {
       selected_experiences: booking.selectedExperiences as unknown as import('@/lib/supabase/types').SelectedExperienceSnapshot[],
       payment_method: customer.paymentMethod,
       payment_status: 'pending',
-      access_token: accessToken,
     })
 
     if (insertErr) {

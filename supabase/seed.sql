@@ -28,9 +28,9 @@ INSERT INTO settings (
 ) VALUES (
   'Villa Paradise Tahiti',
   'A private oceanfront villa in Tahiti, French Polynesia. Direct booking, lagoon views, curated experiences.',
-  'villaparadisetahiti@gmail.com',
-  '+689 89 21 00 53',
-  '68989210053',
+  'hello@villaparadisetahiti.com',
+  '+689 87 12 34 56',
+  '68987123456',
   'https://instagram.com/villaparadisetahiti',
   'https://facebook.com/villaparadisetahiti',
   'https://pinterest.com/villaparadisetahiti',
