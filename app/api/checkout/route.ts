@@ -139,9 +139,45 @@ export async function POST(request: Request) {
     )
   }
 
-  if (breakdown.depositAmount <= 0) {
+  // Block last-minute reservations — must book at least 5 days before check-in.
+  if (breakdown.daysUntilCheckIn !== null && breakdown.daysUntilCheckIn < 2) {
     return NextResponse.json(
-      { error: 'Computed deposit amount is zero — booking refused.' },
+      { error: 'Reservations must be made at least 2 days before check-in.' },
+      { status: 422 },
+    )
+  }
+
+  // Determine the actual amount to charge today based on paymentOption.
+  const { paymentOption, customAmountUSD } = customer
+  let chargeAmount: number
+  let paymentLabel: string
+
+  if (paymentOption === 'full') {
+    chargeAmount = breakdown.total
+    paymentLabel = 'Full Payment'
+  } else if (paymentOption === 'custom') {
+    if (
+      !customAmountUSD ||
+      customAmountUSD < breakdown.depositAmount ||
+      customAmountUSD > breakdown.total
+    ) {
+      return NextResponse.json(
+        {
+          error: `Custom amount must be between ${breakdown.depositAmount.toFixed(2)} and ${breakdown.total.toFixed(2)}.`,
+        },
+        { status: 422 },
+      )
+    }
+    chargeAmount = customAmountUSD
+    paymentLabel = 'Custom Payment'
+  } else {
+    chargeAmount = breakdown.depositAmount
+    paymentLabel = 'Booking Deposit (30%)'
+  }
+
+  if (chargeAmount <= 0) {
+    return NextResponse.json(
+      { error: 'Charge amount is zero — booking refused.' },
       { status: 422 },
     )
   }
@@ -192,8 +228,8 @@ export async function POST(request: Request) {
       subtotal: breakdown.subtotal,
       taxes: breakdown.taxes,
       total: breakdown.total,
-      deposit_amount: breakdown.depositAmount,
-      balance_amount: breakdown.balanceAmount,
+      deposit_amount: chargeAmount,
+      balance_amount: breakdown.total - chargeAmount,
       selected_experiences: booking.selectedExperiences as unknown as import('@/lib/supabase/types').SelectedExperienceSnapshot[],
       payment_method: customer.paymentMethod,
       payment_status: 'pending',
@@ -228,6 +264,8 @@ export async function POST(request: Request) {
       breakdown,
       lineItems,
       metadata,
+      chargeAmountUSD: chargeAmount,
+      paymentLabel,
     })
     if ('error' in result) {
       return NextResponse.json({ error: result.error }, { status: 500 })
@@ -253,7 +291,8 @@ export async function POST(request: Request) {
 
     const result = await createPayPalOrder({
       reservationId,
-      depositAmountUSD: breakdown.depositAmount,
+      chargeAmountUSD: chargeAmount,
+      paymentLabel,
       customer: { email: customer.email },
       metadata,
     })

@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { Volume2, VolumeX } from 'lucide-react'
 
 interface HeroVideoProps {
@@ -9,16 +9,62 @@ interface HeroVideoProps {
 }
 
 /**
- * Client component — hero background video with sound toggle.
- * Autoplays muted (browser requirement), click the button to unmute.
+ * Hero background video — supports HLS (Cloudflare Stream) and plain MP4.
+ *
+ * HLS playback strategy:
+ *  - Safari / iOS : native HLS support via <video src="...m3u8">
+ *  - Chrome / Firefox / Edge : hls.js loaded dynamically (no SSR bundle cost)
+ *
+ * Autoplays muted (browser requirement). Sound toggle in the bottom-right corner.
  */
 export function HeroVideo({ videoUrl, posterUrl }: HeroVideoProps) {
   const videoRef = useRef<HTMLVideoElement>(null)
   const [muted, setMuted] = useState(true)
   const [ready, setReady] = useState(false)
 
-  // Show video as soon as metadata is loaded (faster than onCanPlay for large files)
-  function handleReady() { setReady(true) }
+  const isHLS = videoUrl.endsWith('.m3u8')
+
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video) return
+
+    if (!isHLS) {
+      // Plain MP4 — browser handles it natively.
+      video.src = videoUrl
+      return
+    }
+
+    if (video.canPlayType('application/vnd.apple.mpegurl')) {
+      // Safari / iOS — native HLS.
+      video.src = videoUrl
+      return
+    }
+
+    // Chrome / Firefox / Edge — load hls.js dynamically.
+    let hls: import('hls.js').default | null = null
+
+    import('hls.js').then(({ default: Hls }) => {
+      if (!Hls.isSupported()) {
+        // Fallback: try setting src directly and hope for the best.
+        video.src = videoUrl
+        return
+      }
+      hls = new Hls({
+        autoStartLoad: true,
+        startLevel: -1, // auto quality
+      })
+      hls.loadSource(videoUrl)
+      hls.attachMedia(video)
+    })
+
+    return () => {
+      hls?.destroy()
+    }
+  }, [videoUrl, isHLS])
+
+  function handleReady() {
+    setReady(true)
+  }
 
   function toggleSound() {
     const video = videoRef.current
@@ -41,9 +87,7 @@ export function HeroVideo({ videoUrl, posterUrl }: HeroVideoProps) {
         onLoadedMetadata={handleReady}
         onCanPlay={handleReady}
         aria-hidden="true"
-      >
-        <source src={videoUrl} type="video/mp4" />
-      </video>
+      />
 
       {/* Sound toggle — bottom-right corner */}
       <button
@@ -57,7 +101,6 @@ export function HeroVideo({ videoUrl, posterUrl }: HeroVideoProps) {
           <Volume2 className="h-4 w-4" />
         )}
       </button>
-
     </div>
   )
 }
