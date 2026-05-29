@@ -105,10 +105,6 @@ export const checkoutSchema = z.object({
   paymentMethod: z.enum(['stripe', 'paypal'], {
     message: 'Choose a payment method',
   }),
-  paymentOption: z.enum(['deposit', 'custom', 'full'], {
-    message: 'Choose a payment option',
-  }),
-  customAmountUSD: z.number().positive('Enter a valid amount').optional(),
   acceptTerms: z.literal(true, {
     message: 'You must accept the Terms of Service',
   }),
@@ -116,14 +112,6 @@ export const checkoutSchema = z.object({
     message: 'You must acknowledge the cancellation policy',
   }),
   acceptMarketing: z.boolean().optional(),
-}).superRefine((data, ctx) => {
-  if (data.paymentOption === 'custom' && !data.customAmountUSD) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: 'Enter a custom amount',
-      path: ['customAmountUSD'],
-    })
-  }
 })
 
 export type CheckoutFormData = z.infer<typeof checkoutSchema>
@@ -145,6 +133,5 @@ export const checkoutFormDefaults: Partial<CheckoutFormData> = {
   specialRequests: '',
   arrivalFlight: '',
   departureFlight: '',
-  paymentOption: 'deposit' as const,
   acceptMarketing: false,
 }

@@ -29,12 +29,6 @@
  */
 
 import { useState, useId } from 'react'
-
-export interface CheckoutInitialProfile {
-  firstName: string
-  lastName: string
-  email: string
-}
 import { useRouter } from 'next/navigation'
 import { useForm, type FieldErrors, type UseFormRegister } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -199,12 +193,7 @@ function PayPalMark({ className }: { className?: string }) {
  * The form itself
  * ------------------------------------------------------------------------- */
 
-interface CheckoutFormProps {
-  /** Pre-filled from Google profile — name and email are read-only hints */
-  initialProfile?: CheckoutInitialProfile
-}
-
-export function CheckoutForm({ initialProfile }: CheckoutFormProps) {
+export function CheckoutForm() {
   const router = useRouter()
   const { state, breakdown } = useBooking()
   const [submitError, setSubmitError] = useState<string | null>(null)
@@ -220,17 +209,13 @@ export function CheckoutForm({ initialProfile }: CheckoutFormProps) {
     resolver: zodResolver(checkoutSchema),
     defaultValues: {
       ...checkoutFormDefaults,
-      ...(initialProfile ?? {}),
       specialRequests: state.specialRequests ?? '',
     },
     mode: 'onBlur',
   })
 
   const paymentMethod = watch('paymentMethod')
-  const paymentOption = watch('paymentOption')
-  const customAmountUSD = watch('customAmountUSD')
   const specialRequestsLength = (watch('specialRequests') ?? '').length
-
 
   const onSubmit = async (data: CheckoutFormData) => {
     setSubmitError(null)
@@ -284,18 +269,6 @@ export function CheckoutForm({ initialProfile }: CheckoutFormProps) {
       setSubmitError(message)
     }
   }
-
-  // Label shown on the submit button — reflects the actual charge.
-  const chargeLabel: string = (() => {
-    if (paymentOption === 'full') {
-      return `Pay ${formatUSD(breakdown.total)} — Pay in full`
-    }
-    if (paymentOption === 'custom') {
-      const amt = customAmountUSD && customAmountUSD > 0 ? formatUSD(customAmountUSD) : 'your amount'
-      return `Pay ${amt}`
-    }
-    return `Pay ${formatUSD(breakdown.depositAmount)} deposit`
-  })()
 
   return (
     <form
@@ -484,114 +457,15 @@ export function CheckoutForm({ initialProfile }: CheckoutFormProps) {
         </div>
       </section>
 
-      {/* ─── 4 · Payment amount ─────────────────────────────────────── */}
-      <section
-        aria-labelledby="section-payment-amount"
-        className="flex flex-col gap-5 border-t border-pearl-400 pt-8"
-      >
-        <SectionHeader
-          step={4}
-          title="Payment amount"
-          description="Choose how much you'd like to pay today. The remaining balance is due 30 days before arrival."
-        />
-
-        <fieldset
-          aria-invalid={errors.paymentOption ? true : undefined}
-          className="flex flex-col gap-3"
-        >
-          <legend className="sr-only">Payment amount</legend>
-
-          <PaymentAmountOption
-            id="po-deposit"
-            value="deposit"
-            label="Deposit (30%)"
-            description="Minimum required to confirm your reservation"
-            amount={formatUSD(breakdown.depositAmount)}
-            checked={paymentOption === 'deposit'}
-            onSelect={() => setValue('paymentOption', 'deposit', { shouldValidate: true })}
-            register={register('paymentOption')}
-          />
-
-          <PaymentAmountOption
-            id="po-custom"
-            value="custom"
-            label="Custom amount"
-            description="Pay more than the deposit — balance adjusted accordingly"
-            checked={paymentOption === 'custom'}
-            onSelect={() => setValue('paymentOption', 'custom', { shouldValidate: true })}
-            register={register('paymentOption')}
-          >
-            {paymentOption === 'custom' ? (
-              <div className="mt-3 flex flex-col gap-1.5">
-                <label
-                  htmlFor="co-customAmountUSD"
-                  className="text-eyebrow text-xs font-medium uppercase tracking-widest2 text-midnight-400"
-                >
-                  Amount to pay today (USD)
-                </label>
-                <div className="relative">
-                  <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center font-sans text-midnight-400">
-                    $
-                  </span>
-                  <input
-                    id="co-customAmountUSD"
-                    type="number"
-                    min={breakdown.depositAmount}
-                    max={breakdown.total}
-                    step="0.01"
-                    placeholder={String(breakdown.depositAmount)}
-                    aria-invalid={errors.customAmountUSD ? true : undefined}
-                    className={cn(
-                      'flex h-12 w-full rounded-lg border border-lagoon/20 bg-pearl pl-7 pr-3 font-sans text-body-md text-midnight',
-                      'transition-colors duration-200',
-                      'focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/30',
-                      errors.customAmountUSD && 'border-coral focus:border-coral focus:ring-coral/30',
-                    )}
-                    {...register('customAmountUSD', { valueAsNumber: true })}
-                  />
-                </div>
-                <p className="font-sans text-xs text-midnight-400">
-                  Min {formatUSD(breakdown.depositAmount)} · Max {formatUSD(breakdown.total)}
-                </p>
-                {typeof errors.customAmountUSD?.message === 'string' ? (
-                  <p role="alert" className="flex items-center gap-1.5 text-xs font-medium text-coral">
-                    <AlertCircle className="h-3 w-3 flex-none" aria-hidden="true" />
-                    {errors.customAmountUSD.message}
-                  </p>
-                ) : null}
-              </div>
-            ) : null}
-          </PaymentAmountOption>
-
-          <PaymentAmountOption
-            id="po-full"
-            value="full"
-            label="Pay in full"
-            description="No balance due — simplify your pre-arrival admin"
-            amount={formatUSD(breakdown.total)}
-            checked={paymentOption === 'full'}
-            onSelect={() => setValue('paymentOption', 'full', { shouldValidate: true })}
-            register={register('paymentOption')}
-          />
-        </fieldset>
-
-        {typeof errors.paymentOption?.message === 'string' ? (
-          <p role="alert" className="flex items-center gap-1.5 text-xs font-medium text-coral">
-            <AlertCircle className="h-3 w-3 flex-none" aria-hidden="true" />
-            {errors.paymentOption.message}
-          </p>
-        ) : null}
-      </section>
-
-      {/* ─── 5 · Payment method ─────────────────────────────────────── */}
+      {/* ─── 4 · Payment method ─────────────────────────────────────── */}
       <section
         aria-labelledby="section-payment"
         className="flex flex-col gap-5 border-t border-pearl-400 pt-8"
       >
         <SectionHeader
-          step={5}
+          step={4}
           title="Payment method"
-          description="Choose how you'd like to pay. The balance is due 30 days before arrival."
+          description="Choose how you'd like to pay your deposit. The balance is due 30 days before arrival."
         />
 
         <fieldset
@@ -635,12 +509,12 @@ export function CheckoutForm({ initialProfile }: CheckoutFormProps) {
         ) : null}
       </section>
 
-      {/* ─── 6 · Acknowledgments ────────────────────────────────────── */}
+      {/* ─── 5 · Acknowledgments ────────────────────────────────────── */}
       <section
         aria-labelledby="section-ack"
         className="flex flex-col gap-3 border-t border-pearl-400 pt-8"
       >
-        <SectionHeader step={6} title="Confirm and agree" />
+        <SectionHeader step={5} title="Confirm and agree" />
         <Acknowledgment
           name="acceptTerms"
           register={register}
@@ -707,7 +581,9 @@ export function CheckoutForm({ initialProfile }: CheckoutFormProps) {
           ) : (
             <>
               <Lock className="h-4 w-4" aria-hidden="true" />
-              <span>Continue to payment — {chargeLabel}</span>
+              <span>
+                Continue to payment — Pay {formatUSD(breakdown.depositAmount)} deposit
+              </span>
             </>
           )}
         </Button>
@@ -722,78 +598,6 @@ export function CheckoutForm({ initialProfile }: CheckoutFormProps) {
 /* ---------------------------------------------------------------------------
  * Sub-components — payment option card + checkbox
  * ------------------------------------------------------------------------- */
-
-/* ---------------------------------------------------------------------------
- * Payment amount option card
- * ------------------------------------------------------------------------- */
-
-interface PaymentAmountOptionProps {
-  id: string
-  value: 'deposit' | 'custom' | 'full'
-  label: string
-  description: string
-  amount?: string
-  checked: boolean
-  onSelect: () => void
-  register: ReturnType<UseFormRegister<CheckoutFormData>>
-  children?: React.ReactNode
-}
-
-function PaymentAmountOption({
-  id,
-  value,
-  label,
-  description,
-  amount,
-  checked,
-  onSelect,
-  register,
-  children,
-}: PaymentAmountOptionProps) {
-  return (
-    <label
-      htmlFor={id}
-      onClick={onSelect}
-      className={cn(
-        'flex cursor-pointer flex-col gap-0 rounded-xl border bg-pearl p-4 text-left transition-all',
-        'hover:border-gold hover:shadow-soft',
-        'focus-within:ring-2 focus-within:ring-gold/30',
-        checked ? 'border-gold bg-gold/5 shadow-soft' : 'border-pearl-400',
-      )}
-    >
-      <div className="flex items-start gap-3">
-        <input
-          type="radio"
-          id={id}
-          value={value}
-          className="sr-only"
-          {...register}
-        />
-        <span
-          aria-hidden="true"
-          className={cn(
-            'mt-0.5 flex h-5 w-5 flex-none items-center justify-center rounded-full border',
-            checked ? 'border-gold bg-gold' : 'border-pearl-500 bg-pearl',
-          )}
-        >
-          {checked ? <span className="h-2 w-2 rounded-full bg-midnight" /> : null}
-        </span>
-        <div className="flex min-w-0 flex-1 items-baseline justify-between gap-3">
-          <div className="flex flex-col gap-0.5">
-            <span className="font-heading text-base font-semibold text-midnight">{label}</span>
-            <span className="font-sans text-xs text-midnight-400">{description}</span>
-          </div>
-          {amount ? (
-            <span className="flex-none font-heading text-base font-semibold text-midnight">
-              {amount}
-            </span>
-          ) : null}
-        </div>
-      </div>
-      {children}
-    </label>
-  )
-}
 
 interface PaymentOptionProps {
   id: string

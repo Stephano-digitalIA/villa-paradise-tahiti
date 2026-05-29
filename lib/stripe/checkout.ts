@@ -51,10 +51,6 @@ export interface CreateStripeSessionParams {
    *  only used to derive a single deposit line in the actual session today. */
   lineItems: ReservationLineItem[]
   metadata: Record<string, string>
-  /** Actual amount charged today (may differ from breakdown.depositAmount). */
-  chargeAmountUSD: number
-  /** Human-readable label shown in the Stripe Checkout line item name. */
-  paymentLabel: string
 }
 
 export type CreateStripeSessionResult =
@@ -72,43 +68,39 @@ export async function createStripeCheckoutSession(
     return { error: 'Stripe is not configured on the server.' }
   }
 
-  const { reservationId, customer, breakdown, metadata, chargeAmountUSD, paymentLabel } = params
+  const { reservationId, customer, breakdown, metadata } = params
 
-  if (!chargeAmountUSD || chargeAmountUSD <= 0) {
-    return { error: 'Charge amount is zero — refusing to create session.' }
+  if (!breakdown.depositAmount || breakdown.depositAmount <= 0) {
+    return { error: 'Computed deposit amount is zero — refusing to create session.' }
   }
 
   const siteUrl = getSiteUrl()
 
   // Stripe wants integer minor units (cents for USD).
-  const chargeCents = Math.round(chargeAmountUSD * 100)
+  const depositCents = Math.round(breakdown.depositAmount * 100)
   const totalCents = Math.round(breakdown.total * 100)
-  const balanceDue = Math.max(0, breakdown.total - chargeAmountUSD)
 
+  // The total stays informative in the description so the customer can see
+  // it explicitly on the hosted page.
   const stayLabel =
     breakdown.nights > 0
       ? `${breakdown.nights} night${breakdown.nights > 1 ? 's' : ''} • ${customer.firstName} ${customer.lastName}`
       : `${customer.firstName} ${customer.lastName}`
-
-  const balanceNote =
-    balanceDue > 0
-      ? `Balance $${balanceDue.toFixed(2)} due 30 days before arrival`
-      : 'No balance remaining'
 
   try {
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
       payment_method_types: ['card'],
       customer_email: customer.email,
-      // Single charge line item — full breakdown is in the confirmation email.
+      // Single deposit line item (see header comment for rationale).
       line_items: [
         {
           price_data: {
             currency: 'usd',
-            unit_amount: chargeCents,
+            unit_amount: depositCents,
             product_data: {
-              name: `Villa Paradise Tahiti — ${paymentLabel}`,
-              description: `Reservation ${reservationId} • ${stayLabel} • Stay total $${breakdown.total.toFixed(2)} • ${balanceNote}`,
+              name: 'Villa Paradise Tahiti — Booking Deposit (30%)',
+              description: `Reservation ${reservationId} • ${stayLabel} • Stay total $${breakdown.total.toFixed(2)} • Balance $${breakdown.balanceAmount.toFixed(2)} due 30 days before arrival`,
             },
           },
           quantity: 1,
@@ -119,9 +111,11 @@ export async function createStripeCheckoutSession(
       metadata: {
         ...metadata,
         reservationId,
-        chargeAmount: String(chargeAmountUSD),
+        depositCharged: String(breakdown.depositAmount),
         totalDue: String(breakdown.total),
-        balanceDue: String(balanceDue),
+        balanceDue: String(breakdown.balanceAmount),
+        // String version of the total in cents — useful for analytics
+        // reconciliation against Stripe's payment intent objects.
         totalCents: String(totalCents),
       },
       // The deposit description is a "what they pay now" reminder, but we

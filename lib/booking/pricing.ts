@@ -104,18 +104,6 @@ export function todayISO(): string {
   return `${y}-${m}-${d}`
 }
 
-/**
- * Calendar days from today (local timezone) to `checkIn`.
- * Returns null when `checkIn` is missing or malformed.
- * Negative means check-in is in the past.
- */
-export function calcDaysUntilCheckIn(checkIn: string | null | undefined): number | null {
-  const today = parseISODate(todayISO())
-  const arrival = parseISODate(checkIn ?? null)
-  if (!today || !arrival) return null
-  return Math.round((arrival.getTime() - today.getTime()) / MS_PER_DAY)
-}
-
 /** Add `days` (positive or negative) to an ISO date string. */
 export function addDaysISO(iso: string, days: number): string {
   const date = parseISODate(iso)
@@ -284,8 +272,6 @@ export function computeBreakdown(
   const depositPercent = settings.defaultDepositPercent ?? 30
   const cleaningFee = settings.cleaningFeeUSD ?? 150
 
-  const daysUntilCI = calcDaysUntilCheckIn(state.checkIn)
-
   // Build effective seasonal rates: prefer Supabase settings when populated,
   // fall back to the hardcoded constants so pricing stays correct even before
   // the settings row is seeded in the database.
@@ -331,7 +317,6 @@ export function computeBreakdown(
     balanceAmount: fromCents(balanceCents),
     meetsMinNights: nights === 0 || nights >= minNights,
     minNights,
-    daysUntilCheckIn: daysUntilCI,
   }
 }
 
@@ -362,9 +347,6 @@ export function validateBookingState(
   }
   if (!breakdown.meetsMinNights) {
     issues.push(`Minimum stay is ${breakdown.minNights} nights.`)
-  }
-  if (breakdown.daysUntilCheckIn !== null && breakdown.daysUntilCheckIn < 2) {
-    issues.push('Reservations must be made at least 2 days before check-in.')
   }
   if (state.guests < 1) issues.push('Add at least one guest.')
   return { isValid: issues.length === 0, issues }

@@ -104,8 +104,6 @@ export interface PriceBreakdown {
   meetsMinNights: boolean
   /** Minimum nights enforced by settings (default 5). */
   minNights: number
-  /** Calendar days between today and check-in. Null when no check-in date is set. */
-  daysUntilCheckIn: number | null
 }
 
 /* ---------------------------------------------------------------------------

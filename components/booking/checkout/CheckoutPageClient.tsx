@@ -3,52 +3,32 @@
 /**
  * CheckoutPageClient — orchestrates the /booking/checkout layout.
  *
- * Render states (in order):
- *  1. Skeleton — BookingProvider rehydrating from localStorage.
- *  2. Auth gate — user not signed in with Google (mandatory before payment).
- *  3. Incomplete booking — missing dates/guests, send back to /booking.
- *  4. Full 2-column checkout.
+ * Responsibilities:
+ *  - Read `useBooking()` and decide which view to render:
+ *      1. Skeleton while the provider rehydrates from localStorage.
+ *      2. "Booking incomplete" guard if `validation.isValid === false`
+ *         after hydration — sends the user back to /booking to finish
+ *         their selection. This is intentional: the form is meaningless
+ *         without a complete cart.
+ *      3. The full 2-column checkout otherwise.
+ *  - Keep the page declarative: the form and the summary handle their own
+ *    state — this component just wires them together.
  */
 
-import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { AlertCircle, ArrowLeft, Lock, ShieldCheck } from 'lucide-react'
+import { AlertCircle, ArrowLeft } from 'lucide-react'
 
 import { Button, Container, Section } from '@/components/ui'
-import { createClient } from '@/lib/supabase/client'
-import { GoogleSignInButton } from '@/components/auth/GoogleSignInButton'
 
 import { useBooking } from '../BookingProvider'
 import { CheckoutBreadcrumb } from './CheckoutBreadcrumb'
-import { CheckoutForm, type CheckoutInitialProfile } from './CheckoutForm'
+import { CheckoutForm } from './CheckoutForm'
 import { CheckoutFormSkeleton } from './CheckoutFormSkeleton'
 import { CheckoutSummary } from './CheckoutSummary'
 import { CheckoutTrustBadges } from './CheckoutTrustBadges'
 
 export function CheckoutPageClient() {
   const { hydrated, validation } = useBooking()
-
-  const [authState, setAuthState] = useState<'checking' | 'unauthenticated' | 'authenticated'>('checking')
-  const [profile, setProfile] = useState<CheckoutInitialProfile | null>(null)
-
-  useEffect(() => {
-    const supabase = createClient()
-    supabase.auth.getUser().then(({ data }) => {
-      if (data.user) {
-        const meta = data.user.user_metadata ?? {}
-        const fullName: string = meta.full_name ?? meta.name ?? ''
-        const spaceIdx = fullName.indexOf(' ')
-        setProfile({
-          firstName: spaceIdx > 0 ? fullName.slice(0, spaceIdx) : fullName,
-          lastName:  spaceIdx > 0 ? fullName.slice(spaceIdx + 1) : '',
-          email:     data.user.email ?? '',
-        })
-        setAuthState('authenticated')
-      } else {
-        setAuthState('unauthenticated')
-      }
-    })
-  }, [])
 
   return (
     <>
@@ -72,14 +52,12 @@ export function CheckoutPageClient() {
       </Section>
 
       {/* ─── Body ──────────────────────────────────────────────────── */}
-      {authState === 'checking' || !hydrated ? (
+      {!hydrated ? (
         <CheckoutFormSkeleton />
-      ) : authState === 'unauthenticated' ? (
-        <GoogleAuthGate />
       ) : !validation.isValid ? (
         <IncompleteBookingNotice issues={validation.issues} />
       ) : (
-        <CheckoutBody profile={profile} />
+        <CheckoutBody />
       )}
     </>
   )
@@ -89,14 +67,14 @@ export function CheckoutPageClient() {
  * Main layout — 2 columns on desktop, stacked on mobile.
  * ------------------------------------------------------------------------- */
 
-function CheckoutBody({ profile }: { profile: CheckoutInitialProfile | null }) {
+function CheckoutBody() {
   return (
     <>
       <Section tone="pearl" spacing="compact">
         <Container>
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-10">
             <div className="lg:col-span-7">
-              <CheckoutForm initialProfile={profile ?? undefined} />
+              <CheckoutForm />
             </div>
             <div className="lg:col-span-5">
               <CheckoutSummary />
@@ -111,49 +89,6 @@ function CheckoutBody({ profile }: { profile: CheckoutInitialProfile | null }) {
         </Container>
       </Section>
     </>
-  )
-}
-
-/* ---------------------------------------------------------------------------
- * Guard — Google auth required before checkout.
- * ------------------------------------------------------------------------- */
-
-function GoogleAuthGate() {
-  return (
-    <Section tone="pearl" spacing="compact">
-      <Container className="flex justify-center">
-        <div className="flex w-full max-w-md flex-col items-center gap-6 rounded-2xl border border-pearl-400 bg-pearl p-8 shadow-soft sm:p-10">
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gold/10">
-            <ShieldCheck className="h-7 w-7 text-gold" aria-hidden="true" />
-          </div>
-
-          <div className="text-center">
-            <h2 className="font-heading text-h3-luxe font-medium text-midnight">
-              Sign in to continue
-            </h2>
-            <p className="mt-2 font-sans text-body-sm text-midnight-400">
-              We use Google Sign-In to confirm your identity, pre-fill your details,
-              and keep a record of your booking.
-            </p>
-          </div>
-
-          <GoogleSignInButton redirectTo="/booking/checkout" className="w-full" />
-
-          <ul className="flex flex-col gap-2 self-start text-body-sm text-midnight-400">
-            {[
-              'Your name and email are pre-filled automatically',
-              'No password to remember',
-              'Booking confirmation sent to your Gmail',
-            ].map((item) => (
-              <li key={item} className="flex items-center gap-2">
-                <Lock className="h-3.5 w-3.5 flex-none text-gold" aria-hidden="true" />
-                {item}
-              </li>
-            ))}
-          </ul>
-        </div>
-      </Container>
-    </Section>
   )
 }
 
