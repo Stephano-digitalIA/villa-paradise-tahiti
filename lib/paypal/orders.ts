@@ -31,7 +31,8 @@ function getSiteUrl(): string {
 
 export interface CreatePayPalOrderParams {
   reservationId: string
-  depositAmountUSD: number
+  chargeAmountUSD: number
+  paymentLabel: string
   customer: { email: string }
   metadata: Record<string, string>
 }
@@ -76,10 +77,10 @@ interface PayPalOrderResponse {
 export async function createPayPalOrder(
   params: CreatePayPalOrderParams,
 ): Promise<CreatePayPalOrderResult> {
-  const { reservationId, depositAmountUSD, customer, metadata } = params
+  const { reservationId, chargeAmountUSD, paymentLabel, customer, metadata } = params
 
-  if (!depositAmountUSD || depositAmountUSD <= 0) {
-    return { error: 'Computed deposit amount is zero — refusing to create PayPal order.' }
+  if (!chargeAmountUSD || chargeAmountUSD <= 0) {
+    return { error: 'Charge amount is zero — refusing to create PayPal order.' }
   }
 
   const token = await getPayPalAccessToken()
@@ -96,10 +97,10 @@ export async function createPayPalOrder(
         reference_id: reservationId,
         custom_id: reservationId,
         invoice_id: reservationId,
-        description: 'Villa Paradise Tahiti — Booking Deposit (30%)',
+        description: `Villa Paradise Tahiti — ${paymentLabel}`,
         amount: {
           currency_code: 'USD',
-          value: depositAmountUSD.toFixed(2),
+          value: chargeAmountUSD.toFixed(2),
         },
       },
     ],

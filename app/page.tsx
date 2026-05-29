@@ -47,6 +47,14 @@ export default async function HomePage() {
         {/* Left column — all sections scroll normally */}
         <div className="min-w-0 lg:w-[55%]">
           <HeroHome />
+
+          {/* Mobile-only video — hidden on lg+ (shown in right column on desktop) */}
+          {videoUrl ? (
+            <div className="relative mx-4 mb-8 aspect-video overflow-hidden rounded-2xl shadow-xl lg:hidden">
+              <HeroVideo videoUrl={videoUrl} posterUrl={posterUrl} />
+            </div>
+          ) : null}
+
           <KeyFeatures />
           <VillaPreview />
           <ExperiencesTeaser />
