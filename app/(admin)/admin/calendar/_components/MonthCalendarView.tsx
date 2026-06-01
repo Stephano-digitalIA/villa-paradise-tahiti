@@ -81,10 +81,10 @@ const WEEKDAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
  * ─────────────────────────────────────────────────────────────── */
 
 const RESERVATION_STYLE: Record<PaymentStatus, { bar: string; dot: string }> = {
-  pending:       { bar: 'bg-coral/80    text-white',  dot: 'bg-coral' },
-  deposit_paid:  { bar: 'bg-lagoon      text-pearl',  dot: 'bg-lagoon' },
-  fully_paid:    { bar: 'bg-leaf        text-white',  dot: 'bg-leaf' },
-  cancelled:     { bar: 'bg-midnight-300 text-pearl', dot: 'bg-midnight-300' },
+  pending:       { bar: 'bg-purple-500/85 text-white', dot: 'bg-purple-500' },
+  deposit_paid:  { bar: 'bg-lagoon      text-pearl',   dot: 'bg-lagoon' },
+  fully_paid:    { bar: 'bg-leaf        text-white',   dot: 'bg-leaf' },
+  cancelled:     { bar: 'bg-midnight-300 text-pearl',  dot: 'bg-midnight-300' },
   refunded:      { bar: 'bg-gold/70     text-midnight', dot: 'bg-gold' },
 }
 
