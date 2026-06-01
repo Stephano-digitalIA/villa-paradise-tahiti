@@ -138,8 +138,8 @@ export function MonthCalendarView({ reservations, blocks }: MonthCalendarViewPro
     return visibleReservations.find((r) => iso >= r.check_in && iso < r.check_out)
   }
 
-  function dayHasBlock(iso: string): CalendarBlock | undefined {
-    return visibleBlocks.find((b) => iso >= b.blocked_from && iso <= b.blocked_to)
+  function dayHasBlocks(iso: string): CalendarBlock[] {
+    return visibleBlocks.filter((b) => iso >= b.blocked_from && iso <= b.blocked_to)
   }
 
   function gotoPrev() {
@@ -208,7 +208,11 @@ export function MonthCalendarView({ reservations, blocks }: MonthCalendarViewPro
           const inMonth = day.getUTCMonth() === cursor.getUTCMonth()
           const isToday = iso === todayIso
           const reservation = dayHasReservation(iso)
-          const block = !reservation ? dayHasBlock(iso) : undefined
+          // Always compute blocks too — a direct reservation does NOT hide
+          // overlapping iCal blocks anymore (e.g. an Airbnb / Booking / VRBO
+          // booking that overlaps a direct reservation should stay visible
+          // so the host sees the double-booking).
+          const blocks = dayHasBlocks(iso)
 
           // Edge styling : leftmost cells of each week
           const isWeekStart = idx % 7 === 0
@@ -223,7 +227,7 @@ export function MonthCalendarView({ reservations, blocks }: MonthCalendarViewPro
               inMonth={inMonth}
               isToday={isToday}
               reservation={reservation}
-              block={block}
+              blocks={blocks}
               borderRight={(idx + 1) % 7 !== 0}
               borderBottom={!isLastRow}
               isWeekStart={isWeekStart}
@@ -243,7 +247,7 @@ interface DayCellProps {
   inMonth: boolean
   isToday: boolean
   reservation?: CalendarReservation
-  block?: CalendarBlock
+  blocks: CalendarBlock[]
   borderRight: boolean
   borderBottom: boolean
   isWeekStart: boolean
@@ -255,14 +259,14 @@ function DayCell({
   inMonth,
   isToday,
   reservation,
-  block,
+  blocks,
   borderRight,
   borderBottom,
 }: DayCellProps) {
   const dayNumber = day.getUTCDate()
 
   const baseClasses = [
-    'relative min-h-[92px] p-1.5 font-sans text-xs',
+    'relative min-h-[108px] p-1.5 font-sans text-xs',
     inMonth ? 'bg-white' : 'bg-pearl-300/30',
     borderRight ? 'border-r border-pearl-400' : '',
     borderBottom ? 'border-b border-pearl-400' : '',
@@ -284,57 +288,88 @@ function DayCell({
     </span>
   )
 
-  if (reservation) {
-    const style = RESERVATION_STYLE[reservation.payment_status]
-    const tooltip = `${reservation.guest_name ?? 'Unknown guest'} · ${reservation.num_guests} guest${reservation.num_guests !== 1 ? 's' : ''} · ${reservation.reservation_ref} · ${reservation.payment_status}`
-    return (
-      <div className={baseClasses}>
-        {dayLabel}
-        <Link
-          href={`/admin/reservations/${reservation.id}`}
-          title={tooltip}
-          className={[
-            'mt-1 block truncate rounded-md px-1.5 py-0.5',
-            'font-medium leading-tight',
-            style.bar,
-            'transition-opacity hover:opacity-90',
-          ].join(' ')}
-        >
-          {reservation.guest_name ?? reservation.reservation_ref}
-        </Link>
-      </div>
-    )
-  }
-
-  if (block) {
-    const style = blockStyle(block.source)
-    const tooltip = `${style.label}${block.reason ? ` — ${block.reason}` : ''} · ${block.blocked_from} → ${block.blocked_to}`
-    return (
-      <div className={baseClasses}>
-        {dayLabel}
-        <span
-          title={tooltip}
-          className={[
-            'mt-1 block truncate rounded-md px-1.5 py-0.5',
-            'leading-tight cursor-default',
-            style.bar,
-          ].join(' ')}
-        >
-          {style.label}
-        </span>
-      </div>
-    )
-  }
+  // Up to two visible bars — one for the direct reservation (if any) and one
+  // for the first external block (if any). Additional blocks become a
+  // "+N" pill at the end. Empty days fall back to the "Available" hint.
+  const hasReservation = !!reservation
+  const hasBlock = blocks.length > 0
+  const extraBlockCount = Math.max(0, blocks.length - 1)
+  const isEmpty = !hasReservation && !hasBlock
 
   return (
     <div className={baseClasses}>
       {dayLabel}
-      {inMonth ? (
+
+      {hasReservation ? (
+        <ReservationBar reservation={reservation} />
+      ) : null}
+
+      {hasBlock ? (
+        <>
+          <BlockBar block={blocks[0]!} compact={hasReservation} />
+          {extraBlockCount > 0 ? (
+            <span
+              title={blocks
+                .slice(1)
+                .map((b) => blockStyle(b.source).label)
+                .join(', ')}
+              className="mt-0.5 inline-flex rounded-md bg-midnight/10 px-1.5 py-0.5 font-mono text-[10px] font-semibold text-midnight"
+            >
+              +{extraBlockCount}
+            </span>
+          ) : null}
+        </>
+      ) : null}
+
+      {isEmpty && inMonth ? (
         <span className="mt-1 block text-[10px] uppercase tracking-wide text-leaf/70">
-          Available
+          Disponible
         </span>
       ) : null}
     </div>
+  )
+}
+
+function ReservationBar({ reservation }: { reservation: CalendarReservation }) {
+  const style = RESERVATION_STYLE[reservation.payment_status]
+  const tooltip = `${reservation.guest_name ?? 'Unknown guest'} · ${reservation.num_guests} guest${reservation.num_guests !== 1 ? 's' : ''} · ${reservation.reservation_ref} · ${reservation.payment_status}`
+  return (
+    <Link
+      href={`/admin/reservations/${reservation.id}`}
+      title={tooltip}
+      className={[
+        'mt-1 block truncate rounded-md px-1.5 py-0.5',
+        'font-medium leading-tight',
+        style.bar,
+        'transition-opacity hover:opacity-90',
+      ].join(' ')}
+    >
+      {reservation.guest_name ?? reservation.reservation_ref}
+    </Link>
+  )
+}
+
+function BlockBar({
+  block,
+  compact = false,
+}: {
+  block: CalendarBlock
+  compact?: boolean
+}) {
+  const style = blockStyle(block.source)
+  const tooltip = `${style.label}${block.reason ? ` — ${block.reason}` : ''} · ${block.blocked_from} → ${block.blocked_to}`
+  return (
+    <span
+      title={tooltip}
+      className={[
+        compact ? 'mt-0.5' : 'mt-1',
+        'block truncate rounded-md px-1.5 py-0.5',
+        'leading-tight cursor-default',
+        style.bar,
+      ].join(' ')}
+    >
+      {style.label}
+    </span>
   )
 }
 
