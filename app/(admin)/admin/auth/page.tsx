@@ -1,6 +1,6 @@
 'use client'
 
-import { Suspense, useState, type FormEvent } from 'react'
+import { Suspense, useEffect, useState, type FormEvent } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Lock, Mail } from 'lucide-react'
 
@@ -60,6 +60,21 @@ function AuthErrorMessage() {
 
 function SignInForm() {
   const supabase = createClient()
+
+  // Always start fresh on the admin login page: if a session is still in
+  // the browser (cookies + localStorage) from a previous visit, sign it out
+  // immediately so the page truly resets and the header doesn't display a
+  // stale user. Visitor must re-authenticate to enter the admin again.
+  useEffect(() => {
+    let cancelled = false
+    supabase.auth.getSession().then(({ data }) => {
+      if (cancelled || !data.session) return
+      supabase.auth.signOut()
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [supabase])
 
   function handleSignIn() {
     supabase.auth.signInWithOAuth({

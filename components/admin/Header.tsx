@@ -103,9 +103,22 @@ export function AdminHeader() {
   const supabase = createClient()
 
   useEffect(() => {
+    // Initial fetch
     supabase.auth.getUser().then(({ data }) => {
       setUser(data.user)
     })
+
+    // Subscribe to auth state changes so the header reflects logouts and
+    // logins live (otherwise a residual user stays visible on /admin/auth
+    // after signOut, for example).
+    const { data: subscription } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setUser(session?.user ?? null)
+      },
+    )
+    return () => {
+      subscription.subscription.unsubscribe()
+    }
   }, [supabase])
 
   const avatarUrl = user?.user_metadata?.avatar_url as string | undefined
