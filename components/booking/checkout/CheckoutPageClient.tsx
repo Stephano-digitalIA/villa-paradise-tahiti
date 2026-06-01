@@ -4,19 +4,22 @@
  * CheckoutPageClient — orchestrates the /booking/checkout layout.
  *
  * Render states (in order):
- *  1. Skeleton — BookingProvider rehydrating from localStorage.
- *  2. Auth gate — user not signed in with Google (mandatory before payment).
+ *  1. Skeleton — BookingProvider rehydrating from localStorage / auth loading.
+ *  2. Auth gate — visitor not signed in. Two options: Google, email magic link.
  *  3. Incomplete booking — missing dates/guests, send back to /booking.
  *  4. Full 2-column checkout.
  */
 
-import { useEffect, useState } from 'react'
+import { useMemo } from 'react'
 import Link from 'next/link'
 import { AlertCircle, ArrowLeft, Lock, ShieldCheck } from 'lucide-react'
 
 import { Button, Container, Section } from '@/components/ui'
-import { createClient } from '@/lib/supabase/client'
-import { GoogleSignInButton } from '@/components/auth/GoogleSignInButton'
+import {
+  EmailMagicLinkForm,
+  GoogleSignInButton,
+  useAuth,
+} from '@/components/auth'
 
 import { useBooking } from '../BookingProvider'
 import { CheckoutBreadcrumb } from './CheckoutBreadcrumb'
@@ -27,28 +30,19 @@ import { CheckoutTrustBadges } from './CheckoutTrustBadges'
 
 export function CheckoutPageClient() {
   const { hydrated, validation } = useBooking()
+  const { user, loading: authLoading } = useAuth()
 
-  const [authState, setAuthState] = useState<'checking' | 'unauthenticated' | 'authenticated'>('checking')
-  const [profile, setProfile] = useState<CheckoutInitialProfile | null>(null)
-
-  useEffect(() => {
-    const supabase = createClient()
-    supabase.auth.getUser().then(({ data }) => {
-      if (data.user) {
-        const meta = data.user.user_metadata ?? {}
-        const fullName: string = meta.full_name ?? meta.name ?? ''
-        const spaceIdx = fullName.indexOf(' ')
-        setProfile({
-          firstName: spaceIdx > 0 ? fullName.slice(0, spaceIdx) : fullName,
-          lastName:  spaceIdx > 0 ? fullName.slice(spaceIdx + 1) : '',
-          email:     data.user.email ?? '',
-        })
-        setAuthState('authenticated')
-      } else {
-        setAuthState('unauthenticated')
-      }
-    })
-  }, [])
+  const profile = useMemo<CheckoutInitialProfile | null>(() => {
+    if (!user) return null
+    const meta = user.user_metadata ?? {}
+    const fullName: string = meta.full_name ?? meta.name ?? ''
+    const spaceIdx = fullName.indexOf(' ')
+    return {
+      firstName: spaceIdx > 0 ? fullName.slice(0, spaceIdx) : fullName,
+      lastName: spaceIdx > 0 ? fullName.slice(spaceIdx + 1) : '',
+      email: user.email ?? '',
+    }
+  }, [user])
 
   return (
     <>
@@ -72,10 +66,10 @@ export function CheckoutPageClient() {
       </Section>
 
       {/* ─── Body ──────────────────────────────────────────────────── */}
-      {authState === 'checking' || !hydrated ? (
+      {authLoading || !hydrated ? (
         <CheckoutFormSkeleton />
-      ) : authState === 'unauthenticated' ? (
-        <GoogleAuthGate />
+      ) : !user ? (
+        <AuthGate />
       ) : !validation.isValid ? (
         <IncompleteBookingNotice issues={validation.issues} />
       ) : (
@@ -115,10 +109,10 @@ function CheckoutBody({ profile }: { profile: CheckoutInitialProfile | null }) {
 }
 
 /* ---------------------------------------------------------------------------
- * Guard — Google auth required before checkout.
+ * Guard — sign-in required before checkout (Google / Apple / email magic link).
  * ------------------------------------------------------------------------- */
 
-function GoogleAuthGate() {
+function AuthGate() {
   return (
     <Section tone="pearl" spacing="compact">
       <Container className="flex justify-center">
@@ -132,18 +126,31 @@ function GoogleAuthGate() {
               Sign in to continue
             </h2>
             <p className="mt-2 font-sans text-body-sm text-midnight-400">
-              We use Google Sign-In to confirm your identity, pre-fill your details,
-              and keep a record of your booking.
+              We need to confirm your identity before payment. Choose your preferred method —
+              your details are pre-filled and a confirmation is sent to your inbox.
             </p>
           </div>
 
           <GoogleSignInButton redirectTo="/booking/checkout" className="w-full" />
 
+          <div className="flex w-full items-center gap-3" aria-hidden="true">
+            <span className="h-px flex-1 bg-pearl-400" />
+            <span className="text-eyebrow font-medium uppercase tracking-widest2 text-midnight-400">
+              or
+            </span>
+            <span className="h-px flex-1 bg-pearl-400" />
+          </div>
+
+          <EmailMagicLinkForm
+            redirectTo="/booking/checkout"
+            className="w-full"
+          />
+
           <ul className="flex flex-col gap-2 self-start text-body-sm text-midnight-400">
             {[
               'Your name and email are pre-filled automatically',
               'No password to remember',
-              'Booking confirmation sent to your Gmail',
+              'Booking confirmation sent to your inbox',
             ].map((item) => (
               <li key={item} className="flex items-center gap-2">
                 <Lock className="h-3.5 w-3.5 flex-none text-gold" aria-hidden="true" />

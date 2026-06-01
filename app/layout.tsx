@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Cormorant_Garamond, Inter, Playfair_Display } from 'next/font/google'
 import { ConsentGate } from '@/components/analytics'
+import { AuthProvider } from '@/components/auth/AuthProvider'
 import { ChromeGate, Footer, Header, SkipToContent } from '@/components/layout'
 import { cn } from '@/lib/utils'
 import './globals.css'
@@ -47,17 +48,19 @@ export default function RootLayout({
       className={cn(cormorant.variable, playfair.variable, inter.variable)}
     >
       <body className="min-h-screen bg-pearl font-sans text-midnight antialiased">
-        <ChromeGate>
-          <SkipToContent />
-          <Header />
-        </ChromeGate>
-        <main id="main-content" className="min-h-screen">
-          {children}
-        </main>
-        <ChromeGate hideOnBookingFlow>
-          <Footer />
-        </ChromeGate>
-        <ConsentGate />
+        <AuthProvider>
+          <ChromeGate>
+            <SkipToContent />
+            <Header />
+          </ChromeGate>
+          <main id="main-content" className="min-h-screen">
+            {children}
+          </main>
+          <ChromeGate hideOnBookingFlow>
+            <Footer />
+          </ChromeGate>
+          <ConsentGate />
+        </AuthProvider>
       </body>
     </html>
   )

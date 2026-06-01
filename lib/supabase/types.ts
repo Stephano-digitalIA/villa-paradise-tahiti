@@ -213,6 +213,15 @@ export type AdminUser = {
   created_at: string
 }
 
+export type AcquisitionSource =
+  | 'direct'
+  | 'airbnb'
+  | 'booking'
+  | 'vrbo'
+  | 'referral'
+  | 'manual'
+  | 'imported'
+
 export type Customer = {
   id: string
   email: string
@@ -223,8 +232,53 @@ export type Customer = {
   city: string | null
   zip_code: string | null
   accept_marketing: boolean
+  acquisition_source: AcquisitionSource | null
+  preferred_language: string | null
+  dietary_notes: string | null
+  marketing_consent_at: string | null
+  anonymized_at: string | null
   created_at: string
   updated_at: string
+}
+
+export type CustomerTagColor =
+  | 'gold'
+  | 'coral'
+  | 'lagoon'
+  | 'leaf'
+  | 'midnight'
+  | 'sand'
+
+export type CustomerTag = {
+  id: string
+  label: string
+  color: CustomerTagColor
+  created_at: string
+}
+
+export type CustomerTagAssignment = {
+  customer_id: string
+  tag_id: string
+  assigned_at: string
+}
+
+export type CustomerNote = {
+  id: string
+  customer_id: string
+  author_id: string | null
+  body: string
+  created_at: string
+  updated_at: string
+  deleted_at: string | null
+}
+
+/** Row from the `customer_summary` SQL view. */
+export type CustomerSummary = Customer & {
+  n_stays: number
+  total_revenue: number
+  last_check_in: string | null
+  next_check_in: string | null
+  tags: string[]
 }
 
 export type PaymentStatus =
@@ -294,6 +348,7 @@ export type PaymentEvent = {
 
 export type BlockedDateSource =
   | 'airbnb'
+  | 'booking'
   | 'vrbo'
   | 'direct_booking'
   | 'owner'
@@ -316,6 +371,7 @@ export type EmailLogStatus = 'sent' | 'failed' | 'bounced'
 export type EmailLog = {
   id: string
   reservation_id: string | null
+  customer_id: string | null
   email_type: string
   recipient_email: string
   status: EmailLogStatus
@@ -403,8 +459,22 @@ export type Database = {
         ContactInquiry,
         InsertOf<Omit<ContactInquiry, 'id' | 'created_at'>>
       >
+      customer_tags: TableDef<
+        CustomerTag,
+        InsertOf<Omit<CustomerTag, 'id' | 'created_at'>>
+      >
+      customer_tag_assignments: TableDef<
+        CustomerTagAssignment,
+        InsertOf<Omit<CustomerTagAssignment, 'assigned_at'>>
+      >
+      customer_notes: TableDef<
+        CustomerNote,
+        InsertOf<Omit<CustomerNote, 'id' | 'created_at' | 'updated_at'>>
+      >
     }
-    Views: Record<string, never>
+    Views: {
+      customer_summary: { Row: CustomerSummary; Relationships: [] }
+    }
     Functions: Record<string, never>
     Enums: Record<string, never>
     CompositeTypes: Record<string, never>

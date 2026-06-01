@@ -5,10 +5,12 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Menu, Palmtree } from 'lucide-react'
 import { Button } from '@/components/ui'
+import { useAuth } from '@/components/auth/AuthProvider'
 import { bookingHref, mainNav } from '@/lib/navigation'
 import { cn } from '@/lib/utils'
 import { LanguageSwitcher } from './LanguageSwitcher'
 import { MobileDrawer } from './MobileDrawer'
+import { UserMenu } from './UserMenu'
 
 /**
  * Header — Navigation principale sticky, transparente sur hero puis opaque au scroll.
@@ -33,6 +35,7 @@ export function Header() {
   const [scrolled, setScrolled] = useState(false)
   const [drawerOpen, setDrawerOpen] = useState(false)
   const burgerRef = useRef<HTMLButtonElement>(null)
+  const { user, loading } = useAuth()
 
   // Always opaque — hero is now a light beige card, transparent white text was invisible
   const opaque = true
@@ -130,21 +133,30 @@ export function Header() {
             </ul>
           </nav>
 
-          {/* Cluster droit : LanguageSwitcher (desktop) + CTA Book Now + Burger (mobile) */}
+          {/* Cluster droit : LanguageSwitcher (desktop) + UserMenu si connecté + CTA Book Now + Burger (mobile) */}
           <div className="flex items-center gap-2 sm:gap-3">
             <div className="hidden md:block">
               <LanguageSwitcher variant={opaque ? 'default' : 'light'} />
             </div>
 
-            {/* CTA Book Now — visible desktop, masqué mobile pour laisser place au burger */}
-            <Button
-              asChild
-              variant="primary"
-              size="sm"
-              className="hidden sm:inline-flex"
-            >
-              <Link href={bookingHref}>Book Now</Link>
-            </Button>
+            {/* UserMenu — visible dès qu'on est connecté (sauf pendant le 1er chargement pour éviter le flash) */}
+            {!loading && user ? (
+              <div className="hidden sm:block">
+                <UserMenu variant={opaque ? 'default' : 'light'} />
+              </div>
+            ) : null}
+
+            {/* CTA Book Now — masqué pour les visiteurs connectés (UserMenu prend la place visuellement) */}
+            {!user ? (
+              <Button
+                asChild
+                variant="primary"
+                size="sm"
+                className="hidden sm:inline-flex"
+              >
+                <Link href={bookingHref}>Book Now</Link>
+              </Button>
+            ) : null}
 
             {/* Burger mobile — visible < md */}
             <button

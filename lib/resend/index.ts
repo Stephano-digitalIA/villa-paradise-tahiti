@@ -21,6 +21,7 @@ export {
   sendBookingNotificationOwner,
   sendContactAutoReply,
   sendContactInquiryNotification,
+  sendCustomCustomerEmail,
 } from './send'
 
 export type {

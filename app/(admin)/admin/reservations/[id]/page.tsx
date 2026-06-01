@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import { adminClient } from '@/lib/supabase/admin'
 import { Badge } from '@/components/ui/Badge'
 import type { PaymentStatus, SelectedExperienceSnapshot, Reservation, Customer } from '@/lib/supabase/types'
+import { LinkClientPanel } from '@/components/admin/clients/LinkClientPanel'
 import { ReservationActions } from './_components/ReservationActions'
 import { NotesForm } from './_components/NotesForm'
 
@@ -164,54 +165,62 @@ export default async function ReservationDetailPage({ params }: PageProps) {
               Guest Information
             </h2>
             {customer ? (
-              <dl className="mt-4 space-y-3">
-                <div className="flex gap-4">
-                  <dt className="w-28 flex-shrink-0 font-sans text-xs font-semibold uppercase tracking-wider text-midnight-400">
-                    Name
-                  </dt>
-                  <dd className="font-sans text-sm text-midnight">
-                    {customer.first_name} {customer.last_name}
-                  </dd>
-                </div>
-                <div className="flex gap-4">
-                  <dt className="w-28 flex-shrink-0 font-sans text-xs font-semibold uppercase tracking-wider text-midnight-400">
-                    Email
-                  </dt>
-                  <dd className="font-sans text-sm text-midnight">
-                    <a
-                      href={`mailto:${customer.email}`}
-                      className="text-lagoon hover:underline"
-                    >
-                      {customer.email}
-                    </a>
-                  </dd>
-                </div>
-                {customer.phone && (
+              <>
+                <dl className="mt-4 space-y-3">
                   <div className="flex gap-4">
                     <dt className="w-28 flex-shrink-0 font-sans text-xs font-semibold uppercase tracking-wider text-midnight-400">
-                      Phone
+                      Name
                     </dt>
                     <dd className="font-sans text-sm text-midnight">
-                      {customer.phone}
+                      {customer.first_name} {customer.last_name}
                     </dd>
                   </div>
-                )}
-                {customer.country && (
                   <div className="flex gap-4">
                     <dt className="w-28 flex-shrink-0 font-sans text-xs font-semibold uppercase tracking-wider text-midnight-400">
-                      Country
+                      Email
                     </dt>
                     <dd className="font-sans text-sm text-midnight">
-                      {customer.city ? `${customer.city}, ` : ''}
-                      {customer.country}
+                      <a
+                        href={`mailto:${customer.email}`}
+                        className="text-lagoon hover:underline"
+                      >
+                        {customer.email}
+                      </a>
                     </dd>
                   </div>
-                )}
-              </dl>
+                  {customer.phone && (
+                    <div className="flex gap-4">
+                      <dt className="w-28 flex-shrink-0 font-sans text-xs font-semibold uppercase tracking-wider text-midnight-400">
+                        Phone
+                      </dt>
+                      <dd className="font-sans text-sm text-midnight">
+                        {customer.phone}
+                      </dd>
+                    </div>
+                  )}
+                  {customer.country && (
+                    <div className="flex gap-4">
+                      <dt className="w-28 flex-shrink-0 font-sans text-xs font-semibold uppercase tracking-wider text-midnight-400">
+                        Country
+                      </dt>
+                      <dd className="font-sans text-sm text-midnight">
+                        {customer.city ? `${customer.city}, ` : ''}
+                        {customer.country}
+                      </dd>
+                    </div>
+                  )}
+                </dl>
+                <div className="mt-4 border-t border-pearl-400 pt-3">
+                  <Link
+                    href={`/admin/clients/${customer.id}`}
+                    className="font-sans text-sm font-medium text-gold hover:underline"
+                  >
+                    View full client profile →
+                  </Link>
+                </div>
+              </>
             ) : (
-              <p className="mt-4 font-sans text-sm text-midnight-400">
-                No customer data linked.
-              </p>
+              <LinkClientPanel reservationId={r.id} />
             )}
           </div>
 

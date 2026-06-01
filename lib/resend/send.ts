@@ -168,6 +168,93 @@ export async function sendContactInquiryNotification(
 }
 
 /**
+ * Custom one-off email from the admin CRM to a customer.
+ *
+ * Sends a plain-text body wrapped in a minimal HTML shell preserving line
+ * breaks. Subject/body are admin-authored so we don't render a React
+ * template here. Reply-to defaults to the owner inbox so guests can reply
+ * directly to Thierry.
+ */
+export async function sendCustomCustomerEmail({
+  to,
+  subject,
+  bodyText,
+  replyTo = OWNER_EMAIL,
+}: {
+  to: string
+  subject: string
+  bodyText: string
+  replyTo?: string
+}): Promise<EmailResult> {
+  const safeHtml = wrapBodyAsHtml(bodyText)
+
+  if (!isResendConfigured() || resend === null) {
+    // eslint-disable-next-line no-console
+    console.info('[resend:mock]', {
+      tag: 'admin-custom-email',
+      to,
+      subject,
+      note: 'RESEND_API_KEY not set — email not sent',
+    })
+    return { ok: false, reason: 'not_configured' }
+  }
+
+  try {
+    const result = await resend.emails.send({
+      from: FROM_EMAIL,
+      to,
+      subject,
+      html: safeHtml,
+      text: bodyText,
+      replyTo,
+      tags: [{ name: 'category', value: 'admin-custom-email' }],
+    })
+
+    if (result.error) {
+      // eslint-disable-next-line no-console
+      console.error('[resend:error]', { tag: 'admin-custom-email', to, subject, error: result.error })
+      return { ok: false, reason: 'send_failed', message: result.error.message }
+    }
+
+    const id = result.data?.id ?? ''
+    // eslint-disable-next-line no-console
+    console.info('[resend:sent]', { tag: 'admin-custom-email', to, subject, id })
+    return { ok: true, id }
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('[resend:exception]', { tag: 'admin-custom-email', to, subject, err })
+    return {
+      ok: false,
+      reason: 'send_failed',
+      message: err instanceof Error ? err.message : String(err),
+    }
+  }
+}
+
+function wrapBodyAsHtml(bodyText: string): string {
+  const escaped = bodyText
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+  const paragraphs = escaped
+    .split(/\n{2,}/)
+    .map((p) => `<p style="margin:0 0 16px 0;color:#1a1a1a;line-height:1.6">${p.replace(/\n/g, '<br/>')}</p>`)
+    .join('')
+  return `<!DOCTYPE html><html><body style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:#f8f4ee;padding:24px;margin:0">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+      <tr><td align="center">
+        <table role="presentation" width="560" cellpadding="0" cellspacing="0" border="0" style="background:#ffffff;border-radius:16px;padding:32px;max-width:100%">
+          <tr><td>
+            <p style="margin:0 0 24px 0;font-family:Georgia,serif;font-style:italic;color:#c49a3f;font-size:18px">Villa Paradise Tahiti</p>
+            ${paragraphs}
+          </td></tr>
+        </table>
+      </td></tr>
+    </table>
+  </body></html>`
+}
+
+/**
  * Visitor-facing auto-reply, dispatched after a contact form submission.
  */
 export async function sendContactAutoReply(

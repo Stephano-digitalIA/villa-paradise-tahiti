@@ -37,10 +37,20 @@ export async function middleware(request: NextRequest) {
   // Refresh session (keeps auth cookie alive)
   await supabase.auth.getUser()
 
-  // Protect /admin/* — allow auth pages through, redirect everything else
+  // Protect /admin/* — allow auth pages through, redirect everything else.
+  //
+  // Note: @supabase/ssr chunks large session cookies into `sb-<ref>-auth-token.0`,
+  // `.1`, ... (each ≤4KB). Google OAuth sessions are usually >4KB so they always
+  // arrive chunked. The cookie name therefore matches `sb-*-auth-token` with an
+  // optional `.<n>` suffix — we use `includes` to cover both the legacy
+  // single-cookie format and the chunked one.
   if (pathname.startsWith('/admin') && !pathname.startsWith('/admin/auth')) {
     const hasSession = request.cookies.getAll().some(
-      (c) => c.name.startsWith('sb-') && c.name.endsWith('-auth-token')
+      (c) =>
+        c.name.startsWith('sb-') &&
+        c.name.includes('-auth-token') &&
+        !c.name.endsWith('-code-verifier') &&
+        c.value.length > 0,
     )
     if (!hasSession) {
       const loginUrl = new URL('/admin/auth', request.url)

@@ -1,9 +1,14 @@
 import type { Metadata } from 'next'
 import { adminClient } from '@/lib/supabase/admin'
 import { Badge } from '@/components/ui/Badge'
-import type { PaymentStatus } from '@/lib/supabase/types'
+import type { BlockedDate, PaymentStatus } from '@/lib/supabase/types'
 import { BlockDateForm } from './_components/BlockDateForm'
 import { DeleteBlockButton } from './_components/DeleteBlockButton'
+import {
+  MonthCalendarView,
+  type CalendarBlock,
+  type CalendarReservation,
+} from './_components/MonthCalendarView'
 
 export const metadata: Metadata = {
   title: 'Calendar — Villa Paradise Tahiti Admin',
@@ -58,9 +63,9 @@ function nightsBetween(checkIn: string, checkOut: string): number {
 
 export default async function CalendarPage() {
   const today = new Date().toISOString().split('T')[0]
-  const threeMonthsLater = new Date(
-    Date.now() + 90 * 24 * 60 * 60 * 1000,
-  )
+  // Calendar view needs visibility on the previous month too (when navigating
+  // back to "Today" from a future month, or when a guest just checked out).
+  const oneMonthAgo = new Date(Date.now() - 31 * 24 * 60 * 60 * 1000)
     .toISOString()
     .split('T')[0]
 
@@ -70,12 +75,12 @@ export default async function CalendarPage() {
       .select(
         'id, reservation_ref, check_in, check_out, num_guests, payment_status, customers(first_name, last_name)',
       )
-      .gte('check_out', today)
+      .gte('check_out', oneMonthAgo)
       .order('check_in', { ascending: true }),
     adminClient
       .from('blocked_dates')
       .select('*')
-      .gte('blocked_to', today)
+      .gte('blocked_to', oneMonthAgo)
       .order('blocked_from', { ascending: true }),
   ])
 
@@ -102,6 +107,28 @@ export default async function CalendarPage() {
   }
 
   const reservationRows = (reservations ?? []) as ReservationRow[]
+  const allBlocks = (blockedDates ?? []) as BlockedDate[]
+
+  // Adapt to the calendar view shape (denormalised guest name, slimmer payload).
+  const calendarReservations: CalendarReservation[] = reservationRows.map((r) => ({
+    id: r.id,
+    reservation_ref: r.reservation_ref,
+    check_in: r.check_in,
+    check_out: r.check_out,
+    guest_name: r.customers
+      ? `${r.customers.first_name} ${r.customers.last_name}`.trim()
+      : null,
+    num_guests: r.num_guests,
+    payment_status: r.payment_status,
+  }))
+
+  const calendarBlocks: CalendarBlock[] = allBlocks.map((b) => ({
+    id: b.id,
+    blocked_from: b.blocked_from,
+    blocked_to: b.blocked_to,
+    source: b.source,
+    reason: b.reason,
+  }))
 
   return (
     <div className="p-8">
@@ -111,7 +138,7 @@ export default async function CalendarPage() {
             Calendar
           </h1>
           <p className="mt-1 font-sans text-sm text-midnight-400">
-            Upcoming reservations and blocked periods
+            Month view of reservations and blocked periods across every channel
           </p>
         </div>
         <div className="flex items-center gap-2 rounded-xl border border-pearl-400 bg-white px-4 py-2 shadow-sm">
@@ -124,6 +151,14 @@ export default async function CalendarPage() {
               : 'iCal sync: no data yet'}
           </span>
         </div>
+      </div>
+
+      {/* ─── Month calendar view ──────────────────────────── */}
+      <div className="mt-6">
+        <MonthCalendarView
+          reservations={calendarReservations}
+          blocks={calendarBlocks}
+        />
       </div>
 
       {/* Upcoming Reservations */}

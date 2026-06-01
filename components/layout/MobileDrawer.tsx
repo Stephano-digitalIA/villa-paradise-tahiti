@@ -2,8 +2,10 @@
 
 import { useCallback, useEffect, useRef } from 'react'
 import Link from 'next/link'
-import { X } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { CalendarCheck, LogOut, UserCircle, X } from 'lucide-react'
 import { Button } from '@/components/ui'
+import { useAuth, getDisplayName } from '@/components/auth/AuthProvider'
 import { bookingHref, mainNav } from '@/lib/navigation'
 import { cn } from '@/lib/utils'
 
@@ -28,6 +30,15 @@ export interface MobileDrawerProps {
 export function MobileDrawer({ open, onClose }: MobileDrawerProps) {
   const panelRef = useRef<HTMLDivElement>(null)
   const closeButtonRef = useRef<HTMLButtonElement>(null)
+  const router = useRouter()
+  const { user, signOut } = useAuth()
+  const displayName = getDisplayName(user)
+
+  async function handleSignOut() {
+    onClose()
+    await signOut()
+    router.refresh()
+  }
 
   // 1. Body scroll-lock — préserve la position de scroll pour éviter le "jump"
   useEffect(() => {
@@ -182,14 +193,69 @@ export function MobileDrawer({ open, onClose }: MobileDrawerProps) {
           </ul>
         </nav>
 
-        {/* CTA bas — Book Now full-width */}
-        <div className="border-t border-pearl-400 px-6 py-6">
-          <Button asChild variant="primary" size="lg" className="w-full">
-            <Link href={bookingHref} onClick={onClose}>
-              Book Now
-            </Link>
-          </Button>
-          <p className="mt-4 text-center text-eyebrow text-midnight-400">
+        {/* CTA bas — état connecté ou Book Now */}
+        <div className="flex flex-col gap-4 border-t border-pearl-400 px-6 py-6">
+          {user ? (
+            <>
+              <div className="flex items-center gap-3 rounded-xl bg-sand/60 px-3 py-2.5">
+                <span
+                  aria-hidden="true"
+                  className="flex h-9 w-9 flex-none items-center justify-center rounded-full bg-gold text-sm font-semibold text-midnight"
+                >
+                  {(displayName[0] ?? '?').toUpperCase()}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p className="text-eyebrow font-medium uppercase tracking-widest2 text-midnight-400">
+                    Signed in as
+                  </p>
+                  <p className="truncate font-sans text-body-sm font-semibold text-midnight">
+                    {displayName}
+                  </p>
+                </div>
+              </div>
+
+              <Link
+                href="/account"
+                onClick={onClose}
+                className="flex items-center gap-3 rounded-lg border border-pearl-400 px-3 py-3 font-sans text-body-sm font-medium text-midnight transition-colors hover:bg-sand"
+              >
+                <UserCircle className="h-4 w-4 text-gold" aria-hidden="true" />
+                My account
+              </Link>
+
+              <Link
+                href="/account#bookings"
+                onClick={onClose}
+                className="flex items-center gap-3 rounded-lg border border-pearl-400 px-3 py-3 font-sans text-body-sm font-medium text-midnight transition-colors hover:bg-sand"
+              >
+                <CalendarCheck className="h-4 w-4 text-gold" aria-hidden="true" />
+                My bookings
+              </Link>
+
+              <Button asChild variant="primary" size="lg" className="w-full">
+                <Link href={bookingHref} onClick={onClose}>
+                  Book Now
+                </Link>
+              </Button>
+
+              <button
+                type="button"
+                onClick={handleSignOut}
+                className="flex items-center justify-center gap-2 rounded-lg px-3 py-3 font-sans text-body-sm font-medium text-coral transition-colors hover:bg-coral/10"
+              >
+                <LogOut className="h-4 w-4" aria-hidden="true" />
+                Sign out
+              </button>
+            </>
+          ) : (
+            <Button asChild variant="primary" size="lg" className="w-full">
+              <Link href={bookingHref} onClick={onClose}>
+                Book Now
+              </Link>
+            </Button>
+          )}
+
+          <p className="text-center text-eyebrow text-midnight-400">
             Tahiti · French Polynesia
           </p>
         </div>

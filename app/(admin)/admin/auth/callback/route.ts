@@ -1,63 +1,82 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
-import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
+import { adminClient } from '@/lib/supabase/admin'
 
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
   const next = searchParams.get('next') ?? '/admin'
 
-  if (code) {
-    const cookieStore = await cookies()
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          getAll() {
-            return cookieStore.getAll()
-          },
-          setAll(
-            cookiesToSet: { name: string; value: string; options: CookieOptions }[]
-          ) {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            )
-          },
-        },
-      }
-    )
-
-    const { error, data } = await supabase.auth.exchangeCodeForSession(code)
-
-    if (!error && data.user) {
-      // Check if user exists in admin_users — no auto-provisioning (manual only)
-      const { data: adminUser } = await supabase
-        .from('admin_users')
-        .select('id, role')
-        .eq('id', data.user.id)
-        .maybeSingle()
-
-      if (adminUser) {
-        // Sync Google profile info on every login
-        await supabase
-          .from('admin_users')
-          .update({
-            full_name: data.user.user_metadata?.full_name ?? null,
-            avatar_url: data.user.user_metadata?.avatar_url ?? null,
-          })
-          .eq('id', data.user.id)
-
-        return NextResponse.redirect(`${origin}${next}`)
-      } else {
-        // Authenticated with Google but not an admin — sign out and reject
-        await supabase.auth.signOut()
-        return NextResponse.redirect(
-          `${origin}/admin/auth?error=unauthorized`
-        )
-      }
-    }
+  if (!code) {
+    return NextResponse.redirect(`${origin}/admin/auth?error=auth_failed`)
   }
 
-  return NextResponse.redirect(`${origin}/admin/auth?error=auth_failed`)
+  // We collect every cookie Supabase writes during this request so we can
+  // attach them to the final 307 ourselves. Relying on next/headers cookies()
+  // alone has a known propagation issue with the @supabase/ssr getAll/setAll
+  // pattern: cookies set during exchangeCodeForSession sometimes don't reach
+  // the Set-Cookie headers of the route handler's redirect response, which
+  // makes the next middleware-protected GET appear unauthenticated.
+  const collectedCookies: Array<{
+    name: string
+    value: string
+    options: CookieOptions
+  }> = []
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll()
+        },
+        setAll(
+          cookiesToSet: { name: string; value: string; options: CookieOptions }[]
+        ) {
+          cookiesToSet.forEach((c) => collectedCookies.push(c))
+        },
+      },
+    }
+  )
+
+  const { error, data } = await supabase.auth.exchangeCodeForSession(code)
+
+  let target: string
+
+  if (!error && data.user) {
+    // Lookup via service-role client to bypass RLS — the SSR client's
+    // session is not yet primed for an RLS-protected SELECT on admin_users
+    // within the same request that performed exchangeCodeForSession.
+    const { data: adminUser } = await adminClient
+      .from('admin_users')
+      .select('id, role')
+      .eq('id', data.user.id)
+      .maybeSingle()
+
+    if (adminUser) {
+      await adminClient
+        .from('admin_users')
+        .update({
+          full_name: data.user.user_metadata?.full_name ?? null,
+          avatar_url: data.user.user_metadata?.avatar_url ?? null,
+        })
+        .eq('id', data.user.id)
+      target = `${origin}${next}`
+    } else {
+      await supabase.auth.signOut()
+      target = `${origin}/admin/auth?error=unauthorized`
+    }
+  } else {
+    target = `${origin}/admin/auth?error=auth_failed`
+  }
+
+  // Build the redirect with every Set-Cookie we accumulated. This is what
+  // primes the browser cookie jar so the next request hits the middleware
+  // with a valid session.
+  const response = NextResponse.redirect(target)
+  for (const { name, value, options } of collectedCookies) {
+    response.cookies.set(name, value, options)
+  }
+  return response
 }
