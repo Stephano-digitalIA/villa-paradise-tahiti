@@ -66,6 +66,9 @@ function SignInForm() {
       provider: 'google',
       options: {
         redirectTo: window.location.origin + '/admin/auth/callback',
+        // Force the Google account chooser on every click — avoids silent
+        // sign-in with whatever account Chrome happens to remember.
+        queryParams: { prompt: 'select_account' },
       },
     })
   }
