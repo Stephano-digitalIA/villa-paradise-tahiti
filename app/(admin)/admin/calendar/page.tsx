@@ -4,6 +4,8 @@ import { Badge } from '@/components/ui/Badge'
 import type { BlockedDate, PaymentStatus } from '@/lib/supabase/types'
 import { BlockDateForm } from './_components/BlockDateForm'
 import { DeleteBlockButton } from './_components/DeleteBlockButton'
+import { IcalSyncButton } from '@/components/admin/IcalSyncButton'
+
 import {
   MonthCalendarView,
   type CalendarBlock,
@@ -141,15 +143,18 @@ export default async function CalendarPage() {
             Month view of reservations and blocked periods across every channel
           </p>
         </div>
-        <div className="flex items-center gap-2 rounded-xl border border-pearl-400 bg-white px-4 py-2 shadow-sm">
-          <span
-            className={`h-2 w-2 rounded-full ${minutesAgo !== null ? 'bg-leaf' : 'bg-midnight-300'}`}
-          />
-          <span className="font-sans text-xs text-midnight-400">
-            {minutesAgo !== null
-              ? `Last iCal sync: ${minutesAgo < 1 ? 'just now' : `${minutesAgo} min ago`}`
-              : 'iCal sync: no data yet'}
-          </span>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 rounded-xl border border-pearl-400 bg-white px-4 py-2 shadow-sm">
+            <span
+              className={`h-2 w-2 rounded-full ${minutesAgo !== null ? 'bg-leaf' : 'bg-midnight-300'}`}
+            />
+            <span className="font-sans text-xs text-midnight-400">
+              {minutesAgo !== null
+                ? `Dernière sync iCal : ${minutesAgo < 1 ? 'à l’instant' : `il y a ${minutesAgo} min`}`
+                : 'Aucune sync iCal pour le moment'}
+            </span>
+          </div>
+          <IcalSyncButton variant="outline" />
         </div>
       </div>
 

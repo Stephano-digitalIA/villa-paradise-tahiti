@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { adminClient } from '@/lib/supabase/admin'
-import { IcalSyncButton } from './_components/IcalSyncButton'
+import { IcalSyncButton } from '@/components/admin/IcalSyncButton'
 
 export const metadata: Metadata = {
   title: 'Intégrations — Villa Paradise Tahiti Admin',
