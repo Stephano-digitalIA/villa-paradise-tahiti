@@ -91,18 +91,26 @@ export function parseICalEvents(icalText: string): BlockedDateRange[] {
         }
       | undefined
 
-    if (!component || component.type !== 'VEVENT') continue
-    if (component.status === 'CANCELLED') continue
-    if (isAvailableMarker(component.summary)) continue
+    const c = component as
+      | {
+          type?: string
+          start?: Date | string
+          end?: Date | string
+          summary?: string
+          status?: string
+          uid?: string
+        }
+      | undefined
 
-    if (!component.start || !component.end) continue
+    if (!c || c.type !== 'VEVENT') continue
+    if (c.status === 'CANCELLED') continue
+    if (isAvailableMarker(c.summary)) continue
+
+    if (!c.start || !c.end) continue
 
     const startDate =
-      component.start instanceof Date
-        ? component.start
-        : new Date(component.start)
-    const endDate =
-      component.end instanceof Date ? component.end : new Date(component.end)
+      c.start instanceof Date ? c.start : new Date(c.start)
+    const endDate = c.end instanceof Date ? c.end : new Date(c.end)
 
     if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) {
       continue
@@ -118,8 +126,8 @@ export function parseICalEvents(icalText: string): BlockedDateRange[] {
       start: startIso,
       end: endIso,
       source: 'unknown',
-      summary:
-        typeof component.summary === 'string' ? component.summary : undefined,
+      summary: typeof c.summary === 'string' ? c.summary : undefined,
+      uid: typeof c.uid === 'string' && c.uid.length > 0 ? c.uid : undefined,
     })
   }
 

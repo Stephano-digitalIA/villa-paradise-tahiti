@@ -15,6 +15,7 @@
 
 import {
   fetchAirbnbCalendar,
+  fetchBookingCalendar,
   fetchVrboCalendar,
   hasAnyIcalSource,
 } from './fetch'
@@ -53,6 +54,35 @@ function tagSource(
  * This function never throws — provider failures are logged and the
  * remaining sources still contribute to the merged output.
  */
+export type IcalSource = 'airbnb' | 'vrbo' | 'booking'
+
+export type RawRangesBySource = Record<IcalSource, BlockedDateRange[]>
+
+/**
+ * Fetch + parse every configured iCal source in parallel, **without merging**.
+ * Returns one entry per source so the persistence layer can map each VEVENT
+ * to its own row in `blocked_dates`. Sources with no URL configured come
+ * back as empty arrays.
+ *
+ * The DB sync route uses this directly; `getBlockedDates` calls it as well
+ * and merges the result for public callers.
+ */
+export async function fetchAllRawRanges(): Promise<RawRangesBySource> {
+  const [airbnbText, vrboText, bookingText] = await Promise.all([
+    fetchAirbnbCalendar(),
+    fetchVrboCalendar(),
+    fetchBookingCalendar(),
+  ])
+
+  return {
+    airbnb: airbnbText ? tagSource(parseICalEvents(airbnbText), 'airbnb') : [],
+    vrbo: vrboText ? tagSource(parseICalEvents(vrboText), 'vrbo') : [],
+    booking: bookingText
+      ? tagSource(parseICalEvents(bookingText), 'booking')
+      : [],
+  }
+}
+
 export async function getBlockedDates(
   forceRefresh = false,
 ): Promise<BlockedDateRange[]> {
@@ -69,19 +99,8 @@ export async function getBlockedDates(
     return MOCK_BLOCKED_RANGES
   }
 
-  const [airbnbText, vrboText] = await Promise.all([
-    fetchAirbnbCalendar(),
-    fetchVrboCalendar(),
-  ])
-
-  const airbnbRanges = airbnbText
-    ? tagSource(parseICalEvents(airbnbText), 'airbnb')
-    : []
-  const vrboRanges = vrboText
-    ? tagSource(parseICalEvents(vrboText), 'vrbo')
-    : []
-
-  const merged = mergeBlockedRanges(airbnbRanges, vrboRanges)
+  const raw = await fetchAllRawRanges()
+  const merged = mergeBlockedRanges(raw.airbnb, raw.vrbo, raw.booking)
   setCachedBlockedDates(merged, CACHE_TTL_MS)
   return merged
 }
@@ -90,6 +109,7 @@ export async function getBlockedDates(
 
 export {
   fetchAirbnbCalendar,
+  fetchBookingCalendar,
   fetchVrboCalendar,
   hasAnyIcalSource,
 } from './fetch'

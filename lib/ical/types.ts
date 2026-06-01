@@ -23,4 +23,11 @@ export interface BlockedDateRange {
   end: string
   source: string
   summary?: string
+  /**
+   * iCal `UID` of the originating VEVENT. Stable across syncs as long as the
+   * provider keeps the reservation identifier — used by the DB persistence
+   * layer to upsert/delete by `(source, source_ref)` rather than diffing
+   * ranges naively. May be undefined for mock data.
+   */
+  uid?: string
 }

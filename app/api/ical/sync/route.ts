@@ -16,7 +16,16 @@
 
 import { NextResponse } from 'next/server'
 
-import { getBlockedDates, hasAnyIcalSource } from '@/lib/ical'
+import {
+  fetchAllRawRanges,
+  hasAnyIcalSource,
+  mergeBlockedRanges,
+  MOCK_BLOCKED_RANGES,
+  setCachedBlockedDates,
+} from '@/lib/ical'
+import { syncBlockedDatesToDatabase } from '@/lib/ical/persist'
+
+const CACHE_TTL_MS = 60 * 60 * 1000
 
 export const runtime = 'nodejs'
 // We deliberately want this route to behave dynamically — Vercel Cron
@@ -42,18 +51,41 @@ export async function GET(request: Request) {
   }
 
   try {
-    const ranges = await getBlockedDates(true)
-    const sources = hasAnyIcalSource()
-      ? ['airbnb', 'vrbo'].filter((name) =>
-          ranges.some((r) => r.source.split(',').includes(name)),
-        )
-      : ['mock']
+    if (!hasAnyIcalSource()) {
+      // No URL configured anywhere — keep mock behaviour for local dev,
+      // don't touch the database.
+      setCachedBlockedDates(MOCK_BLOCKED_RANGES, CACHE_TTL_MS)
+      return NextResponse.json({
+        ok: true,
+        mode: 'mock',
+        count: MOCK_BLOCKED_RANGES.length,
+        syncedAt: new Date().toISOString(),
+      })
+    }
+
+    // 1. Fetch + parse every source in parallel (raw, not merged).
+    const raw = await fetchAllRawRanges()
+
+    // 2. Persist to Supabase `blocked_dates` (idempotent upsert + cancel
+    //    cleanup). This is what makes the admin calendar and the CRM
+    //    link panel see external reservations.
+    const persistence = await syncBlockedDatesToDatabase(raw)
+
+    // 3. Refresh the in-memory merged cache so the public availability
+    //    API returns the same data without an extra fetch round-trip.
+    const merged = mergeBlockedRanges(raw.airbnb, raw.vrbo, raw.booking)
+    setCachedBlockedDates(merged, CACHE_TTL_MS)
 
     return NextResponse.json({
       ok: true,
-      count: ranges.length,
-      sources,
-      mode: hasAnyIcalSource() ? 'live' : 'mock',
+      mode: 'live',
+      mergedCount: merged.length,
+      sources: {
+        airbnb: raw.airbnb.length,
+        vrbo: raw.vrbo.length,
+        booking: raw.booking.length,
+      },
+      persistence,
       syncedAt: new Date().toISOString(),
     })
   } catch (error) {

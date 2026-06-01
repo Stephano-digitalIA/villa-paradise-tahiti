@@ -92,10 +92,23 @@ export async function fetchVrboCalendar(): Promise<string | null> {
 }
 
 /**
+ * Fetch the Booking.com iCal export — returns `null` when `BOOKING_ICAL_URL`
+ * is missing or the request fails. Generated in the Booking.com Extranet
+ * under Rates & Availability → Sync calendars → Export calendars.
+ */
+export async function fetchBookingCalendar(): Promise<string | null> {
+  return fetchIcalText(readEnvUrl('BOOKING_ICAL_URL'), 'booking')
+}
+
+/**
  * Convenience: `true` when at least one iCal source URL is configured.
  * Used by the high-level `getBlockedDates` to decide whether to fall
  * back to mock data.
  */
 export function hasAnyIcalSource(): boolean {
-  return Boolean(readEnvUrl('AIRBNB_ICAL_URL') || readEnvUrl('VRBO_ICAL_URL'))
+  return Boolean(
+    readEnvUrl('AIRBNB_ICAL_URL') ||
+      readEnvUrl('VRBO_ICAL_URL') ||
+      readEnvUrl('BOOKING_ICAL_URL'),
+  )
 }
