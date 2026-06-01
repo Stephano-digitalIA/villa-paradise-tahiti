@@ -36,14 +36,14 @@ export function ClientsListTable({ rows }: ClientsListTableProps) {
             <tr className="border-b border-pearl-400 bg-pearl-300/40">
               {[
                 '',
-                'Name',
+                'Nom',
                 'Email',
-                'Phone',
-                'Country',
+                'Téléphone',
+                'Pays',
                 'Tags',
-                'Stays',
-                'Revenue',
-                'Last stay',
+                'Séjours',
+                'CA',
+                'Dernier séjour',
                 'Source',
                 '',
               ].map((h, i) => (

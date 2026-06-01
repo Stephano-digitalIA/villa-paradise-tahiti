@@ -52,7 +52,7 @@ export default async function BlogPage() {
             <table className="w-full text-left">
               <thead>
                 <tr className="border-b border-pearl-400 bg-pearl-300/40">
-                  {['Title', 'Tags', 'Status', 'Date', 'Actions'].map((h) => (
+                  {['Titre', 'Tags', 'Statut', 'Date', 'Actions'].map((h) => (
                     <th
                       key={h}
                       className="px-5 py-3.5 font-sans text-xs font-semibold uppercase tracking-wider text-midnight-400"

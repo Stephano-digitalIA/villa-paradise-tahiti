@@ -39,7 +39,7 @@ export default async function ProvidersPage() {
             <table className="w-full text-left">
               <thead>
                 <tr className="border-b border-pearl-400 bg-pearl-300/40">
-                  {['Name', 'Email', 'Phone', 'Services', 'Active', 'Actions'].map((h) => (
+                  {['Nom', 'Email', 'Téléphone', 'Services', 'Actif', 'Actions'].map((h) => (
                     <th
                       key={h}
                       className="px-5 py-3.5 font-sans text-xs font-semibold uppercase tracking-wider text-midnight-400"

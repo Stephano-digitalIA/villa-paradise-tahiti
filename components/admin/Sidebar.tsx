@@ -182,14 +182,14 @@ function SettingsIcon() {
 }
 
 const navItems: NavItem[] = [
-  { label: 'Dashboard', href: '/admin', icon: <DashboardIcon /> },
-  { label: 'Reservations', href: '/admin/reservations', icon: <ReservationsIcon /> },
+  { label: 'Tableau de bord', href: '/admin', icon: <DashboardIcon /> },
+  { label: 'Réservations', href: '/admin/reservations', icon: <ReservationsIcon /> },
   { label: 'Clients', href: '/admin/clients', icon: <ClientsIcon /> },
   { label: 'Prestations', href: '/admin/content/experiences', icon: <SparklesIcon /> },
-  { label: 'Calendar', href: '/admin/calendar', icon: <CalendarIcon /> },
-  { label: 'Content', href: '/admin/content', icon: <ContentIcon /> },
-  { label: 'Inquiries', href: '/admin/inquiries', icon: <InquiriesIcon /> },
-  { label: 'Settings', href: '/admin/settings', icon: <SettingsIcon /> },
+  { label: 'Calendrier', href: '/admin/calendar', icon: <CalendarIcon /> },
+  { label: 'Contenu', href: '/admin/content', icon: <ContentIcon /> },
+  { label: 'Demandes', href: '/admin/inquiries', icon: <InquiriesIcon /> },
+  { label: 'Paramètres', href: '/admin/settings', icon: <SettingsIcon /> },
 ]
 
 /**

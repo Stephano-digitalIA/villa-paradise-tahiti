@@ -183,13 +183,13 @@ export default async function CalendarPage() {
                 <thead>
                   <tr className="border-b border-pearl-400 bg-pearl-300/40">
                     {[
-                      'Ref',
-                      'Guest',
-                      'Check-in',
-                      'Check-out',
-                      'Nights',
-                      'Guests',
-                      'Status',
+                      'Réf',
+                      'Client',
+                      'Arrivée',
+                      'Départ',
+                      'Nuits',
+                      'Voyageurs',
+                      'Statut',
                     ].map((h) => (
                       <th
                         key={h}
@@ -265,7 +265,7 @@ export default async function CalendarPage() {
               <table className="w-full min-w-[600px] text-left">
                 <thead>
                   <tr className="border-b border-pearl-400 bg-pearl-300/40">
-                    {['From', 'To', 'Reason', 'Source', ''].map((h) => (
+                    {['Du', 'Au', 'Motif', 'Source', ''].map((h) => (
                       <th
                         key={h}
                         className="px-4 py-3.5 font-sans text-xs font-semibold uppercase tracking-wider text-midnight-400"

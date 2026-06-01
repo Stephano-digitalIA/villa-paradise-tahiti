@@ -179,10 +179,10 @@ export function SettingsForm({ initialSettings }: Props) {
 
       {/* Section 1 — Pricing */}
       <div className="rounded-2xl border border-pearl-400 bg-white p-6 shadow-sm">
-        <SectionTitle>Pricing</SectionTitle>
+        <SectionTitle>Tarification</SectionTitle>
         <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <NumberInput
-            label="Default Min Nights"
+            label="Nuits minimum par défaut"
             name="default_min_nights"
             defaultValue={s.default_min_nights}
             min={1}
@@ -190,7 +190,7 @@ export function SettingsForm({ initialSettings }: Props) {
             unit="nights"
           />
           <NumberInput
-            label="Default Deposit"
+            label="Acompte par défaut"
             name="default_deposit_percent"
             defaultValue={s.default_deposit_percent}
             min={0}
@@ -199,7 +199,7 @@ export function SettingsForm({ initialSettings }: Props) {
             unit="%"
           />
           <NumberInput
-            label="Default Nightly Rate"
+            label="Tarif nuit par défaut"
             name="default_nightly_rate_usd"
             defaultValue={s.default_nightly_rate_usd}
             min={0}
@@ -208,7 +208,7 @@ export function SettingsForm({ initialSettings }: Props) {
             unit="USD"
           />
           <NumberInput
-            label="Cleaning Fee"
+            label="Frais de ménage"
             name="cleaning_fee_usd"
             defaultValue={s.cleaning_fee_usd}
             min={0}
@@ -218,7 +218,7 @@ export function SettingsForm({ initialSettings }: Props) {
           />
           <div className="flex flex-col gap-1.5">
             <NumberInput
-              label="Low Season Rate (May–Jun, Oct–Nov)"
+              label="Tarif basse saison (mai–juin, oct–nov)"
               name="rate_low_usd"
               defaultValue={s.rate_low_usd}
               min={0}
@@ -228,7 +228,7 @@ export function SettingsForm({ initialSettings }: Props) {
           </div>
           <div className="flex flex-col gap-1.5">
             <NumberInput
-              label="High Season Rate (Jul–Sep, Dec 1–19)"
+              label="Tarif haute saison (juil–sept, 1–19 déc)"
               name="rate_high_usd"
               defaultValue={s.rate_high_usd}
               min={0}
@@ -238,7 +238,7 @@ export function SettingsForm({ initialSettings }: Props) {
           </div>
           <div className="flex flex-col gap-1.5">
             <NumberInput
-              label="Peak Season Rate (Dec 20–Jan 5, Easter)"
+              label="Tarif très haute saison (20 déc–5 jan, Pâques)"
               name="rate_peak_usd"
               defaultValue={s.rate_peak_usd}
               min={0}
@@ -254,26 +254,26 @@ export function SettingsForm({ initialSettings }: Props) {
         <SectionTitle>Contact</SectionTitle>
         <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
           <TextInput
-            label="Contact Email"
+            label="Email de contact"
             name="contact_email"
             defaultValue={s.contact_email}
             type="email"
             placeholder="contact@villaparadisetahiti.com"
           />
           <TextInput
-            label="Contact Phone"
+            label="Téléphone de contact"
             name="contact_phone"
             defaultValue={s.contact_phone}
             placeholder="+689 87 000 000"
           />
           <TextInput
-            label="WhatsApp Number"
+            label="Numéro WhatsApp"
             name="whatsapp_number"
             defaultValue={s.whatsapp_number}
             placeholder="+689 87 000 000"
           />
           <NumberInput
-            label="Response Time"
+            label="Délai de réponse"
             name="response_time_hours"
             defaultValue={s.response_time_hours}
             min={1}
@@ -285,31 +285,31 @@ export function SettingsForm({ initialSettings }: Props) {
 
       {/* Section 3 — Social */}
       <div className="rounded-2xl border border-pearl-400 bg-white p-6 shadow-sm">
-        <SectionTitle>Social Media</SectionTitle>
+        <SectionTitle>Réseaux sociaux</SectionTitle>
         <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
           <TextInput
-            label="Instagram URL"
+            label="URL Instagram"
             name="social_instagram"
             defaultValue={s.social_instagram}
             placeholder="https://instagram.com/villaparadisetahiti"
             type="url"
           />
           <TextInput
-            label="Facebook URL"
+            label="URL Facebook"
             name="social_facebook"
             defaultValue={s.social_facebook}
             placeholder="https://facebook.com/villaparadisetahiti"
             type="url"
           />
           <TextInput
-            label="Pinterest URL"
+            label="URL Pinterest"
             name="social_pinterest"
             defaultValue={s.social_pinterest}
             placeholder="https://pinterest.com/villaparadisetahiti"
             type="url"
           />
           <TextInput
-            label="TikTok URL"
+            label="URL TikTok"
             name="social_tiktok"
             defaultValue={s.social_tiktok}
             placeholder="https://tiktok.com/@villaparadisetahiti"
@@ -320,13 +320,13 @@ export function SettingsForm({ initialSettings }: Props) {
 
       {/* Section 4 — Cancellation Policy */}
       <div className="rounded-2xl border border-pearl-400 bg-white p-6 shadow-sm">
-        <SectionTitle>Cancellation Policy</SectionTitle>
+        <SectionTitle>Politique d'annulation</SectionTitle>
         <p className="mt-1 font-sans text-xs text-midnight-400">
           Markdown supported. Live preview shown below.
         </p>
         <div className="mt-4 grid grid-cols-1 gap-6 lg:grid-cols-2">
           <div className="flex flex-col gap-1.5">
-            <FieldLabel>Policy Markdown</FieldLabel>
+            <FieldLabel>Markdown de la politique</FieldLabel>
             <textarea
               rows={10}
               value={cancellationPolicy}
@@ -336,7 +336,7 @@ export function SettingsForm({ initialSettings }: Props) {
             />
           </div>
           <div className="flex flex-col gap-1.5">
-            <FieldLabel>Preview</FieldLabel>
+            <FieldLabel>Aperçu</FieldLabel>
             <div className="min-h-[200px] rounded-xl border border-pearl-400 bg-pearl-300/30 px-4 py-3 prose prose-sm prose-midnight max-w-none">
               {cancellationPolicy ? (
                 <ReactMarkdown remarkPlugins={[remarkGfm]}>
@@ -359,7 +359,7 @@ export function SettingsForm({ initialSettings }: Props) {
           disabled={isPending}
           className="rounded-xl bg-midnight px-8 py-3 font-sans text-sm font-medium text-pearl shadow-sm transition-opacity hover:opacity-90 disabled:opacity-50"
         >
-          {isPending ? 'Saving...' : 'Save Settings'}
+          {isPending ? 'Enregistrement…' : 'Enregistrer les paramètres'}
         </button>
       </div>
     </form>

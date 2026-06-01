@@ -25,6 +25,36 @@ function ChevronIcon() {
   )
 }
 
+/** Display label per known URL segment (admin sub-routes). Falls back to a
+ *  capitalised segment when not listed so dynamic ids stay readable. */
+const SEGMENT_LABELS: Record<string, string> = {
+  admin: 'Administration',
+  auth: 'Connexion',
+  calendar: 'Calendrier',
+  callback: 'Callback',
+  clients: 'Clients',
+  content: 'Contenu',
+  blog: 'Blog',
+  experiences: 'Prestations',
+  faq: 'FAQ',
+  gallery: 'Galerie',
+  providers: 'Prestataires',
+  reviews: 'Avis',
+  villa: 'Villa',
+  inquiries: 'Demandes',
+  new: 'Nouveau',
+  reservations: 'Réservations',
+  settings: 'Paramètres',
+  signout: 'Déconnexion',
+}
+
+function labelForSegment(seg: string): string {
+  return (
+    SEGMENT_LABELS[seg] ??
+    seg.charAt(0).toUpperCase() + seg.slice(1).replace(/-/g, ' ')
+  )
+}
+
 function buildBreadcrumbs(pathname: string) {
   const segments = pathname.split('/').filter(Boolean)
   const crumbs: { label: string; href: string }[] = []
@@ -32,8 +62,7 @@ function buildBreadcrumbs(pathname: string) {
   let href = ''
   for (const seg of segments) {
     href += `/${seg}`
-    const label = seg.charAt(0).toUpperCase() + seg.slice(1).replace(/-/g, ' ')
-    crumbs.push({ label, href })
+    crumbs.push({ label: labelForSegment(seg), href })
   }
 
   return crumbs
@@ -127,7 +156,7 @@ export function AdminHeader() {
             type="submit"
             className="rounded-lg border border-pearl-400 px-3 py-1.5 font-sans text-xs font-medium text-midnight-600 transition-colors hover:border-midnight hover:text-midnight"
           >
-            Sign Out
+            Déconnexion
           </button>
         </form>
       </div>

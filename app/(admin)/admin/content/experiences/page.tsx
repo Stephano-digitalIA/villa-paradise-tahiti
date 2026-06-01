@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { adminClient } from '@/lib/supabase/admin'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
-import { ExperienceToggles } from './ExperienceToggles'
+import { ExperienceToggle } from './ExperienceToggles'
 import type { Experience, ExcursionProvider } from '@/lib/supabase/types'
 
 export const metadata: Metadata = { title: 'Experiences — Admin' }
@@ -56,7 +56,7 @@ export default async function ExperiencesPage() {
             <table className="w-full text-left">
               <thead>
                 <tr className="border-b border-pearl-400 bg-pearl-300/40">
-                  {['Slug', 'Title', 'Category', 'Price', 'Unit', 'Active', 'Featured', 'Provider', 'Actions'].map(
+                  {['Slug', 'Titre', 'Catégorie', 'Prix', 'Unité', 'Actif', 'Mis en avant', 'Prestataire', 'Actions'].map(
                     (h) => (
                       <th
                         key={h}
@@ -90,9 +90,11 @@ export default async function ExperiencesPage() {
                       {exp.price_unit.replace('_', ' ')}
                     </td>
                     <td className="px-5 py-4">
-                      <ExperienceToggles id={exp.id} active={exp.active} featured={exp.featured} />
+                      <ExperienceToggle id={exp.id} field="active" value={exp.active} />
                     </td>
-                    <td className="px-5 py-4" />
+                    <td className="px-5 py-4">
+                      <ExperienceToggle id={exp.id} field="featured" value={exp.featured} />
+                    </td>
                     <td className="px-5 py-4 font-sans text-xs text-midnight-400">
                       {exp.excursion_providers?.name ?? '—'}
                     </td>

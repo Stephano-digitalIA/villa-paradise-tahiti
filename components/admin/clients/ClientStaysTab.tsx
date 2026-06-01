@@ -63,7 +63,7 @@ function StaysTable({ rows }: { rows: Reservation[] }) {
         <table className="w-full min-w-[760px] text-left">
           <thead>
             <tr className="border-b border-pearl-400 bg-pearl-300/40">
-              {['Ref', 'Dates', 'Nights', 'Guests', 'Total', 'Status', ''].map((h) => (
+              {['Réf', 'Dates', 'Nuits', 'Voyageurs', 'Total', 'Statut', ''].map((h) => (
                 <th
                   key={h}
                   className="px-4 py-3 font-sans text-xs font-semibold uppercase tracking-wider text-midnight-400"

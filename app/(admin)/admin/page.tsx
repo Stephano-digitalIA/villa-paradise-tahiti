@@ -214,7 +214,7 @@ export default async function AdminDashboardPage() {
                 <thead>
                   <tr className="border-b border-pearl-400 bg-pearl-300/40">
                     <th className="px-5 py-3.5 font-sans text-xs font-semibold uppercase tracking-wider text-midnight-400">
-                      Ref
+                      Réf
                     </th>
                     <th className="px-5 py-3.5 font-sans text-xs font-semibold uppercase tracking-wider text-midnight-400">
                       Client
@@ -226,7 +226,7 @@ export default async function AdminDashboardPage() {
                       Total
                     </th>
                     <th className="px-5 py-3.5 font-sans text-xs font-semibold uppercase tracking-wider text-midnight-400">
-                      Status
+                      Statut
                     </th>
                   </tr>
                 </thead>

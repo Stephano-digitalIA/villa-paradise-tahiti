@@ -65,7 +65,7 @@ export default async function ReviewsPage() {
             <table className="w-full text-left">
               <thead>
                 <tr className="border-b border-pearl-400 bg-pearl-300/40">
-                  {['Author', 'Location', 'Rating', 'Title', 'Source', 'Featured', 'Verified', 'Date', 'Actions'].map(
+                  {['Auteur', 'Lieu', 'Note', 'Titre', 'Source', 'Mis en avant', 'Vérifié', 'Date', 'Actions'].map(
                     (h) => (
                       <th
                         key={h}

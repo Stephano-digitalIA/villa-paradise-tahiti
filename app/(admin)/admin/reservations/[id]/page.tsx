@@ -454,13 +454,13 @@ export default async function ReservationDetailPage({ params }: PageProps) {
                     Type
                   </th>
                   <th className="pb-2 pr-6 font-sans text-xs font-semibold uppercase tracking-wider text-midnight-400">
-                    Recipient
+                    Destinataire
                   </th>
                   <th className="pb-2 pr-6 font-sans text-xs font-semibold uppercase tracking-wider text-midnight-400">
-                    Status
+                    Statut
                   </th>
                   <th className="pb-2 font-sans text-xs font-semibold uppercase tracking-wider text-midnight-400">
-                    Sent At
+                    Envoyé le
                   </th>
                 </tr>
               </thead>

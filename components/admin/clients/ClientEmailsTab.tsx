@@ -48,7 +48,7 @@ export function ClientEmailsTab({ emails }: ClientEmailsTabProps) {
         <table className="w-full min-w-[640px] text-left">
           <thead>
             <tr className="border-b border-pearl-400 bg-pearl-300/40">
-              {['Type', 'Recipient', 'Status', 'Sent at'].map((h) => (
+              {['Type', 'Destinataire', 'Statut', 'Envoyé le'].map((h) => (
                 <th
                   key={h}
                   className="px-4 py-3 font-sans text-xs font-semibold uppercase tracking-wider text-midnight-400"

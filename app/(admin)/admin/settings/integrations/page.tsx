@@ -3,7 +3,7 @@ import { adminClient } from '@/lib/supabase/admin'
 import { IcalSyncButton } from './_components/IcalSyncButton'
 
 export const metadata: Metadata = {
-  title: 'Integrations — Villa Paradise Tahiti Admin',
+  title: 'Intégrations — Villa Paradise Tahiti Admin',
 }
 
 export const dynamic = 'force-dynamic'
@@ -31,7 +31,7 @@ export default async function IntegrationsPage() {
     <div className="p-8">
       <div>
         <h1 className="font-heading text-2xl font-semibold text-midnight">
-          Integrations
+          Intégrations
         </h1>
         <p className="mt-1 font-sans text-sm text-midnight-400">
           iCal sync and email configuration
@@ -42,7 +42,7 @@ export default async function IntegrationsPage() {
         {/* iCal Sync */}
         <div className="rounded-2xl border border-pearl-400 bg-white p-6 shadow-sm">
           <h2 className="font-heading text-lg font-semibold text-midnight">
-            iCal Sync
+            Synchronisation iCal
           </h2>
           <p className="mt-1 font-sans text-sm text-midnight-400">
             Automatically syncs Airbnb blocked dates via iCal feed.
@@ -124,7 +124,7 @@ export default async function IntegrationsPage() {
         {/* Email Config */}
         <div className="rounded-2xl border border-pearl-400 bg-white p-6 shadow-sm">
           <h2 className="font-heading text-lg font-semibold text-midnight">
-            Email Configuration
+            Configuration Email
           </h2>
           <p className="mt-1 font-sans text-sm text-midnight-400">
             Transactional email settings via Resend.
@@ -134,7 +134,7 @@ export default async function IntegrationsPage() {
             {/* From address */}
             <div className="flex flex-col gap-1.5">
               <label className="font-sans text-xs font-semibold uppercase tracking-wider text-midnight-400">
-                From Address
+                Adresse d'envoi
               </label>
               <div className="flex items-center gap-3 rounded-xl border border-pearl-400 bg-pearl px-4 py-2.5">
                 <span className="font-sans text-sm text-midnight">
@@ -160,7 +160,7 @@ export default async function IntegrationsPage() {
             {/* Owner notification email */}
             <div className="flex flex-col gap-1.5">
               <label className="font-sans text-xs font-semibold uppercase tracking-wider text-midnight-400">
-                Owner Notification Email
+                Email de notification propriétaire
               </label>
               <div className="flex items-center gap-3 rounded-xl border border-pearl-400 bg-pearl px-4 py-2.5">
                 <span className="font-sans text-sm text-midnight">

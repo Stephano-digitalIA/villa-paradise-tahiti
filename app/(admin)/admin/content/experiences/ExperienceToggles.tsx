@@ -1,33 +1,45 @@
 'use client'
 
 import { useState } from 'react'
+
 import { ToggleSwitch } from '@/components/admin/ToggleSwitch'
+
 import { toggleExperienceField } from './actions'
 
-type Props = { id: string; active: boolean; featured: boolean }
+interface ExperienceToggleProps {
+  id: string
+  field: 'active' | 'featured'
+  value: boolean
+}
 
-export function ExperienceToggles({ id, active: initialActive, featured: initialFeatured }: Props) {
-  const [active, setActive] = useState(initialActive)
-  const [featured, setFeatured] = useState(initialFeatured)
+/**
+ * Single inline toggle for one experience boolean field.
+ *
+ * Use one instance per column so the table layout stays in sync with
+ * the header (Active / Featured). Local optimistic state flips on click
+ * and is then persisted server-side via the toggleExperienceField action.
+ */
+export function ExperienceToggle({
+  id,
+  field,
+  value: initialValue,
+}: ExperienceToggleProps) {
+  const [value, setValue] = useState(initialValue)
 
   return (
-    <div className="flex items-center gap-3">
-      <ToggleSwitch
-        checked={active}
-        label="Active"
-        onToggle={async () => {
-          await toggleExperienceField(id, 'active', !active)
-          setActive((v) => !v)
-        }}
-      />
-      <ToggleSwitch
-        checked={featured}
-        label="Featured"
-        onToggle={async () => {
-          await toggleExperienceField(id, 'featured', !featured)
-          setFeatured((v) => !v)
-        }}
-      />
-    </div>
+    <ToggleSwitch
+      checked={value}
+      label={field === 'active' ? 'Active' : 'Featured'}
+      onToggle={async () => {
+        const next = !value
+        // Optimistic flip — revert if the server action throws.
+        setValue(next)
+        try {
+          await toggleExperienceField(id, field, next)
+        } catch {
+          setValue((v) => !v)
+        }
+      }}
+    />
   )
 }

@@ -169,16 +169,16 @@ export default async function ReservationsPage({ searchParams }: PageProps) {
               <thead>
                 <tr className="border-b border-pearl-400 bg-pearl-300/40">
                   {[
-                    'Ref',
+                    'Réf',
                     'Client',
-                    'Check-in',
-                    'Check-out',
-                    'Nights',
-                    'Guests',
+                    'Arrivée',
+                    'Départ',
+                    'Nuits',
+                    'Voyageurs',
                     'Total',
-                    'Deposit',
-                    'Status',
-                    'Created',
+                    'Acompte',
+                    'Statut',
+                    'Créée le',
                     '',
                   ].map((h) => (
                     <th
