@@ -95,7 +95,7 @@ const BLOCK_STYLE: Record<string, { bar: string; dot: string; label: string }> =
   direct_booking: { bar: 'bg-lagoon         text-pearl',  dot: 'bg-lagoon',      label: 'Direct' },
   owner:          { bar: 'bg-midnight       text-pearl',  dot: 'bg-midnight',    label: 'Owner' },
   maintenance:    { bar: 'bg-amber-600/80   text-white',  dot: 'bg-amber-600',   label: 'Maintenance' },
-  turnover:       { bar: 'bg-red-600/80     text-white',  dot: 'bg-red-600',     label: 'Cleaning' },
+  turnover:       { bar: 'bg-emerald-800    text-white',  dot: 'bg-emerald-800', label: 'Cleaning' },
 }
 
 function blockStyle(source: string) {

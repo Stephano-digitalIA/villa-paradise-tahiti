@@ -78,15 +78,15 @@ export function DateRangePicker() {
               guest) and can&apos;t be selected.
             </p>
           </div>
-          <div className="inline-flex items-center gap-2 self-start rounded-full border border-red-600/40 bg-red-600/5 px-3 py-1.5">
+          <div className="inline-flex items-center gap-2 self-start rounded-full border border-emerald-800/40 bg-emerald-800/5 px-3 py-1.5">
             <span
-              className="inline-block h-3 w-3 shrink-0 rounded-full border border-red-600/50 bg-red-600/30"
+              className="inline-block h-3 w-3 shrink-0 rounded-full border border-emerald-800/50 bg-emerald-800/30"
               aria-hidden="true"
             />
             <p className="font-sans text-xs text-midnight-400">
-              <span className="font-semibold text-midnight">Red</span> dates
-              are mandatory cleaning &amp; turnover days (the day after every
-              guest stay) and are reserved for housekeeping.
+              <span className="font-semibold text-midnight">Dark green</span>{' '}
+              dates are mandatory cleaning &amp; turnover days (the day after
+              every guest stay) and are reserved for housekeeping.
             </p>
           </div>
         </div>
