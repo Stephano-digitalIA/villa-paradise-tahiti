@@ -155,6 +155,25 @@ export default function GettingHerePage() {
         </Container>
       </Section>
 
+      {/* ─── Flight search form (moved above routes for instant action) ── */}
+      <Section tone="pearl" spacing="compact">
+        <Container className="max-w-3xl">
+          <div className="mb-8 flex flex-col items-center gap-3 text-center">
+            <p className="eyebrow">Live search</p>
+            <h2 className="font-heading text-h2-luxe font-medium text-midnight">
+              Check fares &amp; schedules
+            </h2>
+            <p className="max-w-prose font-sans text-body-md text-midnight-400">
+              Pick your departure city and dates — Skyscanner opens in a
+              focused popup, pre-filled with your search. We may earn a small
+              commission if you book through that link, at no extra cost to
+              you.
+            </p>
+          </div>
+          <FlightSearchForm />
+        </Container>
+      </Section>
+
       {/* ─── Airline logos banner ────────────────────────── */}
       <AirlineLogosBanner />
 
@@ -224,27 +243,8 @@ export default function GettingHerePage() {
 
           <p className="mt-6 text-center font-sans text-xs italic text-midnight-300">
             Seasonal services (Delta, Air Tahiti Nui Tokyo) vary by month —
-            Skyscanner below reflects current availability.
+            the Skyscanner search above reflects current availability.
           </p>
-        </Container>
-      </Section>
-
-      {/* ─── Flight search form ──────────────────────────── */}
-      <Section tone="pearl" spacing="default">
-        <Container className="max-w-3xl">
-          <div className="mb-8 flex flex-col items-center gap-3 text-center">
-            <p className="eyebrow">Live search</p>
-            <h2 className="font-heading text-h2-luxe font-medium text-midnight">
-              Check fares &amp; schedules
-            </h2>
-            <p className="max-w-prose font-sans text-body-md text-midnight-400">
-              Pick your departure city and dates — we&apos;ll open Skyscanner
-              in a new tab with your search pre-filled. We may earn a small
-              commission if you book through that link, at no extra cost to
-              you.
-            </p>
-          </div>
-          <FlightSearchForm />
         </Container>
       </Section>
 

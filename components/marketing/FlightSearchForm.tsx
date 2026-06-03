@@ -146,7 +146,46 @@ export function FlightSearchForm() {
     }
 
     const url = buildSkyscannerUrl({ origin, departure, returnDate, adults })
-    window.open(url, '_blank', 'noopener,noreferrer')
+
+    // Skyscanner blocks iframe embeds (X-Frame-Options), so a true
+    // in-page modal is impossible. The closest UX is a focused popup
+    // window centred on the user's screen — 1100×720 fits the search
+    // results layout without filling the screen. `popup=yes` tells
+    // Chromium-based browsers to treat this as a chromeless popup
+    // rather than a full tab.
+    const w = 1100
+    const h = 720
+    const left =
+      typeof window !== 'undefined'
+        ? Math.max(0, Math.round((window.screen.availWidth - w) / 2))
+        : 100
+    const top =
+      typeof window !== 'undefined'
+        ? Math.max(0, Math.round((window.screen.availHeight - h) / 2))
+        : 60
+    const features = [
+      `width=${w}`,
+      `height=${h}`,
+      `left=${left}`,
+      `top=${top}`,
+      'popup=yes',
+      'noopener',
+      'noreferrer',
+      'menubar=no',
+      'toolbar=no',
+      'location=yes',
+      'status=no',
+      'resizable=yes',
+      'scrollbars=yes',
+    ].join(',')
+
+    const popup = window.open(url, 'skyscanner-search', features)
+    // Popup blockers can return null — fall back to a regular new tab.
+    if (!popup) {
+      window.open(url, '_blank', 'noopener,noreferrer')
+    } else {
+      popup.focus()
+    }
   }
 
   return (
@@ -292,7 +331,7 @@ export function FlightSearchForm() {
 
       <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <p className="font-sans text-body-sm text-midnight-300">
-          Opens in a new tab
+          Opens in a focused popup window
         </p>
         <Button type="submit" variant="primary" size="lg">
           Find flights
