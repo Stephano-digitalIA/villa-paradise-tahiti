@@ -11,6 +11,11 @@ import {
   type CalendarBlock,
   type CalendarReservation,
 } from './_components/MonthCalendarView'
+import {
+  GUEST_STAY_SOURCES,
+  TURNOVER_SOURCE,
+  nextIsoDay,
+} from '@/lib/booking/availability-client'
 
 export const metadata: Metadata = {
   title: 'Calendar — Villa Paradise Tahiti Admin',
@@ -131,6 +136,29 @@ export default async function CalendarPage() {
     source: b.source,
     reason: b.reason,
   }))
+
+  // Inject a synthetic 1-day "turnover" block after every guest stay
+  // (Airbnb / Booking / VRBO / direct booking) — but skip when another
+  // block already covers that day (back-to-back stays). Same rule as
+  // the public availability layer; rendered in red by MonthCalendarView.
+  for (const block of allBlocks) {
+    if (!GUEST_STAY_SOURCES.has(block.source)) continue
+    const turnoverDay = nextIsoDay(block.blocked_to)
+    const shadowed = allBlocks.some(
+      (other) =>
+        other.id !== block.id &&
+        other.blocked_from <= turnoverDay &&
+        other.blocked_to >= turnoverDay,
+    )
+    if (shadowed) continue
+    calendarBlocks.push({
+      id: `turnover-${block.id}`,
+      blocked_from: turnoverDay,
+      blocked_to: turnoverDay,
+      source: TURNOVER_SOURCE,
+      reason: `Cleaning day after ${block.source} stay`,
+    })
+  }
 
   return (
     <div className="p-8">

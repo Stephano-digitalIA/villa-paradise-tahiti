@@ -78,3 +78,58 @@
     @apply text-eyebrow font-medium uppercase text-gold;
   }
 }
+
+/* ──────────────────────────────────────────────────────────────────────
+ * react-day-picker (used by components/ui/DateField.tsx) — strengthen
+ * the contrast between available and blocked days. Booked dates (Airbnb,
+ * owner, etc.) get a coral wash + strikethrough so guests immediately
+ * see they're not selectable, without us having to write a custom
+ * legend everywhere the picker is used.
+ * ──────────────────────────────────────────────────────────────────── */
+
+.rdp-day_button {
+  font-weight: 500;
+}
+
+/* Available day: clear dark text on white. */
+.rdp-day:not(.rdp-disabled):not(.rdp-outside) .rdp-day_button {
+  color: #0c1f33; /* midnight */
+}
+
+.rdp-day:not(.rdp-disabled):not(.rdp-outside) .rdp-day_button:hover {
+  background-color: rgba(201, 166, 107, 0.15); /* gold/15 */
+  color: #0c1f33;
+}
+
+/* Blocked / disabled day: dim coral wash, strikethrough, not clickable. */
+.rdp-day.rdp-disabled:not(.rdp-outside) .rdp-day_button {
+  background-color: rgba(244, 119, 96, 0.12); /* coral/12 */
+  color: #b56b5a; /* dimmed coral */
+  text-decoration: line-through;
+  text-decoration-color: rgba(181, 107, 90, 0.55);
+  text-decoration-thickness: 1.5px;
+  opacity: 0.85;
+  cursor: not-allowed;
+  border-radius: 9999px;
+}
+
+/* Turnover day (1-day cleaning after a guest stay) — saturated red so
+   it pops out from regular booked days. Overrides the coral block style
+   above when both classes are present. */
+.rdp-day.rdp-day-turnover:not(.rdp-outside) .rdp-day_button,
+.rdp-day.rdp-day-turnover.rdp-disabled:not(.rdp-outside) .rdp-day_button {
+  background-color: rgba(220, 38, 38, 0.22); /* red-600/22 */
+  color: #991b1b; /* red-800 */
+  text-decoration: line-through;
+  text-decoration-color: rgba(153, 27, 27, 0.7);
+  text-decoration-thickness: 1.5px;
+  opacity: 1;
+  cursor: not-allowed;
+  border-radius: 9999px;
+  font-weight: 600;
+}
+
+/* Outside-month days stay almost invisible (don't compete with blocks). */
+.rdp-day.rdp-outside .rdp-day_button {
+  color: rgba(12, 31, 51, 0.18);
+}

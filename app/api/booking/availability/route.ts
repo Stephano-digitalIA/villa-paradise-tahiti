@@ -1,39 +1,37 @@
 /**
- * GET /api/booking/availability — public read of blocked dates (Phase E1).
+ * GET /api/booking/availability — public read of blocked dates.
  *
- * Returns the merged Airbnb + VRBO blocked ranges in the normalised
- * `{ start, end, source, summary? }` shape so a future date-picker can
- * render unavailability without hitting Airbnb directly.
+ * Source of truth: the Supabase `blocked_dates` table, which receives
+ * every block from every channel:
+ *   - hourly iCal sync writes `airbnb`, `vrbo`, `booking`
+ *   - admin manual form writes `owner`, `maintenance`
+ *   - payment webhooks write `direct_booking`
  *
- * Caching strategy:
- *   - `s-maxage=60`           — CDN serves the same payload for 60 s
- *     between origin hits, capping our cost during traffic spikes.
- *   - `stale-while-revalidate=300` — even stale entries are served while
- *     the CDN refreshes in the background, so we never block a page
- *     render on iCal latency.
- *   - The hourly Vercel cron at `/api/ical/sync` forces an upstream
- *     refresh; this endpoint stays read-only.
+ * Plus pending reservations (rows in `reservations` with
+ * `payment_status='pending'`) — these aren't in `blocked_dates` yet
+ * because the webhook hasn't fired, but they DO hold the dates as
+ * tentatively booked.
+ *
+ * Caching:
+ *   - `s-maxage=60`             — CDN caches identical responses 60s.
+ *   - `stale-while-revalidate=300` — serves stale during background
+ *      refresh, never blocks the page on DB latency.
  */
 
 import { NextResponse } from 'next/server'
 
-import { getBlockedDates, hasAnyIcalSource } from '@/lib/ical'
+import { getPublicBlockedRanges } from '@/lib/booking/availability'
 
 export const runtime = 'nodejs'
-// Force dynamic so each request consults the live in-memory cache
-// (refreshed hourly by `/api/ical/sync`) rather than serving a snapshot
-// frozen at build time. Edge caching for the response itself is handled
-// by the `Cache-Control` header below.
 export const dynamic = 'force-dynamic'
 
 export async function GET() {
   try {
-    const ranges = await getBlockedDates()
+    const ranges = await getPublicBlockedRanges()
 
     return NextResponse.json(
       {
         blockedRanges: ranges,
-        mode: hasAnyIcalSource() ? 'live' : 'mock',
         count: ranges.length,
       },
       {
@@ -48,7 +46,6 @@ export async function GET() {
     return NextResponse.json(
       {
         blockedRanges: [],
-        mode: 'error',
         count: 0,
         error: error instanceof Error ? error.message : String(error),
       },

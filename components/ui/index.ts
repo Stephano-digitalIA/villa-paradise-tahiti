@@ -18,5 +18,6 @@ export {
   type CardProps,
 } from './Card'
 export { Container, type ContainerProps } from './Container'
+export { DateField, type DateFieldProps } from './DateField'
 export { Input, type InputProps } from './Input'
 export { Section, type SectionProps } from './Section'

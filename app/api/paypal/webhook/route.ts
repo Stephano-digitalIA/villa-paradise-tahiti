@@ -32,6 +32,7 @@ import {
   type BookingConfirmationData,
 } from '@/lib/resend'
 import { getPayPalOrder, verifyPayPalWebhook } from '@/lib/paypal'
+import { checkAvailability } from '@/lib/booking/availability'
 import { adminClient } from '@/lib/supabase/admin'
 
 export const runtime = 'nodejs'
@@ -233,14 +234,38 @@ export async function POST(request: Request) {
             .maybeSingle()
 
           if (res?.check_in && res?.check_out) {
-            await adminClient.from('blocked_dates').insert({
-              blocked_from: res.check_in,
-              blocked_to: res.check_out,
-              reason: `Booking ${reservationRef}`,
-              source: 'direct_booking',
-              source_ref: reservationRef,
-              reservation_id: null,
+            // Final race guard — same logic as the Stripe webhook.
+            const availability = await checkAvailability(res.check_in, res.check_out, {
+              excludeReservationRef: reservationRef,
             })
+
+            if (!availability.ok) {
+              // eslint-disable-next-line no-console
+              console.error(
+                '[paypal:webhook] CRITICAL: race-condition double-booking detected — payment captured but dates conflict',
+                {
+                  reservationRef,
+                  conflicts: availability.conflicts,
+                },
+              )
+              await adminClient
+                .from('reservations')
+                .update({
+                  internal_notes:
+                    `[CONFLICT-REVIEW] Race-condition double booking. ` +
+                    `Conflicts: ${availability.conflicts.map((c) => `${c.label} (${c.from} → ${c.to})`).join('; ')}`,
+                })
+                .eq('reservation_ref', reservationRef)
+            } else {
+              await adminClient.from('blocked_dates').insert({
+                blocked_from: res.check_in,
+                blocked_to: res.check_out,
+                reason: `Booking ${reservationRef}`,
+                source: 'direct_booking',
+                source_ref: reservationRef,
+                reservation_id: null,
+              })
+            }
           }
         } catch (err) {
           // eslint-disable-next-line no-console

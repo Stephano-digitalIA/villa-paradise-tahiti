@@ -30,6 +30,7 @@ import type Stripe from 'stripe'
 import { NextResponse } from 'next/server'
 
 import { parseExperiencesMetadata } from '@/lib/booking'
+import { checkAvailability } from '@/lib/booking/availability'
 import {
   sendBookingConfirmationGuest,
   sendBookingNotificationOwner,
@@ -184,14 +185,48 @@ export async function POST(request: Request) {
 
         if (metadata.checkIn && metadata.checkOut) {
           try {
-            await adminClient.from('blocked_dates').insert({
-              blocked_from: metadata.checkIn,
-              blocked_to: metadata.checkOut,
-              reason: `Booking ${reservationRef}`,
-              source: 'direct_booking',
-              source_ref: reservationRef,
-              reservation_id: null,
-            })
+            // Final race guard — re-check just before we INSERT. Catches
+            // the rare case where two payments completed between checkout
+            // and webhook (the API-level check at /api/checkout is the
+            // primary defense; this is the last line).
+            const availability = await checkAvailability(
+              metadata.checkIn,
+              metadata.checkOut,
+              { excludeReservationRef: reservationRef },
+            )
+
+            if (!availability.ok) {
+              // eslint-disable-next-line no-console
+              console.error(
+                '[stripe:webhook] CRITICAL: race-condition double-booking detected — payment captured but dates conflict',
+                {
+                  reservationRef,
+                  conflicts: availability.conflicts,
+                },
+              )
+              // Flag the reservation with a sentinel so the admin spots it
+              // immediately in the reservations list. Payment stays
+              // `deposit_paid` (money was taken, that's factual) — the
+              // operator decides whether to refund or relocate the guest.
+              await adminClient
+                .from('reservations')
+                .update({
+                  internal_notes:
+                    `[CONFLICT-REVIEW] Race-condition double booking. ` +
+                    `Conflicts: ${availability.conflicts.map((c) => `${c.label} (${c.from} → ${c.to})`).join('; ')}`,
+                })
+                .eq('reservation_ref', reservationRef)
+              // Don't insert into blocked_dates — would only deepen the mess.
+            } else {
+              await adminClient.from('blocked_dates').insert({
+                blocked_from: metadata.checkIn,
+                blocked_to: metadata.checkOut,
+                reason: `Booking ${reservationRef}`,
+                source: 'direct_booking',
+                source_ref: reservationRef,
+                reservation_id: null,
+              })
+            }
           } catch (err) {
             // eslint-disable-next-line no-console
             console.error('[stripe:webhook] blocked_dates insert failed:', err)

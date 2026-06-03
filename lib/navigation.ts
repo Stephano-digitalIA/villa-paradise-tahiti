@@ -23,6 +23,7 @@ export const mainNav: readonly NavLink[] = [
   { label: 'Experiences', href: '/experiences' },
   { label: 'Gallery', href: '/gallery' },
   { label: 'Rates', href: '/rates' },
+  { label: 'Getting Here', href: '/getting-here' },
   { label: 'Reviews', href: '/reviews' },
   { label: 'Blog', href: '/blog' },
   { label: 'FAQ', href: '/faq' },
@@ -43,6 +44,7 @@ export const exploreNav: readonly NavLink[] = [
  * Liens regroupés pour la colonne "Information" du footer.
  */
 export const informationNav: readonly NavLink[] = [
+  { label: 'Getting Here', href: '/getting-here' },
   { label: 'FAQ', href: '/faq' },
   { label: 'Reviews', href: '/reviews' },
   { label: 'Blog', href: '/blog' },

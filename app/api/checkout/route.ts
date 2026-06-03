@@ -40,6 +40,7 @@ import {
   toPricingSettings,
   type BookingState,
 } from '@/lib/booking'
+import { checkAvailability } from '@/lib/booking/availability'
 import { createStripeCheckoutSession, isStripeConfigured } from '@/lib/stripe'
 import { createPayPalOrder, isPayPalConfigured } from '@/lib/paypal'
 import { sanityFetch } from '@/lib/sanity/fetcher'
@@ -145,6 +146,38 @@ export async function POST(request: Request) {
       { error: 'Reservations must be made at least 2 days before check-in.' },
       { status: 422 },
     )
+  }
+
+  /* ----- Availability guard (race-condition safe) ------------------- */
+  // Refuse the booking if the [checkIn, checkOut) range overlaps anything
+  // already in blocked_dates (Airbnb, owner, maintenance, prior direct
+  // bookings) OR a pending reservation. Runs BEFORE we insert a pending
+  // row of our own, so two simultaneous checkouts can't both succeed.
+  if (booking.checkIn && booking.checkOut) {
+    try {
+      const availability = await checkAvailability(booking.checkIn, booking.checkOut)
+      if (!availability.ok) {
+        return NextResponse.json(
+          {
+            error: 'These dates are no longer available.',
+            conflicts: availability.conflicts.map((c) => ({
+              from: c.from,
+              to: c.to,
+              source: c.source,
+            })),
+          },
+          { status: 409 },
+        )
+      }
+    } catch (err) {
+      // Fail closed — if we can't verify, deny rather than risk a double-booking.
+      // eslint-disable-next-line no-console
+      console.error('[api/checkout] availability check failed', err)
+      return NextResponse.json(
+        { error: 'Could not verify availability — please try again.' },
+        { status: 503 },
+      )
+    }
   }
 
   // Determine the actual amount to charge today based on paymentOption.

@@ -47,3 +47,17 @@ export {
   type ReservationLineItem,
   type ExperienceCatalogEntry,
 } from './reservation'
+
+// Client-safe only (pure overlap + type).
+//
+// IMPORTANT: do NOT re-export from './availability' here — that module
+// imports the Supabase admin client and its server-only env vars. Even a
+// `export { ... } from './availability'` statement makes webpack pull
+// the module into any bundle that imports from this barrel, throwing
+// `supabaseKey is required` on the client.
+//
+// Server-side callers import directly from `@/lib/booking/availability`.
+export {
+  rangeOverlapsAny,
+  type PublicBlockedRange,
+} from './availability-client'

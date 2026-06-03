@@ -213,32 +213,20 @@ function Row({ label, value, hint }: RowProps) {
  * ------------------------------------------------------------------------- */
 
 /**
- * Format the stay window for display, e.g. `Jul 15 – Jul 22, 2026`.
- * Returns an empty string when either bound is missing/invalid so the
- * caller can fall back to a placeholder.
+ * Format the stay window for display in US `mm/dd/yyyy` format, e.g.
+ * `07/15/2026 – 07/22/2026`. Returns an empty string when either bound
+ * is missing/invalid so the caller can fall back to a placeholder.
  */
 function formatStayRange(checkIn: string | null, checkOut: string | null): string {
-  const a = parseISO(checkIn)
-  const b = parseISO(checkOut)
-  if (!a || !b) return ''
-  const sameYear = a.getUTCFullYear() === b.getUTCFullYear()
-  const fmtA = new Intl.DateTimeFormat('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: sameYear ? undefined : 'numeric',
-    timeZone: 'UTC',
-  })
-  const fmtB = new Intl.DateTimeFormat('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-    timeZone: 'UTC',
-  })
-  return `${fmtA.format(a)} – ${fmtB.format(b)}`
+  if (!isIso(checkIn) || !isIso(checkOut)) return ''
+  return `${toUsDate(checkIn!)} – ${toUsDate(checkOut!)}`
 }
 
-function parseISO(iso: string | null): Date | null {
-  if (!iso || !/^\d{4}-\d{2}-\d{2}$/.test(iso)) return null
-  const [y, m, d] = iso.split('-').map(Number)
-  return new Date(Date.UTC(y, m - 1, d))
+function isIso(iso: string | null): iso is string {
+  return !!iso && /^\d{4}-\d{2}-\d{2}$/.test(iso)
+}
+
+function toUsDate(iso: string): string {
+  const [y, m, d] = iso.split('-')
+  return `${m}/${d}/${y}`
 }

@@ -31,7 +31,12 @@ export function PriceSummary({ className }: PriceSummaryProps) {
     validation,
     settings,
     removeExperience,
+    availabilityConflict,
   } = useBooking()
+
+  // Block the CTA when the picked range overlaps a blocked period —
+  // even if the pricing/min-nights validation is otherwise green.
+  const canContinue = validation.isValid && !availabilityConflict
 
   const depositPercent = settings?.defaultDepositPercent ?? 30
   const hasNights = breakdown.nights > 0
@@ -170,25 +175,28 @@ export function PriceSummary({ className }: PriceSummaryProps) {
       {/* ─── CTA ─────────────────────────────────────────────────────── */}
       <div className="flex flex-col gap-3">
         <Button
-          asChild={validation.isValid}
+          asChild={canContinue}
           variant="primary"
           size="lg"
           className="w-full"
-          disabled={!validation.isValid}
-          aria-disabled={!validation.isValid}
+          disabled={!canContinue}
+          aria-disabled={!canContinue}
         >
-          {validation.isValid ? (
+          {canContinue ? (
             <Link href="/booking/checkout">Continue to checkout</Link>
           ) : (
             <span>Continue to checkout</span>
           )}
         </Button>
 
-        {!validation.isValid && validation.issues.length > 0 ? (
+        {!canContinue ? (
           <ul
             className="flex flex-col gap-1 text-xs text-midnight-400"
             aria-live="polite"
           >
+            {availabilityConflict ? (
+              <li>· These dates aren&apos;t available — pick a different window.</li>
+            ) : null}
             {validation.issues.map((issue) => (
               <li key={issue}>· {issue}</li>
             ))}
@@ -237,20 +245,15 @@ function Row({ label, value, hint }: RowProps) {
  * ------------------------------------------------------------------------- */
 
 function formatStayRange(checkIn: string, checkOut: string): string {
-  const a = parseISO(checkIn)
-  const b = parseISO(checkOut)
-  if (!a || !b) return ''
-  const fmt = new Intl.DateTimeFormat('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-    timeZone: 'UTC',
-  })
-  return `${fmt.format(a)} → ${fmt.format(b)}`
+  if (!isIso(checkIn) || !isIso(checkOut)) return ''
+  return `${toUsDate(checkIn)} → ${toUsDate(checkOut)}`
 }
 
-function parseISO(iso: string): Date | null {
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return null
-  const [y, m, d] = iso.split('-').map(Number)
-  return new Date(Date.UTC(y, m - 1, d))
+function isIso(iso: string): boolean {
+  return /^\d{4}-\d{2}-\d{2}$/.test(iso)
+}
+
+function toUsDate(iso: string): string {
+  const [y, m, d] = iso.split('-')
+  return `${m}/${d}/${y}`
 }

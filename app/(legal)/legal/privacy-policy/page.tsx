@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import { LegalPageHeader } from '@/components/sections/legal'
 import { buildMetadata } from '@/lib/seo'
 
-const LAST_UPDATED = 'May 1, 2026'
+const LAST_UPDATED = 'June 2, 2026'
 
 export const metadata: Metadata = buildMetadata({
   title: 'Privacy Policy — Villa Paradise Tahiti',
@@ -161,6 +161,18 @@ export default function PrivacyPolicyPage() {
           subpoena, or to enforce our Terms of Service.
         </li>
       </ul>
+
+      <h2>3a. Affiliate links</h2>
+      <p>
+        Our <a href="/getting-here">Getting Here</a> page includes a flight
+        search tool that hands you off to{' '}
+        <strong>Skyscanner</strong> in a new tab. When you book a flight
+        after clicking that link, we may earn a small commission from
+        Skyscanner at no extra cost to you. We do not load Skyscanner&apos;s
+        tracking scripts on our own pages, and clicking the link is the
+        moment you choose to share data with them — at which point their
+        own privacy policy applies.
+      </p>
 
       <h2>4. Cookies and similar technologies</h2>
       <p>We use four categories of cookies:</p>

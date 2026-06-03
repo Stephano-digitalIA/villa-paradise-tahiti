@@ -40,10 +40,22 @@ import {
   type PriceBreakdown,
   type SelectedExperience,
 } from '@/lib/booking'
+// Direct import from the client-safe module — going through the barrel
+// risks dragging the server-only `adminClient` into the browser bundle.
+import {
+  rangeOverlapsAny,
+  type PublicBlockedRange,
+} from '@/lib/booking/availability-client'
 
 /* ---------------------------------------------------------------------------
  * Context shape
  * ------------------------------------------------------------------------- */
+
+export interface AvailabilityConflict {
+  start: string
+  end: string
+  source: string
+}
 
 export interface BookingContextValue {
   /** Sanity-provided list of available experiences (filtered upstream). */
@@ -58,6 +70,16 @@ export interface BookingContextValue {
   validation: BookingValidation
   /** True until the localStorage rehydration has run (avoids hydration mismatch). */
   hydrated: boolean
+
+  /* Availability — populated from /api/booking/availability on mount */
+  blockedRanges: PublicBlockedRange[]
+  /** True while the initial fetch is in flight. */
+  availabilityLoading: boolean
+  /**
+   * Set when the picked date range overlaps a blocked range. Null when
+   * the range is free or when either date is missing.
+   */
+  availabilityConflict: AvailabilityConflict | null
 
   /* mutators */
   setCheckIn: (date: string | null) => void
@@ -93,6 +115,8 @@ export interface BookingProviderProps {
 export function BookingProvider({ experiences, settings, children }: BookingProviderProps) {
   const [state, setState] = useState<BookingState>(DEFAULT_STATE)
   const [hydrated, setHydrated] = useState(false)
+  const [blockedRanges, setBlockedRanges] = useState<PublicBlockedRange[]>([])
+  const [availabilityLoading, setAvailabilityLoading] = useState(true)
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   /* ---- Rehydrate from localStorage on mount (client only) ------------- */
@@ -109,6 +133,31 @@ export function BookingProvider({ experiences, settings, children }: BookingProv
     setHydrated(true)
     // We only want to read storage once.
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  /* ---- Fetch unavailable ranges from the public endpoint ------------- */
+  useEffect(() => {
+    let cancelled = false
+    async function load() {
+      try {
+        const res = await fetch('/api/booking/availability', { cache: 'no-store' })
+        if (!res.ok) throw new Error(`HTTP ${res.status}`)
+        const json = (await res.json()) as { blockedRanges?: PublicBlockedRange[] }
+        if (!cancelled) {
+          setBlockedRanges(json.blockedRanges ?? [])
+        }
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.error('[booking] availability fetch failed:', err)
+        if (!cancelled) setBlockedRanges([])
+      } finally {
+        if (!cancelled) setAvailabilityLoading(false)
+      }
+    }
+    load()
+    return () => {
+      cancelled = true
+    }
   }, [])
 
   /* ---- Debounced save on every change after hydration ----------------- */
@@ -132,6 +181,27 @@ export function BookingProvider({ experiences, settings, children }: BookingProv
     () => validateBookingState(state, breakdown),
     [state, breakdown],
   )
+
+  /**
+   * Compares the currently picked range against `blockedRanges`. Pure —
+   * runs on every state / blockedRanges change without hitting the
+   * network. Returns null when either date is missing.
+   */
+  const availabilityConflict = useMemo<AvailabilityConflict | null>(() => {
+    if (!state.checkIn || !state.checkOut) return null
+    const result = rangeOverlapsAny(state.checkIn, state.checkOut, blockedRanges)
+    if (!result.conflict) return null
+    return {
+      start: result.conflict.start,
+      end: result.conflict.end,
+      // `source` exists on PublicBlockedRange but rangeOverlapsAny only
+      // returns start/end — re-find the original to surface the label.
+      source:
+        blockedRanges.find(
+          (r) => r.start === result.conflict!.start && r.end === result.conflict!.end,
+        )?.source ?? 'unknown',
+    }
+  }, [state.checkIn, state.checkOut, blockedRanges])
 
   /* ---- Actions -------------------------------------------------------- */
   const setCheckIn = useCallback((date: string | null) => {
@@ -237,6 +307,9 @@ export function BookingProvider({ experiences, settings, children }: BookingProv
       breakdown,
       validation,
       hydrated,
+      blockedRanges,
+      availabilityLoading,
+      availabilityConflict,
       setCheckIn,
       setCheckOut,
       setGuests,
@@ -254,6 +327,9 @@ export function BookingProvider({ experiences, settings, children }: BookingProv
       breakdown,
       validation,
       hydrated,
+      blockedRanges,
+      availabilityLoading,
+      availabilityConflict,
       setCheckIn,
       setCheckOut,
       setGuests,
