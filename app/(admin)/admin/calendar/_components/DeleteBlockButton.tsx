@@ -21,12 +21,12 @@ export function DeleteBlockButton({ blockId }: Props) {
         })
         if (!res.ok) {
           const body = await res.json().catch(() => ({}))
-          setError((body as { error?: string }).error ?? 'Delete failed')
+          setError((body as { error?: string }).error ?? 'Échec de la suppression')
           return
         }
         router.refresh()
       } catch {
-        setError('Network error')
+        setError('Erreur réseau')
       }
     })
   }
@@ -39,7 +39,7 @@ export function DeleteBlockButton({ blockId }: Props) {
         disabled={isPending}
         className="font-sans text-xs font-medium text-coral hover:underline disabled:opacity-50"
       >
-        {isPending ? 'Deleting...' : 'Delete'}
+        {isPending ? 'Suppression…' : 'Supprimer'}
       </button>
       {error && (
         <p className="mt-1 font-sans text-xs text-coral">{error}</p>

@@ -3,6 +3,7 @@ import { adminClient } from '@/lib/supabase/admin'
 import { FaqClient } from './FaqClient'
 
 export const metadata: Metadata = { title: 'FAQ — Admin' }
+// (FAQ is the same word in French — no translation needed for the page title)
 export const dynamic = 'force-dynamic'
 
 export default async function FaqPage() {

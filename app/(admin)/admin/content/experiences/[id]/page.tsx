@@ -10,7 +10,7 @@ import type { ExperienceGalleryItem } from '@/lib/supabase/types'
 
 import { ExperienceForm } from '../ExperienceForm'
 
-export const metadata: Metadata = { title: 'Edit Experience — Admin' }
+export const metadata: Metadata = { title: 'Éditer la prestation — Admin' }
 export const dynamic = 'force-dynamic'
 
 type Props = { params: { id: string } }
@@ -53,7 +53,7 @@ export default async function EditExperiencePage({ params }: Props) {
           </span>
           {!experience.active ? (
             <Badge variant="warning" size="sm">
-              Draft — hidden publicly
+              Brouillon — caché du site
             </Badge>
           ) : null}
         </div>
@@ -65,7 +65,7 @@ export default async function EditExperiencePage({ params }: Props) {
           className="inline-flex items-center gap-1.5 rounded-xl border border-pearl-400 bg-white px-3 py-2 font-sans text-sm font-medium text-midnight shadow-sm transition-colors hover:border-midnight"
         >
           <ExternalLink className="h-3.5 w-3.5 text-gold" aria-hidden="true" />
-          View on site
+          Voir sur le site
         </a>
       </div>
 

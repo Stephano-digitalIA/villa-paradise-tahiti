@@ -51,6 +51,7 @@ export function ExperienceForm({ experience, providers }: Props) {
     const fd = new FormData(e.currentTarget)
     setStatus('saving')
     setError(null)
+    // (translation cue: error strings below are translated to French)
     startTransition(async () => {
       try {
         if (experience) {
@@ -61,7 +62,7 @@ export function ExperienceForm({ experience, providers }: Props) {
         router.push('/admin/content/experiences')
       } catch (err) {
         setStatus('error')
-        setError(err instanceof Error ? err.message : 'Something went wrong')
+        setError(err instanceof Error ? err.message : 'Une erreur est survenue')
       }
     })
   }
@@ -73,15 +74,15 @@ export function ExperienceForm({ experience, providers }: Props) {
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="font-heading text-2xl font-semibold text-midnight">
-            {isEdit ? 'Edit Experience' : 'New Experience'}
+            {isEdit ? 'Éditer la prestation' : 'Nouvelle prestation'}
           </h1>
         </div>
         <div className="flex gap-3">
           <Button variant="outline" size="sm" onClick={() => router.push('/admin/content/experiences')}>
-            Cancel
+            Annuler
           </Button>
           <Button type="submit" form="exp-form" disabled={isPending} size="sm">
-            {isPending ? 'Saving…' : isEdit ? 'Save Changes' : 'Create Experience'}
+            {isPending ? 'Enregistrement…' : isEdit ? 'Enregistrer' : 'Créer la prestation'}
           </Button>
         </div>
       </div>
@@ -95,11 +96,11 @@ export function ExperienceForm({ experience, providers }: Props) {
       <form id="exp-form" onSubmit={handleSubmit}>
         <div className="rounded-2xl border border-pearl-400 bg-white shadow-sm">
           <div className="px-8">
-            <FormSection title="Basic Info">
+            <FormSection title="Informations de base">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
                   <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                    Title <span className="text-coral">*</span>
+                    Titre <span className="text-coral">*</span>
                   </label>
                   <Input
                     name="title"
@@ -116,14 +117,14 @@ export function ExperienceForm({ experience, providers }: Props) {
                     name="slug"
                     value={slug}
                     onChange={(e) => setSlug(e.target.value)}
-                    placeholder="auto-generated from title"
+                    placeholder="auto-généré depuis le titre"
                   />
                 </div>
               </div>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
                   <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                    Category <span className="text-coral">*</span>
+                    Catégorie <span className="text-coral">*</span>
                   </label>
                   <select
                     name="category"
@@ -133,21 +134,21 @@ export function ExperienceForm({ experience, providers }: Props) {
                   >
                     {CATEGORIES.map((c) => (
                       <option key={c} value={c}>
-                        {c.charAt(0).toUpperCase() + c.slice(1)}
+                        {({excursion:'Excursion',evening:'Soirée',dining:'Restauration',wellness:'Bien-être',cultural:'Culturel',adventure:'Aventure'} as Record<string,string>)[c] ?? c}
                       </option>
                     ))}
                   </select>
                 </div>
                 <div>
                   <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                    Provider
+                    Prestataire
                   </label>
                   <select
                     name="provider_id"
                     defaultValue={experience?.provider_id ?? ''}
                     className="h-12 w-full rounded-lg border border-lagoon/20 bg-pearl px-3 font-sans text-sm text-midnight focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/30"
                   >
-                    <option value="">No provider</option>
+                    <option value="">Aucun prestataire</option>
                     {providers.map((p) => (
                       <option key={p.id} value={p.id}>
                         {p.name}
@@ -158,8 +159,8 @@ export function ExperienceForm({ experience, providers }: Props) {
               </div>
               <div>
                 <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                  Short Description <span className="text-coral">*</span>{' '}
-                  <span className="font-normal text-midnight-400">(max 160 chars)</span>
+                  Description courte <span className="text-coral">*</span>{' '}
+                  <span className="font-normal text-midnight-400">(160 caractères max)</span>
                 </label>
                 <textarea
                   name="short_description"
@@ -172,26 +173,26 @@ export function ExperienceForm({ experience, providers }: Props) {
               </div>
             </FormSection>
 
-            <FormSection title="Description" description="Supports Markdown">
+            <FormSection title="Description" description="Supporte le Markdown">
               <MarkdownEditor
                 name="description"
-                label="Full Description"
+                label="Description complète"
                 defaultValue={experience?.description}
                 rows={8}
               />
             </FormSection>
 
-            <FormSection title="Pricing">
+            <FormSection title="Tarification">
               <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
                 <div>
                   <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                    Price (USD) <span className="text-coral">*</span>
+                    Prix (USD) <span className="text-coral">*</span>
                   </label>
                   <Input type="number" name="price_usd" defaultValue={experience?.price_usd ?? 0} min={0} required />
                 </div>
                 <div>
                   <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                    Price Unit
+                    Unité de prix
                   </label>
                   <select
                     name="price_unit"
@@ -200,7 +201,7 @@ export function ExperienceForm({ experience, providers }: Props) {
                   >
                     {PRICE_UNITS.map((u) => (
                       <option key={u} value={u}>
-                        {u.replace('_', ' ')}
+                        {({per_person:'par personne',per_group:'par groupe',flat:'forfait'} as Record<string,string>)[u] ?? u}
                       </option>
                     ))}
                   </select>
@@ -209,29 +210,29 @@ export function ExperienceForm({ experience, providers }: Props) {
               <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
                 <div>
                   <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                    Min Guests
+                    Voyageurs min
                   </label>
                   <Input type="number" name="min_guests" defaultValue={experience?.min_guests ?? ''} min={1} />
                 </div>
                 <div>
                   <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                    Max Guests
+                    Voyageurs max
                   </label>
                   <Input type="number" name="max_guests" defaultValue={experience?.max_guests ?? ''} min={1} />
                 </div>
                 <div>
                   <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                    Duration
+                    Durée
                   </label>
-                  <Input name="duration" defaultValue={experience?.duration ?? ''} placeholder="3 hours" />
+                  <Input name="duration" defaultValue={experience?.duration ?? ''} placeholder="3 heures" />
                 </div>
               </div>
             </FormSection>
 
-            <FormSection title="Meeting Point & Season">
+            <FormSection title="Point de rendez-vous & saisonnalité">
               <div>
                 <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                  Meeting Point
+                  Point de rendez-vous
                 </label>
                 <Input name="meeting_point" defaultValue={experience?.meeting_point ?? ''} />
               </div>
@@ -246,20 +247,20 @@ export function ExperienceForm({ experience, providers }: Props) {
                   className="h-4 w-4 rounded border-pearl-400 text-gold focus:ring-gold"
                 />
                 <label htmlFor="seasonal" className="font-sans text-sm font-medium text-midnight cursor-pointer">
-                  Seasonal
+                  Saisonnier
                 </label>
               </div>
               {seasonal && (
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                      Season Start
+                      Début de saison
                     </label>
                     <Input type="date" name="season_start" defaultValue={experience?.season_start ?? ''} />
                   </div>
                   <div>
                     <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                      Season End
+                      Fin de saison
                     </label>
                     <Input type="date" name="season_end" defaultValue={experience?.season_end ?? ''} />
                   </div>
@@ -267,21 +268,21 @@ export function ExperienceForm({ experience, providers }: Props) {
               )}
             </FormSection>
 
-            <FormSection title="Highlights" description="One highlight per line">
+            <FormSection title="Points forts" description="Un point fort par ligne">
               <textarea
                 name="highlights"
                 rows={5}
                 defaultValue={(experience?.highlights ?? []).join('\n')}
-                placeholder="Snorkel in crystal-clear waters&#10;Guided by certified instructors&#10;Equipment included"
+                placeholder="Snorkeling dans des eaux cristallines&#10;Guidé par des instructeurs certifiés&#10;Équipement inclus"
                 className="w-full resize-y rounded-lg border border-lagoon/20 bg-pearl px-4 py-3 font-sans text-sm text-midnight placeholder:text-midnight-300 focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/30"
               />
             </FormSection>
 
-            <FormSection title="Visibility">
+            <FormSection title="Visibilité">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                 <div>
                   <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                    Popularity (0–100)
+                    Popularité (0–100)
                   </label>
                   <Input type="number" name="popularity" defaultValue={experience?.popularity ?? 0} min={0} max={100} />
                 </div>
@@ -295,7 +296,7 @@ export function ExperienceForm({ experience, providers }: Props) {
                     defaultChecked={experience?.featured ?? false}
                     className="h-4 w-4 rounded border-pearl-400 text-gold focus:ring-gold"
                   />
-                  <span className="font-sans text-sm text-midnight">Featured</span>
+                  <span className="font-sans text-sm text-midnight">Mis en avant</span>
                 </label>
                 <label className="flex cursor-pointer items-center gap-2">
                   <input
@@ -305,22 +306,22 @@ export function ExperienceForm({ experience, providers }: Props) {
                     defaultChecked={experience?.active ?? true}
                     className="h-4 w-4 rounded border-pearl-400 text-gold focus:ring-gold"
                   />
-                  <span className="font-sans text-sm text-midnight">Active</span>
+                  <span className="font-sans text-sm text-midnight">Actif</span>
                 </label>
               </div>
             </FormSection>
 
-            <FormSection title="Cover Image">
+            <FormSection title="Image de couverture">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
                   <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                    Cover Image URL
+                    URL image de couverture
                   </label>
                   <Input name="cover_image_url" defaultValue={experience?.cover_image_url ?? ''} placeholder="https://…" />
                 </div>
                 <div>
                   <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                    Cover Image Alt
+                    Texte alternatif (alt)
                   </label>
                   <Input name="cover_image_alt" defaultValue={experience?.cover_image_alt ?? ''} />
                 </div>
@@ -330,13 +331,13 @@ export function ExperienceForm({ experience, providers }: Props) {
             <FormSection title="SEO">
               <div>
                 <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                  SEO Title <span className="font-normal text-midnight-400">(max 70 chars)</span>
+                  Titre SEO <span className="font-normal text-midnight-400">(70 caractères max)</span>
                 </label>
                 <Input name="seo_title" defaultValue={experience?.seo_title ?? ''} maxLength={70} />
               </div>
               <div>
                 <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                  SEO Description <span className="font-normal text-midnight-400">(max 170 chars)</span>
+                  Description SEO <span className="font-normal text-midnight-400">(170 caractères max)</span>
                 </label>
                 <textarea
                   name="seo_description"

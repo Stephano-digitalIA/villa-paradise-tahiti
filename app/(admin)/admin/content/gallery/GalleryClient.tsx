@@ -11,6 +11,17 @@ const CATEGORIES: GalleryCategory[] = [
   'exterior', 'interior', 'pool', 'lagoon', 'bedrooms', 'night', 'sunset', 'experiences',
 ]
 
+const CATEGORY_LABEL: Record<GalleryCategory, string> = {
+  exterior: 'Extérieur',
+  interior: 'Intérieur',
+  pool: 'Piscine',
+  lagoon: 'Lagon',
+  bedrooms: 'Chambres',
+  night: 'Nuit',
+  sunset: 'Coucher de soleil',
+  experiences: 'Expériences',
+}
+
 const CATEGORY_VARIANT: Record<GalleryCategory, 'default' | 'info' | 'success' | 'warning' | 'luxe' | 'gold'> = {
   exterior: 'default',
   interior: 'info',
@@ -45,13 +56,13 @@ export function GalleryClient({ initialItems }: Props) {
         // Refresh — simple page reload to get updated list
         window.location.reload()
       } catch (err) {
-        setUploadError(err instanceof Error ? err.message : 'Upload failed')
+        setUploadError(err instanceof Error ? err.message : 'Échec du téléversement')
       }
     })
   }
 
   function handleDelete(id: string, imageUrl: string) {
-    if (!confirm('Delete this photo permanently?')) return
+    if (!confirm('Supprimer définitivement cette photo ?')) return
     startTransition(async () => {
       await deleteGalleryItem(id, imageUrl)
       setItems((prev) => prev.filter((i) => i.id !== id))
@@ -74,14 +85,14 @@ export function GalleryClient({ initialItems }: Props) {
     <div className="p-8 space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-heading text-2xl font-semibold text-midnight">Gallery</h1>
+          <h1 className="font-heading text-2xl font-semibold text-midnight">Galerie</h1>
           <p className="mt-1 font-sans text-sm text-midnight-400">{items.length} photos</p>
         </div>
       </div>
 
       {/* Upload form */}
       <div className="rounded-2xl border border-pearl-400 bg-white p-6 shadow-sm">
-        <h2 className="mb-4 font-heading text-base font-semibold text-midnight">Upload Photos</h2>
+        <h2 className="mb-4 font-heading text-base font-semibold text-midnight">Téléverser des photos</h2>
         {uploadError && (
           <p className="mb-4 rounded-xl border border-coral/20 bg-coral/5 px-4 py-2 font-sans text-sm text-coral">
             {uploadError}
@@ -90,7 +101,7 @@ export function GalleryClient({ initialItems }: Props) {
         <form onSubmit={handleUpload} className="flex flex-wrap items-end gap-4">
           <div>
             <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-              Category
+              Catégorie
             </label>
             <select
               name="category"
@@ -99,20 +110,20 @@ export function GalleryClient({ initialItems }: Props) {
             >
               {CATEGORIES.map((c) => (
                 <option key={c} value={c}>
-                  {c.charAt(0).toUpperCase() + c.slice(1)}
+                  {CATEGORY_LABEL[c]}
                 </option>
               ))}
             </select>
           </div>
           <div className="flex-1 min-w-[200px]">
             <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-              Alt text <span className="text-coral">*</span>
+              Texte alternatif (alt) <span className="text-coral">*</span>
             </label>
             <input
               type="text"
               name="alt"
               required
-              placeholder="Aerial view of the villa pool"
+              placeholder="Vue aérienne de la piscine de la villa"
               className="flex h-12 w-full rounded-lg border border-lagoon/20 bg-pearl px-4 py-3 font-sans text-sm text-midnight placeholder:text-midnight-300 focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/30"
             />
           </div>
@@ -129,7 +140,7 @@ export function GalleryClient({ initialItems }: Props) {
             />
           </div>
           <Button type="submit" disabled={isPending} size="sm">
-            {isPending ? 'Uploading…' : 'Upload'}
+            {isPending ? 'Téléversement…' : 'Téléverser'}
           </Button>
         </form>
       </div>
@@ -144,7 +155,7 @@ export function GalleryClient({ initialItems }: Props) {
               : 'border-pearl-400 bg-white text-midnight hover:border-midnight'
           }`}
         >
-          All ({items.length})
+          Toutes ({items.length})
         </button>
         {CATEGORIES.map((cat) => {
           const count = items.filter((i) => i.category === cat).length
@@ -159,7 +170,7 @@ export function GalleryClient({ initialItems }: Props) {
                   : 'border-pearl-400 bg-white text-midnight hover:border-midnight'
               }`}
             >
-              {cat} ({count})
+              {CATEGORY_LABEL[cat]} ({count})
             </button>
           )
         })}
@@ -168,8 +179,8 @@ export function GalleryClient({ initialItems }: Props) {
       {/* Grid */}
       {filtered.length === 0 ? (
         <div className="rounded-2xl border border-pearl-400 bg-white px-8 py-16 text-center shadow-sm">
-          <p className="font-heading text-lg text-midnight-400">No photos yet.</p>
-          <p className="mt-1 font-sans text-sm text-midnight-400">Upload your first photo above.</p>
+          <p className="font-heading text-lg text-midnight-400">Aucune photo pour le moment.</p>
+          <p className="mt-1 font-sans text-sm text-midnight-400">Téléverse ta première photo ci-dessus.</p>
         </div>
       ) : (
         <>
@@ -190,11 +201,11 @@ export function GalleryClient({ initialItems }: Props) {
                 </div>
                 <div className="p-3 space-y-2">
                   <Badge variant={CATEGORY_VARIANT[item.category]} size="sm">
-                    {item.category}
+                    {CATEGORY_LABEL[item.category]}
                   </Badge>
                   <p className="font-sans text-xs text-midnight-400 line-clamp-1">{item.alt}</p>
                   <div className="flex items-center gap-2">
-                    <label className="font-sans text-xs text-midnight-400">Order</label>
+                    <label className="font-sans text-xs text-midnight-400">Ordre</label>
                     <input
                       type="number"
                       value={orderMap[item.id] ?? item.sort_order}
@@ -208,7 +219,7 @@ export function GalleryClient({ initialItems }: Props) {
                     disabled={isPending}
                     className="w-full rounded-lg border border-coral/20 bg-coral/5 py-1 font-sans text-xs font-medium text-coral transition-colors hover:bg-coral/10 disabled:opacity-50"
                   >
-                    Delete
+                    Supprimer
                   </button>
                 </div>
               </div>
@@ -216,7 +227,7 @@ export function GalleryClient({ initialItems }: Props) {
           </div>
           <div className="flex justify-end">
             <Button variant="outline" size="sm" onClick={handleSaveOrder} disabled={isPending}>
-              {isPending ? 'Saving…' : 'Save Order'}
+              {isPending ? 'Enregistrement…' : 'Enregistrer l\'ordre'}
             </Button>
           </div>
         </>

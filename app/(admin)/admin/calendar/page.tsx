@@ -35,27 +35,27 @@ const STATUS_VARIANT: Record<
 }
 
 const STATUS_LABEL: Record<PaymentStatus, string> = {
-  pending: 'Pending',
-  deposit_paid: 'Deposit Paid',
-  fully_paid: 'Fully Paid',
-  cancelled: 'Cancelled',
-  refunded: 'Refunded',
+  pending: 'En attente',
+  deposit_paid: 'Acompte versé',
+  fully_paid: 'Soldé',
+  cancelled: 'Annulé',
+  refunded: 'Remboursé',
 }
 
 function formatDate(dateStr: string | null | undefined): string {
   if (!dateStr) return '—'
-  return new Date(dateStr).toLocaleDateString('en-US', {
+  return new Date(dateStr).toLocaleDateString('fr-FR', {
+    day: '2-digit',
     month: 'short',
-    day: 'numeric',
     year: 'numeric',
   })
 }
 
 function formatDateTime(dateStr: string | null | undefined): string {
   if (!dateStr) return '—'
-  return new Date(dateStr).toLocaleString('en-US', {
+  return new Date(dateStr).toLocaleString('fr-FR', {
+    day: '2-digit',
     month: 'short',
-    day: 'numeric',
     year: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
@@ -165,10 +165,10 @@ export default async function CalendarPage() {
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="font-heading text-2xl font-semibold text-midnight">
-            Calendar
+            Calendrier
           </h1>
           <p className="mt-1 font-sans text-sm text-midnight-400">
-            Month view of reservations and blocked periods across every channel
+            Vue mensuelle des réservations et périodes bloquées, tous canaux confondus
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -197,16 +197,16 @@ export default async function CalendarPage() {
       {/* Upcoming Reservations */}
       <div className="mt-8">
         <h2 className="font-heading text-lg font-semibold text-midnight">
-          Upcoming Reservations
+          Réservations à venir
         </h2>
         <p className="mt-1 font-sans text-xs text-midnight-400">
-          Showing stays with check-out on or after today &mdash; next 3 months
+          Séjours avec départ aujourd&apos;hui ou après &mdash; 3 prochains mois
         </p>
 
         {reservationRows.length === 0 ? (
           <div className="mt-4 rounded-2xl border border-pearl-400 bg-white px-8 py-12 text-center shadow-sm">
             <p className="font-heading text-base text-midnight-400">
-              No upcoming reservations
+              Aucune réservation à venir
             </p>
           </div>
         ) : (
@@ -283,13 +283,13 @@ export default async function CalendarPage() {
       {/* Blocked Periods */}
       <div className="mt-10">
         <h2 className="font-heading text-lg font-semibold text-midnight">
-          Blocked Periods
+          Périodes bloquées
         </h2>
 
         {(blockedDates ?? []).length === 0 ? (
           <div className="mt-4 rounded-2xl border border-pearl-400 bg-white px-8 py-12 text-center shadow-sm">
             <p className="font-heading text-base text-midnight-400">
-              No blocked periods
+              Aucune période bloquée
             </p>
           </div>
         ) : (
@@ -358,10 +358,10 @@ export default async function CalendarPage() {
       {/* Block dates form */}
       <div className="mt-10">
         <h2 className="font-heading text-lg font-semibold text-midnight">
-          Block Dates Manually
+          Bloquer des dates manuellement
         </h2>
         <p className="mt-1 font-sans text-sm text-midnight-400">
-          Block a period for owner use, maintenance, or other reasons.
+          Bloquer une période pour usage propriétaire, entretien ou autre raison.
         </p>
         <div className="mt-4">
           <BlockDateForm />

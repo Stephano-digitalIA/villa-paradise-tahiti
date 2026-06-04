@@ -81,43 +81,43 @@ export function VillaForm({ villa }: Props) {
     <div className="p-8">
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="font-heading text-2xl font-semibold text-midnight">Villa Settings</h1>
+          <h1 className="font-heading text-2xl font-semibold text-midnight">Paramètres villa</h1>
           <p className="mt-1 font-sans text-sm text-midnight-400">
-            Edit villa details, specs, amenities, and SEO
+            Modifier les détails, caractéristiques, équipements et SEO de la villa
           </p>
         </div>
         <Button type="submit" form="villa-form" disabled={isPending} size="sm">
-          {status === 'saving' ? 'Saving…' : status === 'saved' ? 'Saved ✓' : 'Save Changes'}
+          {status === 'saving' ? 'Enregistrement…' : status === 'saved' ? 'Enregistré ✓' : 'Enregistrer'}
         </Button>
       </div>
 
       {status === 'error' && (
         <div className="mb-6 rounded-xl border border-coral/20 bg-coral/5 px-4 py-3 font-sans text-sm text-coral">
-          Something went wrong. Please try again.
+          Une erreur est survenue. Merci de réessayer.
         </div>
       )}
 
       <form id="villa-form" ref={formRef} onSubmit={handleSubmit}>
         <div className="rounded-2xl border border-pearl-400 bg-white shadow-sm">
           <div className="px-8">
-            <FormSection title="Basic Info">
+            <FormSection title="Informations de base">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
                   <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                    Villa Name <span className="text-coral">*</span>
+                    Nom de la villa <span className="text-coral">*</span>
                   </label>
                   <Input name="name" defaultValue={villa.name} required />
                 </div>
                 <div>
                   <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                    Tagline
+                    Accroche
                   </label>
                   <Input name="tagline" defaultValue={villa.tagline ?? ''} />
                 </div>
               </div>
             </FormSection>
 
-            <FormSection title="Description" description="Supports Markdown formatting">
+            <FormSection title="Description" description="Supporte la mise en forme Markdown">
               <MarkdownEditor
                 name="description"
                 label="Description"
@@ -126,35 +126,35 @@ export function VillaForm({ villa }: Props) {
               />
             </FormSection>
 
-            <FormSection title="Hero Media">
+            <FormSection title="Média principal (hero)">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
                   <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                    Hero Image URL
+                    URL image hero
                   </label>
                   <Input name="hero_image_url" defaultValue={villa.hero_image_url ?? ''} placeholder="https://…" />
                 </div>
                 <div>
                   <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                    Hero Image Alt
+                    Texte alternatif (alt)
                   </label>
                   <Input name="hero_image_alt" defaultValue={villa.hero_image_alt ?? ''} />
                 </div>
               </div>
               <div>
                 <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                  Hero Video URL
+                  URL vidéo hero
                 </label>
                 <Input name="hero_video_url" defaultValue={villa.hero_video_url ?? ''} placeholder="https://…" />
               </div>
             </FormSection>
 
-            <FormSection title="Specifications">
+            <FormSection title="Caractéristiques">
               <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
                 {[
-                  { name: 'bedrooms', label: 'Bedrooms', value: villa.bedrooms },
-                  { name: 'bathrooms', label: 'Bathrooms', value: villa.bathrooms },
-                  { name: 'max_guests', label: 'Max Guests', value: villa.max_guests },
+                  { name: 'bedrooms', label: 'Chambres', value: villa.bedrooms },
+                  { name: 'bathrooms', label: 'Salles de bain', value: villa.bathrooms },
+                  { name: 'max_guests', label: 'Capacité max', value: villa.max_guests },
                 ].map((f) => (
                   <div key={f.name}>
                     <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
@@ -167,64 +167,64 @@ export function VillaForm({ villa }: Props) {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                    Size (sqm)
+                    Surface (m²)
                   </label>
                   <Input type="number" name="size_sqm" defaultValue={villa.size_sqm ?? ''} />
                 </div>
                 <div>
                   <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                    Size (sqft)
+                    Surface (sqft)
                   </label>
                   <Input type="number" name="size_sqft" defaultValue={villa.size_sqft ?? ''} />
                 </div>
               </div>
               <div className="flex flex-wrap gap-4 pt-2">
-                <CheckboxField name="has_pool" label="Pool" defaultChecked={villa.has_pool} />
+                <CheckboxField name="has_pool" label="Piscine" defaultChecked={villa.has_pool} />
                 <CheckboxField name="has_jacuzzi" label="Jacuzzi" defaultChecked={villa.has_jacuzzi} />
-                <CheckboxField name="has_ac" label="Air Conditioning" defaultChecked={villa.has_ac} />
-                <CheckboxField name="has_wifi" label="WiFi" defaultChecked={villa.has_wifi} />
+                <CheckboxField name="has_ac" label="Climatisation" defaultChecked={villa.has_ac} />
+                <CheckboxField name="has_wifi" label="Wi-Fi" defaultChecked={villa.has_wifi} />
                 <CheckboxField name="has_parking" label="Parking" defaultChecked={villa.has_parking} />
               </div>
             </FormSection>
 
-            <FormSection title="Amenities" description="One amenity per line — displayed as tags">
+            <FormSection title="Équipements" description="Un équipement par ligne — affiché en étiquettes">
               <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
                 <div>
                   <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                    Amenities list
+                    Liste des équipements
                   </label>
                   <textarea
                     name="amenities"
                     rows={8}
                     defaultValue={(villa.amenities ?? []).join('\n')}
-                    placeholder="Private beach access&#10;Kayaks&#10;Snorkeling equipment"
+                    placeholder="Accès plage privée&#10;Kayaks&#10;Équipement de snorkeling"
                     onChange={handleAmenitiesChange}
                     className="w-full resize-y rounded-lg border border-lagoon/20 bg-pearl px-4 py-3 font-sans text-sm text-midnight placeholder:text-midnight-300 focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/30"
                   />
                 </div>
                 <div>
-                  <p className="mb-1.5 font-sans text-sm font-medium text-midnight">Preview</p>
+                  <p className="mb-1.5 font-sans text-sm font-medium text-midnight">Aperçu</p>
                   {amenitiesPreview.length > 0 ? (
                     <TagList raw={amenitiesPreview} />
                   ) : (
-                    <p className="font-sans text-sm italic text-midnight-300">No amenities yet.</p>
+                    <p className="font-sans text-sm italic text-midnight-300">Aucun équipement.</p>
                   )}
                 </div>
               </div>
             </FormSection>
 
-            <FormSection title="Location">
+            <FormSection title="Localisation">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div className="sm:col-span-2">
-                  <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">Address</label>
+                  <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">Adresse</label>
                   <Input name="address" defaultValue={villa.address ?? ''} />
                 </div>
                 <div>
-                  <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">City <span className="text-coral">*</span></label>
+                  <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">Ville <span className="text-coral">*</span></label>
                   <Input name="city" defaultValue={villa.city} required />
                 </div>
                 <div>
-                  <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">Country <span className="text-coral">*</span></label>
+                  <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">Pays <span className="text-coral">*</span></label>
                   <Input name="country" defaultValue={villa.country} required />
                 </div>
                 <div>
@@ -241,13 +241,13 @@ export function VillaForm({ villa }: Props) {
             <FormSection title="SEO">
               <div>
                 <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                  SEO Title <span className="font-normal text-midnight-400">(max 70 chars)</span>
+                  Titre SEO <span className="font-normal text-midnight-400">(70 caractères max)</span>
                 </label>
                 <Input name="seo_title" defaultValue={villa.seo_title ?? ''} maxLength={70} />
               </div>
               <div>
                 <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                  SEO Description <span className="font-normal text-midnight-400">(max 170 chars)</span>
+                  Description SEO <span className="font-normal text-midnight-400">(170 caractères max)</span>
                 </label>
                 <textarea
                   name="seo_description"

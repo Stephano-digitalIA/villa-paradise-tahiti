@@ -12,6 +12,14 @@ import { createFAQ, updateFAQ, deleteFAQ } from './actions'
 
 const CATEGORIES: FaqCategory[] = ['booking', 'villa', 'tahiti', 'payment', 'experiences']
 
+const CATEGORY_LABEL: Record<FaqCategory, string> = {
+  booking: 'Réservation',
+  villa: 'Villa',
+  tahiti: 'Tahiti',
+  payment: 'Paiement',
+  experiences: 'Prestations',
+}
+
 type EditableRow = FAQ & { _dirty?: boolean; _new?: boolean }
 
 type Props = { initialFaqs: FAQ[] }
@@ -71,14 +79,14 @@ export function FaqClient({ initialFaqs }: Props) {
       } catch (err) {
         setSaveErrors((prev) => ({
           ...prev,
-          [faq.id]: err instanceof Error ? err.message : 'Save failed',
+          [faq.id]: err instanceof Error ? err.message : 'Échec de la sauvegarde',
         }))
       }
     })
   }
 
   function handleDelete(id: string) {
-    if (!confirm('Delete this FAQ permanently?')) return
+    if (!confirm('Supprimer définitivement cette FAQ ?')) return
     startTransition(async () => {
       await deleteFAQ(id)
       setFaqs((prev) => prev.filter((f) => f.id !== id))
@@ -112,26 +120,26 @@ export function FaqClient({ initialFaqs }: Props) {
       <div>
         <h1 className="font-heading text-2xl font-semibold text-midnight">FAQ</h1>
         <p className="mt-1 font-sans text-sm text-midnight-400">
-          {faqs.length} questions — edit inline, save per row
+          {faqs.length} questions — édition en ligne, sauvegarde par ligne
         </p>
       </div>
 
       {CATEGORIES.map((cat) => (
         <section key={cat}>
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="font-heading text-base font-semibold capitalize text-midnight">{cat}</h2>
+            <h2 className="font-heading text-base font-semibold text-midnight">{CATEGORY_LABEL[cat]}</h2>
             <button
               type="button"
               onClick={() => handleAddNew(cat)}
               className="flex items-center gap-1 rounded-lg border border-pearl-400 bg-white px-3 py-1.5 font-sans text-xs font-medium text-midnight transition-colors hover:border-gold hover:text-gold"
             >
-              + Add
+              + Ajouter
             </button>
           </div>
 
           {groups[cat].length === 0 ? (
             <p className="font-sans text-sm italic text-midnight-300">
-              No FAQs in this category yet.
+              Aucune FAQ dans cette catégorie pour le moment.
             </p>
           ) : (
             <div className="space-y-3">
@@ -154,25 +162,25 @@ export function FaqClient({ initialFaqs }: Props) {
                         type="text"
                         value={faq.question}
                         onChange={(e) => patchLocal(faq.id, { question: e.target.value })}
-                        placeholder="What is the check-in time?"
+                        placeholder="À quelle heure est le check-in ?"
                         className="w-full rounded-lg border border-lagoon/20 bg-pearl px-3 py-2 font-sans text-sm text-midnight placeholder:text-midnight-300 focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold/30"
                       />
                     </div>
                     <div>
                       <label className="mb-1 block font-sans text-xs font-medium text-midnight-400">
-                        Answer
+                        Réponse
                       </label>
                       <textarea
                         rows={3}
                         value={faq.answer}
                         onChange={(e) => patchLocal(faq.id, { answer: e.target.value })}
-                        placeholder="Check-in is between 3pm and 8pm."
+                        placeholder="Le check-in se fait entre 15h et 20h."
                         className="w-full resize-y rounded-lg border border-lagoon/20 bg-pearl px-3 py-2 font-sans text-sm text-midnight placeholder:text-midnight-300 focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold/30"
                       />
                     </div>
                     <div className="flex flex-wrap items-center gap-4">
                       <div className="flex items-center gap-2">
-                        <label className="font-sans text-xs text-midnight-400">Order</label>
+                        <label className="font-sans text-xs text-midnight-400">Ordre</label>
                         <input
                           type="number"
                           value={faq.sort_order}
@@ -183,7 +191,7 @@ export function FaqClient({ initialFaqs }: Props) {
                         />
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="font-sans text-xs text-midnight-400">Active</span>
+                        <span className="font-sans text-xs text-midnight-400">Actif</span>
                         <ToggleSwitch
                           checked={faq.active}
                           onToggle={async () => {
@@ -198,7 +206,7 @@ export function FaqClient({ initialFaqs }: Props) {
                             disabled={isPending || !faq.question || !faq.answer}
                             onClick={() => handleSave(faq)}
                           >
-                            Save
+                            Enregistrer
                           </Button>
                         )}
                         <button
@@ -207,7 +215,7 @@ export function FaqClient({ initialFaqs }: Props) {
                           disabled={isPending}
                           className="rounded-lg border border-coral/20 bg-coral/5 px-3 py-1.5 font-sans text-xs font-medium text-coral transition-colors hover:bg-coral/10 disabled:opacity-50"
                         >
-                          Delete
+                          Supprimer
                         </button>
                       </div>
                     </div>

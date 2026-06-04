@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { ProviderActiveToggle } from './ProviderActiveToggle'
 
-export const metadata: Metadata = { title: 'Providers — Admin' }
+export const metadata: Metadata = { title: 'Prestataires — Admin' }
 export const dynamic = 'force-dynamic'
 
 export default async function ProvidersPage() {
@@ -20,18 +20,18 @@ export default async function ProvidersPage() {
     <div className="p-8">
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="font-heading text-2xl font-semibold text-midnight">Excursion Providers</h1>
-          <p className="mt-1 font-sans text-sm text-midnight-400">{providers.length} providers</p>
+          <h1 className="font-heading text-2xl font-semibold text-midnight">Prestataires excursions</h1>
+          <p className="mt-1 font-sans text-sm text-midnight-400">{providers.length} prestataire{providers.length > 1 ? 's' : ''}</p>
         </div>
         <Button asChild size="sm">
-          <Link href="/admin/content/providers/new">+ Add Provider</Link>
+          <Link href="/admin/content/providers/new">+ Ajouter un prestataire</Link>
         </Button>
       </div>
 
       {providers.length === 0 ? (
         <div className="rounded-2xl border border-pearl-400 bg-white px-8 py-16 text-center shadow-sm">
-          <p className="font-heading text-lg text-midnight-400">No providers yet.</p>
-          <p className="mt-1 font-sans text-sm text-midnight-400">Click + to create your first one.</p>
+          <p className="font-heading text-lg text-midnight-400">Aucun prestataire pour le moment.</p>
+          <p className="mt-1 font-sans text-sm text-midnight-400">Clique sur + pour créer le premier.</p>
         </div>
       ) : (
         <div className="overflow-hidden rounded-2xl border border-pearl-400 bg-white shadow-sm">
@@ -82,7 +82,7 @@ export default async function ProvidersPage() {
                         href={`/admin/content/providers/${p.id}`}
                         className="font-sans text-xs font-medium text-gold hover:underline"
                       >
-                        Edit
+                        Éditer
                       </Link>
                     </td>
                   </tr>

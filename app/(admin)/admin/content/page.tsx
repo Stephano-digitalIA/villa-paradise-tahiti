@@ -1,52 +1,52 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
-export const metadata: Metadata = { title: 'Content — Admin' }
+export const metadata: Metadata = { title: 'Contenu — Admin' }
 
 const SECTIONS = [
   {
     href: '/admin/content/villa',
     title: 'Villa',
-    description: 'Edit name, description, specs, amenities, location and SEO',
+    description: 'Modifier nom, description, caractéristiques, équipements, localisation et SEO',
   },
   {
     href: '/admin/content/gallery',
-    title: 'Gallery',
-    description: 'Upload, reorder and categorise villa photos',
+    title: 'Galerie',
+    description: 'Téléverser, réordonner et catégoriser les photos de la villa',
   },
   {
     href: '/admin/content/experiences',
-    title: 'Experiences',
-    description: 'Manage excursions, dining, wellness and cultural activities',
+    title: 'Prestations',
+    description: 'Gérer excursions, restauration, bien-être et activités culturelles',
   },
   {
     href: '/admin/content/providers',
-    title: 'Providers',
-    description: 'Manage excursion and activity partners',
+    title: 'Prestataires',
+    description: 'Gérer les partenaires excursions et activités',
   },
   {
     href: '/admin/content/reviews',
-    title: 'Reviews',
-    description: 'Add and manage guest reviews from all sources',
+    title: 'Avis',
+    description: 'Ajouter et gérer les avis clients de toutes les sources',
   },
   {
     href: '/admin/content/blog',
     title: 'Blog',
-    description: 'Write and publish articles about Tahiti and villa life',
+    description: 'Rédiger et publier des articles sur Tahiti et la vie à la villa',
   },
   {
     href: '/admin/content/faq',
     title: 'FAQ',
-    description: 'Edit frequently asked questions inline, grouped by category',
+    description: 'Éditer les questions fréquentes en ligne, groupées par catégorie',
   },
 ]
 
 export default function ContentPage() {
   return (
     <div className="p-8">
-      <h1 className="font-heading text-2xl font-semibold text-midnight">Content</h1>
+      <h1 className="font-heading text-2xl font-semibold text-midnight">Contenu</h1>
       <p className="mt-1 font-sans text-sm text-midnight-400">
-        Manage all public content for Villa Paradise Tahiti
+        Gérer l&apos;ensemble du contenu public de Villa Paradise Tahiti
       </p>
 
       <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">

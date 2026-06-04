@@ -34,7 +34,7 @@ export function ReviewForm({ review }: Props) {
         }
         router.push('/admin/content/reviews')
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Something went wrong')
+        setError(err instanceof Error ? err.message : 'Une erreur est survenue')
       }
     })
   }
@@ -43,14 +43,14 @@ export function ReviewForm({ review }: Props) {
     <div className="p-8">
       <div className="mb-6 flex items-center justify-between">
         <h1 className="font-heading text-2xl font-semibold text-midnight">
-          {isEdit ? 'Edit Review' : 'Add Review'}
+          {isEdit ? 'Éditer l\'avis' : 'Ajouter un avis'}
         </h1>
         <div className="flex gap-3">
           <Button variant="outline" size="sm" onClick={() => router.push('/admin/content/reviews')}>
-            Cancel
+            Annuler
           </Button>
           <Button type="submit" form="review-form" disabled={isPending} size="sm">
-            {isPending ? 'Saving…' : isEdit ? 'Save Changes' : 'Create Review'}
+            {isPending ? 'Enregistrement…' : isEdit ? 'Enregistrer' : 'Créer l\'avis'}
           </Button>
         </div>
       </div>
@@ -64,28 +64,28 @@ export function ReviewForm({ review }: Props) {
       <form id="review-form" onSubmit={handleSubmit}>
         <div className="rounded-2xl border border-pearl-400 bg-white shadow-sm">
           <div className="px-8">
-            <FormSection title="Author">
+            <FormSection title="Auteur">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
                   <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                    Author Name <span className="text-coral">*</span>
+                    Nom de l&apos;auteur <span className="text-coral">*</span>
                   </label>
                   <Input name="author_name" defaultValue={review?.author_name} required />
                 </div>
                 <div>
                   <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                    Location
+                    Lieu
                   </label>
                   <Input name="author_location" defaultValue={review?.author_location ?? ''} placeholder="Paris, France" />
                 </div>
               </div>
             </FormSection>
 
-            <FormSection title="Review Content">
+            <FormSection title="Contenu de l'avis">
               {/* Star rating */}
               <div>
                 <label className="mb-2 block font-sans text-sm font-medium text-midnight">
-                  Rating
+                  Note
                 </label>
                 <div className="flex gap-1">
                   {[1, 2, 3, 4, 5].map((n) => (
@@ -105,13 +105,13 @@ export function ReviewForm({ review }: Props) {
               </div>
               <div>
                 <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                  Title <span className="text-coral">*</span>
+                  Titre <span className="text-coral">*</span>
                 </label>
                 <Input name="title" defaultValue={review?.title} required />
               </div>
               <div>
                 <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                  Body <span className="text-coral">*</span>
+                  Texte <span className="text-coral">*</span>
                 </label>
                 <textarea
                   name="body"
@@ -123,24 +123,24 @@ export function ReviewForm({ review }: Props) {
               </div>
             </FormSection>
 
-            <FormSection title="Stay Dates">
+            <FormSection title="Dates du séjour">
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                    Stay From
+                    Arrivée
                   </label>
                   <Input type="date" name="stay_from" defaultValue={review?.stay_from ?? ''} />
                 </div>
                 <div>
                   <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                    Stay To
+                    Départ
                   </label>
                   <Input type="date" name="stay_to" defaultValue={review?.stay_to ?? ''} />
                 </div>
               </div>
             </FormSection>
 
-            <FormSection title="Meta">
+            <FormSection title="Métadonnées">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
                   <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
@@ -160,7 +160,7 @@ export function ReviewForm({ review }: Props) {
                 </div>
                 <div>
                   <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                    Published At
+                    Publié le
                   </label>
                   <Input
                     type="datetime-local"
@@ -182,7 +182,7 @@ export function ReviewForm({ review }: Props) {
                     defaultChecked={review?.verified ?? false}
                     className="h-4 w-4 rounded border-pearl-400 text-gold focus:ring-gold"
                   />
-                  <span className="font-sans text-sm text-midnight">Verified</span>
+                  <span className="font-sans text-sm text-midnight">Vérifié</span>
                 </label>
                 <label className="flex cursor-pointer items-center gap-2">
                   <input
@@ -192,7 +192,7 @@ export function ReviewForm({ review }: Props) {
                     defaultChecked={review?.featured ?? false}
                     className="h-4 w-4 rounded border-pearl-400 text-gold focus:ring-gold"
                   />
-                  <span className="font-sans text-sm text-midnight">Featured</span>
+                  <span className="font-sans text-sm text-midnight">Mis en avant</span>
                 </label>
               </div>
             </FormSection>

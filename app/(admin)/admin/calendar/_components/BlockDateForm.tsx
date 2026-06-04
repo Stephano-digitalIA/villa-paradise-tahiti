@@ -4,8 +4,8 @@ import { useState, useTransition, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 
 const SOURCES = [
-  { value: 'owner', label: 'Owner' },
-  { value: 'maintenance', label: 'Maintenance' },
+  { value: 'owner', label: 'Propriétaire' },
+  { value: 'maintenance', label: 'Entretien' },
 ]
 
 export function BlockDateForm() {
@@ -30,12 +30,12 @@ export function BlockDateForm() {
     const source = sourceRef.current?.value
 
     if (!blockedFrom || !blockedTo || !source) {
-      setError('Please fill in all required fields.')
+      setError('Merci de remplir tous les champs obligatoires.')
       return
     }
 
     if (blockedTo < blockedFrom) {
-      setError('"To" date must be on or after "From" date.')
+      setError('La date « Au » doit être identique ou postérieure à la date « Du ».')
       return
     }
 
@@ -49,7 +49,7 @@ export function BlockDateForm() {
 
         if (!res.ok) {
           const body = await res.json().catch(() => ({}))
-          setError((body as { error?: string }).error ?? `Request failed (${res.status})`)
+          setError((body as { error?: string }).error ?? `Échec de la requête (${res.status})`)
           return
         }
 
@@ -59,7 +59,7 @@ export function BlockDateForm() {
         if (reasonRef.current) reasonRef.current.value = ''
         router.refresh()
       } catch {
-        setError('Network error. Please try again.')
+        setError('Erreur réseau. Merci de réessayer.')
       }
     })
   }
@@ -76,14 +76,14 @@ export function BlockDateForm() {
       )}
       {success && (
         <div className="mb-4 rounded-lg border border-leaf/20 bg-leaf/10 px-4 py-3 font-sans text-sm text-leaf">
-          Dates blocked successfully.
+          Dates bloquées avec succès.
         </div>
       )}
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div className="flex flex-col gap-1.5">
           <label className="font-sans text-xs font-semibold uppercase tracking-wider text-midnight-400">
-            From <span className="text-coral">*</span>
+            Du <span className="text-coral">*</span>
           </label>
           <input
             ref={fromRef}
@@ -95,7 +95,7 @@ export function BlockDateForm() {
 
         <div className="flex flex-col gap-1.5">
           <label className="font-sans text-xs font-semibold uppercase tracking-wider text-midnight-400">
-            To <span className="text-coral">*</span>
+            Au <span className="text-coral">*</span>
           </label>
           <input
             ref={toRef}
@@ -107,12 +107,12 @@ export function BlockDateForm() {
 
         <div className="flex flex-col gap-1.5">
           <label className="font-sans text-xs font-semibold uppercase tracking-wider text-midnight-400">
-            Reason
+            Motif
           </label>
           <input
             ref={reasonRef}
             type="text"
-            placeholder="e.g. Renovation"
+            placeholder="ex : Travaux"
             className="rounded-xl border border-pearl-400 bg-pearl px-3 py-2 font-sans text-sm text-midnight placeholder-midnight-300 focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
           />
         </div>
@@ -142,7 +142,7 @@ export function BlockDateForm() {
           disabled={isPending}
           className="rounded-xl bg-midnight px-6 py-2.5 font-sans text-sm font-medium text-pearl transition-opacity hover:opacity-90 disabled:opacity-50"
         >
-          {isPending ? 'Blocking...' : 'Block Dates'}
+          {isPending ? 'Blocage en cours…' : 'Bloquer les dates'}
         </button>
       </div>
     </form>

@@ -12,7 +12,7 @@ export function ProviderActiveToggle({ id, active: initialActive }: Props) {
   return (
     <ToggleSwitch
       checked={active}
-      label="Active"
+      label="Actif"
       onToggle={async () => {
         await toggleProviderActive(id, !active)
         setActive((v) => !v)

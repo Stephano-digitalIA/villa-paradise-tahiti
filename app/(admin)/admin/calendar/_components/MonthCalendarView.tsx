@@ -71,10 +71,10 @@ function startOfWeek(d: Date): Date {
 }
 
 const MONTH_NAMES = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
+  'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+  'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre',
 ]
-const WEEKDAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+const WEEKDAY_LABELS = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam']
 
 /* ───────────────────────────────────────────────────────────────
  * Source/status styles
@@ -93,9 +93,9 @@ const BLOCK_STYLE: Record<string, { bar: string; dot: string; label: string }> =
   booking:        { bar: 'bg-indigo-500/80  text-white',  dot: 'bg-indigo-500',  label: 'Booking.com' },
   vrbo:           { bar: 'bg-cyan-600/80    text-white',  dot: 'bg-cyan-600',    label: 'VRBO' },
   direct_booking: { bar: 'bg-lagoon         text-pearl',  dot: 'bg-lagoon',      label: 'Direct' },
-  owner:          { bar: 'bg-midnight       text-pearl',  dot: 'bg-midnight',    label: 'Owner' },
-  maintenance:    { bar: 'bg-amber-600/80   text-white',  dot: 'bg-amber-600',   label: 'Maintenance' },
-  turnover:       { bar: 'bg-emerald-800    text-white',  dot: 'bg-emerald-800', label: 'Cleaning' },
+  owner:          { bar: 'bg-midnight       text-pearl',  dot: 'bg-midnight',    label: 'Propriétaire' },
+  maintenance:    { bar: 'bg-amber-600/80   text-white',  dot: 'bg-amber-600',   label: 'Entretien' },
+  turnover:       { bar: 'bg-emerald-800    text-white',  dot: 'bg-emerald-800', label: 'Ménage' },
 }
 
 function blockStyle(source: string) {
@@ -162,7 +162,7 @@ export function MonthCalendarView({ reservations, blocks }: MonthCalendarViewPro
           <button
             type="button"
             onClick={gotoPrev}
-            aria-label="Previous month"
+            aria-label="Mois précédent"
             className="rounded-lg border border-pearl-400 bg-white p-2 text-midnight transition-colors hover:border-midnight"
           >
             <ChevronLeft className="h-4 w-4" aria-hidden="true" />
@@ -172,12 +172,12 @@ export function MonthCalendarView({ reservations, blocks }: MonthCalendarViewPro
             onClick={gotoToday}
             className="rounded-lg border border-pearl-400 bg-white px-3 py-1.5 font-sans text-xs font-semibold text-midnight transition-colors hover:border-midnight"
           >
-            Today
+            Aujourd&apos;hui
           </button>
           <button
             type="button"
             onClick={gotoNext}
-            aria-label="Next month"
+            aria-label="Mois suivant"
             className="rounded-lg border border-pearl-400 bg-white p-2 text-midnight transition-colors hover:border-midnight"
           >
             <ChevronRight className="h-4 w-4" aria-hidden="true" />
@@ -378,14 +378,15 @@ function BlockBar({
 
 function Legend() {
   const items: { dot: string; label: string }[] = [
-    { dot: RESERVATION_STYLE.fully_paid.dot, label: 'Paid' },
-    { dot: RESERVATION_STYLE.deposit_paid.dot, label: 'Deposit' },
-    { dot: RESERVATION_STYLE.pending.dot, label: 'Pending' },
+    { dot: RESERVATION_STYLE.fully_paid.dot, label: 'Soldé' },
+    { dot: RESERVATION_STYLE.deposit_paid.dot, label: 'Acompte' },
+    { dot: RESERVATION_STYLE.pending.dot, label: 'En attente' },
     { dot: BLOCK_STYLE.airbnb!.dot, label: 'Airbnb' },
     { dot: BLOCK_STYLE.booking!.dot, label: 'Booking' },
     { dot: BLOCK_STYLE.vrbo!.dot, label: 'VRBO' },
-    { dot: BLOCK_STYLE.owner!.dot, label: 'Owner' },
-    { dot: BLOCK_STYLE.maintenance!.dot, label: 'Maintenance' },
+    { dot: BLOCK_STYLE.owner!.dot, label: 'Propriétaire' },
+    { dot: BLOCK_STYLE.maintenance!.dot, label: 'Entretien' },
+    { dot: BLOCK_STYLE.turnover!.dot, label: 'Ménage' },
   ]
   return (
     <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">

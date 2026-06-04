@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation'
 import { adminClient } from '@/lib/supabase/admin'
 import { ReviewForm } from '../ReviewForm'
 
-export const metadata: Metadata = { title: 'Edit Review — Admin' }
+export const metadata: Metadata = { title: 'Éditer l\'avis — Admin' }
 export const dynamic = 'force-dynamic'
 
 type Props = { params: { id: string } }

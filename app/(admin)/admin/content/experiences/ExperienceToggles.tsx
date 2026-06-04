@@ -29,7 +29,7 @@ export function ExperienceToggle({
   return (
     <ToggleSwitch
       checked={value}
-      label={field === 'active' ? 'Active' : 'Featured'}
+      label={field === 'active' ? 'Actif' : 'Mis en avant'}
       onToggle={async () => {
         const next = !value
         // Optimistic flip — revert if the server action throws.

@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { adminClient } from '@/lib/supabase/admin'
 import { GalleryClient } from './GalleryClient'
 
-export const metadata: Metadata = { title: 'Gallery — Admin' }
+export const metadata: Metadata = { title: 'Galerie — Admin' }
 export const dynamic = 'force-dynamic'
 
 export default async function GalleryPage() {

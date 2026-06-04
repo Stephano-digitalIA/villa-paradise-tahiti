@@ -12,7 +12,7 @@ export function ReviewFeaturedToggle({ id, featured: initialFeatured }: Props) {
   return (
     <ToggleSwitch
       checked={featured}
-      label="Featured"
+      label="Mis en avant"
       onToggle={async () => {
         await toggleReviewFeatured(id, !featured)
         setFeatured((v) => !v)

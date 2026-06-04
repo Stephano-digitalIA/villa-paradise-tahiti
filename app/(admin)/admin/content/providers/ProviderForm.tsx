@@ -30,7 +30,7 @@ export function ProviderForm({ provider }: Props) {
         }
         router.push('/admin/content/providers')
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Something went wrong')
+        setError(err instanceof Error ? err.message : 'Une erreur est survenue')
       }
     })
   }
@@ -39,14 +39,14 @@ export function ProviderForm({ provider }: Props) {
     <div className="p-8">
       <div className="mb-6 flex items-center justify-between">
         <h1 className="font-heading text-2xl font-semibold text-midnight">
-          {isEdit ? 'Edit Provider' : 'New Provider'}
+          {isEdit ? 'Éditer le prestataire' : 'Nouveau prestataire'}
         </h1>
         <div className="flex gap-3">
           <Button variant="outline" size="sm" onClick={() => router.push('/admin/content/providers')}>
-            Cancel
+            Annuler
           </Button>
           <Button type="submit" form="provider-form" disabled={isPending} size="sm">
-            {isPending ? 'Saving…' : isEdit ? 'Save Changes' : 'Create Provider'}
+            {isPending ? 'Enregistrement…' : isEdit ? 'Enregistrer' : 'Créer le prestataire'}
           </Button>
         </div>
       </div>
@@ -60,11 +60,11 @@ export function ProviderForm({ provider }: Props) {
       <form id="provider-form" onSubmit={handleSubmit}>
         <div className="rounded-2xl border border-pearl-400 bg-white shadow-sm">
           <div className="px-8">
-            <FormSection title="Contact Info">
+            <FormSection title="Coordonnées">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
                   <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                    Name <span className="text-coral">*</span>
+                    Nom <span className="text-coral">*</span>
                   </label>
                   <Input name="name" defaultValue={provider?.name} required />
                 </div>
@@ -76,13 +76,13 @@ export function ProviderForm({ provider }: Props) {
                 </div>
                 <div>
                   <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                    Phone
+                    Téléphone
                   </label>
                   <Input type="tel" name="contact_phone" defaultValue={provider?.contact_phone ?? ''} />
                 </div>
                 <div>
                   <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                    Website
+                    Site web
                   </label>
                   <Input type="url" name="website" defaultValue={provider?.website ?? ''} placeholder="https://…" />
                 </div>
@@ -90,7 +90,7 @@ export function ProviderForm({ provider }: Props) {
                   <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
                     Instagram
                   </label>
-                  <Input name="instagram" defaultValue={provider?.instagram ?? ''} placeholder="@handle" />
+                  <Input name="instagram" defaultValue={provider?.instagram ?? ''} placeholder="@pseudo" />
                 </div>
                 <div>
                   <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
@@ -108,12 +108,12 @@ export function ProviderForm({ provider }: Props) {
               </div>
             </FormSection>
 
-            <FormSection title="Services" description="One service per line">
+            <FormSection title="Services" description="Un service par ligne">
               <textarea
                 name="services"
                 rows={5}
                 defaultValue={(provider?.services ?? []).join('\n')}
-                placeholder="Lagoon excursion&#10;Shark & ray feeding&#10;Private boat charter"
+                placeholder="Excursion lagon&#10;Nourrissage requins & raies&#10;Affrètement bateau privé"
                 className="w-full resize-y rounded-lg border border-lagoon/20 bg-pearl px-4 py-3 font-sans text-sm text-midnight placeholder:text-midnight-300 focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/30"
               />
             </FormSection>
@@ -123,12 +123,12 @@ export function ProviderForm({ provider }: Props) {
                 name="notes"
                 rows={4}
                 defaultValue={provider?.notes ?? ''}
-                placeholder="Internal notes about this provider…"
+                placeholder="Notes internes sur ce prestataire…"
                 className="w-full resize-y rounded-lg border border-lagoon/20 bg-pearl px-4 py-3 font-sans text-sm text-midnight placeholder:text-midnight-300 focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/30"
               />
             </FormSection>
 
-            <FormSection title="Status">
+            <FormSection title="Statut">
               <label className="flex cursor-pointer items-center gap-2">
                 <input
                   type="checkbox"
@@ -137,7 +137,7 @@ export function ProviderForm({ provider }: Props) {
                   defaultChecked={provider?.active ?? true}
                   className="h-4 w-4 rounded border-pearl-400 text-gold focus:ring-gold"
                 />
-                <span className="font-sans text-sm text-midnight">Active</span>
+                <span className="font-sans text-sm text-midnight">Actif</span>
               </label>
             </FormSection>
           </div>

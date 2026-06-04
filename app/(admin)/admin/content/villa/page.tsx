@@ -3,7 +3,7 @@ import { adminClient } from '@/lib/supabase/admin'
 import { VillaForm } from './VillaForm'
 import type { Villa } from '@/lib/supabase/types'
 
-export const metadata: Metadata = { title: 'Villa Settings — Admin' }
+export const metadata: Metadata = { title: 'Paramètres villa — Admin' }
 export const dynamic = 'force-dynamic'
 
 export default async function VillaEditPage() {

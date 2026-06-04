@@ -14,9 +14,9 @@ function isPublished(publishedAt: string | null): boolean {
 
 function formatDate(str: string | null) {
   if (!str) return '—'
-  return new Date(str).toLocaleDateString('en-US', {
+  return new Date(str).toLocaleDateString('fr-FR', {
+    day: '2-digit',
     month: 'short',
-    day: 'numeric',
     year: 'numeric',
   })
 }
@@ -34,17 +34,17 @@ export default async function BlogPage() {
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="font-heading text-2xl font-semibold text-midnight">Blog</h1>
-          <p className="mt-1 font-sans text-sm text-midnight-400">{posts.length} articles</p>
+          <p className="mt-1 font-sans text-sm text-midnight-400">{posts.length} article{posts.length > 1 ? 's' : ''}</p>
         </div>
         <Button asChild size="sm">
-          <Link href="/admin/content/blog/new">+ New Post</Link>
+          <Link href="/admin/content/blog/new">+ Nouvel article</Link>
         </Button>
       </div>
 
       {posts.length === 0 ? (
         <div className="rounded-2xl border border-pearl-400 bg-white px-8 py-16 text-center shadow-sm">
-          <p className="font-heading text-lg text-midnight-400">No posts yet.</p>
-          <p className="mt-1 font-sans text-sm text-midnight-400">Click + to create your first one.</p>
+          <p className="font-heading text-lg text-midnight-400">Aucun article pour le moment.</p>
+          <p className="mt-1 font-sans text-sm text-midnight-400">Clique sur + pour créer le premier.</p>
         </div>
       ) : (
         <div className="overflow-hidden rounded-2xl border border-pearl-400 bg-white shadow-sm">
@@ -93,7 +93,7 @@ export default async function BlogPage() {
                         variant={isPublished(post.published_at) ? 'success' : 'warning'}
                         size="sm"
                       >
-                        {isPublished(post.published_at) ? 'Published' : 'Draft'}
+                        {isPublished(post.published_at) ? 'Publié' : 'Brouillon'}
                       </Badge>
                     </td>
                     <td className="px-5 py-4 font-sans text-xs text-midnight-400">
@@ -104,7 +104,7 @@ export default async function BlogPage() {
                         href={`/admin/content/blog/${post.id}`}
                         className="font-sans text-xs font-medium text-gold hover:underline"
                       >
-                        Edit
+                        Éditer
                       </Link>
                     </td>
                   </tr>

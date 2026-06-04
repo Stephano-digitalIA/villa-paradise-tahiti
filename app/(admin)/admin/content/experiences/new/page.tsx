@@ -6,7 +6,7 @@ import { adminClient } from '@/lib/supabase/admin'
 
 import { ExperienceForm } from '../ExperienceForm'
 
-export const metadata: Metadata = { title: 'New Experience — Admin' }
+export const metadata: Metadata = { title: 'Nouvelle prestation — Admin' }
 export const dynamic = 'force-dynamic'
 
 export default async function NewExperiencePage() {
@@ -28,15 +28,16 @@ export default async function NewExperiencePage() {
         </Link>
         <span className="font-sans text-sm text-midnight-400">/</span>
         <span className="font-sans text-sm font-medium text-midnight">
-          New experience
+          Nouvelle prestation
         </span>
       </div>
 
       <div className="flex items-start gap-3 rounded-xl border border-pearl-400 bg-pearl-300/40 px-4 py-3">
         <ImageIcon className="mt-0.5 h-4 w-4 flex-none text-gold" aria-hidden="true" />
         <p className="font-sans text-sm text-midnight-400">
-          Set the cover image below. The full gallery (additional photos) opens
-          on the edit page once this experience is saved.
+          Définis l&apos;image de couverture ci-dessous. La galerie complète
+          (photos additionnelles) s&apos;ouvrira sur la page d&apos;édition une
+          fois la prestation enregistrée.
         </p>
       </div>
 

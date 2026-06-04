@@ -45,7 +45,7 @@ export function PostForm({ post }: Props) {
         }
         router.push('/admin/content/blog')
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Something went wrong')
+        setError(err instanceof Error ? err.message : 'Une erreur est survenue')
       }
     })
   }
@@ -54,14 +54,14 @@ export function PostForm({ post }: Props) {
     <div className="p-8">
       <div className="mb-6 flex items-center justify-between">
         <h1 className="font-heading text-2xl font-semibold text-midnight">
-          {isEdit ? 'Edit Post' : 'New Post'}
+          {isEdit ? 'Éditer l\'article' : 'Nouvel article'}
         </h1>
         <div className="flex gap-3">
           <Button variant="outline" size="sm" onClick={() => router.push('/admin/content/blog')}>
-            Cancel
+            Annuler
           </Button>
           <Button type="submit" form="post-form" disabled={isPending} size="sm">
-            {isPending ? 'Saving…' : isEdit ? 'Save Changes' : 'Create Post'}
+            {isPending ? 'Enregistrement…' : isEdit ? 'Enregistrer' : 'Créer l\'article'}
           </Button>
         </div>
       </div>
@@ -75,11 +75,11 @@ export function PostForm({ post }: Props) {
       <form id="post-form" onSubmit={handleSubmit}>
         <div className="rounded-2xl border border-pearl-400 bg-white shadow-sm">
           <div className="px-8">
-            <FormSection title="Basic Info">
+            <FormSection title="Informations de base">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
                   <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                    Title <span className="text-coral">*</span>
+                    Titre <span className="text-coral">*</span>
                   </label>
                   <Input
                     name="title"
@@ -96,14 +96,14 @@ export function PostForm({ post }: Props) {
                     name="slug"
                     value={slug}
                     onChange={(e) => setSlug(e.target.value)}
-                    placeholder="auto-generated"
+                    placeholder="auto-généré"
                   />
                 </div>
               </div>
               <div>
                 <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                  Excerpt <span className="text-coral">*</span>{' '}
-                  <span className="font-normal text-midnight-400">(max 220 chars)</span>
+                  Extrait <span className="text-coral">*</span>{' '}
+                  <span className="font-normal text-midnight-400">(220 caractères max)</span>
                 </label>
                 <textarea
                   name="excerpt"
@@ -116,65 +116,65 @@ export function PostForm({ post }: Props) {
               </div>
             </FormSection>
 
-            <FormSection title="Body" description="Supports Markdown">
+            <FormSection title="Corps" description="Supporte le Markdown">
               <MarkdownEditor
                 name="body"
-                label="Article body"
+                label="Corps de l'article"
                 defaultValue={post?.body}
                 rows={15}
               />
             </FormSection>
 
-            <FormSection title="Cover Image">
+            <FormSection title="Image de couverture">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
                   <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                    Cover Image URL
+                    URL image de couverture
                   </label>
                   <Input name="cover_image_url" defaultValue={post?.cover_image_url ?? ''} placeholder="https://…" />
                 </div>
                 <div>
                   <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                    Cover Image Alt
+                    Texte alternatif (alt)
                   </label>
                   <Input name="cover_image_alt" defaultValue={post?.cover_image_alt ?? ''} />
                 </div>
               </div>
             </FormSection>
 
-            <FormSection title="Author">
+            <FormSection title="Auteur">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
                   <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                    Author Name
+                    Nom de l&apos;auteur
                   </label>
                   <Input name="author_name" defaultValue={post?.author_name ?? ''} />
                 </div>
                 <div>
                   <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                    Author Bio
+                    Bio de l&apos;auteur
                   </label>
                   <Input name="author_bio" defaultValue={post?.author_bio ?? ''} />
                 </div>
               </div>
             </FormSection>
 
-            <FormSection title="Tags & Meta">
+            <FormSection title="Tags & métadonnées">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
                   <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
                     Tags{' '}
-                    <span className="font-normal text-midnight-400">(comma-separated)</span>
+                    <span className="font-normal text-midnight-400">(séparés par des virgules)</span>
                   </label>
                   <Input
                     name="tags"
                     defaultValue={(post?.tags ?? []).join(', ')}
-                    placeholder="tahiti, lagoon, travel"
+                    placeholder="tahiti, lagon, voyage"
                   />
                 </div>
                 <div>
                   <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                    Reading Time (min)
+                    Temps de lecture (min)
                   </label>
                   <Input
                     type="number"
@@ -186,8 +186,8 @@ export function PostForm({ post }: Props) {
               </div>
               <div>
                 <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                  Published At{' '}
-                  <span className="font-normal text-midnight-400">(leave blank = draft)</span>
+                  Publié le{' '}
+                  <span className="font-normal text-midnight-400">(laisser vide = brouillon)</span>
                 </label>
                 <Input
                   type="datetime-local"
@@ -202,14 +202,14 @@ export function PostForm({ post }: Props) {
             <FormSection title="SEO">
               <div>
                 <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                  SEO Title <span className="font-normal text-midnight-400">(max 70 chars)</span>
+                  Titre SEO <span className="font-normal text-midnight-400">(70 caractères max)</span>
                 </label>
                 <Input name="seo_title" defaultValue={post?.seo_title ?? ''} maxLength={70} />
               </div>
               <div>
                 <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                  SEO Description{' '}
-                  <span className="font-normal text-midnight-400">(max 170 chars)</span>
+                  Description SEO{' '}
+                  <span className="font-normal text-midnight-400">(170 caractères max)</span>
                 </label>
                 <textarea
                   name="seo_description"
