@@ -94,7 +94,7 @@ export function Location({ villa }: LocationProps) {
               On this quiet stretch of coastline, travelers come for...
             </h2>
             <p className="mt-6 max-w-prose font-sans text-body-md text-pearl/80 sm:text-body-lg">
-              Punaauia, Tahiti's most prestigious neighbourhood, is the western coastal suburb of Papeete where residents build their family homes — a postcard shoreline with white sandy beaches and a turquoise lagoon, twenty-five minutes from the airport and a world away from the hustle of the capital.
+              Punaauia, Tahiti's most prestigious neighbourhood — a postcard shoreline with white sandy beaches and a turquoise lagoon, twenty-five minutes from the airport and a world away from the hustle of the capital.
             </p>
 
             <ul className="mt-10 flex flex-col gap-5">
