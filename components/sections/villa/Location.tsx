@@ -10,17 +10,17 @@ interface LocationProps {
 /**
  * Villa location section.
  *
- * Renders an interactive Google Maps embed (centered on the villa marker)
- * with a "View on Google Maps" deep-link, plus the contextual answers every
- * visitor asks: distance to airport, to Papeete, to the nearest beach.
+ * Renders an interactive Google Maps satellite embed with a "View on Google
+ * Maps" deep-link, plus the contextual answers every visitor asks: distance
+ * to airport, to Papeete, to the nearest beach.
  */
 
-// Canonical Google Maps place link for Villa Paradise Tahiti.
+// Google Maps satellite view link for the villa area.
 const MAPS_PLACE_URL =
-  'https://www.google.com/maps/place/Villa+Paradise+Tahiti/@-17.6522674,-149.5780236,15.78z/data=!4m9!3m8!1s0x769a33eb86afcf29:0xcd2405f8f5db71e1!5m2!4m1!1i2!8m2!3d-17.6473078!4d-149.5864567!16s%2Fg%2F11lkynn952?entry=ttu&g_ep=EgoyMDI2MDYwMS4wIKXMDSoASAFQAw%3D%3D'
-// Keyless interactive embed centered on the villa marker (lat/lng from the place URL).
+  'https://www.google.com/maps/@-17.6484313,-149.5851282,2465m/data=!3m1!1e3?entry=ttu&g_ep=EgoyMDI2MDYwMS4wIKXMDSoASAFQAw%3D%3D'
+// Keyless interactive satellite embed (t=k) centered on the same coordinates.
 const MAPS_EMBED_SRC =
-  'https://maps.google.com/maps?q=-17.6473078,-149.5864567&z=15&hl=en&output=embed'
+  'https://maps.google.com/maps?q=-17.6484313,-149.5851282&t=k&z=16&hl=en&output=embed'
 
 export function Location({ villa }: LocationProps) {
   const location = villa.location
