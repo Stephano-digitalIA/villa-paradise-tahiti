@@ -90,11 +90,19 @@ export interface PriceBreakdown {
   cleaningFee: number
   /** Sum of every selected experience line. */
   experiencesTotal: number
-  /** villa + cleaning + experiences. */
+  /** villa + cleaning + experiences (before any discount). */
   subtotal: number
+  /** Long-stay discount in USD — % off (villa + cleaning) for stays ≥ threshold. 0 otherwise. */
+  longStayDiscount: number
+  /** True when the long-stay discount was applied. */
+  longStayDiscountApplied: boolean
+  /** Discount rate used when applied (e.g. 10). */
+  longStayDiscountPercent: number
+  /** Minimum nights that unlock the long-stay discount. */
+  longStayMinNights: number
   /** Taxes line. 0 in French Polynesia (kept for future flexibility). */
   taxes: number
-  /** subtotal + taxes. */
+  /** subtotal − longStayDiscount + taxes. */
   total: number
   /** Deposit due at booking (`depositPercent` from settings, default 30%). */
   depositAmount: number

@@ -18,7 +18,7 @@ const SEASONS: SeasonRate[] = [
     unit: 'per night',
     window: 'May – June · October – November',
     blurb:
-      'Soft trade winds, fewer travelers and the most generous pricing of the year. Our favorite weeks.',
+      'Soft trade winds, fewer travelers and the most generous pricing of the year. Our favorite period.',
   },
   {
     name: 'High Season',
@@ -27,7 +27,7 @@ const SEASONS: SeasonRate[] = [
     unit: 'per night',
     window: 'July – September · December – early January',
     blurb:
-      'Whale-watching season, dry sunny days, golden hour at the pool. Books out 4–6 months ahead.',
+      'Whale-watching season, dry sunny days, golden hour at the pool.',
   },
   {
     name: 'Peak Holidays',
@@ -36,7 +36,7 @@ const SEASONS: SeasonRate[] = [
     unit: 'per night',
     window: 'Christmas week · New Year · Easter',
     blurb:
-      'The villa fills up first for the holidays. Seven-night minimum, deposit due at booking.',
+      'Villa Paradise Tahiti is the best place to celebrate your Christmas and New Year holidays.',
   },
 ]
 

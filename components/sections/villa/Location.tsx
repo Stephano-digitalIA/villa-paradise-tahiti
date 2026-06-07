@@ -10,11 +10,18 @@ interface LocationProps {
 /**
  * Villa location section.
  *
- * Renders a stylized map placeholder (no live Google Maps to keep the
- * homepage lean — Phase D will wire it up) plus the contextual answers
- * every American visitor asks: distance to airport, to Papeete, to the
- * nearest beach.
+ * Renders an interactive Google Maps embed (centered on the villa marker)
+ * with a "View on Google Maps" deep-link, plus the contextual answers every
+ * visitor asks: distance to airport, to Papeete, to the nearest beach.
  */
+
+// Canonical Google Maps place link for Villa Paradise Tahiti.
+const MAPS_PLACE_URL =
+  'https://www.google.com/maps/place/Villa+Paradise+Tahiti/@-17.6522674,-149.5780236,15.78z/data=!4m9!3m8!1s0x769a33eb86afcf29:0xcd2405f8f5db71e1!5m2!4m1!1i2!8m2!3d-17.6473078!4d-149.5864567!16s%2Fg%2F11lkynn952?entry=ttu&g_ep=EgoyMDI2MDYwMS4wIKXMDSoASAFQAw%3D%3D'
+// Keyless interactive embed centered on the villa marker (lat/lng from the place URL).
+const MAPS_EMBED_SRC =
+  'https://maps.google.com/maps?q=-17.6473078,-149.5864567&z=15&hl=en&output=embed'
+
 export function Location({ villa }: LocationProps) {
   const location = villa.location
 
@@ -46,42 +53,26 @@ export function Location({ villa }: LocationProps) {
     <Section tone="midnight" spacing="default">
       <Container>
         <div className="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
-          {/* Map placeholder */}
-          <div
-            className="relative isolate aspect-[4/3] overflow-hidden rounded-2xl border border-pearl/10 bg-midnight-700"
-            aria-label="Map placeholder — Punaauia, Tahiti"
-          >
-            {/* Decorative grid */}
-            <div
-              className="absolute inset-0 opacity-30"
-              style={{
-                backgroundImage:
-                  'linear-gradient(to right, rgba(250,250,248,0.06) 1px, transparent 1px), linear-gradient(to bottom, rgba(250,250,248,0.06) 1px, transparent 1px)',
-                backgroundSize: '32px 32px',
-              }}
-              aria-hidden="true"
+          {/* Interactive map */}
+          <div className="relative isolate aspect-[4/3] overflow-hidden rounded-2xl border border-pearl/10 bg-midnight-700">
+            <iframe
+              title={`Map — ${location?.city ?? 'Punaauia, Tahiti'}`}
+              src={MAPS_EMBED_SRC}
+              className="absolute inset-0 h-full w-full"
+              style={{ border: 0 }}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              allowFullScreen
             />
-            {/* Soft glow centered on pin */}
-            <div
-              className="absolute left-1/2 top-1/2 h-48 w-48 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gold/20 blur-3xl"
-              aria-hidden="true"
-            />
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-pearl">
-              <MapPin
-                className="mb-4 h-10 w-10 text-gold"
-                strokeWidth={1.25}
-                aria-hidden="true"
-              />
-              <p className="font-display text-h3-luxe italic text-pearl">
-                {location?.city ?? 'Punaauia, Tahiti'}
-              </p>
-              <p className="mt-2 font-sans text-body-sm text-pearl/65">
-                {location?.country ?? 'French Polynesia'} · 17.64°S · 149.60°W
-              </p>
-              <p className="mt-6 font-sans text-eyebrow uppercase tracking-widest2 text-gold/80">
-                Interactive map coming soon
-              </p>
-            </div>
+            <a
+              href={MAPS_PLACE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="absolute bottom-3 right-3 z-10 inline-flex items-center gap-2 rounded-full bg-midnight/85 px-4 py-2 font-sans text-eyebrow uppercase tracking-widest2 text-pearl shadow-card backdrop-blur transition-colors hover:text-gold"
+            >
+              <MapPin className="h-4 w-4 text-gold" strokeWidth={1.5} aria-hidden="true" />
+              View on Google Maps
+            </a>
           </div>
 
           {/* Copy + distances */}

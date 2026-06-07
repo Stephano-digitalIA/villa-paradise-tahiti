@@ -135,6 +135,16 @@ export function PriceSummary({ className }: PriceSummaryProps) {
       {/* ─── Totals ──────────────────────────────────────────────────── */}
       <div className="flex flex-col gap-2 border-t border-pearl-400 pt-4">
         <Row label="Subtotal" value={hasNights ? formatUSD(breakdown.subtotal) : '—'} />
+        {breakdown.longStayDiscountApplied ? (
+          <div className="flex items-baseline justify-between gap-3 text-body-sm">
+            <span className="font-sans text-leaf">
+              Long-stay discount ({breakdown.longStayDiscountPercent}% · {breakdown.longStayMinNights}+ nights)
+            </span>
+            <span className="font-sans font-semibold text-leaf">
+              −{formatUSD(breakdown.longStayDiscount)}
+            </span>
+          </div>
+        ) : null}
         <Row
           label="Taxes & fees"
           value={hasNights ? formatUSD(breakdown.taxes) : '—'}

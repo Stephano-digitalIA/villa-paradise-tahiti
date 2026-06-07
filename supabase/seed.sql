@@ -78,7 +78,7 @@ INSERT INTO villa (
   'Your private paradise in the heart of French Polynesia.',
   'Set on a quiet stretch of black-sand coast, Villa Paradise opens directly onto the turquoise lagoon of Tahiti. Days begin with the soft hush of the reef, drift through hours under the bougainvilleas, and end with a Pacific sunset bleeding into the horizon.
 
-Inside, four light-filled bedrooms unfold around an open-plan living space dressed in pale wood, woven rattan and natural linen. Floor-to-ceiling windows pivot open onto the terrace, blurring the line between the villa and the garden beyond.
+Inside, four light-filled bedrooms unfold around an open-plan living space dressed in pale wood. Floor-to-ceiling windows pivot open onto the terrace, blurring the line between the villa and the garden beyond.
 
 The infinity pool sits flush with the lagoon, framed by tropical palms and the silhouette of Moorea on the horizon. A private path winds through the garden down to the water, where kayaks and snorkeling gear wait under a thatched fare.
 
@@ -94,19 +94,19 @@ Beyond the villa, our concierge curates the experiences that turn a stay into a 
   true,
   true,
   ARRAY[
-    'Private infinity pool',
     'High-speed Wi-Fi',
-    'Air conditioning throughout',
-    'Fully equipped chef kitchen',
+    'Air conditioning in all bedrooms',
+    'Fully equipped chef''s kitchen',
     'Smart TV with streaming',
+    'Private infinity pool',
     'Outdoor dining terrace',
     'Tropical garden',
-    'Beach & lagoon access',
+    'Beach and lagoon access 10 min by car',
     'Two kayaks included',
-    'Snorkeling gear',
-    'Private parking',
+    'Snorkelling equipment',
+    'Free private parking',
     'Daily housekeeping (on request)',
-    'Welcome tropical basket',
+    'Tropical welcome basket',
     'Concierge service'
   ],
   'Punaauia Coast Road',

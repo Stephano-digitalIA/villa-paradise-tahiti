@@ -344,6 +344,16 @@ export default async function ReservationDetailPage({ params }: PageProps) {
                     </dd>
                   </div>
                 )}
+                {r.long_stay_discount != null && r.long_stay_discount > 0 && (
+                  <div className="flex justify-between">
+                    <dt className="font-sans text-sm text-leaf">
+                      Long-stay discount
+                    </dt>
+                    <dd className="font-sans text-sm text-leaf">
+                      −{formatUSD(r.long_stay_discount)}
+                    </dd>
+                  </div>
+                )}
                 {r.taxes != null && r.taxes > 0 && (
                   <div className="flex justify-between">
                     <dt className="font-sans text-sm text-midnight-400">

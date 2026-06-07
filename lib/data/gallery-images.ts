@@ -135,7 +135,7 @@ export const galleryImages: GalleryImage[] = [
     category: 'interior',
     width: 1400,
     height: 1050,
-    caption: 'The master bedroom — pale wood, natural linen, and ocean light.',
+    caption: 'The master bedroom — pale wood and ocean light.',
   },
   {
     id: 'gal-int-10',

@@ -116,6 +116,16 @@ export function CheckoutSummary({ className }: CheckoutSummaryProps) {
       {/* ─── Subtotals ─────────────────────────────────────────────── */}
       <div className="flex flex-col gap-2 border-t border-pearl-400 pt-4">
         <Row label="Subtotal" value={breakdown.nights > 0 ? formatUSD(breakdown.subtotal) : '—'} />
+        {breakdown.longStayDiscountApplied ? (
+          <div className="flex items-baseline justify-between gap-3 text-body-sm">
+            <span className="font-sans text-leaf">
+              Long-stay discount ({breakdown.longStayDiscountPercent}% · {breakdown.longStayMinNights}+ nights)
+            </span>
+            <span className="font-sans font-semibold text-leaf">
+              −{formatUSD(breakdown.longStayDiscount)}
+            </span>
+          </div>
+        ) : null}
         <Row
           label="Taxes & fees"
           value={breakdown.nights > 0 ? formatUSD(breakdown.taxes) : '—'}

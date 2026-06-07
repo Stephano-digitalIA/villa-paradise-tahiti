@@ -259,6 +259,7 @@ export async function POST(request: Request) {
       cleaning_fee: breakdown.cleaningFee,
       experiences_total: breakdown.experiencesTotal,
       subtotal: breakdown.subtotal,
+      long_stay_discount: breakdown.longStayDiscount,
       taxes: breakdown.taxes,
       total: breakdown.total,
       deposit_amount: chargeAmount,

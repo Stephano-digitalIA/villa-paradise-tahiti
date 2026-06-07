@@ -64,9 +64,9 @@ function classify(amenity: string): Group {
 }
 
 const groupLabels: Record<Group, { title: string; eyebrow: string }> = {
-  indoor: { title: 'Inside the Villa', eyebrow: 'Indoor' },
-  outdoor: { title: 'Outdoor & Lagoon', eyebrow: 'Outdoor' },
-  services: { title: 'Services & Extras', eyebrow: 'Concierge' },
+  indoor: { title: 'Inside the villa', eyebrow: 'Indoor' },
+  outdoor: { title: 'Outside & lagoon', eyebrow: 'Outdoor' },
+  services: { title: 'Services & extras', eyebrow: 'Concierge' },
 }
 
 export function Amenities({ villa }: AmenitiesProps) {
@@ -87,7 +87,7 @@ export function Amenities({ villa }: AmenitiesProps) {
             <span className="h-px w-8 bg-gold" aria-hidden="true" />
           </p>
           <h2 className="font-heading text-h2-luxe font-medium leading-tight text-midnight">
-            Everything has been thought out in every detail to make your stay as enjoyable as possible
+            Everything has been thought out in every detail to make your stay enjoyable
           </h2>
           <p className="mt-6 font-sans text-body-md text-midnight-400 sm:text-body-lg">
             From the welcome basket to the high-speed Wi-Fi, here is what is included with your stay at this villa.

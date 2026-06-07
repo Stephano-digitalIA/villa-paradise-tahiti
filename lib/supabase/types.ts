@@ -314,6 +314,7 @@ export type Reservation = {
   cleaning_fee: number | null
   experiences_total: number | null
   subtotal: number | null
+  long_stay_discount: number | null
   taxes: number | null
   total: number | null
   deposit_amount: number | null

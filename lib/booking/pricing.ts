@@ -41,6 +41,14 @@ export const SEASONAL_RATES: Record<Season, number> = {
   peak: 1290,
 }
 
+/**
+ * Long-stay discount: a stay of at least `LONG_STAY_MIN_NIGHTS` nights gets
+ * `LONG_STAY_DISCOUNT_PERCENT`% off the accommodation portion (villa nights +
+ * cleaning fee). Experiences are excluded — they keep their own pricing.
+ */
+export const LONG_STAY_MIN_NIGHTS = 14
+export const LONG_STAY_DISCOUNT_PERCENT = 10
+
 /** Fallback nightly rate when no season can be detected (e.g. dates blank). */
 const FALLBACK_NIGHTLY_RATE = 690
 
@@ -310,9 +318,17 @@ export function computeBreakdown(
   )
   const subtotalCents = villaSubtotalCents + cleaningFeeCents + experiencesTotalCents
 
+  // Long-stay discount: % off the accommodation (villa + cleaning), not experiences.
+  const longStayDiscountApplied = nights >= LONG_STAY_MIN_NIGHTS
+  const longStayDiscountCents = longStayDiscountApplied
+    ? Math.round(
+        ((villaSubtotalCents + cleaningFeeCents) * LONG_STAY_DISCOUNT_PERCENT) / 100,
+      )
+    : 0
+
   // Taxes are 0 in French Polynesia (TVA non applicable) — keep the line for layout parity.
   const taxesCents = 0
-  const totalCents = subtotalCents + taxesCents
+  const totalCents = subtotalCents - longStayDiscountCents + taxesCents
 
   const depositCents = Math.round((totalCents * depositPercent) / 100)
   const balanceCents = totalCents - depositCents
@@ -325,6 +341,10 @@ export function computeBreakdown(
     cleaningFee: fromCents(cleaningFeeCents),
     experiencesTotal: fromCents(experiencesTotalCents),
     subtotal: fromCents(subtotalCents),
+    longStayDiscount: fromCents(longStayDiscountCents),
+    longStayDiscountApplied,
+    longStayDiscountPercent: LONG_STAY_DISCOUNT_PERCENT,
+    longStayMinNights: LONG_STAY_MIN_NIGHTS,
     taxes: fromCents(taxesCents),
     total: fromCents(totalCents),
     depositAmount: fromCents(depositCents),
