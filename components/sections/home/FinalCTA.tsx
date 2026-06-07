@@ -76,7 +76,7 @@ export function FinalCTA() {
               <span className="font-sans text-body-sm text-pearl">4.9 / 5</span>
             </div>
             <span className="hidden h-4 w-px bg-pearl/20 sm:block" aria-hidden="true" />
-            <span className="font-sans text-body-sm">50% refund if cancelled 60+ days before</span>
+            <span className="font-sans text-body-sm">100% refund if cancelled more than 60 days before</span>
             <span className="hidden h-4 w-px bg-pearl/20 sm:block" aria-hidden="true" />
             <span className="font-sans text-body-sm">Secure booking by Stripe</span>
           </div>

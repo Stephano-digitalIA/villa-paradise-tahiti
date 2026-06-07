@@ -15,29 +15,22 @@ interface Tier {
 
 const TIERS: readonly Tier[] = [
   {
-    window: '60+ days before arrival',
-    refund: '90% refund',
-    description: '10% admin fee retained to cover transaction costs.',
+    window: 'More than 60 days before arrival',
+    refund: '100% refund',
+    description: 'Full refund of the total amount paid to the original method.',
     tone: 'leaf',
   },
   {
-    window: '30 – 59 days',
+    window: '30 – 60 days before arrival',
     refund: '50% refund',
     description: 'Half of the total amount paid is refunded to the original method.',
     tone: 'gold',
   },
   {
-    window: '15 – 29 days',
-    refund: '25% refund',
-    description:
-      'Twenty-five percent of the total amount paid is refunded; the balance is retained.',
-    tone: 'coral',
-  },
-  {
-    window: 'Less than 15 days',
+    window: 'Within 30 days of arrival',
     refund: 'Non-refundable',
     description:
-      'No refund is available. We may credit a future stay at our sole discretion.',
+      'No refund is available — travel insurance is strongly recommended.',
     tone: 'midnight',
   },
 ] as const
@@ -64,7 +57,7 @@ const toneStyles: Record<Tier['tone'], { ring: string; badge: string }> = {
 export function CancellationTiers() {
   return (
     <div className="not-prose my-10">
-      <h2 className="font-heading text-h3-luxe text-midnight">Refund tiers at a glance</h2>
+      <h2 className="font-heading text-h3-luxe text-midnight">Flexible &amp; transparent</h2>
       <p className="mt-2 font-sans text-body-md text-midnight-400">
         Refund amounts are calculated against the total booking value (deposit
         plus balance) and exclude third-party fees (payment processor,

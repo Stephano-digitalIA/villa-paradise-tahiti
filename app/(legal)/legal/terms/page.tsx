@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import { LegalPageHeader } from '@/components/sections/legal'
 import { buildMetadata } from '@/lib/seo'
 
-const LAST_UPDATED = 'May 1, 2026'
+const LAST_UPDATED = 'June 6, 2026'
 
 export const metadata: Metadata = buildMetadata({
   title: 'Terms of Service — Villa Paradise Tahiti',
@@ -55,10 +55,13 @@ export default function TermsPage() {
           at checkout;
         </li>
         <li>
-          pay a non-refundable deposit equal to thirty percent (30%) of the
-          total booking value at the time of reservation; the remaining
-          seventy percent (70%) is automatically charged sixty (60) days
-          before the scheduled arrival date.
+          pay a deposit equal to thirty percent (30%) of the total booking
+          value at the time of reservation; the remaining seventy percent
+          (70%) is automatically charged thirty (30) days before the
+          scheduled arrival date. The deposit is refundable in accordance
+          with our <a href="/legal/cancellation">Cancellation Policy</a> &mdash;
+          in full for cancellations made more than sixty (60) days before
+          arrival.
         </li>
       </ul>
       <p>
@@ -80,6 +83,44 @@ export default function TermsPage() {
         to the nightly rate and are clearly itemized at checkout. We reserve
         the right to pass through any rate increase mandated by the
         government, provided that notice is given before final payment.
+      </p>
+
+      <h3>2.3 Seasonal rates and minimum stay</h3>
+      <p>
+        Nightly rates apply to the entire villa (sleeps up to 8) and vary by
+        season. The rate shown and itemized at checkout is always final:
+      </p>
+      <ul>
+        <li>
+          <strong>Low season</strong> (May&ndash;June and
+          October&ndash;November): USD 590 per night;
+        </li>
+        <li>
+          <strong>High season</strong> (July&ndash;September and December
+          through early January): USD 890 per night;
+        </li>
+        <li>
+          <strong>Peak holidays</strong> (Christmas week, New Year, and
+          Easter): USD 1,290 per night.
+        </li>
+      </ul>
+      <p>
+        A minimum stay of five (5) nights applies in low and high season, and
+        seven (7) nights during the peak holiday period. A one-time cleaning
+        fee is added to every reservation and itemized at checkout.
+      </p>
+
+      <h3>2.4 Long-stay discount</h3>
+      <p>
+        Reservations of fourteen (14) nights or more automatically receive a
+        ten percent (10%) discount on the accommodation portion of the booking
+        &mdash; that is, the villa nightly subtotal together with the cleaning
+        fee. The discount is calculated and shown at checkout before the
+        deposit is determined, so the thirty percent (30%) deposit and the
+        remaining balance are both computed on the already-discounted total.
+        The long-stay discount does not apply to optional experiences or
+        third-party excursions and may not be combined with any other
+        promotional offer or coupon.
       </p>
 
       <h2>3. Guest responsibilities and house rules</h2>

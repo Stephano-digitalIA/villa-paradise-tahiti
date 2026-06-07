@@ -671,7 +671,7 @@ export function CheckoutForm({ initialProfile }: CheckoutFormProps) {
           >
             cancellation policy
           </a>{' '}
-          (90% refund up to 60 days before arrival).
+          (100% refund more than 60 days before arrival).
         </Acknowledgment>
         <Acknowledgment name="acceptMarketing" register={register} optional>
           I'd like to receive Villa Paradise updates and travel inspiration (you can opt out at any time).

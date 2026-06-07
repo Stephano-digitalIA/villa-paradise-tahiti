@@ -178,7 +178,7 @@ export function CheckoutSummary({ className }: CheckoutSummaryProps) {
         </div>
         <div className="flex items-center gap-2">
           <ShieldCheck className="h-3 w-3 text-leaf" aria-hidden="true" />
-          <span>50% refund if cancelled 60+ days before arrival</span>
+          <span>100% refund for cancellations more than 60 days before arrival</span>
         </div>
         <div className="flex items-center gap-2">
           <Star className="h-3 w-3 text-gold" aria-hidden="true" />

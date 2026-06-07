@@ -44,7 +44,7 @@ export function RatesCta() {
         </div>
 
         <p className="mt-8 font-sans text-caption text-pearl/60">
-          Best-rate guarantee · 50% refund if cancelled 60+ days ahead · Secure
+          Best-rate guarantee · 100% refund if cancelled more than 60 days ahead · Secure
           payment via Stripe
         </p>
       </Container>

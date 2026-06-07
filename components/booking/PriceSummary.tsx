@@ -219,7 +219,7 @@ export function PriceSummary({ className }: PriceSummaryProps) {
         </div>
         <div className="flex items-center justify-center gap-2 text-xs text-midnight-400">
           <ShieldCheck className="h-3 w-3 text-leaf" aria-hidden="true" />
-          <span>50% refund if cancelled 60+ days before arrival</span>
+          <span>100% refund for cancellations more than 60 days before arrival</span>
         </div>
       </div>
     </aside>

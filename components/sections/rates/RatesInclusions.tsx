@@ -4,61 +4,56 @@ import { Container, Section } from '@/components/ui'
 
 const INCLUDED: ReadonlyArray<{ title: string; detail: string }> = [
   {
-    title: 'Welcome tropical basket',
+    title: 'Tropical welcome basket',
     detail:
-      'Fresh papaya, mango, passionfruit, croissants and vanilla coffee on the counter when you arrive.',
+      'Fresh papaya, mango, passion fruit, croissants and vanilla coffee awaiting you on the counter upon arrival.',
   },
   {
-    title: 'Daily housekeeping (on request)',
-    detail:
-      'Discreet refresh of linens, towels and the kitchen — scheduled to your rhythm.',
+    title: 'Daily housekeeping (on request), weekly complimentary for long stays',
+    detail: 'Linen, towels and kitchen refreshed on your schedule.',
   },
   {
     title: 'Private compact car',
     detail:
-      'A small island car for the duration of the stay, fuel-efficient and parked at the villa.',
+      'A small island car, five seats, fuel-efficient and parked at the villa, available for the entire duration of your stay.',
   },
   {
-    title: 'Complimentary airport transfer',
+    title: 'Free airport transfer',
     detail:
-      'Complimentary transfer by our partner taxi service for the 25-minute ride from Faaʻa International Airport (PPT).',
+      'Complimentary transfer by our taxi partner for the 25-minute journey from Faaʻa International Airport (PPT) or the ferry port.',
   },
   {
     title: 'High-speed Wi-Fi',
     detail:
-      'Fibre throughout the property, fast enough for video calls from the terrace.',
+      'Fibre optic available throughout the property, fast enough for video calls from the terrace or remote working.',
   },
   {
-    title: 'Kayaks &amp; snorkeling gear',
-    detail:
-      'Two kayaks, fins, masks and reef-safe sunscreen ready under the fare by the lagoon.',
+    title: 'Snorkelling equipment',
+    detail: 'Fins, masks and reef-safe sunscreen are available.',
   },
 ]
 
-const EXTRAS: ReadonlyArray<{ title: string; detail: string; from: string }> = [
+const EXTRAS: ReadonlyArray<{ title: string; detail: string; from?: string }> = [
   {
-    title: 'Curated excursions',
+    title: 'Excursions with our partners',
     detail:
-      'Lagoon snorkeling, 4×4 island tour, sunset sail, whale watching (in season).',
-    from: 'from $150 / person',
+      'Snorkelling in the lagoon, 4×4 island tour, catamaran excursion, VIP private boat excursion, sunset cruise, whale watching (in season).',
   },
   {
-    title: 'Private chef &amp; catering',
+    title: 'Private chef & catering',
     detail:
       'Polynesian-French menus prepared on the terrace by a chef from our concierge network.',
-    from: 'from $200 / dinner',
+    from: 'from $70 / dinner',
   },
   {
     title: 'In-villa spa services',
     detail:
-      'Taurumi massage with warm monoï oil, manicure, facial — booked the same day if availability allows.',
-    from: 'from $150 / session',
+      'Taurumi massage with warm monoï oil, manicure, facial — book same-day subject to availability.',
   },
   {
-    title: 'Thai massage at home',
+    title: 'In-home Thai massage',
     detail:
-      'In-villa taurumi massage with warm monoï oil by our certified partner therapist — booked on request.',
-    from: 'from $150 / session',
+      'Taurumi in-villa massage with warm monoï oil by our certified partner therapist — on request.',
   },
 ]
 
@@ -71,17 +66,11 @@ export function RatesInclusions() {
   return (
     <Section tone="pearl" spacing="default">
       <Container>
-        <div className="mb-12 grid items-end gap-6 md:grid-cols-2">
-          <div>
-            <p className="eyebrow mb-3">What you get</p>
-            <h2 className="font-heading text-h2-luxe font-medium text-midnight">
-              The price covers more than a bed
-            </h2>
-          </div>
-          <p className="font-sans text-body-md text-midnight-400">
-            Everything below is included in the nightly rate. The add-ons
-            to the right are optional — most guests pick two or three.
-          </p>
+        <div className="mb-12">
+          <p className="eyebrow mb-3">What you get</p>
+          <h2 className="font-heading text-h2-luxe font-medium text-midnight">
+            The price includes your well-being and:
+          </h2>
         </div>
 
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
@@ -137,9 +126,11 @@ export function RatesInclusions() {
                       <p className="font-sans text-body-md font-semibold text-midnight">
                         {item.title}
                       </p>
-                      <span className="text-eyebrow uppercase tracking-widest2 text-gold">
-                        {item.from}
-                      </span>
+                      {item.from ? (
+                        <span className="text-eyebrow uppercase tracking-widest2 text-gold">
+                          {item.from}
+                        </span>
+                      ) : null}
                     </div>
                     <p className="mt-1 font-sans text-body-sm text-midnight-400">
                       {item.detail}

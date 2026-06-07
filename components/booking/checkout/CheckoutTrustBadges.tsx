@@ -29,7 +29,7 @@ const BADGES: TrustBadge[] = [
   {
     icon: ShieldCheck,
     title: 'Flexible cancellation',
-    body: 'Cancel 60+ days before arrival for a 50% refund. Inside 30 days: non-refundable.',
+    body: 'Cancel more than 60 days before arrival for a 100% refund. Within 30 days: non-refundable.',
   },
   {
     icon: Clock,

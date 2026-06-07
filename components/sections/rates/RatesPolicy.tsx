@@ -77,19 +77,19 @@ export function RatesPolicy({ settings }: RatesPolicyProps) {
                 <div className="flex flex-col gap-4 font-sans text-body-md text-midnight-400">
                   <p>
                     <span className="font-semibold text-midnight">
-                      More than 60 days before check-in:
+                      More than 60 days before arrival:
+                    </span>{' '}
+                    100% refund.
+                  </p>
+                  <p>
+                    <span className="font-semibold text-midnight">
+                      30 to 60 days before arrival:
                     </span>{' '}
                     50% refund.
                   </p>
                   <p>
                     <span className="font-semibold text-midnight">
-                      30 to 60 days before check-in:
-                    </span>{' '}
-                    non-refundable.
-                  </p>
-                  <p>
-                    <span className="font-semibold text-midnight">
-                      Inside 30 days:
+                      Within 30 days of arrival:
                     </span>{' '}
                     non-refundable. Travel insurance strongly recommended.
                   </p>
