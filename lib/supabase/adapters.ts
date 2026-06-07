@@ -42,6 +42,7 @@ export function adaptVilla(v: Villa) {
       bathrooms: v.bathrooms,
       maxGuests: v.max_guests,
       sizeSqm: v.size_sqm,
+      sizeSqft: v.size_sqft,
       hasPool: v.has_pool,
       hasJacuzzi: v.has_jacuzzi,
       hasAC: v.has_ac,

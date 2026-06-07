@@ -26,7 +26,7 @@ export function ReviewsStats({
       label: 'Average rating',
     },
     {
-      value: `${formatNumber(totalReviews)}+`,
+      value: formatNumber(totalReviews),
       label: 'Verified reviews',
     },
     {

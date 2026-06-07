@@ -28,7 +28,7 @@ export function Location({ villa }: LocationProps) {
     {
       Icon: MapPin,
       label: 'Papeete city center',
-      value: '20 min by car',
+      value: '30 min by car',
     },
     {
       Icon: Waves,
@@ -37,7 +37,7 @@ export function Location({ villa }: LocationProps) {
     },
     {
       Icon: Utensils,
-      label: 'Restaurants & shops',
+      label: 'Restaurants, shops & shopping centre',
       value: '5 min by car',
     },
   ]
@@ -91,12 +91,10 @@ export function Location({ villa }: LocationProps) {
               The Setting
             </p>
             <h2 className="font-heading text-h2-luxe font-medium leading-tight text-pearl">
-              On the quiet stretch of coast travelers come for
+              On this quiet stretch of coastline, travelers come for...
             </h2>
             <p className="mt-6 max-w-prose font-sans text-body-md text-pearl/80 sm:text-body-lg">
-              Punaauia is the west-coast suburb of Papeete where locals build their family
-              homes — a postcard shoreline of black-sand beaches and turquoise lagoon,
-              twenty-five minutes from the airport and a world away from the busy capital.
+              Punaauia, Tahiti's most prestigious neighbourhood, is the western coastal suburb of Papeete where residents build their family homes — a postcard shoreline with white sandy beaches and a turquoise lagoon, twenty-five minutes from the airport and a world away from the hustle of the capital.
             </p>
 
             <ul className="mt-10 flex flex-col gap-5">

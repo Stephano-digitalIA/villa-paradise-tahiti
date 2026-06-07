@@ -24,7 +24,12 @@ export async function VillaPreview() {
     villa.heroImage.url ??
     ''
 
-  const stats: Array<{ Icon: typeof BedDouble; label: string; value: string }> = [
+  const stats: Array<{
+    Icon: typeof BedDouble
+    label: string
+    value: string
+    noTranslate?: boolean
+  }> = [
     {
       Icon: BedDouble,
       label: 'Bedrooms',
@@ -37,13 +42,21 @@ export async function VillaPreview() {
     },
     {
       Icon: Users,
-      label: 'Sleeps',
+      label: 'Guests',
       value: `Up to ${villa.specs.maxGuests}`,
     },
     {
       Icon: Maximize,
       label: 'Size',
-      value: villa.specs.sizeSqft ? `${villa.specs.sizeSqft.toLocaleString()} sq ft` : '—',
+      noTranslate: true,
+      value:
+        villa.specs.sizeSqm && villa.specs.sizeSqft
+          ? `${villa.specs.sizeSqm} m² · ${villa.specs.sizeSqft} sq ft`
+          : villa.specs.sizeSqm
+            ? `${villa.specs.sizeSqm} m²`
+            : villa.specs.sizeSqft
+              ? `${villa.specs.sizeSqft} sq ft`
+              : '—',
     },
   ]
 
@@ -67,22 +80,24 @@ export async function VillaPreview() {
               {villa.tagline}
             </p>
             <p className="mt-4 font-sans text-body-md text-midnight-400">
-              Behind a discreet garden wall on Tahiti&apos;s west coast, Villa Paradise opens onto a
-              private terrace and a heated infinity pool overlooking a turquoise lagoon. Inside,
-              four light-filled bedrooms are arranged around a spacious open-plan living area,
-              styled with pale wood, woven rattan, and natural linen.
+              Villa Paradise opens onto a private terrace and a heated infinity pool with a jacuzzi, overlooking a turquoise lagoon. Inside, four air-conditioned sun-drenched bedrooms are arranged around a vast open living space, dressed in fine exotic light wood.
             </p>
 
             {/* Stats grid */}
             <dl className="mt-10 grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-4">
-              {stats.map(({ Icon, label, value }) => (
+              {stats.map(({ Icon, label, value, noTranslate }) => (
                 <div key={label} className="flex flex-col items-center gap-1">
                   <Icon
                     className="h-5 w-5 text-gold"
                     strokeWidth={1.5}
                     aria-hidden="true"
                   />
-                  <dd className="font-heading text-h3-luxe font-medium text-midnight">
+                  <dd
+                    className={`font-heading text-h3-luxe font-medium text-midnight${
+                      noTranslate ? ' notranslate' : ''
+                    }`}
+                    translate={noTranslate ? 'no' : undefined}
+                  >
                     {value}
                   </dd>
                   <dt className="font-sans text-eyebrow text-midnight-400">{label}</dt>

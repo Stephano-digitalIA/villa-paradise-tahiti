@@ -13,25 +13,25 @@ const features: Feature[] = [
     Icon: Home,
     title: 'Private Villa',
     body:
-      'The entire 4-bedroom estate is yours — no shared spaces, no front desk, no resort crowds.',
+      'The entire 4-bedroom,air conditioned property is at your disposal — a completely private retreat, with no overlooking neighbors...'
   },
   {
     Icon: Waves,
     title: 'Heated Infinity Pool',
     body:
-      'A 39-foot infinity pool blending seamlessly into the lagoon, heated year-round and illuminated at night for evening swims.',
+      'A infinity pool that blends harmoniously into the lagoon, heated year-round and illuminated at night for evening swims.',
   },
   {
     Icon: Mountain,
     title: 'Moorea on the Horizon',
     body:
-      'Direct lagoon frontage with uninterrupted views of Moorea — the most photographed sunset in Polynesia.',
+      'Panoramic views and an unobstructed view of Moorea — the most photographed sunset in Polynesia.',
   },
   {
     Icon: Car,
     title: 'Car Included',
     body:
-      'A private vehicle is included throughout your stay so you can explore Tahiti at your own pace.',
+      'A private vehicle is made available to you free of charge for the entire duration of your stay so you can explore Tahiti at your own pace.',
   },
 ]
 

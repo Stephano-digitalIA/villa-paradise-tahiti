@@ -87,11 +87,10 @@ export function Amenities({ villa }: AmenitiesProps) {
             <span className="h-px w-8 bg-gold" aria-hidden="true" />
           </p>
           <h2 className="font-heading text-h2-luxe font-medium leading-tight text-midnight">
-            Everything thought through, nothing in the way
+            Everything has been thought out in every detail to make your stay as enjoyable as possible
           </h2>
           <p className="mt-6 font-sans text-body-md text-midnight-400 sm:text-body-lg">
-            From welcome basket to high-speed Wi-Fi to the kayaks waiting in the fare —
-            here is what comes with the villa.
+            From the welcome basket to the high-speed Wi-Fi, here is what is included with your stay at this villa.
           </p>
         </div>
 

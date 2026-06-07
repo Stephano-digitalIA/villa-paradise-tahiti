@@ -21,7 +21,7 @@ const reasons: Reason[] = [
     Icon: BadgePercent,
     title: 'Better Price, Same Villa',
     body:
-      'Book directly and bypass the 15% Airbnb service fee. On a typical week, that is $700 to $1,500 staying with you — more than enough for a sunset sail and a chef dinner.',
+      'Pay less by booking directly on our website.',
   },
   {
     Icon: Heart,
@@ -48,7 +48,7 @@ export function WhyDirectBooking() {
             <span className="h-px w-8 bg-gold" aria-hidden="true" />
           </p>
           <h2 className="font-heading text-h2-luxe font-medium leading-tight text-midnight">
-            Why our guests skip the platforms
+            Why our guests skip the online platforms
           </h2>
           <p className="mt-6 font-sans text-body-md text-midnight-400 sm:text-body-lg">
             The same villa, the same dates, a better experience for less. Here is what

@@ -47,12 +47,14 @@ export function SpecsGrid({ villa }: SpecsGridProps) {
     {
       Icon: Waves,
       label: 'Pool',
-      value: villa.specs.hasPool ? 'Heated infinity' : '—',
+      value: villa.specs.hasPool ? 'Permanently heated' : '—',
     },
     {
       Icon: Snowflake,
       label: 'Climate',
-      value: villa.specs.hasAC ? 'A/C throughout' : 'Cross-breeze only',
+      value: villa.specs.hasAC
+        ? `A/C throughout ${villa.specs.bedrooms} bedrooms`
+        : 'Cross-breeze only',
     },
   ]
 

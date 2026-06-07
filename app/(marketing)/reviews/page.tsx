@@ -16,7 +16,7 @@ import { SITE_URL, absoluteUrl, buildMetadata } from '@/lib/seo'
 export const metadata: Metadata = buildMetadata({
   title: 'Guest Reviews — Villa Paradise Tahiti',
   description:
-    'See what our guests say about Villa Paradise. 4.9/5 from 100+ verified reviews on Airbnb, VRBO and Google. Real stories, unedited.',
+    'See what our guests say about Villa Paradise. 4.9/5 from 47 verified reviews on Airbnb, VRBO and Google. Real stories, unedited.',
   path: '/reviews',
 })
 
@@ -45,9 +45,9 @@ export default async function ReviewsPage() {
       ? reviews.reduce((sum, r) => sum + r.rating, 0) / totalReviews
       : 0
 
-  // Marketing-facing total. We display "100+" to signal scale even when
-  // only a subset of reviews has been migrated into Sanity yet.
-  const displayTotal = Math.max(totalReviews, 100)
+  // Marketing-facing total. We floor the figure to 47 to signal scale even
+  // when only a subset of reviews has been migrated into Sanity yet.
+  const displayTotal = Math.max(totalReviews, 47)
   const aggregate = aggregateRatingSchema(reviews, displayTotal)
 
   return (

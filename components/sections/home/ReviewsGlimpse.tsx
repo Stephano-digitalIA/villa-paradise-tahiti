@@ -29,7 +29,7 @@ export async function ReviewsGlimpse() {
             Guest Stories
           </p>
           <h2 className="font-heading text-h2-luxe font-medium leading-tight text-pearl">
-            Loved by couples, families and honeymooners from across the US
+            Loved by couples, families and honeymooners from across the world
           </h2>
           <div className="mt-6 flex items-center gap-2 text-pearl/85">
             <div className="flex" aria-label="Rated 4.9 out of 5 stars">

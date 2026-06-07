@@ -25,7 +25,7 @@ export function HeroHome() {
         </h1>
 
         <p className="mt-8 font-sans text-body-md text-midnight/70 sm:text-body-lg">
-          A private villa perched on the island&apos;s heights, where the Pacific stretches out
+          A private villa perched on the island&apos;s heights of Tahiti, where the Pacific stretches out
           at your feet — a heated infinity pool, Moorea on the horizon, and a concierge
           service curating every detail of your week in paradise.
         </p>
@@ -51,7 +51,7 @@ export function HeroHome() {
             <span className="font-sans text-body-sm">on Airbnb</span>
           </div>
           <span className="hidden h-4 w-px bg-midnight/20 sm:block" aria-hidden="true" />
-          <span className="font-sans text-body-sm">100+ Verified Reviews</span>
+          <span className="font-sans text-body-sm">47 Verified Reviews</span>
           <span className="hidden h-4 w-px bg-midnight/20 sm:block" aria-hidden="true" />
           <span className="font-sans text-body-sm">Punaauia, Tahiti</span>
         </div>

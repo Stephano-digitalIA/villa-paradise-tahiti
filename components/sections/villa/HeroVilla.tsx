@@ -31,13 +31,9 @@ export function HeroVilla({ villa }: HeroVillaProps) {
           priority
           className="object-cover"
         />
-        <div
-          className="absolute inset-0 bg-gradient-to-t from-midnight/60 via-midnight/15 to-transparent"
-          aria-hidden="true"
-        />
       </div>
 
-      <Container className="relative z-10 flex flex-1 flex-col justify-end pb-16 pt-32 lg:pb-24">
+      <Container className="relative z-10 flex flex-1 flex-col items-end justify-end pb-16 pt-32 text-right lg:pb-24">
         <p className="mb-6 flex items-center gap-3 font-sans text-eyebrow font-medium uppercase tracking-widest2 text-gold">
           <span className="h-px w-10 bg-gold" aria-hidden="true" />
           The Villa
