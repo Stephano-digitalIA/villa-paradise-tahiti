@@ -169,6 +169,8 @@ export function adaptSettings(s: Settings) {
     rate_low_usd: s.rate_low_usd,
     rate_high_usd: s.rate_high_usd,
     rate_peak_usd: s.rate_peak_usd,
+    long_stay_min_nights: s.long_stay_min_nights,
+    long_stay_discount_percent: s.long_stay_discount_percent,
   }
 }
 

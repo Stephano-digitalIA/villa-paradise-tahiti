@@ -4,6 +4,7 @@ import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { FormSection } from '@/components/admin/FormSection'
 import { MarkdownEditor } from '@/components/admin/MarkdownEditor'
+import { ImageUploadField } from '@/components/admin/ImageUploadField'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 import type { Post } from '@/lib/supabase/types'
@@ -131,7 +132,12 @@ export function PostForm({ post }: Props) {
                   <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
                     URL image de couverture
                   </label>
-                  <Input name="cover_image_url" defaultValue={post?.cover_image_url ?? ''} placeholder="https://…" />
+                  <ImageUploadField
+                    name="cover_image_url"
+                    defaultValue={post?.cover_image_url}
+                    bucket="blog-media"
+                    prefix="covers"
+                  />
                 </div>
                 <div>
                   <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">

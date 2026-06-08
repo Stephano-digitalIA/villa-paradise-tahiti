@@ -239,6 +239,10 @@ export interface PricingSettings {
   rate_high_usd?: number | null
   /** When present, overrides the hardcoded SEASONAL_RATES.peak constant. */
   rate_peak_usd?: number | null
+  /** When present, overrides LONG_STAY_MIN_NIGHTS. */
+  long_stay_min_nights?: number | null
+  /** When present, overrides LONG_STAY_DISCOUNT_PERCENT. */
+  long_stay_discount_percent?: number | null
 }
 
 /**
@@ -256,6 +260,8 @@ export interface SettingsInput {
   rate_low_usd?: number | null
   rate_high_usd?: number | null
   rate_peak_usd?: number | null
+  long_stay_min_nights?: number | null
+  long_stay_discount_percent?: number | null
 }
 
 /**
@@ -274,6 +280,8 @@ export function toPricingSettings(
     rate_low_usd: settings?.rate_low_usd,
     rate_high_usd: settings?.rate_high_usd,
     rate_peak_usd: settings?.rate_peak_usd,
+    long_stay_min_nights: settings?.long_stay_min_nights,
+    long_stay_discount_percent: settings?.long_stay_discount_percent,
   }
 }
 
@@ -291,6 +299,9 @@ export function computeBreakdown(
   const minNights = settings.defaultMinNights ?? 5
   const depositPercent = settings.defaultDepositPercent ?? 30
   const cleaningFee = settings.cleaningFeeUSD ?? 150
+  const longStayMinNights = settings.long_stay_min_nights ?? LONG_STAY_MIN_NIGHTS
+  const longStayDiscountPercent =
+    settings.long_stay_discount_percent ?? LONG_STAY_DISCOUNT_PERCENT
 
   const daysUntilCI = calcDaysUntilCheckIn(state.checkIn)
 
@@ -319,10 +330,11 @@ export function computeBreakdown(
   const subtotalCents = villaSubtotalCents + cleaningFeeCents + experiencesTotalCents
 
   // Long-stay discount: % off the accommodation (villa + cleaning), not experiences.
-  const longStayDiscountApplied = nights >= LONG_STAY_MIN_NIGHTS
+  // Threshold + percent are configurable via settings (fallback to the constants).
+  const longStayDiscountApplied = nights >= longStayMinNights
   const longStayDiscountCents = longStayDiscountApplied
     ? Math.round(
-        ((villaSubtotalCents + cleaningFeeCents) * LONG_STAY_DISCOUNT_PERCENT) / 100,
+        ((villaSubtotalCents + cleaningFeeCents) * longStayDiscountPercent) / 100,
       )
     : 0
 
@@ -343,8 +355,8 @@ export function computeBreakdown(
     subtotal: fromCents(subtotalCents),
     longStayDiscount: fromCents(longStayDiscountCents),
     longStayDiscountApplied,
-    longStayDiscountPercent: LONG_STAY_DISCOUNT_PERCENT,
-    longStayMinNights: LONG_STAY_MIN_NIGHTS,
+    longStayDiscountPercent,
+    longStayMinNights,
     taxes: fromCents(taxesCents),
     total: fromCents(totalCents),
     depositAmount: fromCents(depositCents),

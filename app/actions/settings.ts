@@ -14,6 +14,10 @@ export async function saveSettings(
 
   if (error) return { error: error.message }
 
+  // Admin + every public surface that shows settings-derived pricing.
   revalidatePath('/admin/settings')
+  revalidatePath('/rates')
+  revalidatePath('/booking')
+  revalidatePath('/booking/checkout')
   return {}
 }

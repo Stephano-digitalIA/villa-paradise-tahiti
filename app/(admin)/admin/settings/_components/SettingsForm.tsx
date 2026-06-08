@@ -135,6 +135,8 @@ export function SettingsForm({ initialSettings }: Props) {
       rate_low_usd: num('rate_low_usd'),
       rate_high_usd: num('rate_high_usd'),
       rate_peak_usd: num('rate_peak_usd'),
+      long_stay_min_nights: num('long_stay_min_nights'),
+      long_stay_discount_percent: num('long_stay_discount_percent'),
       // Contact
       contact_email: str('contact_email'),
       contact_phone: str('contact_phone'),
@@ -246,6 +248,24 @@ export function SettingsForm({ initialSettings }: Props) {
               unit="USD"
             />
           </div>
+          <NumberInput
+            label="Remise long séjour — seuil"
+            name="long_stay_min_nights"
+            defaultValue={s.long_stay_min_nights}
+            min={1}
+            placeholder="14"
+            unit="nights"
+          />
+          <NumberInput
+            label="Remise long séjour — réduction"
+            name="long_stay_discount_percent"
+            defaultValue={s.long_stay_discount_percent}
+            min={0}
+            max={100}
+            step={0.01}
+            placeholder="10"
+            unit="%"
+          />
         </div>
       </div>
 

@@ -22,6 +22,8 @@ export type Settings = {
   rate_low_usd: number | null
   rate_high_usd: number | null
   rate_peak_usd: number | null
+  long_stay_min_nights: number | null
+  long_stay_discount_percent: number | null
   season_windows: Array<{ from: string; to: string; label: string }>
   cancellation_policy: string | null
   terms_of_service: string | null

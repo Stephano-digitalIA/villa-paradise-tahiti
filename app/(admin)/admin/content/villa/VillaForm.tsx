@@ -3,6 +3,7 @@
 import { useRef, useState, useTransition } from 'react'
 import { FormSection } from '@/components/admin/FormSection'
 import { MarkdownEditor } from '@/components/admin/MarkdownEditor'
+import { ImageUploadField } from '@/components/admin/ImageUploadField'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 import type { Villa } from '@/lib/supabase/types'
@@ -132,7 +133,12 @@ export function VillaForm({ villa }: Props) {
                   <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
                     URL image hero
                   </label>
-                  <Input name="hero_image_url" defaultValue={villa.hero_image_url ?? ''} placeholder="https://…" />
+                  <ImageUploadField
+                    name="hero_image_url"
+                    defaultValue={villa.hero_image_url}
+                    bucket="villa-media"
+                    prefix="hero"
+                  />
                 </div>
                 <div>
                   <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
