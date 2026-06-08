@@ -22,13 +22,14 @@ augmenter les réservations directes et réduire la dépendance à Airbnb.
 | Framework | **Next.js 14.2** (App Router) |
 | Langage | **TypeScript** strict |
 | UI | **Tailwind CSS 3.4** + composants maison + `lucide-react` |
-| CMS | **Sanity** (`next-sanity` embed à `/studio`) |
+| Données / Auth / Storage | **Supabase** (Postgres + RLS) — couche données réelle. ⚠️ `sanityFetch()` lit **Supabase**, pas Sanity (voir [CLAUDE.md](CLAUDE.md)) |
+| CMS (legacy, inutilisé) | **Sanity** en mode `mock` — Studio `/studio` non branché |
 | Paiement | **Stripe** Checkout + **PayPal** Orders v2 |
 | Email | **Resend** + templates React Email |
 | Calendrier | **node-ical** + **ical-generator** (sync Airbnb / VRBO) |
 | Analytics | **GA4** + **Hotjar** (gated par consent) |
 | Forms | **react-hook-form** + **zod** |
-| Hébergement | **Vercel** (cron natifs + edge OG) |
+| Hébergement | **Netlify** (`@netlify/plugin-nextjs`, auto-deploy sur push `master`) |
 
 ---
 
@@ -55,14 +56,17 @@ npm run format         # prettier --write .
 ## Variables d'environnement
 
 Copier `.env.example` vers `.env.local` (jamais commité) et renseigner ce qui est
-disponible. **Toutes les intégrations externes ont un mode mock** — le site tourne
-intégralement sans aucune vraie clé.
+disponible. **Supabase est requis** (`NEXT_PUBLIC_SUPABASE_URL`,
+`NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`) — sans ces clés le
+middleware fait planter chaque route (500). ⚠️ Ces vars **ne sont pas** listées
+dans `.env.example` : les ajouter manuellement. Les **autres** intégrations
+(Stripe, PayPal, Resend, iCal, GA/Hotjar) ont toutes un mode mock.
 
 Bascules mock → live :
 
 | Var manquante | Comportement mock |
 |---|---|
-| `NEXT_PUBLIC_SANITY_PROJECT_ID` = `mock` ou vide | Lit `lib/sanity/mock-data.ts`, `/studio` affiche carte d'onboarding |
+| Supabase vide / requête sans résultat | Repli sur `lib/sanity/mock-data.ts`. Sinon le contenu live vient de **Supabase** (ce n'est PAS du mock) |
 | `STRIPE_*` absent | `/api/checkout` renvoie `mock: true` + redirect direct vers `/booking/success` |
 | `PAYPAL_*` absent | Idem |
 | `RESEND_API_KEY` absent | `/api/contact` retourne 200, emails loggés mais non envoyés |
