@@ -12,6 +12,7 @@ import { RatesInclusions } from '@/components/sections/rates/RatesInclusions'
 import { RatesPolicy } from '@/components/sections/rates/RatesPolicy'
 import { sanityFetch } from '@/lib/sanity/fetcher'
 import { settingsQuery, type Settings } from '@/lib/sanity'
+import { SEASONAL_RATES } from '@/lib/booking/pricing'
 import { SITE_URL, absoluteUrl, buildMetadata } from '@/lib/seo'
 
 export const metadata: Metadata = buildMetadata({
@@ -35,23 +36,30 @@ export const metadata: Metadata = buildMetadata({
 export default async function RatesPage() {
   const settings = await sanityFetch<Settings | null>(settingsQuery)
 
+  // Live seasonal rates: Supabase settings override, else the SEASONAL_RATES fallback.
+  const rates = {
+    low: settings?.rate_low_usd ?? SEASONAL_RATES.low,
+    high: settings?.rate_high_usd ?? SEASONAL_RATES.high,
+    peak: settings?.rate_peak_usd ?? SEASONAL_RATES.peak,
+  }
+
   return (
     <>
       <JsonLd
         data={priceSpecificationSchema([
           {
             name: 'Low Season',
-            priceUSD: 590,
+            priceUSD: rates.low,
             season: 'May – June, October – November',
           },
           {
             name: 'High Season',
-            priceUSD: 890,
+            priceUSD: rates.high,
             season: 'July – September, December – early January',
           },
           {
             name: 'Peak Holidays',
-            priceUSD: 1290,
+            priceUSD: rates.peak,
             season: 'Christmas week, New Year, Easter',
           },
         ])}
@@ -63,7 +71,7 @@ export default async function RatesPage() {
         ])}
       />
       <RatesHero />
-      <RatesGrid />
+      <RatesGrid settings={settings} />
       <RatesInclusions />
       <RatesPolicy settings={settings} />
       <RatesCta />

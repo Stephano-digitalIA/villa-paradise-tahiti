@@ -241,5 +241,9 @@ export interface Settings {
   defaultDepositPercent: number
   defaultNightlyRateUSD?: number
   cleaningFeeUSD?: number
+  /** Per-season nightly rates (USD). Supabase-only; override the hardcoded SEASONAL_RATES. */
+  rate_low_usd?: number | null
+  rate_high_usd?: number | null
+  rate_peak_usd?: number | null
   bookingTermsUrl?: string
 }

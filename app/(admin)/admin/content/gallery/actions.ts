@@ -5,7 +5,13 @@ import { adminClient } from '@/lib/supabase/admin'
 import { uploadFile } from '@/lib/supabase/storage'
 import type { GalleryCategory } from '@/lib/supabase/types'
 
-const REVALIDATE = () => revalidatePath('/admin/content/gallery')
+const REVALIDATE = () => {
+  // Admin list + every public surface that shows gallery photos.
+  revalidatePath('/admin/content/gallery')
+  revalidatePath('/gallery')
+  revalidatePath('/villa')
+  revalidatePath('/')
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // uploadGalleryImage — upload file to Storage + INSERT gallery_items row

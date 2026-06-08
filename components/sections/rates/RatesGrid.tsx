@@ -1,10 +1,14 @@
 import { Container, Section } from '@/components/ui'
 import { Badge } from '@/components/ui'
+import { SEASONAL_RATES } from '@/lib/booking/pricing'
+import type { Season } from '@/lib/booking/types'
+import type { Settings } from '@/lib/sanity'
 
 interface SeasonRate {
   name: string
+  /** Maps to the Supabase settings rate field + the SEASONAL_RATES fallback. */
+  key: Season
   badge?: 'standard' | 'popular' | 'peak'
-  priceUSD: number
   unit: string
   window: string
   blurb: string
@@ -13,8 +17,8 @@ interface SeasonRate {
 const SEASONS: SeasonRate[] = [
   {
     name: 'Low Season',
+    key: 'low',
     badge: 'standard',
-    priceUSD: 590,
     unit: 'per night',
     window: 'May – June · October – November',
     blurb:
@@ -22,8 +26,8 @@ const SEASONS: SeasonRate[] = [
   },
   {
     name: 'High Season',
+    key: 'high',
     badge: 'popular',
-    priceUSD: 890,
     unit: 'per night',
     window: 'July – September · December – early January',
     blurb:
@@ -31,14 +35,25 @@ const SEASONS: SeasonRate[] = [
   },
   {
     name: 'Peak Holidays',
+    key: 'peak',
     badge: 'peak',
-    priceUSD: 1290,
     unit: 'per night',
     window: 'Christmas week · New Year · Easter',
     blurb:
       'Villa Paradise Tahiti is the best place to celebrate your Christmas and New Year holidays.',
   },
 ]
+
+/** Live nightly rate for a season: Supabase settings override, else SEASONAL_RATES fallback. */
+function seasonPrice(key: Season, settings: Settings | null): number {
+  const override =
+    key === 'low'
+      ? settings?.rate_low_usd
+      : key === 'high'
+        ? settings?.rate_high_usd
+        : settings?.rate_peak_usd
+  return override ?? SEASONAL_RATES[key]
+}
 
 /**
  * RatesGrid — three seasonal price cards.
@@ -48,7 +63,7 @@ const SEASONS: SeasonRate[] = [
  * three tiers, ascending, with the "popular" middle tier visually
  * emphasised via a luxe ring.
  */
-export function RatesGrid() {
+export function RatesGrid({ settings = null }: { settings?: Settings | null }) {
   return (
     <Section tone="sand" spacing="default">
       <Container>
@@ -68,6 +83,7 @@ export function RatesGrid() {
           {SEASONS.map((season) => {
             const isPopular = season.badge === 'popular'
             const isPeak = season.badge === 'peak'
+            const priceUSD = seasonPrice(season.key, settings)
 
             return (
               <article
@@ -101,7 +117,7 @@ export function RatesGrid() {
 
                 <div className="mt-8 flex items-baseline gap-2">
                   <span className="font-heading text-h1-luxe font-medium text-midnight">
-                    ${season.priceUSD.toLocaleString('en-US')}
+                    ${priceUSD.toLocaleString('en-US')}
                   </span>
                   <span className="font-sans text-body-sm text-midnight-400">
                     / {season.unit}

@@ -8,9 +8,44 @@ import {
   breadcrumbSchema,
   imageGallerySchema,
 } from '@/components/seo'
-import { galleryImages } from '@/lib/data/gallery-images'
+import {
+  galleryImages as fallbackImages,
+  type GalleryCategory,
+  type GalleryImage,
+} from '@/lib/data/gallery-images'
+import { getGalleryItems } from '@/lib/supabase/queries'
 import { bookingHref } from '@/lib/navigation'
 import { SITE_URL, absoluteUrl, buildMetadata } from '@/lib/seo'
+
+/**
+ * Live gallery loader — reads Supabase `gallery_items` (managed from
+ * /admin/content/gallery) and falls back to the bundled static images when
+ * the table is empty, so the page is never blank.
+ */
+const CATEGORY_MAP: Record<string, GalleryCategory> = {
+  exterior: 'exterior',
+  interior: 'interior',
+  pool: 'pool',
+  lagoon: 'lagoon',
+  sunset: 'sunset',
+  experiences: 'experiences',
+  bedrooms: 'interior',
+  night: 'sunset',
+}
+
+async function loadGalleryImages(): Promise<GalleryImage[]> {
+  const rows = await getGalleryItems()
+  if (rows.length === 0) return fallbackImages
+  return rows.map((g, i) => ({
+    id: g.id ?? `gal-${i}`,
+    url: g.image_url ?? '',
+    alt: g.alt ?? '',
+    category: CATEGORY_MAP[g.category] ?? 'exterior',
+    width: g.width ?? 1400,
+    height: g.height ?? 1050,
+    caption: g.caption ?? undefined,
+  }))
+}
 
 /**
  * /gallery — Villa Paradise photo gallery.
@@ -32,7 +67,8 @@ export const metadata: Metadata = buildMetadata({
   path: '/gallery',
 })
 
-export default function GalleryPage() {
+export default async function GalleryPage() {
+  const galleryImages = await loadGalleryImages()
   const galleryStructured = galleryImages.slice(0, 24).map((image) => ({
     url: image.url,
     caption: image.caption,
