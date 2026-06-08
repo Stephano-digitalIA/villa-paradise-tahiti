@@ -7,6 +7,25 @@
 
 ---
 
+> ⚠️ **CE DOCUMENT EST EN PARTIE PÉRIMÉ (mai 2026).** La réalité au déploiement diffère :
+>
+> - **Hébergement : Netlify, pas Vercel.** Le site est **Git-connecté** : pousser sur `master`
+>   déclenche un **auto-deploy** vers `villa-paradise-tahiti-thierry.netlify.app`
+>   (config `netlify.toml` + `@netlify/plugin-nextjs`). Pas d'étape « Promote / Deploy » manuelle.
+>   Le cron iCal tourne via une **Netlify Scheduled Function** (`netlify/functions/`), pas `vercel.json`.
+> - **Données / contenu : Supabase, pas Sanity.** Le contenu live (villa, experiences, reviews,
+>   settings…) vit dans des tables **Supabase**, pas dans Sanity. `sanityFetch()` lit Supabase
+>   (voir [`CLAUDE.md`](../CLAUDE.md)). Les vars **`NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+>   / `SUPABASE_SERVICE_ROLE_KEY` sont obligatoires** (sinon 500). L'étape « Sanity init » ci-dessous
+>   ne s'applique plus.
+> - **Domaine / rollback :** se font côté **Netlify** (Site settings → Domain / Deploys → Publish deploy),
+>   pas Vercel.
+>
+> Restent valables tels quels : la création des comptes **Stripe / PayPal / Resend / GA4 / Hotjar**,
+> les **webhooks**, et la **checklist E2E** (Étapes 5, 6, 8) — seul l'hébergeur change.
+
+---
+
 ## TL;DR — la séquence en 7 étapes
 
 1. **Repo GitHub** privé créé et code poussé.
