@@ -1,6 +1,7 @@
 import { BadgePercent, Heart, Sparkles } from 'lucide-react'
 
 import { Container, Section } from '@/components/ui'
+import { getSiteContent } from '@/lib/content'
 
 /**
  * Why Direct Booking — Homepage.
@@ -16,43 +17,48 @@ interface Reason {
   body: string
 }
 
-const reasons: Reason[] = [
-  {
-    Icon: BadgePercent,
-    title: 'Better Price, Same Villa',
-    body:
-      'Pay less by booking directly on our website.',
-  },
-  {
-    Icon: Heart,
-    title: 'Talk to the Owner',
-    body:
-      'No call centres. No anonymous platform messaging. You speak directly with the owner from your first question to the moment you hand back the keys — usually within the hour.',
-  },
-  {
-    Icon: Sparkles,
-    title: 'A Stay Tailored to You',
-    body:
-      'Welcome basket, private chef night, sunrise snorkel, kid-friendly excursions — every detail of your week is shaped around what your group actually wants to do.',
-  },
-]
-
-export function WhyDirectBooking() {
+export async function WhyDirectBooking() {
+  const t = await getSiteContent()
+  const reasons: Reason[] = [
+    {
+      Icon: BadgePercent,
+      title: t('home.why.w1.title', 'Better Price, Same Villa'),
+      body: t('home.why.w1.body', 'Pay less by booking directly on our website.'),
+    },
+    {
+      Icon: Heart,
+      title: t('home.why.w2.title', 'Talk to the Owner'),
+      body: t(
+        'home.why.w2.body',
+        'No call centres. No anonymous platform messaging. You speak directly with the owner from your first question to the moment you hand back the keys — usually within the hour.',
+      ),
+    },
+    {
+      Icon: Sparkles,
+      title: t('home.why.w3.title', 'A Stay Tailored to You'),
+      body: t(
+        'home.why.w3.body',
+        'Welcome basket, private chef night, sunrise snorkel, kid-friendly excursions — every detail of your week is shaped around what your group actually wants to do.',
+      ),
+    },
+  ]
   return (
     <Section tone="pearl" spacing="default">
       <Container>
         <div className="mx-auto max-w-2xl text-center">
           <p className="eyebrow mb-4 flex items-center justify-center gap-3">
             <span className="h-px w-8 bg-gold" aria-hidden="true" />
-            Booking Direct
+            {t('home.why.eyebrow', 'Booking Direct')}
             <span className="h-px w-8 bg-gold" aria-hidden="true" />
           </p>
           <h2 className="font-heading text-h2-luxe font-medium leading-tight text-midnight">
-            Why our guests skip the online platforms
+            {t('home.why.title', 'Why our guests skip the online platforms')}
           </h2>
           <p className="mt-6 font-sans text-body-md text-midnight-400 sm:text-body-lg">
-            The same villa, the same dates, a better experience for less. Here is what
-            booking directly looks like for our guests.
+            {t(
+              'home.why.intro',
+              'The same villa, the same dates, a better experience for less. Here is what booking directly looks like for our guests.',
+            )}
           </p>
         </div>
 

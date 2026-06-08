@@ -422,11 +422,18 @@ type InsertOf<T> = {
   [K in keyof T as null extends T[K] ? K : never]?: T[K]
 }
 
+export type SiteContent = {
+  key: string
+  value: string
+  updated_at: string
+}
+
 export type Database = {
   public: {
     Tables: {
       settings: TableDef<Settings, Partial<Settings>>
       villa: TableDef<Villa, Partial<Villa>>
+      site_content: TableDef<SiteContent, Partial<SiteContent>>
       gallery_items: TableDef<GalleryItem, InsertOf<Omit<GalleryItem, 'id' | 'created_at'>>>
       excursion_providers: TableDef<
         ExcursionProvider,

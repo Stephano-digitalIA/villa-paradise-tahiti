@@ -1,6 +1,7 @@
 import { Home, Waves, Mountain, Car } from 'lucide-react'
 
 import { Container, Section } from '@/components/ui'
+import { getSiteContent } from '@/lib/content'
 
 interface Feature {
   Icon: typeof Home
@@ -8,39 +9,50 @@ interface Feature {
   body: string
 }
 
-const features: Feature[] = [
-  {
-    Icon: Home,
-    title: 'Private Villa',
-    body:
-      'The entire 4-bedroom,air conditioned property is at your disposal — a completely private retreat, with no overlooking neighbors...'
-  },
-  {
-    Icon: Waves,
-    title: 'Heated Infinity Pool',
-    body:
-      'A infinity pool that blends harmoniously into the lagoon, heated year-round and illuminated at night for evening swims.',
-  },
-  {
-    Icon: Mountain,
-    title: 'Moorea on the Horizon',
-    body:
-      'Panoramic views and an unobstructed view of Moorea — the most photographed sunset in Polynesia.',
-  },
-  {
-    Icon: Car,
-    title: 'Car Included',
-    body:
-      'A private vehicle is made available to you free of charge for the entire duration of your stay so you can explore Tahiti at your own pace.',
-  },
-]
-
 interface KeyFeaturesProps {
   /** Render with transparent background and light colours for use over the hero video */
   onVideo?: boolean
 }
 
-export function KeyFeatures({ onVideo = false }: KeyFeaturesProps) {
+export async function KeyFeatures({ onVideo = false }: KeyFeaturesProps) {
+  const t = await getSiteContent()
+  const eyebrow = t('home.features.eyebrow', 'Why Villa Paradise')
+  const title = t('home.features.title', 'Four reasons travelers choose us over the resort')
+  const features: Feature[] = [
+    {
+      Icon: Home,
+      title: t('home.features.f1.title', 'Private Villa'),
+      body: t(
+        'home.features.f1.body',
+        'The entire 4-bedroom,air conditioned property is at your disposal — a completely private retreat, with no overlooking neighbors...',
+      ),
+    },
+    {
+      Icon: Waves,
+      title: t('home.features.f2.title', 'Heated Infinity Pool'),
+      body: t(
+        'home.features.f2.body',
+        'A infinity pool that blends harmoniously into the lagoon, heated year-round and illuminated at night for evening swims.',
+      ),
+    },
+    {
+      Icon: Mountain,
+      title: t('home.features.f3.title', 'Moorea on the Horizon'),
+      body: t(
+        'home.features.f3.body',
+        'Panoramic views and an unobstructed view of Moorea — the most photographed sunset in Polynesia.',
+      ),
+    },
+    {
+      Icon: Car,
+      title: t('home.features.f4.title', 'Car Included'),
+      body: t(
+        'home.features.f4.body',
+        'A private vehicle is made available to you free of charge for the entire duration of your stay so you can explore Tahiti at your own pace.',
+      ),
+    },
+  ]
+
   if (onVideo) {
     return (
       <div className="w-full py-20 lg:py-28">
@@ -48,11 +60,11 @@ export function KeyFeatures({ onVideo = false }: KeyFeaturesProps) {
           <div className="mx-auto max-w-2xl text-center">
             <p className="mb-4 flex items-center justify-center gap-3 font-sans text-eyebrow font-medium uppercase tracking-widest2 text-gold">
               <span className="h-px w-8 bg-gold" aria-hidden="true" />
-              Why Villa Paradise
+              {eyebrow}
               <span className="h-px w-8 bg-gold" aria-hidden="true" />
             </p>
             <h2 className="font-heading text-h2-luxe font-medium leading-tight text-pearl">
-              Four reasons travelers choose us over the resort
+              {title}
             </h2>
           </div>
 
@@ -90,7 +102,7 @@ export function KeyFeatures({ onVideo = false }: KeyFeaturesProps) {
             <span className="h-px w-8 bg-gold" aria-hidden="true" />
           </p>
           <h2 className="font-heading text-h2-luxe font-medium leading-tight text-midnight">
-            Four reasons travelers choose us over the resort
+            {title}
           </h2>
         </div>
 

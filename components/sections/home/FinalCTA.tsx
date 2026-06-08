@@ -4,6 +4,7 @@ import { Star } from 'lucide-react'
 
 import { Button, Container } from '@/components/ui'
 import { bookingHref } from '@/lib/navigation'
+import { getSiteContent } from '@/lib/content'
 import { mockVilla } from '@/lib/sanity'
 
 /**
@@ -13,7 +14,8 @@ import { mockVilla } from '@/lib/sanity'
  * Uses the villa hero image as an atmospheric backdrop (heavily darkened)
  * with a single primary CTA pointing to the booking funnel.
  */
-export function FinalCTA() {
+export async function FinalCTA() {
+  const t = await getSiteContent()
   const heroUrl = mockVilla.heroImage.url ?? ''
 
   return (
@@ -43,26 +45,27 @@ export function FinalCTA() {
         <div className="max-w-2xl">
           <p className="mb-4 flex items-center gap-3 font-sans text-eyebrow font-medium uppercase tracking-widest2 text-gold">
             <span className="h-px w-8 bg-gold" aria-hidden="true" />
-            Reserve Your Stay
+            {t('home.cta.eyebrow', 'Reserve Your Stay')}
           </p>
           <h2 className="font-display text-hero-sm font-light italic leading-tight text-pearl sm:text-hero-md">
-            Ready to start planning
+            {t('home.cta.title1', 'Ready to start planning')}
             <span className="block font-heading not-italic text-gold">
-              your Tahiti escape?
+              {t('home.cta.title2', 'your Tahiti escape?')}
             </span>
           </h2>
           <p className="mt-6 font-sans text-body-md text-pearl/80 sm:text-body-lg">
-            Tell us your dates and the number of travelers — we will hold the villa for 48
-            hours while you finalize your flights and design the perfect week with our
-            concierge.
+            {t(
+              'home.cta.subtitle',
+              'Tell us your dates and the number of travelers — we will hold the villa for 48 hours while you finalize your flights and design the perfect week with our concierge.',
+            )}
           </p>
 
           <div className="mt-10 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
             <Button asChild variant="primary" size="lg">
-              <Link href={bookingHref}>Book Now</Link>
+              <Link href={bookingHref}>{t('home.cta.cta_primary', 'Book Now')}</Link>
             </Button>
             <Button asChild variant="outline-light" size="lg">
-              <Link href="/contact">Message the Owner</Link>
+              <Link href="/contact">{t('home.cta.cta_secondary', 'Message the Owner')}</Link>
             </Button>
           </div>
 
@@ -76,9 +79,9 @@ export function FinalCTA() {
               <span className="font-sans text-body-sm text-pearl">4.9 / 5</span>
             </div>
             <span className="hidden h-4 w-px bg-pearl/20 sm:block" aria-hidden="true" />
-            <span className="font-sans text-body-sm">100% refund if cancelled more than 60 days before</span>
+            <span className="font-sans text-body-sm">{t('home.cta.trust_cancel', '100% refund if cancelled more than 60 days before')}</span>
             <span className="hidden h-4 w-px bg-pearl/20 sm:block" aria-hidden="true" />
-            <span className="font-sans text-body-sm">Secure booking by Stripe</span>
+            <span className="font-sans text-body-sm">{t('home.cta.trust_secure', 'Secure booking by Stripe')}</span>
           </div>
         </div>
       </Container>
