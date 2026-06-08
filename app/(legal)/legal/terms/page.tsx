@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 
-import { LegalPageHeader } from '@/components/sections/legal'
+import { LegalMarkdown, LegalPageHeader } from '@/components/sections/legal'
+import { getSiteContent } from '@/lib/content'
 import { buildMetadata } from '@/lib/seo'
 
 const LAST_UPDATED = 'June 6, 2026'
@@ -15,7 +16,9 @@ export const metadata: Metadata = buildMetadata({
 /**
  * /legal/terms — booking and use Terms of Service draft.
  */
-export default function TermsPage() {
+export default async function TermsPage() {
+  const t = await getSiteContent()
+  const override = t('legal.terms.body', '')
   return (
     <>
       <LegalPageHeader
@@ -25,6 +28,10 @@ export default function TermsPage() {
         intro="These Terms of Service govern your access to and use of villaparadisetahiti.com and any booking you make through it. Please read them carefully before reserving your stay."
       />
 
+      {override ? (
+        <LegalMarkdown markdown={override} />
+      ) : (
+        <>
       <h2>1. Acceptance of terms</h2>
       <p>
         By accessing the Villa Paradise Tahiti website (the &ldquo;Site&rdquo;)
@@ -293,6 +300,8 @@ export default function TermsPage() {
         </a>{' '}
         or via the <a href="/contact">contact form</a>.
       </p>
+        </>
+      )}
     </>
   )
 }

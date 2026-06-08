@@ -36,6 +36,9 @@ export async function saveSiteContent(
   }
 
   revalidatePath('/')
+  revalidatePath('/legal/terms')
+  revalidatePath('/legal/cancellation')
+  revalidatePath('/legal/privacy-policy')
   revalidatePath('/admin/content/site')
   return {}
 }

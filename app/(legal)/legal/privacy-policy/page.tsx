@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 
-import { LegalPageHeader } from '@/components/sections/legal'
+import { LegalMarkdown, LegalPageHeader } from '@/components/sections/legal'
+import { getSiteContent } from '@/lib/content'
 import { buildMetadata } from '@/lib/seo'
 
 const LAST_UPDATED = 'June 2, 2026'
@@ -19,7 +20,9 @@ export const metadata: Metadata = buildMetadata({
  * principles in mind. Every page must keep the pending-counsel
  * disclaimer until a licensed attorney signs off.
  */
-export default function PrivacyPolicyPage() {
+export default async function PrivacyPolicyPage() {
+  const t = await getSiteContent()
+  const override = t('legal.privacy.body', '')
   return (
     <>
       <LegalPageHeader
@@ -29,6 +32,10 @@ export default function PrivacyPolicyPage() {
         intro="This Privacy Policy explains how Villa Paradise Tahiti (collectively, “we,” “our,” or “us”) collects, uses, discloses, and protects your information when you visit villaparadisetahiti.com, book a stay, or contact our concierge team."
       />
 
+      {override ? (
+        <LegalMarkdown markdown={override} />
+      ) : (
+        <>
       <h2>1. Information we collect</h2>
       <p>
         We collect information that you provide directly, information collected
@@ -304,6 +311,8 @@ export default function PrivacyPolicyPage() {
         of the page; material changes will be flagged with a notice on the
         homepage for at least 30 days.
       </p>
+        </>
+      )}
     </>
   )
 }

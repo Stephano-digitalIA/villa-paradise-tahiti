@@ -71,7 +71,7 @@ export function SiteContentForm({ groups, values }: SiteContentFormProps) {
                   <textarea
                     name={field.key}
                     defaultValue={values[field.key] ?? ''}
-                    rows={3}
+                    rows={field.rows ?? 3}
                     placeholder="Vide = texte par défaut du site"
                     className="w-full rounded-lg border border-pearl-400 bg-white px-3 py-2 font-sans text-sm text-midnight placeholder:text-midnight-300 focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
                   />

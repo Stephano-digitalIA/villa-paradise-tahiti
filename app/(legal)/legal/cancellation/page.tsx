@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 
-import { CancellationTiers, LegalPageHeader } from '@/components/sections/legal'
+import { CancellationTiers, LegalMarkdown, LegalPageHeader } from '@/components/sections/legal'
+import { getSiteContent } from '@/lib/content'
 import { buildMetadata } from '@/lib/seo'
 
 const LAST_UPDATED = 'May 1, 2026'
@@ -16,7 +17,9 @@ export const metadata: Metadata = buildMetadata({
  * /legal/cancellation — refund tiers, force majeure exceptions, and
  * process for modifying or cancelling a booking.
  */
-export default function CancellationPage() {
+export default async function CancellationPage() {
+  const t = await getSiteContent()
+  const override = t('legal.cancellation.body', '')
   return (
     <>
       <LegalPageHeader
@@ -26,6 +29,10 @@ export default function CancellationPage() {
         intro="This policy describes how refunds are calculated when you cancel or modify a confirmed reservation at Villa Paradise Tahiti. Travel insurance is strongly recommended to protect you against the unexpected."
       />
 
+      {override ? (
+        <LegalMarkdown markdown={override} />
+      ) : (
+        <>
       <h2>1. Policy summary</h2>
       <p>
         Refund amounts depend on how many days before the scheduled arrival
@@ -191,6 +198,8 @@ export default function CancellationPage() {
         hours during Tahiti business hours and confirm the applicable
         refund or credit calculation before processing.
       </p>
+        </>
+      )}
     </>
   )
 }

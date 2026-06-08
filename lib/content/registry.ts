@@ -11,6 +11,8 @@ export interface ContentField {
   key: string
   label: string
   multiline?: boolean
+  /** Rows for multiline fields (default 3). */
+  rows?: number
 }
 
 export interface ContentGroup {
@@ -72,6 +74,14 @@ export const SITE_CONTENT_GROUPS: ContentGroup[] = [
       { key: 'home.cta.cta_secondary', label: 'Bouton secondaire' },
       { key: 'home.cta.trust_cancel', label: 'Bandeau — annulation' },
       { key: 'home.cta.trust_secure', label: 'Bandeau — paiement' },
+    ],
+  },
+  {
+    title: 'Pages légales — markdown (vide = texte par défaut du site)',
+    fields: [
+      { key: 'legal.terms.body', label: 'Conditions générales (Terms)', multiline: true, rows: 18 },
+      { key: 'legal.cancellation.body', label: 'Politique d’annulation', multiline: true, rows: 18 },
+      { key: 'legal.privacy.body', label: 'Politique de confidentialité', multiline: true, rows: 18 },
     ],
   },
 ]
