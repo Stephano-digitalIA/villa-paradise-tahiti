@@ -5,7 +5,7 @@ import { SITE_CONTENT_DEFAULTS, SITE_CONTENT_GROUPS } from '@/lib/content/regist
 
 import { SiteContentForm } from './SiteContentForm'
 
-export const metadata: Metadata = { title: 'Textes du site — Admin' }
+export const metadata: Metadata = { title: 'Textes de la page d’accueil — Admin' }
 
 // Always read fresh so freshly-saved values appear (avoids the Data Cache).
 export const dynamic = 'force-dynamic'
@@ -15,7 +15,9 @@ export default async function SiteContentPage() {
 
   return (
     <div className="p-8">
-      <h1 className="font-heading text-2xl font-semibold text-midnight">Textes du site</h1>
+      <h1 className="font-heading text-2xl font-semibold text-midnight">
+        Textes de la page d’accueil.
+      </h1>
       <p className="mt-1 max-w-2xl font-sans text-sm text-midnight-400">
         Personnalise les textes marketing de la page d’accueil. Laisse un champ vide pour
         garder le texte par défaut. Les changements apparaissent immédiatement sur le site.
