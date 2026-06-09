@@ -33,9 +33,9 @@ export const metadata: Metadata = {
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_SITE_URL ?? 'https://villaparadisetahiti.com'
   ),
-  title: 'Villa Paradise Tahiti — Luxury Villa Rental',
+  title: 'Villa Paradise Tahiti — Luxury Villa & Hotel Alternative in Tahiti',
   description:
-    'A private luxury villa retreat in Tahiti, French Polynesia. Direct booking with curated experiences and concierge services.',
+    'A private luxury villa in Tahiti, French Polynesia — the elegant alternative to a hotel. Direct booking with curated experiences and concierge service.',
   keywords: [...SITE_KEYWORDS],
 }
 

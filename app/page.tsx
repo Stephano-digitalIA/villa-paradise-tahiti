@@ -22,10 +22,9 @@ import { villaQuery, type Villa } from '@/lib/sanity'
 import { mockVilla } from '@/lib/sanity'
 
 export const metadata: Metadata = buildMetadata({
-  title:
-    'Villa Paradise Tahiti — Luxury Private Villa Rental in French Polynesia',
+  title: 'Villa Paradise Tahiti — Luxury Villa & the Tahiti Hotel Alternative',
   description:
-    'Your private paradise in Tahiti. 4 bedrooms, heated infinity pool, Moorea views, included car. Book direct for the best rate.',
+    'Your private villa in Tahiti — the luxury alternative to a hotel. 4 bedrooms, heated infinity pool, Moorea views, car included. Book direct for the best rate.',
   path: '/',
 })
 
