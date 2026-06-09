@@ -17,6 +17,19 @@ function slugify(str: string) {
     .replace(/(^-|-$)/g, '')
 }
 
+function parseTranslations(formData: FormData): Record<string, string> {
+  const fr = (k: string) => ((formData.get(k) as string | null) ?? '').trim()
+  return {
+    title: fr('title__fr'),
+    excerpt: fr('excerpt__fr'),
+    body: fr('body__fr'),
+    cover_image_alt: fr('cover_image_alt__fr'),
+    author_bio: fr('author_bio__fr'),
+    seo_title: fr('seo_title__fr'),
+    seo_description: fr('seo_description__fr'),
+  }
+}
+
 function parsePost(formData: FormData) {
   const tagsRaw = (formData.get('tags') as string | null) || ''
   const tags = tagsRaw
@@ -48,15 +61,31 @@ function parsePost(formData: FormData) {
 }
 
 export async function createPost(formData: FormData): Promise<void> {
-  const payload = parsePost(formData)
+  const payload = { ...parsePost(formData), translations: parseTranslations(formData) }
   const { error } = await adminClient.from('posts').insert(payload)
-  if (error) throw new Error(error.message)
+  if (error) {
+    if (!/translations/.test(error.message)) throw new Error(error.message)
+    const { translations: _omit, ...enOnly } = payload
+    void _omit
+    const { error: retry } = await adminClient.from('posts').insert(enOnly)
+    if (retry) throw new Error(retry.message)
+  }
   REVALIDATE()
 }
 
 export async function updatePost(id: string, formData: FormData): Promise<void> {
-  const payload = { ...parsePost(formData), updated_at: new Date().toISOString() }
+  const payload = {
+    ...parsePost(formData),
+    translations: parseTranslations(formData),
+    updated_at: new Date().toISOString(),
+  }
   const { error } = await adminClient.from('posts').update(payload).eq('id', id)
-  if (error) throw new Error(error.message)
+  if (error) {
+    if (!/translations/.test(error.message)) throw new Error(error.message)
+    const { translations: _omit, ...enOnly } = payload
+    void _omit
+    const { error: retry } = await adminClient.from('posts').update(enOnly).eq('id', id)
+    if (retry) throw new Error(retry.message)
+  }
   REVALIDATE()
 }

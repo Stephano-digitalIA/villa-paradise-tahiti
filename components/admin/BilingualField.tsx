@@ -15,6 +15,8 @@ export interface BilingualFieldProps {
   multiline?: boolean
   rows?: number
   className?: string
+  /** Optional: notified when the English value changes (e.g. to auto-slug). */
+  onEnChange?: (value: string) => void
 }
 
 /**
@@ -35,9 +37,15 @@ export function BilingualField({
   multiline,
   rows,
   className,
+  onEnChange,
 }: BilingualFieldProps) {
   const [en, setEn] = useState(defaultEn)
   const [fr, setFr] = useState(defaultFr)
+
+  function handleEnChange(value: string) {
+    setEn(value)
+    onEnChange?.(value)
+  }
 
   return (
     <TranslatableField
@@ -46,7 +54,7 @@ export function BilingualField({
       frName={frName}
       enValue={en}
       frValue={fr}
-      onEnChange={setEn}
+      onEnChange={handleEnChange}
       onFrChange={setFr}
       multiline={multiline}
       rows={rows}

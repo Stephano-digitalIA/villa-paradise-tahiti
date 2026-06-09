@@ -26,17 +26,37 @@ function parseProvider(formData: FormData) {
   }
 }
 
+function parseTranslations(formData: FormData): Record<string, string> {
+  return { services: ((formData.get('services__fr') as string | null) ?? '').trim() }
+}
+
 export async function createProvider(formData: FormData): Promise<void> {
-  const payload = parseProvider(formData)
+  const payload = { ...parseProvider(formData), translations: parseTranslations(formData) }
   const { error } = await adminClient.from('excursion_providers').insert(payload)
-  if (error) throw new Error(error.message)
+  if (error) {
+    if (!/translations/.test(error.message)) throw new Error(error.message)
+    const { translations: _omit, ...enOnly } = payload
+    void _omit
+    const { error: retry } = await adminClient.from('excursion_providers').insert(enOnly)
+    if (retry) throw new Error(retry.message)
+  }
   REVALIDATE()
 }
 
 export async function updateProvider(id: string, formData: FormData): Promise<void> {
-  const payload = { ...parseProvider(formData), updated_at: new Date().toISOString() }
+  const payload = {
+    ...parseProvider(formData),
+    translations: parseTranslations(formData),
+    updated_at: new Date().toISOString(),
+  }
   const { error } = await adminClient.from('excursion_providers').update(payload).eq('id', id)
-  if (error) throw new Error(error.message)
+  if (error) {
+    if (!/translations/.test(error.message)) throw new Error(error.message)
+    const { translations: _omit, ...enOnly } = payload
+    void _omit
+    const { error: retry } = await adminClient.from('excursion_providers').update(enOnly).eq('id', id)
+    if (retry) throw new Error(retry.message)
+  }
   REVALIDATE()
 }
 

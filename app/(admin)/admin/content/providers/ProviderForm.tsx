@@ -3,6 +3,7 @@
 import { useTransition, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { FormSection } from '@/components/admin/FormSection'
+import { BilingualField } from '@/components/admin/BilingualField'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 import type { ExcursionProvider } from '@/lib/supabase/types'
@@ -16,6 +17,7 @@ export function ProviderForm({ provider }: Props) {
   const [error, setError] = useState<string | null>(null)
 
   const isEdit = Boolean(provider)
+  const tr = provider?.translations ?? {}
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -108,13 +110,15 @@ export function ProviderForm({ provider }: Props) {
               </div>
             </FormSection>
 
-            <FormSection title="Services" description="Un service par ligne">
-              <textarea
-                name="services"
+            <FormSection title="Services" description="Un service par ligne (français et anglais)">
+              <BilingualField
+                label="Liste des services — un par ligne"
+                enName="services"
+                frName="services__fr"
+                defaultEn={(provider?.services ?? []).join('\n')}
+                defaultFr={tr.services ?? ''}
+                multiline
                 rows={5}
-                defaultValue={(provider?.services ?? []).join('\n')}
-                placeholder="Excursion lagon&#10;Nourrissage requins & raies&#10;Affrètement bateau privé"
-                className="w-full resize-y rounded-lg border border-lagoon/20 bg-pearl px-4 py-3 font-sans text-sm text-midnight placeholder:text-midnight-300 focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/30"
               />
             </FormSection>
 

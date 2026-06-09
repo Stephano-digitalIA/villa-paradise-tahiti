@@ -15,9 +15,17 @@ export async function createFAQ(data: {
   category: FaqCategory
   sort_order: number
   active: boolean
+  translations?: Record<string, string>
 }): Promise<void> {
   const { error } = await adminClient.from('faqs').insert(data)
-  if (error) throw new Error(error.message)
+  if (error) {
+    // Pre-migration 012 — `translations` column absent. Retry English-only.
+    if (!/translations/.test(error.message)) throw new Error(error.message)
+    const { translations: _omit, ...enOnly } = data
+    void _omit
+    const { error: retry } = await adminClient.from('faqs').insert(enOnly)
+    if (retry) throw new Error(retry.message)
+  }
   REVALIDATE()
 }
 
@@ -28,10 +36,17 @@ export async function updateFAQ(
     answer: string
     sort_order: number
     active: boolean
+    translations: Record<string, string>
   }>,
 ): Promise<void> {
   const { error } = await adminClient.from('faqs').update(data).eq('id', id)
-  if (error) throw new Error(error.message)
+  if (error) {
+    if (!/translations/.test(error.message)) throw new Error(error.message)
+    const { translations: _omit, ...enOnly } = data
+    void _omit
+    const { error: retry } = await adminClient.from('faqs').update(enOnly).eq('id', id)
+    if (retry) throw new Error(retry.message)
+  }
   REVALIDATE()
 }
 

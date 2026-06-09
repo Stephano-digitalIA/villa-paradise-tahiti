@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { FormSection } from '@/components/admin/FormSection'
-import { MarkdownEditor } from '@/components/admin/MarkdownEditor'
+import { BilingualField } from '@/components/admin/BilingualField'
 import { ImageUploadField } from '@/components/admin/ImageUploadField'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
@@ -36,23 +36,16 @@ function slugify(str: string) {
 export function ExperienceForm({ experience, providers }: Props) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
-  const [status, setStatus] = useState<'idle' | 'saving' | 'error'>('idle')
   const [error, setError] = useState<string | null>(null)
   const [slug, setSlug] = useState(experience?.slug ?? '')
   const [seasonal, setSeasonal] = useState(experience?.seasonal ?? false)
 
-  function handleTitleChange(e: React.ChangeEvent<HTMLInputElement>) {
-    if (!experience) {
-      setSlug(slugify(e.target.value))
-    }
-  }
+  const tr = experience?.translations ?? {}
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     const fd = new FormData(e.currentTarget)
-    setStatus('saving')
     setError(null)
-    // (translation cue: error strings below are translated to French)
     startTransition(async () => {
       try {
         if (experience) {
@@ -62,7 +55,6 @@ export function ExperienceForm({ experience, providers }: Props) {
         }
         router.push('/admin/content/experiences')
       } catch (err) {
-        setStatus('error')
         setError(err instanceof Error ? err.message : 'Une erreur est survenue')
       }
     })
@@ -98,18 +90,17 @@ export function ExperienceForm({ experience, providers }: Props) {
         <div className="rounded-2xl border border-pearl-400 bg-white shadow-sm">
           <div className="px-8">
             <FormSection title="Informations de base">
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div>
-                  <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                    Titre <span className="text-coral">*</span>
-                  </label>
-                  <Input
-                    name="title"
-                    defaultValue={experience?.title}
-                    required
-                    onChange={handleTitleChange}
-                  />
-                </div>
+              <BilingualField
+                label="Titre"
+                enName="title"
+                frName="title__fr"
+                defaultEn={experience?.title ?? ''}
+                defaultFr={tr.title ?? ''}
+                onEnChange={(v) => {
+                  if (!experience) setSlug(slugify(v))
+                }}
+              />
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                 <div>
                   <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
                     Slug
@@ -121,8 +112,6 @@ export function ExperienceForm({ experience, providers }: Props) {
                     placeholder="auto-généré depuis le titre"
                   />
                 </div>
-              </div>
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
                   <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
                     Catégorie <span className="text-coral">*</span>
@@ -158,27 +147,25 @@ export function ExperienceForm({ experience, providers }: Props) {
                   </select>
                 </div>
               </div>
-              <div>
-                <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                  Description courte <span className="text-coral">*</span>{' '}
-                  <span className="font-normal text-midnight-400">(160 caractères max)</span>
-                </label>
-                <textarea
-                  name="short_description"
-                  rows={2}
-                  maxLength={160}
-                  required
-                  defaultValue={experience?.short_description}
-                  className="w-full resize-y rounded-lg border border-lagoon/20 bg-pearl px-4 py-3 font-sans text-sm text-midnight placeholder:text-midnight-300 focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/30"
-                />
-              </div>
+              <BilingualField
+                label="Description courte (≈ 160 caractères)"
+                enName="short_description"
+                frName="short_description__fr"
+                defaultEn={experience?.short_description ?? ''}
+                defaultFr={tr.short_description ?? ''}
+                multiline
+                rows={2}
+              />
             </FormSection>
 
             <FormSection title="Description" description="Supporte le Markdown">
-              <MarkdownEditor
-                name="description"
+              <BilingualField
                 label="Description complète"
-                defaultValue={experience?.description}
+                enName="description"
+                frName="description__fr"
+                defaultEn={experience?.description ?? ''}
+                defaultFr={tr.description ?? ''}
+                multiline
                 rows={8}
               />
             </FormSection>
@@ -221,22 +208,26 @@ export function ExperienceForm({ experience, providers }: Props) {
                   </label>
                   <Input type="number" name="max_guests" defaultValue={experience?.max_guests ?? ''} min={1} />
                 </div>
-                <div>
-                  <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                    Durée
-                  </label>
-                  <Input name="duration" defaultValue={experience?.duration ?? ''} placeholder="3 heures" />
+                <div className="sm:col-span-2">
+                  <BilingualField
+                    label="Durée"
+                    enName="duration"
+                    frName="duration__fr"
+                    defaultEn={experience?.duration ?? ''}
+                    defaultFr={tr.duration ?? ''}
+                  />
                 </div>
               </div>
             </FormSection>
 
             <FormSection title="Point de rendez-vous & saisonnalité">
-              <div>
-                <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                  Point de rendez-vous
-                </label>
-                <Input name="meeting_point" defaultValue={experience?.meeting_point ?? ''} />
-              </div>
+              <BilingualField
+                label="Point de rendez-vous"
+                enName="meeting_point"
+                frName="meeting_point__fr"
+                defaultEn={experience?.meeting_point ?? ''}
+                defaultFr={tr.meeting_point ?? ''}
+              />
               <div className="flex items-center gap-2">
                 <input
                   type="checkbox"
@@ -269,13 +260,15 @@ export function ExperienceForm({ experience, providers }: Props) {
               )}
             </FormSection>
 
-            <FormSection title="Points forts" description="Un point fort par ligne">
-              <textarea
-                name="highlights"
+            <FormSection title="Points forts" description="Un point fort par ligne (français et anglais)">
+              <BilingualField
+                label="Points forts — un par ligne"
+                enName="highlights"
+                frName="highlights__fr"
+                defaultEn={(experience?.highlights ?? []).join('\n')}
+                defaultFr={tr.highlights ?? ''}
+                multiline
                 rows={5}
-                defaultValue={(experience?.highlights ?? []).join('\n')}
-                placeholder="Snorkeling dans des eaux cristallines&#10;Guidé par des instructeurs certifiés&#10;Équipement inclus"
-                className="w-full resize-y rounded-lg border border-lagoon/20 bg-pearl px-4 py-3 font-sans text-sm text-midnight placeholder:text-midnight-300 focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/30"
               />
             </FormSection>
 
@@ -313,46 +306,43 @@ export function ExperienceForm({ experience, providers }: Props) {
             </FormSection>
 
             <FormSection title="Image de couverture">
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div>
-                  <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                    URL image de couverture
-                  </label>
-                  <ImageUploadField
-                    name="cover_image_url"
-                    defaultValue={experience?.cover_image_url}
-                    bucket="experiences-media"
-                    prefix="covers"
-                  />
-                </div>
-                <div>
-                  <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                    Texte alternatif (alt)
-                  </label>
-                  <Input name="cover_image_alt" defaultValue={experience?.cover_image_alt ?? ''} />
-                </div>
+              <div>
+                <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
+                  URL image de couverture
+                </label>
+                <ImageUploadField
+                  name="cover_image_url"
+                  defaultValue={experience?.cover_image_url}
+                  bucket="experiences-media"
+                  prefix="covers"
+                />
               </div>
+              <BilingualField
+                label="Texte alternatif (alt)"
+                enName="cover_image_alt"
+                frName="cover_image_alt__fr"
+                defaultEn={experience?.cover_image_alt ?? ''}
+                defaultFr={tr.cover_image_alt ?? ''}
+              />
             </FormSection>
 
             <FormSection title="SEO">
-              <div>
-                <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                  Titre SEO <span className="font-normal text-midnight-400">(70 caractères max)</span>
-                </label>
-                <Input name="seo_title" defaultValue={experience?.seo_title ?? ''} maxLength={70} />
-              </div>
-              <div>
-                <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                  Description SEO <span className="font-normal text-midnight-400">(170 caractères max)</span>
-                </label>
-                <textarea
-                  name="seo_description"
-                  rows={3}
-                  maxLength={170}
-                  defaultValue={experience?.seo_description ?? ''}
-                  className="w-full resize-y rounded-lg border border-lagoon/20 bg-pearl px-4 py-3 font-sans text-sm text-midnight placeholder:text-midnight-300 focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/30"
-                />
-              </div>
+              <BilingualField
+                label="Titre SEO (≈ 70 caractères)"
+                enName="seo_title"
+                frName="seo_title__fr"
+                defaultEn={experience?.seo_title ?? ''}
+                defaultFr={tr.seo_title ?? ''}
+              />
+              <BilingualField
+                label="Description SEO (≈ 170 caractères)"
+                enName="seo_description"
+                frName="seo_description__fr"
+                defaultEn={experience?.seo_description ?? ''}
+                defaultFr={tr.seo_description ?? ''}
+                multiline
+                rows={3}
+              />
             </FormSection>
           </div>
         </div>

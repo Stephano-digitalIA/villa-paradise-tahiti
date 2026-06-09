@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import { ToggleSwitch } from '@/components/admin/ToggleSwitch'
+import { TranslatableField } from '@/components/admin/TranslatableField'
 import { Button } from '@/components/ui/Button'
 import type { FAQ, FaqCategory } from '@/lib/supabase/types'
 import { createFAQ, updateFAQ, deleteFAQ } from './actions'
@@ -20,12 +21,24 @@ const CATEGORY_LABEL: Record<FaqCategory, string> = {
   experiences: 'Prestations',
 }
 
-type EditableRow = FAQ & { _dirty?: boolean; _new?: boolean }
+type EditableRow = FAQ & {
+  _dirty?: boolean
+  _new?: boolean
+  /** French source — seeded from translations, edited inline. */
+  frQuestion: string
+  frAnswer: string
+}
 
 type Props = { initialFaqs: FAQ[] }
 
 export function FaqClient({ initialFaqs }: Props) {
-  const [faqs, setFaqs] = useState<EditableRow[]>(initialFaqs)
+  const [faqs, setFaqs] = useState<EditableRow[]>(
+    initialFaqs.map((f) => ({
+      ...f,
+      frQuestion: f.translations?.question ?? '',
+      frAnswer: f.translations?.answer ?? '',
+    })),
+  )
   const [isPending, startTransition] = useTransition()
   const [saveErrors, setSaveErrors] = useState<Record<string, string>>({})
 
@@ -51,6 +64,7 @@ export function FaqClient({ initialFaqs }: Props) {
 
   function handleSave(faq: EditableRow) {
     startTransition(async () => {
+      const translations = { question: faq.frQuestion ?? '', answer: faq.frAnswer ?? '' }
       try {
         if (faq._new) {
           await createFAQ({
@@ -59,6 +73,7 @@ export function FaqClient({ initialFaqs }: Props) {
             category: faq.category,
             sort_order: faq.sort_order,
             active: faq.active,
+            translations,
           })
           // Mark as saved
           setFaqs((prev) => prev.map((f) => (f.id === faq.id ? { ...f, _new: false, _dirty: false } : f)))
@@ -68,6 +83,7 @@ export function FaqClient({ initialFaqs }: Props) {
             answer: faq.answer,
             sort_order: faq.sort_order,
             active: faq.active,
+            translations,
           })
           setFaqs((prev) => prev.map((f) => (f.id === faq.id ? { ...f, _dirty: false } : f)))
         }
@@ -103,6 +119,8 @@ export function FaqClient({ initialFaqs }: Props) {
         id: tmpId,
         question: '',
         answer: '',
+        frQuestion: '',
+        frAnswer: '',
         category,
         sort_order: maxOrder + 1,
         active: true,
@@ -154,30 +172,26 @@ export function FaqClient({ initialFaqs }: Props) {
                     <p className="mb-2 font-sans text-xs text-coral">{saveErrors[faq.id]}</p>
                   )}
                   <div className="space-y-2">
-                    <div>
-                      <label className="mb-1 block font-sans text-xs font-medium text-midnight-400">
-                        Question
-                      </label>
-                      <input
-                        type="text"
-                        value={faq.question}
-                        onChange={(e) => patchLocal(faq.id, { question: e.target.value })}
-                        placeholder="À quelle heure est le check-in ?"
-                        className="w-full rounded-lg border border-lagoon/20 bg-pearl px-3 py-2 font-sans text-sm text-midnight placeholder:text-midnight-300 focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold/30"
-                      />
-                    </div>
-                    <div>
-                      <label className="mb-1 block font-sans text-xs font-medium text-midnight-400">
-                        Réponse
-                      </label>
-                      <textarea
-                        rows={3}
-                        value={faq.answer}
-                        onChange={(e) => patchLocal(faq.id, { answer: e.target.value })}
-                        placeholder="Le check-in se fait entre 15h et 20h."
-                        className="w-full resize-y rounded-lg border border-lagoon/20 bg-pearl px-3 py-2 font-sans text-sm text-midnight placeholder:text-midnight-300 focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold/30"
-                      />
-                    </div>
+                    <TranslatableField
+                      label="Question"
+                      enName={`question-${faq.id}`}
+                      frName={`question-fr-${faq.id}`}
+                      enValue={faq.question}
+                      frValue={faq.frQuestion}
+                      onEnChange={(v) => patchLocal(faq.id, { question: v })}
+                      onFrChange={(v) => patchLocal(faq.id, { frQuestion: v })}
+                    />
+                    <TranslatableField
+                      label="Réponse"
+                      enName={`answer-${faq.id}`}
+                      frName={`answer-fr-${faq.id}`}
+                      enValue={faq.answer}
+                      frValue={faq.frAnswer}
+                      onEnChange={(v) => patchLocal(faq.id, { answer: v })}
+                      onFrChange={(v) => patchLocal(faq.id, { frAnswer: v })}
+                      multiline
+                      rows={3}
+                    />
                     <div className="flex flex-wrap items-center gap-4">
                       <div className="flex items-center gap-2">
                         <label className="font-sans text-xs text-midnight-400">Ordre</label>

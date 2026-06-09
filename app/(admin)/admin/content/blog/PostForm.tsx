@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { FormSection } from '@/components/admin/FormSection'
-import { MarkdownEditor } from '@/components/admin/MarkdownEditor'
+import { BilingualField } from '@/components/admin/BilingualField'
 import { ImageUploadField } from '@/components/admin/ImageUploadField'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
@@ -28,10 +28,7 @@ export function PostForm({ post }: Props) {
   const [slug, setSlug] = useState(post?.slug ?? '')
 
   const isEdit = Boolean(post)
-
-  function handleTitleChange(e: React.ChangeEvent<HTMLInputElement>) {
-    if (!post) setSlug(slugify(e.target.value))
-  }
+  const tr = post?.translations ?? {}
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -77,75 +74,69 @@ export function PostForm({ post }: Props) {
         <div className="rounded-2xl border border-pearl-400 bg-white shadow-sm">
           <div className="px-8">
             <FormSection title="Informations de base">
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div>
-                  <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                    Titre <span className="text-coral">*</span>
-                  </label>
-                  <Input
-                    name="title"
-                    defaultValue={post?.title}
-                    required
-                    onChange={handleTitleChange}
-                  />
-                </div>
-                <div>
-                  <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                    Slug
-                  </label>
-                  <Input
-                    name="slug"
-                    value={slug}
-                    onChange={(e) => setSlug(e.target.value)}
-                    placeholder="auto-généré"
-                  />
-                </div>
-              </div>
+              <BilingualField
+                label="Titre"
+                enName="title"
+                frName="title__fr"
+                defaultEn={post?.title ?? ''}
+                defaultFr={tr.title ?? ''}
+                onEnChange={(v) => {
+                  if (!post) setSlug(slugify(v))
+                }}
+              />
               <div>
                 <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                  Extrait <span className="text-coral">*</span>{' '}
-                  <span className="font-normal text-midnight-400">(220 caractères max)</span>
+                  Slug
                 </label>
-                <textarea
-                  name="excerpt"
-                  rows={3}
-                  required
-                  maxLength={220}
-                  defaultValue={post?.excerpt}
-                  className="w-full resize-y rounded-lg border border-lagoon/20 bg-pearl px-4 py-3 font-sans text-sm text-midnight placeholder:text-midnight-300 focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/30"
+                <Input
+                  name="slug"
+                  value={slug}
+                  onChange={(e) => setSlug(e.target.value)}
+                  placeholder="auto-généré"
                 />
               </div>
+              <BilingualField
+                label="Extrait (≈ 220 caractères)"
+                enName="excerpt"
+                frName="excerpt__fr"
+                defaultEn={post?.excerpt ?? ''}
+                defaultFr={tr.excerpt ?? ''}
+                multiline
+                rows={3}
+              />
             </FormSection>
 
             <FormSection title="Corps" description="Supporte le Markdown">
-              <MarkdownEditor
-                name="body"
+              <BilingualField
                 label="Corps de l'article"
-                defaultValue={post?.body}
+                enName="body"
+                frName="body__fr"
+                defaultEn={post?.body ?? ''}
+                defaultFr={tr.body ?? ''}
+                multiline
                 rows={15}
               />
             </FormSection>
 
             <FormSection title="Image de couverture">
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div>
-                  <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                    URL image de couverture
-                  </label>
-                  <ImageUploadField
-                    name="cover_image_url"
-                    defaultValue={post?.cover_image_url}
-                    bucket="blog-media"
-                    prefix="covers"
-                  />
-                </div>
-                <div>
-                  <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                    Texte alternatif (alt)
-                  </label>
-                  <Input name="cover_image_alt" defaultValue={post?.cover_image_alt ?? ''} />
-                </div>
+              <div>
+                <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
+                  URL image de couverture
+                </label>
+                <ImageUploadField
+                  name="cover_image_url"
+                  defaultValue={post?.cover_image_url}
+                  bucket="blog-media"
+                  prefix="covers"
+                />
               </div>
+              <BilingualField
+                label="Texte alternatif (alt)"
+                enName="cover_image_alt"
+                frName="cover_image_alt__fr"
+                defaultEn={post?.cover_image_alt ?? ''}
+                defaultFr={tr.cover_image_alt ?? ''}
+              />
             </FormSection>
 
             <FormSection title="Auteur">
@@ -156,13 +147,16 @@ export function PostForm({ post }: Props) {
                   </label>
                   <Input name="author_name" defaultValue={post?.author_name ?? ''} />
                 </div>
-                <div>
-                  <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                    Bio de l&apos;auteur
-                  </label>
-                  <Input name="author_bio" defaultValue={post?.author_bio ?? ''} />
-                </div>
               </div>
+              <BilingualField
+                label="Bio de l’auteur"
+                enName="author_bio"
+                frName="author_bio__fr"
+                defaultEn={post?.author_bio ?? ''}
+                defaultFr={tr.author_bio ?? ''}
+                multiline
+                rows={2}
+              />
             </FormSection>
 
             <FormSection title="Tags & métadonnées">
@@ -206,25 +200,22 @@ export function PostForm({ post }: Props) {
             </FormSection>
 
             <FormSection title="SEO">
-              <div>
-                <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                  Titre SEO <span className="font-normal text-midnight-400">(70 caractères max)</span>
-                </label>
-                <Input name="seo_title" defaultValue={post?.seo_title ?? ''} maxLength={70} />
-              </div>
-              <div>
-                <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                  Description SEO{' '}
-                  <span className="font-normal text-midnight-400">(170 caractères max)</span>
-                </label>
-                <textarea
-                  name="seo_description"
-                  rows={3}
-                  maxLength={170}
-                  defaultValue={post?.seo_description ?? ''}
-                  className="w-full resize-y rounded-lg border border-lagoon/20 bg-pearl px-4 py-3 font-sans text-sm text-midnight placeholder:text-midnight-300 focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/30"
-                />
-              </div>
+              <BilingualField
+                label="Titre SEO (≈ 70 caractères)"
+                enName="seo_title"
+                frName="seo_title__fr"
+                defaultEn={post?.seo_title ?? ''}
+                defaultFr={tr.seo_title ?? ''}
+              />
+              <BilingualField
+                label="Description SEO (≈ 170 caractères)"
+                enName="seo_description"
+                frName="seo_description__fr"
+                defaultEn={post?.seo_description ?? ''}
+                defaultFr={tr.seo_description ?? ''}
+                multiline
+                rows={3}
+              />
             </FormSection>
           </div>
         </div>

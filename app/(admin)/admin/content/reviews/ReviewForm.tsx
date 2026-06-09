@@ -3,6 +3,7 @@
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { FormSection } from '@/components/admin/FormSection'
+import { BilingualField } from '@/components/admin/BilingualField'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 import type { Review, ReviewRating, ReviewSource } from '@/lib/supabase/types'
@@ -19,6 +20,7 @@ export function ReviewForm({ review }: Props) {
   const [rating, setRating] = useState<ReviewRating>(review?.rating ?? 5)
 
   const isEdit = Boolean(review)
+  const tr = review?.translations ?? {}
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -72,13 +74,14 @@ export function ReviewForm({ review }: Props) {
                   </label>
                   <Input name="author_name" defaultValue={review?.author_name} required />
                 </div>
-                <div>
-                  <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                    Lieu
-                  </label>
-                  <Input name="author_location" defaultValue={review?.author_location ?? ''} placeholder="Paris, France" />
-                </div>
               </div>
+              <BilingualField
+                label="Lieu"
+                enName="author_location"
+                frName="author_location__fr"
+                defaultEn={review?.author_location ?? ''}
+                defaultFr={tr.author_location ?? ''}
+              />
             </FormSection>
 
             <FormSection title="Contenu de l'avis">
@@ -103,24 +106,22 @@ export function ReviewForm({ review }: Props) {
                   </span>
                 </div>
               </div>
-              <div>
-                <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                  Titre <span className="text-coral">*</span>
-                </label>
-                <Input name="title" defaultValue={review?.title} required />
-              </div>
-              <div>
-                <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                  Texte <span className="text-coral">*</span>
-                </label>
-                <textarea
-                  name="body"
-                  rows={5}
-                  required
-                  defaultValue={review?.body}
-                  className="w-full resize-y rounded-lg border border-lagoon/20 bg-pearl px-4 py-3 font-sans text-sm text-midnight placeholder:text-midnight-300 focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/30"
-                />
-              </div>
+              <BilingualField
+                label="Titre"
+                enName="title"
+                frName="title__fr"
+                defaultEn={review?.title ?? ''}
+                defaultFr={tr.title ?? ''}
+              />
+              <BilingualField
+                label="Texte"
+                enName="body"
+                frName="body__fr"
+                defaultEn={review?.body ?? ''}
+                defaultFr={tr.body ?? ''}
+                multiline
+                rows={5}
+              />
             </FormSection>
 
             <FormSection title="Dates du séjour">

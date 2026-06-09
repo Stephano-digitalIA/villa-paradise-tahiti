@@ -9,6 +9,15 @@ const REVALIDATE = () => {
   revalidatePath('/', 'layout')
 }
 
+function parseTranslations(formData: FormData): Record<string, string> {
+  const fr = (k: string) => ((formData.get(k) as string | null) ?? '').trim()
+  return {
+    author_location: fr('author_location__fr'),
+    title: fr('title__fr'),
+    body: fr('body__fr'),
+  }
+}
+
 function parseReview(formData: FormData) {
   return {
     author_name: (formData.get('author_name') as string).trim(),
@@ -27,16 +36,28 @@ function parseReview(formData: FormData) {
 }
 
 export async function createReview(formData: FormData): Promise<void> {
-  const payload = parseReview(formData)
+  const payload = { ...parseReview(formData), translations: parseTranslations(formData) }
   const { error } = await adminClient.from('reviews').insert(payload)
-  if (error) throw new Error(error.message)
+  if (error) {
+    if (!/translations/.test(error.message)) throw new Error(error.message)
+    const { translations: _omit, ...enOnly } = payload
+    void _omit
+    const { error: retry } = await adminClient.from('reviews').insert(enOnly)
+    if (retry) throw new Error(retry.message)
+  }
   REVALIDATE()
 }
 
 export async function updateReview(id: string, formData: FormData): Promise<void> {
-  const payload = parseReview(formData)
+  const payload = { ...parseReview(formData), translations: parseTranslations(formData) }
   const { error } = await adminClient.from('reviews').update(payload).eq('id', id)
-  if (error) throw new Error(error.message)
+  if (error) {
+    if (!/translations/.test(error.message)) throw new Error(error.message)
+    const { translations: _omit, ...enOnly } = payload
+    void _omit
+    const { error: retry } = await adminClient.from('reviews').update(enOnly).eq('id', id)
+    if (retry) throw new Error(retry.message)
+  }
   REVALIDATE()
 }
 

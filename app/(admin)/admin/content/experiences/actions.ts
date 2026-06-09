@@ -18,6 +18,22 @@ function slugify(str: string) {
     .replace(/(^-|-$)/g, '')
 }
 
+/** FR source per translatable field, gathered from the `*__fr` form inputs. */
+function parseTranslations(formData: FormData): Record<string, string> {
+  const fr = (k: string) => ((formData.get(k) as string | null) ?? '').trim()
+  return {
+    title: fr('title__fr'),
+    short_description: fr('short_description__fr'),
+    description: fr('description__fr'),
+    duration: fr('duration__fr'),
+    meeting_point: fr('meeting_point__fr'),
+    highlights: fr('highlights__fr'),
+    cover_image_alt: fr('cover_image_alt__fr'),
+    seo_title: fr('seo_title__fr'),
+    seo_description: fr('seo_description__fr'),
+  }
+}
+
 function parseExperience(formData: FormData) {
   const highlightsRaw = formData.get('highlights') as string
   const highlights = highlightsRaw
@@ -56,16 +72,31 @@ function parseExperience(formData: FormData) {
 }
 
 export async function createExperience(formData: FormData): Promise<void> {
-  const payload = { ...parseExperience(formData), sort_order: 0 }
+  const translations = parseTranslations(formData)
+  const payload = { ...parseExperience(formData), translations, sort_order: 0 }
   const { error } = await adminClient.from('experiences').insert(payload)
-  if (error) throw new Error(error.message)
+  if (error) {
+    // Pre-migration 012 — `translations` column absent. Retry English-only.
+    if (!/translations/.test(error.message)) throw new Error(error.message)
+    const { translations: _omit, ...enOnly } = payload
+    void _omit
+    const { error: retry } = await adminClient.from('experiences').insert(enOnly)
+    if (retry) throw new Error(retry.message)
+  }
   REVALIDATE()
 }
 
 export async function updateExperience(id: string, formData: FormData): Promise<void> {
-  const payload = { ...parseExperience(formData), updated_at: new Date().toISOString() }
+  const translations = parseTranslations(formData)
+  const payload = { ...parseExperience(formData), translations, updated_at: new Date().toISOString() }
   const { error } = await adminClient.from('experiences').update(payload).eq('id', id)
-  if (error) throw new Error(error.message)
+  if (error) {
+    if (!/translations/.test(error.message)) throw new Error(error.message)
+    const { translations: _omit, ...enOnly } = payload
+    void _omit
+    const { error: retry } = await adminClient.from('experiences').update(enOnly).eq('id', id)
+    if (retry) throw new Error(retry.message)
+  }
   REVALIDATE()
 }
 

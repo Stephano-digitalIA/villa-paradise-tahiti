@@ -99,6 +99,8 @@ export type ExcursionProvider = {
   notes: string | null
   services: string[]
   active: boolean
+  /** Admin-only FR source per translatable field; '{}' before migration 012. */
+  translations?: Record<string, string>
   created_at: string
   updated_at: string
 }
@@ -139,6 +141,8 @@ export type Experience = {
   sort_order: number
   seo_title: string | null
   seo_description: string | null
+  /** Admin-only FR source per translatable field; '{}' before migration 012. */
+  translations?: Record<string, string>
   created_at: string
   updated_at: string
   // Joined from excursion_providers (optional)
@@ -170,6 +174,8 @@ export type Review = {
   source: ReviewSource
   featured: boolean
   published_at: string
+  /** Admin-only FR source per translatable field; '{}' before migration 012. */
+  translations?: Record<string, string>
   created_at: string
 }
 
@@ -190,6 +196,8 @@ export type Post = {
   seo_title: string | null
   seo_description: string | null
   og_image_url: string | null
+  /** Admin-only FR source per translatable field; '{}' before migration 012. */
+  translations?: Record<string, string>
   created_at: string
   updated_at: string
 }
@@ -203,6 +211,8 @@ export type FAQ = {
   category: FaqCategory
   sort_order: number
   active: boolean
+  /** Admin-only FR source per translatable field; '{}' before migration 012. */
+  translations?: Record<string, string>
   created_at: string
 }
 
