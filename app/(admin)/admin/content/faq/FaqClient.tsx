@@ -11,14 +11,16 @@ import { createFAQ, updateFAQ, deleteFAQ } from './actions'
 // FaqClient — fully client-side inline editing for FAQs
 // ─────────────────────────────────────────────────────────────────────────────
 
-const CATEGORIES: FaqCategory[] = ['booking', 'villa', 'tahiti', 'payment', 'experiences']
+// Order + labels mirror the public FAQ page (components/sections/faq/FaqGroups.tsx)
+// so the admin sections match what visitors see.
+const CATEGORIES: FaqCategory[] = ['booking', 'payment', 'villa', 'experiences', 'tahiti']
 
 const CATEGORY_LABEL: Record<FaqCategory, string> = {
   booking: 'Réservation',
+  payment: 'Paiement & annulation',
   villa: 'Villa',
-  tahiti: 'Tahiti',
-  payment: 'Paiement',
   experiences: 'Prestations',
+  tahiti: 'Tahiti & voyage',
 }
 
 type EditableRow = FAQ & {
