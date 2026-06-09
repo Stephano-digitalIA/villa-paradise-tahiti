@@ -13,6 +13,7 @@ import {
   KeyFeatures,
   ReviewsGlimpse,
   VillaPreview,
+  VillaVsHotel,
   WhyDirectBooking,
 } from '@/components/sections/home'
 import { HeroVideo } from '@/components/sections/home/HeroVideo'
@@ -59,6 +60,7 @@ export default async function HomePage() {
           <ExperiencesTeaser />
           <ReviewsGlimpse />
           <WhyDirectBooking />
+          <VillaVsHotel />
           <FinalCTA />
         </div>
 

@@ -64,6 +64,20 @@ export const SITE_CONTENT_GROUPS: ContentGroup[] = [
     ],
   },
   {
+    title: 'Accueil — Villa vs hôtel',
+    fields: [
+      { key: 'home.vshotel.eyebrow', label: 'Sur-titre' },
+      { key: 'home.vshotel.title', label: 'Titre de section' },
+      { key: 'home.vshotel.intro', label: 'Intro', multiline: true },
+      { key: 'home.vshotel.p1.title', label: 'Point 1 — titre' },
+      { key: 'home.vshotel.p1.body', label: 'Point 1 — texte', multiline: true },
+      { key: 'home.vshotel.p2.title', label: 'Point 2 — titre' },
+      { key: 'home.vshotel.p2.body', label: 'Point 2 — texte', multiline: true },
+      { key: 'home.vshotel.p3.title', label: 'Point 3 — titre' },
+      { key: 'home.vshotel.p3.body', label: 'Point 3 — texte', multiline: true },
+    ],
+  },
+  {
     title: 'Accueil — Appel à l’action final',
     fields: [
       { key: 'home.cta.eyebrow', label: 'Sur-titre' },
@@ -116,6 +130,7 @@ export const SITE_CONTENT_KEYS: ReadonlySet<string> = new Set(
  *   - home.why.*      → components/sections/home/WhyDirectBooking.tsx
  *   - home.cta.*      → components/sections/home/FinalCTA.tsx
  *   - home.villa.*    → components/sections/home/VillaPreview.tsx
+ *   - home.vshotel.*  → components/sections/home/VillaVsHotel.tsx
  *
  * Legal bodies (legal.*) are intentionally absent: their default is rich JSX
  * (not markdown), so there is nothing to pre-fill — an empty field keeps the
@@ -181,4 +196,18 @@ export const SITE_CONTENT_DEFAULTS: Readonly<Record<string, string>> = {
   'home.villa.stat_bathrooms': 'Bathrooms',
   'home.villa.stat_guests': 'Guests',
   'home.villa.stat_size': 'Size',
+  // Accueil — Villa vs hôtel (components/sections/home/VillaVsHotel.tsx)
+  'home.vshotel.eyebrow': 'Villa vs Hotel',
+  'home.vshotel.title': 'Why a private villa beats a Tahiti hotel',
+  'home.vshotel.intro':
+    'A hotel gives you a room. Villa Paradise gives you an entire private estate in Tahiti — more space, more privacy and more personal care, often for less than a comparable resort stay.',
+  'home.vshotel.p1.title': 'The whole place to yourself',
+  'home.vshotel.p1.body':
+    'No shared lobbies, lifts or crowded pools. Where a Tahiti hotel rents you a single room, the villa is entirely yours — four bedrooms, a private heated pool and not a neighbour in sight.',
+  'home.vshotel.p2.title': 'More space, better value',
+  'home.vshotel.p2.body':
+    'For the price of two or three hotel rooms, your group gets a full villa, a heated infinity pool and an included car — space and freedom a resort simply cannot match.',
+  'home.vshotel.p3.title': 'A host, not a front desk',
+  'home.vshotel.p3.body':
+    'Skip the check-in queue. One owner-concierge curates your whole week — private chef nights, excursions and airport transfers — with a personal touch no hotel front desk can offer.',
 }
