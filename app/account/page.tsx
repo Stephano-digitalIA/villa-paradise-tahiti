@@ -5,11 +5,76 @@ import { ArrowRight, CalendarCheck, Mail, UserCircle } from 'lucide-react'
 
 import { Button, Container, Section } from '@/components/ui'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { adminClient } from '@/lib/supabase/admin'
+import type { PaymentStatus, Reservation } from '@/lib/supabase/types'
 
 export const metadata: Metadata = {
   title: 'My account — Villa Paradise Tahiti',
   description: 'Your Villa Paradise Tahiti client space.',
   robots: { index: false, follow: false },
+}
+
+// Always render per-request with fresh data so newly created bookings appear.
+export const dynamic = 'force-dynamic'
+
+const STATUS_LABELS: Record<PaymentStatus, string> = {
+  pending: 'Awaiting payment',
+  deposit_paid: 'Deposit paid',
+  fully_paid: 'Fully paid',
+  cancelled: 'Cancelled',
+  refunded: 'Refunded',
+}
+
+const STATUS_STYLES: Record<PaymentStatus, string> = {
+  pending: 'bg-gold/10 text-gold',
+  deposit_paid: 'bg-gold/10 text-gold',
+  fully_paid: 'bg-emerald-500/10 text-emerald-700',
+  cancelled: 'bg-midnight/5 text-midnight-400',
+  refunded: 'bg-midnight/5 text-midnight-400',
+}
+
+function formatUSD(amount: number | null | undefined): string {
+  if (amount == null) return '—'
+  const hasCents = Math.round(amount * 100) % 100 !== 0
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: hasCents ? 2 : 0,
+    maximumFractionDigits: hasCents ? 2 : 0,
+  }).format(amount)
+}
+
+function formatDate(dateStr: string | null | undefined): string {
+  if (!dateStr) return '—'
+  return new Date(dateStr).toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  })
+}
+
+/**
+ * Reservations are linked to a `customers` row by email (the checkout upserts
+ * the customer on `email`). We match the signed-in user's email to surface
+ * their bookings. Uses the service-role client (RLS-bypassing) but is strictly
+ * scoped to the authenticated user's own email.
+ */
+async function getUserReservations(email: string): Promise<Reservation[]> {
+  const { data: customers } = await adminClient
+    .from('customers')
+    .select('id')
+    .ilike('email', email)
+
+  const customerIds = (customers ?? []).map((c) => c.id)
+  if (customerIds.length === 0) return []
+
+  const { data: reservations } = await adminClient
+    .from('reservations')
+    .select('*')
+    .in('customer_id', customerIds)
+    .order('check_in', { ascending: false })
+
+  return (reservations ?? []) as Reservation[]
 }
 
 export default async function AccountPage() {
@@ -26,6 +91,8 @@ export default async function AccountPage() {
   const firstName = fullName.includes(' ')
     ? fullName.split(' ')[0]
     : fullName || (user.email?.split('@')[0] ?? 'there')
+
+  const reservations = user.email ? await getUserReservations(user.email) : []
 
   return (
     <Section tone="pearl" spacing="default">
@@ -50,14 +117,47 @@ export default async function AccountPage() {
             id="bookings"
             icon={<CalendarCheck className="h-5 w-5 text-gold" aria-hidden="true" />}
             title="My bookings"
-            body="Your reservations and their status will be listed here. Until then, head to the booking page to plan your stay."
+            body={
+              reservations.length > 0
+                ? 'Your reservations and their current status.'
+                : 'Your reservations and their status will be listed here. Until then, head to the booking page to plan your stay.'
+            }
           >
-            <Button asChild variant="primary" size="md">
-              <Link href="/booking">
-                Build your stay
-                <ArrowRight className="h-4 w-4" aria-hidden="true" />
-              </Link>
-            </Button>
+            {reservations.length > 0 ? (
+              <ul className="flex flex-col gap-3">
+                {reservations.map((r) => (
+                  <li
+                    key={r.id}
+                    className="flex flex-col gap-1.5 rounded-xl border border-pearl-400 bg-white/60 p-4"
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="font-heading text-body-md font-medium text-midnight">
+                        {formatDate(r.check_in)} – {formatDate(r.check_out)}
+                      </span>
+                      <span
+                        className={`rounded-full px-2.5 py-0.5 text-[11px] font-medium ${STATUS_STYLES[r.payment_status]}`}
+                      >
+                        {STATUS_LABELS[r.payment_status]}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between gap-3 font-sans text-body-sm text-midnight-400">
+                      <span>
+                        Ref {r.reservation_ref} · {r.num_guests}{' '}
+                        {r.num_guests > 1 ? 'guests' : 'guest'}
+                      </span>
+                      <span className="font-medium text-midnight">{formatUSD(r.total)}</span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <Button asChild variant="primary" size="md">
+                <Link href="/booking">
+                  Build your stay
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                </Link>
+              </Button>
+            )}
           </Card>
 
           <Card
