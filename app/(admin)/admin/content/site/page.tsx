@@ -1,14 +1,17 @@
 import type { Metadata } from 'next'
 
-import { getSiteContentMap } from '@/lib/content'
+import { getSiteContentEntries } from '@/lib/content'
 import { SITE_CONTENT_GROUPS } from '@/lib/content/registry'
 
 import { SiteContentForm } from './SiteContentForm'
 
 export const metadata: Metadata = { title: 'Textes du site — Admin' }
 
+// Always read fresh so freshly-saved values appear (avoids the Data Cache).
+export const dynamic = 'force-dynamic'
+
 export default async function SiteContentPage() {
-  const values = await getSiteContentMap()
+  const values = await getSiteContentEntries()
 
   return (
     <div className="p-8">

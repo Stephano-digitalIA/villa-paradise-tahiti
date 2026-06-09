@@ -43,3 +43,38 @@ export async function getSiteContentMap(): Promise<Record<string, string>> {
   }
   return out
 }
+
+/** Published English + French source per key — used by the bilingual editor. */
+export interface SiteContentEntry {
+  value: string
+  value_fr: string
+}
+
+export async function getSiteContentEntries(): Promise<Record<string, SiteContentEntry>> {
+  const out: Record<string, SiteContentEntry> = {}
+  try {
+    // value_fr may not exist before migration 010 — fall back to value-only.
+    const { data, error } = await adminClient
+      .from('site_content')
+      .select('key, value, value_fr')
+    if (error) throw error
+    if (data) {
+      for (const row of data) {
+        out[row.key] = {
+          value: (row.value as string) ?? '',
+          value_fr: ((row as { value_fr?: string }).value_fr as string) ?? '',
+        }
+      }
+      return out
+    }
+  } catch {
+    /* value_fr column or table absent — fall back to value-only below */
+  }
+  try {
+    const { data } = await adminClient.from('site_content').select('key, value')
+    if (data) for (const row of data) out[row.key] = { value: (row.value as string) ?? '', value_fr: '' }
+  } catch {
+    /* table absent — empty map */
+  }
+  return out
+}

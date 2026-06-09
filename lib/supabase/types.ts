@@ -425,6 +425,8 @@ type InsertOf<T> = {
 export type SiteContent = {
   key: string
   value: string
+  /** French source text (admin-only); '' before migration 010. */
+  value_fr: string
   updated_at: string
 }
 
