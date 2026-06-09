@@ -60,6 +60,8 @@ export type Villa = {
   seo_title: string | null
   seo_description: string | null
   og_image_url: string | null
+  /** Admin-only FR source per translatable text field; '{}' before migration 011. */
+  translations?: Record<string, string>
   updated_at: string
 }
 

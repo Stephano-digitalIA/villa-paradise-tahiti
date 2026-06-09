@@ -1,8 +1,8 @@
 'use client'
 
-import { useRef, useState, useTransition } from 'react'
+import { useState, useTransition } from 'react'
 import { FormSection } from '@/components/admin/FormSection'
-import { MarkdownEditor } from '@/components/admin/MarkdownEditor'
+import { BilingualField } from '@/components/admin/BilingualField'
 import { ImageUploadField } from '@/components/admin/ImageUploadField'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
@@ -36,32 +36,14 @@ function CheckboxField({
   )
 }
 
-function TagList({ raw }: { raw: string[] }) {
-  return (
-    <div className="flex flex-wrap gap-2">
-      {raw.map((a) => (
-        <span
-          key={a}
-          className="rounded-full border border-pearl-400 bg-pearl-300 px-3 py-1 font-sans text-xs text-midnight"
-        >
-          {a}
-        </span>
-      ))}
-    </div>
-  )
-}
-
 type Props = { villa: Villa }
 
 export function VillaForm({ villa }: Props) {
-  const [amenitiesPreview, setAmenitiesPreview] = useState<string[]>(villa.amenities ?? [])
   const [status, setStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle')
   const [isPending, startTransition] = useTransition()
-  const formRef = useRef<HTMLFormElement>(null)
 
-  function handleAmenitiesChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
-    setAmenitiesPreview(e.target.value.split('\n').filter(Boolean))
-  }
+  // French source per translatable field — '' before migration 011 / first edit.
+  const tr = villa.translations ?? {}
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -84,7 +66,8 @@ export function VillaForm({ villa }: Props) {
         <div>
           <h1 className="font-heading text-2xl font-semibold text-midnight">Paramètres villa</h1>
           <p className="mt-1 font-sans text-sm text-midnight-400">
-            Modifier les détails, caractéristiques, équipements et SEO de la villa
+            Écris en français, traduis en anglais (le site publie l’anglais). Les
+            caractéristiques chiffrées et la localisation ne sont pas traduites.
           </p>
         </div>
         <Button type="submit" form="villa-form" disabled={isPending} size="sm">
@@ -98,31 +81,36 @@ export function VillaForm({ villa }: Props) {
         </div>
       )}
 
-      <form id="villa-form" ref={formRef} onSubmit={handleSubmit}>
+      <form id="villa-form" onSubmit={handleSubmit}>
         <div className="rounded-2xl border border-pearl-400 bg-white shadow-sm">
           <div className="px-8">
             <FormSection title="Informations de base">
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div>
-                  <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                    Nom de la villa <span className="text-coral">*</span>
-                  </label>
-                  <Input name="name" defaultValue={villa.name} required />
-                </div>
-                <div>
-                  <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                    Accroche
-                  </label>
-                  <Input name="tagline" defaultValue={villa.tagline ?? ''} />
-                </div>
+              <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+                <BilingualField
+                  label="Nom de la villa"
+                  enName="name"
+                  frName="name__fr"
+                  defaultEn={villa.name ?? ''}
+                  defaultFr={tr.name ?? ''}
+                />
+                <BilingualField
+                  label="Accroche"
+                  enName="tagline"
+                  frName="tagline__fr"
+                  defaultEn={villa.tagline ?? ''}
+                  defaultFr={tr.tagline ?? ''}
+                />
               </div>
             </FormSection>
 
             <FormSection title="Description" description="Supporte la mise en forme Markdown">
-              <MarkdownEditor
-                name="description"
+              <BilingualField
                 label="Description"
-                defaultValue={villa.description}
+                enName="description"
+                frName="description__fr"
+                defaultEn={villa.description ?? ''}
+                defaultFr={tr.description ?? ''}
+                multiline
                 rows={8}
               />
             </FormSection>
@@ -142,17 +130,18 @@ export function VillaForm({ villa }: Props) {
                 </div>
                 <div>
                   <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                    Texte alternatif (alt)
+                    URL vidéo hero
                   </label>
-                  <Input name="hero_image_alt" defaultValue={villa.hero_image_alt ?? ''} />
+                  <Input name="hero_video_url" defaultValue={villa.hero_video_url ?? ''} placeholder="https://…" />
                 </div>
               </div>
-              <div>
-                <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                  URL vidéo hero
-                </label>
-                <Input name="hero_video_url" defaultValue={villa.hero_video_url ?? ''} placeholder="https://…" />
-              </div>
+              <BilingualField
+                label="Texte alternatif (alt) de l’image hero"
+                enName="hero_image_alt"
+                frName="hero_image_alt__fr"
+                defaultEn={villa.hero_image_alt ?? ''}
+                defaultFr={tr.hero_image_alt ?? ''}
+              />
             </FormSection>
 
             <FormSection title="Caractéristiques">
@@ -193,30 +182,19 @@ export function VillaForm({ villa }: Props) {
               </div>
             </FormSection>
 
-            <FormSection title="Équipements" description="Un équipement par ligne — affiché en étiquettes">
-              <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-                <div>
-                  <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                    Liste des équipements
-                  </label>
-                  <textarea
-                    name="amenities"
-                    rows={8}
-                    defaultValue={(villa.amenities ?? []).join('\n')}
-                    placeholder="Accès plage privée&#10;Kayaks&#10;Équipement de snorkeling"
-                    onChange={handleAmenitiesChange}
-                    className="w-full resize-y rounded-lg border border-lagoon/20 bg-pearl px-4 py-3 font-sans text-sm text-midnight placeholder:text-midnight-300 focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/30"
-                  />
-                </div>
-                <div>
-                  <p className="mb-1.5 font-sans text-sm font-medium text-midnight">Aperçu</p>
-                  {amenitiesPreview.length > 0 ? (
-                    <TagList raw={amenitiesPreview} />
-                  ) : (
-                    <p className="font-sans text-sm italic text-midnight-300">Aucun équipement.</p>
-                  )}
-                </div>
-              </div>
+            <FormSection
+              title="Équipements"
+              description="Un équipement par ligne (français et anglais), affiché en étiquettes"
+            >
+              <BilingualField
+                label="Liste des équipements — un par ligne"
+                enName="amenities"
+                frName="amenities__fr"
+                defaultEn={(villa.amenities ?? []).join('\n')}
+                defaultFr={tr.amenities ?? ''}
+                multiline
+                rows={8}
+              />
             </FormSection>
 
             <FormSection title="Localisation">
@@ -245,24 +223,22 @@ export function VillaForm({ villa }: Props) {
             </FormSection>
 
             <FormSection title="SEO">
-              <div>
-                <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                  Titre SEO <span className="font-normal text-midnight-400">(70 caractères max)</span>
-                </label>
-                <Input name="seo_title" defaultValue={villa.seo_title ?? ''} maxLength={70} />
-              </div>
-              <div>
-                <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                  Description SEO <span className="font-normal text-midnight-400">(170 caractères max)</span>
-                </label>
-                <textarea
-                  name="seo_description"
-                  rows={3}
-                  maxLength={170}
-                  defaultValue={villa.seo_description ?? ''}
-                  className="w-full resize-y rounded-lg border border-lagoon/20 bg-pearl px-4 py-3 font-sans text-sm text-midnight placeholder:text-midnight-300 focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/30"
-                />
-              </div>
+              <BilingualField
+                label="Titre SEO (≈ 70 caractères)"
+                enName="seo_title"
+                frName="seo_title__fr"
+                defaultEn={villa.seo_title ?? ''}
+                defaultFr={tr.seo_title ?? ''}
+              />
+              <BilingualField
+                label="Description SEO (≈ 170 caractères)"
+                enName="seo_description"
+                frName="seo_description__fr"
+                defaultEn={villa.seo_description ?? ''}
+                defaultFr={tr.seo_description ?? ''}
+                multiline
+                rows={3}
+              />
             </FormSection>
           </div>
         </div>
