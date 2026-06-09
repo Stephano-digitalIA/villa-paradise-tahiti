@@ -77,6 +77,20 @@ export const SITE_CONTENT_GROUPS: ContentGroup[] = [
     ],
   },
   {
+    title: 'Accueil — Aperçu villa',
+    fields: [
+      { key: 'home.villa.eyebrow', label: 'Sur-titre' },
+      { key: 'home.villa.title1', label: 'Titre — ligne 1 (italique)' },
+      { key: 'home.villa.title2', label: 'Titre — ligne 2' },
+      { key: 'home.villa.description', label: 'Description', multiline: true, rows: 4 },
+      { key: 'home.villa.cta', label: 'Bouton' },
+      { key: 'home.villa.stat_bedrooms', label: 'Stat — chambres (libellé)' },
+      { key: 'home.villa.stat_bathrooms', label: 'Stat — salles de bain (libellé)' },
+      { key: 'home.villa.stat_guests', label: 'Stat — voyageurs (libellé)' },
+      { key: 'home.villa.stat_size', label: 'Stat — surface (libellé)' },
+    ],
+  },
+  {
     title: 'Pages légales — markdown (vide = texte par défaut du site)',
     fields: [
       { key: 'legal.terms.body', label: 'Conditions générales (Terms)', multiline: true, rows: 18 },
@@ -101,6 +115,7 @@ export const SITE_CONTENT_KEYS: ReadonlySet<string> = new Set(
  *   - home.features.* → components/sections/home/KeyFeatures.tsx
  *   - home.why.*      → components/sections/home/WhyDirectBooking.tsx
  *   - home.cta.*      → components/sections/home/FinalCTA.tsx
+ *   - home.villa.*    → components/sections/home/VillaPreview.tsx
  *
  * Legal bodies (legal.*) are intentionally absent: their default is rich JSX
  * (not markdown), so there is nothing to pre-fill — an empty field keeps the
@@ -155,4 +170,15 @@ export const SITE_CONTENT_DEFAULTS: Readonly<Record<string, string>> = {
   'home.cta.cta_secondary': 'Message the Owner',
   'home.cta.trust_cancel': '100% refund if cancelled more than 60 days before',
   'home.cta.trust_secure': 'Secure booking by Stripe',
+  // Accueil — Aperçu villa (components/sections/home/VillaPreview.tsx)
+  'home.villa.eyebrow': 'The Villa',
+  'home.villa.title1': 'A sanctuary of calm',
+  'home.villa.title2': 'and quiet luxury.',
+  'home.villa.description':
+    'Villa Paradise opens onto a private terrace and a heated infinity pool with a jacuzzi, overlooking a turquoise lagoon. Inside, four air-conditioned sun-drenched bedrooms are arranged around a vast open living space, dressed in fine exotic light wood.',
+  'home.villa.cta': 'Discover the Villa',
+  'home.villa.stat_bedrooms': 'Bedrooms',
+  'home.villa.stat_bathrooms': 'Bathrooms',
+  'home.villa.stat_guests': 'Guests',
+  'home.villa.stat_size': 'Size',
 }
