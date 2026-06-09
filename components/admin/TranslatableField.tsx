@@ -7,10 +7,10 @@ import { translateText } from '@/app/actions/translate'
 const FIELD_BASE =
   'w-full rounded-lg px-3 py-2 font-sans text-sm text-midnight placeholder:text-midnight-300 focus:outline-none focus:ring-1'
 
-// French source — neutral slate accent.
-const FR_FIELD = `${FIELD_BASE} border border-midnight-200 bg-white focus:border-midnight-400 focus:ring-midnight-300`
-// English published — gold accent (this is what goes live on the site).
-const EN_FIELD = `${FIELD_BASE} border border-gold-300 bg-gold-50/60 focus:border-gold focus:ring-gold`
+// French source — pale slate/blue tint.
+const FR_FIELD = `${FIELD_BASE} border border-midnight-200 bg-midnight-50 focus:border-midnight-400 focus:ring-midnight-300`
+// English published — pale gold tint (this is what goes live on the site).
+const EN_FIELD = `${FIELD_BASE} border border-gold-300 bg-gold-50 focus:border-gold focus:ring-gold`
 
 export interface TranslatableFieldProps {
   /** Display label for the field. */
@@ -96,7 +96,7 @@ export function TranslatableField({
       </div>
 
       {/* French source */}
-      <label className="block rounded-lg border-l-[3px] border-midnight-300 bg-white/70 py-2 pl-3 pr-2">
+      <label className="block rounded-lg border-l-[3px] border-midnight-300 bg-midnight-50/50 py-2 pl-3 pr-2">
         <LangChip tone="fr" code="FR" text="Français — source" />
         {multiline ? (
           <textarea
