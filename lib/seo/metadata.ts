@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 
 import {
   DEFAULT_OG_IMAGE,
+  SITE_KEYWORDS,
   SITE_LOCALE,
   SITE_NAME,
   SITE_TWITTER_HANDLE,
@@ -42,6 +43,8 @@ export interface BuildMetadataParams {
   authors?: string[]
   /** Set true on pages we don't want indexed (booking flow, drafts...). */
   noIndex?: boolean
+  /** Extra page-specific keywords, merged after the site-wide SITE_KEYWORDS. */
+  keywords?: string[]
 }
 
 /** Build a Metadata object with sensible OG / Twitter defaults. */
@@ -57,6 +60,7 @@ export function buildMetadata(params: BuildMetadataParams): Metadata {
     modifiedTime,
     authors,
     noIndex = false,
+    keywords,
   } = params
 
   const url = absoluteUrl(path)
@@ -66,6 +70,7 @@ export function buildMetadata(params: BuildMetadataParams): Metadata {
   return {
     title,
     description,
+    keywords: keywords ? [...SITE_KEYWORDS, ...keywords] : [...SITE_KEYWORDS],
     metadataBase: new URL(SITE_URL),
     alternates: {
       canonical: url,

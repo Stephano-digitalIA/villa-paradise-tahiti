@@ -15,6 +15,26 @@ export const SITE_NAME = 'Villa Paradise Tahiti'
 export const SITE_DESCRIPTION =
   'A private luxury villa retreat in Tahiti, French Polynesia — the alternative to hotels. Direct booking with curated experiences and concierge services. Better than any hotel in Tahiti.'
 
+/**
+ * Site-wide SEO keywords — rendered as `<meta name="keywords">` on every page
+ * (root layout default + merged into `buildMetadata`). Note: Google ignores
+ * this tag for ranking; it's kept for the few engines/tools that still read it
+ * and as an explicit brand keyword record. Real ranking comes from the visible
+ * copy, titles and descriptions.
+ */
+export const SITE_KEYWORDS: readonly string[] = [
+  'luxury villa Tahiti',
+  'Tahiti villa rental',
+  'private villa Tahiti',
+  'French Polynesia villa',
+  'Tahiti accommodation',
+  'Tahiti hotel',
+  'hotels',
+  'hotel',
+  'Bora Bora',
+  'Punaauia villa',
+]
+
 /** Locale of all marketing copy. */
 export const SITE_LOCALE = 'en_US'
 

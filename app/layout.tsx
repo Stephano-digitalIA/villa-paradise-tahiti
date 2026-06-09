@@ -4,6 +4,7 @@ import { ConsentGate } from '@/components/analytics'
 import { AuthProvider } from '@/components/auth/AuthProvider'
 import { ChromeGate, Footer, Header, SkipToContent } from '@/components/layout'
 import { cn } from '@/lib/utils'
+import { SITE_KEYWORDS } from '@/lib/seo'
 import './globals.css'
 
 const cormorant = Cormorant_Garamond({
@@ -35,6 +36,7 @@ export const metadata: Metadata = {
   title: 'Villa Paradise Tahiti — Luxury Villa Rental',
   description:
     'A private luxury villa retreat in Tahiti, French Polynesia. Direct booking with curated experiences and concierge services.',
+  keywords: [...SITE_KEYWORDS],
 }
 
 export default function RootLayout({
