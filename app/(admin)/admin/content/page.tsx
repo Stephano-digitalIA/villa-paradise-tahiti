@@ -6,7 +6,7 @@ export const metadata: Metadata = { title: 'Contenu — Admin' }
 const SECTIONS = [
   {
     href: '/admin/content/site',
-    title: 'Textes du site',
+    title: 'Accueil',
     description: 'Modifier les textes marketing de la page d’accueil (titres, accroches, boutons)',
   },
   {

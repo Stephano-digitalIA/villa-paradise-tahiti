@@ -34,6 +34,7 @@ const SEGMENT_LABELS: Record<string, string> = {
   callback: 'Callback',
   clients: 'Clients',
   content: 'Contenu',
+  site: 'Accueil',
   blog: 'Blog',
   experiences: 'Prestations',
   faq: 'FAQ',
