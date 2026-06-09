@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 import { getSiteContentEntries } from '@/lib/content'
-import { SITE_CONTENT_GROUPS } from '@/lib/content/registry'
+import { SITE_CONTENT_DEFAULTS, SITE_CONTENT_GROUPS } from '@/lib/content/registry'
 
 import { SiteContentForm } from './SiteContentForm'
 
@@ -22,7 +22,11 @@ export default async function SiteContentPage() {
       </p>
 
       <div className="mt-8 max-w-5xl">
-        <SiteContentForm groups={SITE_CONTENT_GROUPS} values={values} />
+        <SiteContentForm
+          groups={SITE_CONTENT_GROUPS}
+          values={values}
+          defaults={SITE_CONTENT_DEFAULTS}
+        />
       </div>
     </div>
   )

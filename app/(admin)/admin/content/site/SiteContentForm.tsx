@@ -13,11 +13,14 @@ import { saveSiteContent } from './actions'
 interface SiteContentFormProps {
   groups: ContentGroup[]
   values: Record<string, SiteContentEntry>
+  /** Published English defaults per key — pre-fills empty fields so the
+   *  operator sees the existing site copy instead of blank inputs. */
+  defaults?: Record<string, string>
 }
 
 type FieldState = { en: string; fr: string }
 
-export function SiteContentForm({ groups, values }: SiteContentFormProps) {
+export function SiteContentForm({ groups, values, defaults = {} }: SiteContentFormProps) {
   const allKeys = useMemo(
     () => groups.flatMap((g) => g.fields.map((f) => f.key)),
     [groups],
@@ -26,7 +29,13 @@ export function SiteContentForm({ groups, values }: SiteContentFormProps) {
   const [state, setState] = useState<Record<string, FieldState>>(() => {
     const init: Record<string, FieldState> = {}
     for (const key of allKeys) {
-      init[key] = { en: values[key]?.value ?? '', fr: values[key]?.value_fr ?? '' }
+      // Prefer the saved override; otherwise show the current site default so
+      // the field is never blank for keys that have a default.
+      const en = values[key]?.value ?? ''
+      init[key] = {
+        en: en !== '' ? en : (defaults[key] ?? ''),
+        fr: values[key]?.value_fr ?? '',
+      }
     }
     return init
   })
@@ -61,7 +70,16 @@ export function SiteContentForm({ groups, values }: SiteContentFormProps) {
     setError(null)
     const entries: Record<string, { value: string; value_fr: string }> = {}
     for (const key of allKeys) {
-      entries[key] = { value: state[key]?.en ?? '', value_fr: state[key]?.fr ?? '' }
+      const en = state[key]?.en ?? ''
+      const fr = state[key]?.fr ?? ''
+      const def = defaults[key]
+      // If EN is still exactly the site default and no FR source was written,
+      // persist nothing so the key stays on its in-code default and the
+      // "clear to revert" semantics hold — we never freeze the default into the DB.
+      const isUntouchedDefault = fr === '' && def !== undefined && en === def
+      entries[key] = isUntouchedDefault
+        ? { value: '', value_fr: '' }
+        : { value: en, value_fr: fr }
     }
     startSaving(async () => {
       const result = await saveSiteContent(entries)
@@ -88,7 +106,8 @@ export function SiteContentForm({ groups, values }: SiteContentFormProps) {
 
       <div className="flex items-center justify-between gap-3 rounded-xl border border-gold/30 bg-gold/5 px-5 py-3">
         <p className="font-sans text-xs text-midnight-400">
-          Écris en français, traduis en anglais (le site publie l’anglais), puis enregistre.
+          Le champ anglais est pré-rempli avec le texte actuel du site. Édite-le, ou écris le
+          français et traduis. Le site publie l’anglais.
         </p>
         <Button
           type="button"
@@ -130,7 +149,7 @@ export function SiteContentForm({ groups, values }: SiteContentFormProps) {
 
       <div className="sticky bottom-0 flex items-center justify-end gap-3 border-t border-pearl-400 bg-pearl/80 py-4 backdrop-blur">
         <span className="font-sans text-xs text-midnight-400">
-          Un champ anglais vide (et français vide) rétablit le texte par défaut.
+          Un champ anglais laissé sur le texte par défaut n’est pas enregistré.
         </span>
         <Button type="submit" variant="primary" disabled={saving}>
           {saving ? 'Enregistrement…' : 'Enregistrer'}
