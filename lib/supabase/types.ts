@@ -85,6 +85,8 @@ export type GalleryItem = {
   height: number | null
   sort_order: number
   active: boolean
+  /** Soft-delete (trash): null = live, timestamp = trashed. undefined before migration 013. */
+  deleted_at?: string | null
   created_at: string
 }
 

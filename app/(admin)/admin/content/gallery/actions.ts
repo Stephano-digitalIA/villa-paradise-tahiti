@@ -55,9 +55,45 @@ export async function uploadGalleryImage(formData: FormData): Promise<void> {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// deleteGalleryItem — DELETE row + remove from Storage
+// trashGalleryItem — soft delete: hide from site + main grid, KEEP the file
 // ─────────────────────────────────────────────────────────────────────────────
-export async function deleteGalleryItem(id: string, imageUrl: string): Promise<void> {
+export async function trashGalleryItem(id: string): Promise<void> {
+  const { error } = await adminClient
+    .from('gallery_items')
+    .update({ deleted_at: new Date().toISOString() })
+    .eq('id', id)
+  if (error) {
+    // Pre-migration 013 — `deleted_at` column absent. Fall back to hiding it
+    // (active = false) so nothing is ever destroyed; the file is still kept.
+    if (!/deleted_at/.test(error.message)) throw new Error(error.message)
+    const { error: retry } = await adminClient
+      .from('gallery_items')
+      .update({ active: false })
+      .eq('id', id)
+    if (retry) throw new Error(retry.message)
+  }
+  REVALIDATE()
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// restoreGalleryItem — bring a trashed item back
+// ─────────────────────────────────────────────────────────────────────────────
+export async function restoreGalleryItem(id: string): Promise<void> {
+  const { error } = await adminClient
+    .from('gallery_items')
+    .update({ deleted_at: null })
+    .eq('id', id)
+  if (error) throw new Error(error.message)
+  REVALIDATE()
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// deleteGalleryItemPermanently — DELETE row + remove file from Storage (final)
+// ─────────────────────────────────────────────────────────────────────────────
+export async function deleteGalleryItemPermanently(
+  id: string,
+  imageUrl: string,
+): Promise<void> {
   const { error } = await adminClient.from('gallery_items').delete().eq('id', id)
   if (error) throw new Error(error.message)
 

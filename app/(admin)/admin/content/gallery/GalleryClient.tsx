@@ -1,11 +1,17 @@
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useMemo, useState, useTransition } from 'react'
 import Image from 'next/image'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import type { GalleryCategory, GalleryItem } from '@/lib/supabase/types'
-import { uploadGalleryImage, deleteGalleryItem, updateGalleryOrder } from './actions'
+import {
+  uploadGalleryImage,
+  trashGalleryItem,
+  restoreGalleryItem,
+  deleteGalleryItemPermanently,
+  updateGalleryOrder,
+} from './actions'
 
 const CATEGORIES: GalleryCategory[] = [
   'exterior', 'interior', 'pool', 'lagoon', 'bedrooms', 'night', 'sunset', 'experiences',
@@ -44,7 +50,10 @@ export function GalleryClient({ initialItems }: Props) {
     Object.fromEntries(initialItems.map((i) => [i.id, i.sort_order])),
   )
 
-  const filtered = filterCat === 'all' ? items : items.filter((i) => i.category === filterCat)
+  const live = useMemo(() => items.filter((i) => !i.deleted_at), [items])
+  const trashed = useMemo(() => items.filter((i) => i.deleted_at), [items])
+
+  const filtered = filterCat === 'all' ? live : live.filter((i) => i.category === filterCat)
 
   function handleUpload(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -61,10 +70,25 @@ export function GalleryClient({ initialItems }: Props) {
     })
   }
 
-  function handleDelete(id: string, imageUrl: string) {
-    if (!confirm('Supprimer définitivement cette photo ?')) return
+  function handleTrash(id: string) {
     startTransition(async () => {
-      await deleteGalleryItem(id, imageUrl)
+      await trashGalleryItem(id)
+      const now = new Date().toISOString()
+      setItems((prev) => prev.map((i) => (i.id === id ? { ...i, deleted_at: now } : i)))
+    })
+  }
+
+  function handleRestore(id: string) {
+    startTransition(async () => {
+      await restoreGalleryItem(id)
+      setItems((prev) => prev.map((i) => (i.id === id ? { ...i, deleted_at: null } : i)))
+    })
+  }
+
+  function handlePermanentDelete(id: string, imageUrl: string) {
+    if (!confirm('Supprimer DÉFINITIVEMENT cette photo ? Le fichier sera effacé et irrécupérable.')) return
+    startTransition(async () => {
+      await deleteGalleryItemPermanently(id, imageUrl)
       setItems((prev) => prev.filter((i) => i.id !== id))
     })
   }
@@ -75,7 +99,7 @@ export function GalleryClient({ initialItems }: Props) {
   }
 
   function handleSaveOrder() {
-    const updates = items.map((i) => ({ id: i.id, sort_order: orderMap[i.id] ?? i.sort_order }))
+    const updates = live.map((i) => ({ id: i.id, sort_order: orderMap[i.id] ?? i.sort_order }))
     startTransition(async () => {
       await updateGalleryOrder(updates)
     })
@@ -86,7 +110,7 @@ export function GalleryClient({ initialItems }: Props) {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-heading text-2xl font-semibold text-midnight">Galerie</h1>
-          <p className="mt-1 font-sans text-sm text-midnight-400">{items.length} photos</p>
+          <p className="mt-1 font-sans text-sm text-midnight-400">{live.length} photos</p>
         </div>
       </div>
 
@@ -155,10 +179,10 @@ export function GalleryClient({ initialItems }: Props) {
               : 'border-pearl-400 bg-white text-midnight hover:border-midnight'
           }`}
         >
-          Toutes ({items.length})
+          Toutes ({live.length})
         </button>
         {CATEGORIES.map((cat) => {
-          const count = items.filter((i) => i.category === cat).length
+          const count = live.filter((i) => i.category === cat).length
           if (count === 0) return null
           return (
             <button
@@ -215,11 +239,11 @@ export function GalleryClient({ initialItems }: Props) {
                   </div>
                   <button
                     type="button"
-                    onClick={() => handleDelete(item.id, item.image_url)}
+                    onClick={() => handleTrash(item.id)}
                     disabled={isPending}
                     className="w-full rounded-lg border border-coral/20 bg-coral/5 py-1 font-sans text-xs font-medium text-coral transition-colors hover:bg-coral/10 disabled:opacity-50"
                   >
-                    Supprimer
+                    Mettre à la corbeille
                   </button>
                 </div>
               </div>
@@ -231,6 +255,61 @@ export function GalleryClient({ initialItems }: Props) {
             </Button>
           </div>
         </>
+      )}
+
+      {/* Trash */}
+      {trashed.length > 0 && (
+        <div className="space-y-4 rounded-2xl border border-pearl-400 bg-pearl/40 p-6">
+          <div>
+            <h2 className="font-heading text-base font-semibold text-midnight">
+              Corbeille ({trashed.length})
+            </h2>
+            <p className="mt-1 font-sans text-xs text-midnight-400">
+              Photos masquées du site. Restaure-les, ou supprime-les définitivement (le fichier
+              sera alors effacé du stockage et irrécupérable).
+            </p>
+          </div>
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+            {trashed.map((item) => (
+              <div
+                key={item.id}
+                className="overflow-hidden rounded-xl border border-pearl-400 bg-white shadow-sm"
+              >
+                <div className="relative h-36 w-full overflow-hidden bg-pearl-300">
+                  <Image
+                    src={item.image_url}
+                    alt={item.alt}
+                    fill
+                    className="object-cover opacity-60 grayscale"
+                    sizes="200px"
+                  />
+                </div>
+                <div className="space-y-2 p-3">
+                  <Badge variant={CATEGORY_VARIANT[item.category]} size="sm">
+                    {CATEGORY_LABEL[item.category]}
+                  </Badge>
+                  <p className="font-sans text-xs text-midnight-400 line-clamp-1">{item.alt}</p>
+                  <button
+                    type="button"
+                    onClick={() => handleRestore(item.id)}
+                    disabled={isPending}
+                    className="w-full rounded-lg border border-leaf/30 bg-leaf/5 py-1 font-sans text-xs font-medium text-leaf transition-colors hover:bg-leaf/10 disabled:opacity-50"
+                  >
+                    Restaurer
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handlePermanentDelete(item.id, item.image_url)}
+                    disabled={isPending}
+                    className="w-full rounded-lg border border-coral/30 bg-coral/10 py-1 font-sans text-xs font-medium text-coral transition-colors hover:bg-coral/20 disabled:opacity-50"
+                  >
+                    Supprimer définitivement
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       )}
     </div>
   )

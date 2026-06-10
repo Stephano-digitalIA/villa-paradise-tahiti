@@ -82,7 +82,9 @@ export async function getGalleryItems(category?: string): Promise<GalleryItem[]>
     console.error('[getGalleryItems]', error.message)
     return []
   }
-  return data ?? []
+  // Exclude trashed items (soft-delete). Filtered in JS so the query stays
+  // valid before migration 013 (column absent → deleted_at undefined → kept).
+  return (data ?? []).filter((row) => !(row as GalleryItem).deleted_at)
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
