@@ -65,3 +65,29 @@ export function setCachedBlockedDates(
 export function clearCachedBlockedDates(): void {
   getStore()[GLOBAL_KEY] = undefined
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Last-sync timestamp — drives the on-demand debounce (per process instance).
+// Separate from the range cache TTL so an on-demand booking sync can use a much
+// shorter freshness window than the hourly cron cache.
+// ─────────────────────────────────────────────────────────────────────────────
+
+const SYNC_AT_KEY = '__vpt_ical_last_sync_at' as const
+
+interface GlobalWithSyncAt {
+  [SYNC_AT_KEY]?: number | undefined
+}
+
+function getSyncStore(): GlobalWithSyncAt {
+  return globalThis as unknown as GlobalWithSyncAt
+}
+
+/** Epoch ms of the last sync attempt in this process, or 0 if never. */
+export function getLastSyncAt(): number {
+  return getSyncStore()[SYNC_AT_KEY] ?? 0
+}
+
+/** Record that a sync just ran (used to debounce on-demand triggers). */
+export function markSyncedNow(): void {
+  getSyncStore()[SYNC_AT_KEY] = Date.now()
+}
