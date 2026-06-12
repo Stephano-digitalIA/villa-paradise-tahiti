@@ -21,23 +21,15 @@
 import { NextResponse } from 'next/server'
 
 import { getPublicBlockedRanges } from '@/lib/booking/availability'
-import { runIcalSync } from '@/lib/ical/sync'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
-// On-demand iCal freshness window: the date picker triggers this read on the
-// "book now" page, so we refresh the channels first — but at most once per
-// window per instance, so concurrent visitors share a single refresh.
-const ON_DEMAND_SYNC_WINDOW_MS = 90 * 1000
-
+// Fast read — returns whatever is currently persisted. The date picker triggers
+// a background refresh via POST /api/booking/sync and re-reads this endpoint
+// once it completes, so the page is instant and freshens shortly after.
 export async function GET() {
   try {
-    // Pull the latest external bookings BEFORE returning availability, so the
-    // guest never picks a date that was just taken on Airbnb/Booking/VRBO.
-    // Never throws; on failure we fall through to the last persisted data.
-    await runIcalSync({ minIntervalMs: ON_DEMAND_SYNC_WINDOW_MS })
-
     const ranges = await getPublicBlockedRanges()
 
     return NextResponse.json(

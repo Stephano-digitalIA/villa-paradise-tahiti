@@ -138,14 +138,19 @@ export function BookingProvider({ experiences, settings, children }: BookingProv
   /* ---- Fetch unavailable ranges from the public endpoint ------------- */
   useEffect(() => {
     let cancelled = false
-    async function load() {
+
+    async function fetchRanges(): Promise<PublicBlockedRange[] | null> {
+      const res = await fetch('/api/booking/availability', { cache: 'no-store' })
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+      const json = (await res.json()) as { blockedRanges?: PublicBlockedRange[] }
+      return json.blockedRanges ?? []
+    }
+
+    // 1. Show whatever is already persisted — instantly, no channel fetch.
+    async function loadInitial() {
       try {
-        const res = await fetch('/api/booking/availability', { cache: 'no-store' })
-        if (!res.ok) throw new Error(`HTTP ${res.status}`)
-        const json = (await res.json()) as { blockedRanges?: PublicBlockedRange[] }
-        if (!cancelled) {
-          setBlockedRanges(json.blockedRanges ?? [])
-        }
+        const ranges = await fetchRanges()
+        if (!cancelled && ranges) setBlockedRanges(ranges)
       } catch (err) {
         // eslint-disable-next-line no-console
         console.error('[booking] availability fetch failed:', err)
@@ -154,7 +159,28 @@ export function BookingProvider({ experiences, settings, children }: BookingProv
         if (!cancelled) setAvailabilityLoading(false)
       }
     }
-    load()
+
+    // 2. In the background, pull the latest Airbnb/Booking/VRBO bookings, then
+    //    silently re-read availability so the picker freshens within seconds.
+    //    Best-effort: any failure leaves the already-shown data in place.
+    async function refreshFromChannels() {
+      try {
+        const sync = await fetch('/api/booking/sync', { method: 'POST' })
+        if (!sync.ok) return
+        const result = (await sync.json()) as { mode?: string }
+        // Only re-read when a live sync actually ran (it may have changed the
+        // blocked dates); 'skipped'/'mock' don't touch the persisted data.
+        if (cancelled || result.mode !== 'live') return
+        const ranges = await fetchRanges()
+        if (!cancelled && ranges) setBlockedRanges(ranges)
+      } catch {
+        /* ignore — current availability already displayed */
+      }
+    }
+
+    loadInitial()
+    refreshFromChannels()
+
     return () => {
       cancelled = true
     }
