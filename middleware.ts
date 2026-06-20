@@ -10,6 +10,24 @@ import { type NextRequest, NextResponse } from 'next/server'
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
+  // OAuth fallback catcher.
+  // When Supabase can't honour the requested redirect URL (the admin callback
+  // path isn't in the project's Redirect URLs allow-list), it falls back to the
+  // configured Site URL — the home page — with the `?code=` attached. Forward
+  // that code to the admin callback so Google sign-in still completes, without
+  // depending on the Supabase dashboard config. The code is a Supabase OAuth
+  // UUID, so we gate on that shape to avoid catching unrelated `?code=` params.
+  const oauthCode = request.nextUrl.searchParams.get('code')
+  if (
+    pathname === '/' &&
+    oauthCode &&
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(oauthCode)
+  ) {
+    const callbackUrl = new URL('/admin/auth/callback', request.url)
+    callbackUrl.search = request.nextUrl.search // preserve ?code=… (+ any extras)
+    return NextResponse.redirect(callbackUrl)
+  }
+
   let response = NextResponse.next({ request })
 
   // Refresh session on every request (Supabase SSR requirement)
