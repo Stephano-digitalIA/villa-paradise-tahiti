@@ -3,7 +3,7 @@
 import { useRef, useState, useTransition, type FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
-import { ArrowDown, ArrowUp, Image as ImageIcon, Link as LinkIcon, Plus, Trash2, Upload, X } from 'lucide-react'
+import { ArrowDown, ArrowUp, Image as ImageIcon, Plus, Trash2, X } from 'lucide-react'
 
 import {
   addGalleryImage,
@@ -18,8 +18,6 @@ interface ExperienceGalleryManagerProps {
   experienceSlug: string
   initialImages: ExperienceGalleryItem[]
 }
-
-type AddMode = 'upload' | 'url'
 
 export function ExperienceGalleryManager({
   experienceId,
@@ -90,9 +88,7 @@ function AddImageForm({
   experienceSlug,
   onSuccess,
 }: AddImageFormProps) {
-  const [mode, setMode] = useState<AddMode>('upload')
   const [file, setFile] = useState<File | null>(null)
-  const [url, setUrl] = useState('')
   const [alt, setAlt] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [pending, startTransition] = useTransition()
@@ -100,7 +96,6 @@ function AddImageForm({
 
   function reset() {
     setFile(null)
-    setUrl('')
     setAlt('')
     setError(null)
     if (fileInputRef.current) fileInputRef.current.value = ''
@@ -109,12 +104,8 @@ function AddImageForm({
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     if (pending) return
-    if (mode === 'upload' && !file) {
-      setError('Pick a file first')
-      return
-    }
-    if (mode === 'url' && !url.trim()) {
-      setError('Paste an image URL')
+    if (!file) {
+      setError('Choisis d’abord un fichier')
       return
     }
     setError(null)
@@ -123,8 +114,7 @@ function AddImageForm({
     formData.set('experience_id', experienceId)
     formData.set('experience_slug', experienceSlug)
     formData.set('alt', alt)
-    if (mode === 'upload' && file) formData.set('file', file)
-    if (mode === 'url') formData.set('url', url)
+    formData.set('file', file)
 
     startTransition(async () => {
       const res = await addGalleryImage(formData)
@@ -142,42 +132,14 @@ function AddImageForm({
       onSubmit={handleSubmit}
       className="flex flex-col gap-3 rounded-xl border border-pearl-400 bg-pearl-300/30 p-4"
     >
-      <div className="flex items-center gap-2">
-        <ModeTab
-          active={mode === 'upload'}
-          onClick={() => setMode('upload')}
-          icon={<Upload className="h-3.5 w-3.5" />}
-          label="Upload file"
-        />
-        <ModeTab
-          active={mode === 'url'}
-          onClick={() => setMode('url')}
-          icon={<LinkIcon className="h-3.5 w-3.5" />}
-          label="Paste URL"
-        />
-      </div>
-
-      {mode === 'upload' ? (
-        <div className="flex items-center gap-3">
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-            disabled={pending}
-            className="block w-full cursor-pointer rounded-lg border border-pearl-400 bg-white file:mr-3 file:cursor-pointer file:rounded-l-lg file:border-0 file:bg-midnight file:px-3 file:py-2 file:font-sans file:text-xs file:font-semibold file:text-pearl hover:file:bg-midnight/90 disabled:opacity-60"
-          />
-        </div>
-      ) : (
-        <input
-          type="url"
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
-          disabled={pending}
-          placeholder="https://example.com/image.jpg"
-          className="w-full rounded-lg border border-pearl-400 bg-white px-3 py-2 font-sans text-sm text-midnight focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/30 disabled:opacity-60"
-        />
-      )}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+        disabled={pending}
+        className="block w-full cursor-pointer rounded-lg border border-pearl-400 bg-white file:mr-3 file:cursor-pointer file:rounded-l-lg file:border-0 file:bg-midnight file:px-3 file:py-2 file:font-sans file:text-xs file:font-semibold file:text-pearl hover:file:bg-midnight/90 disabled:opacity-60"
+      />
 
       <div className="flex items-center gap-3">
         <input
@@ -205,34 +167,6 @@ function AddImageForm({
         </p>
       ) : null}
     </form>
-  )
-}
-
-function ModeTab({
-  active,
-  onClick,
-  icon,
-  label,
-}: {
-  active: boolean
-  onClick: () => void
-  icon: React.ReactNode
-  label: string
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={
-        'inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-sans text-xs font-medium transition-colors ' +
-        (active
-          ? 'bg-midnight text-pearl'
-          : 'bg-white text-midnight-400 hover:text-midnight border border-pearl-400')
-      }
-    >
-      {icon}
-      {label}
-    </button>
   )
 }
 

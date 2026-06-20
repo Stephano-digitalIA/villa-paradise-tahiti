@@ -18,9 +18,10 @@ interface ImageUploadFieldProps {
 }
 
 /**
- * Admin image field — upload a file (→ Supabase Storage) OR paste a URL.
- * Renders a controlled text input named `{name}` so the surrounding form
- * submits the resulting URL exactly like the old plain-URL field.
+ * Admin image field — a single way to set an image: upload a file (→ Supabase
+ * Storage). The resulting URL is carried to the surrounding form via a hidden
+ * input named `{name}`; a thumbnail previews the current image and "Retirer"
+ * clears it.
  */
 export function ImageUploadField({
   name,
@@ -64,15 +65,9 @@ export function ImageUploadField({
         )}
 
         <div className="min-w-0 flex-1">
-          <input
-            type="text"
-            name={name}
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-            placeholder="https://… or upload a file"
-            className="w-full rounded-lg border border-pearl-400 bg-white px-3 py-2 font-sans text-sm text-midnight placeholder:text-midnight-300 focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
-          />
-          <div className="mt-2 flex items-center gap-3">
+          {/* Hidden field carries the uploaded image URL to the surrounding form. */}
+          <input type="hidden" name={name} value={url} />
+          <div className="flex flex-wrap items-center gap-3">
             <button
               type="button"
               onClick={() => fileRef.current?.click()}
@@ -84,9 +79,19 @@ export function ImageUploadField({
               ) : (
                 <Upload className="h-3.5 w-3.5" aria-hidden />
               )}
-              {pending ? 'Uploading…' : 'Upload image'}
+              {pending ? 'Téléversement…' : url ? 'Remplacer l’image' : 'Téléverser une image'}
             </button>
-            <span className="font-sans text-xs text-midnight-300">JPG/PNG/WebP · 8 MB max</span>
+            {url ? (
+              <button
+                type="button"
+                onClick={() => setUrl('')}
+                disabled={pending}
+                className="font-sans text-xs font-medium text-coral underline-offset-2 hover:underline disabled:opacity-60"
+              >
+                Retirer
+              </button>
+            ) : null}
+            <span className="font-sans text-xs text-midnight-300">JPG/PNG/WebP · 8 Mo max</span>
           </div>
           {error ? (
             <p className="mt-1.5 font-sans text-xs text-coral">{error}</p>
