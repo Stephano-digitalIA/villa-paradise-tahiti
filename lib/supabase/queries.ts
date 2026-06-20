@@ -5,6 +5,7 @@ import type {
   GalleryItem,
   Experience,
   ExperienceCategory,
+  ExperienceGalleryItem,
   Review,
   Post,
   FAQ,
@@ -150,6 +151,33 @@ export async function getExperienceBySlug(slug: string): Promise<Experience | nu
     return null
   }
   return data as Experience | null
+}
+
+/**
+ * Returns the extra gallery photos for an experience (by slug), ordered by
+ * sort_order. Empty array when the experience or its gallery is missing.
+ */
+export async function getExperienceGalleryBySlug(
+  slug: string,
+): Promise<ExperienceGalleryItem[]> {
+  const { data: exp } = await supabase
+    .from('experiences')
+    .select('id')
+    .eq('slug', slug)
+    .maybeSingle()
+  if (!exp) return []
+
+  const { data, error } = await supabase
+    .from('experience_gallery')
+    .select('*')
+    .eq('experience_id', exp.id)
+    .order('sort_order', { ascending: true })
+
+  if (error) {
+    console.error('[getExperienceGalleryBySlug]', error.message)
+    return []
+  }
+  return (data ?? []) as ExperienceGalleryItem[]
 }
 
 /**

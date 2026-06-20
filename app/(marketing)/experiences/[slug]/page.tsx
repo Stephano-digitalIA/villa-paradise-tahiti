@@ -6,6 +6,8 @@ import { Calendar, Check, Clock, MapPin, Users } from 'lucide-react'
 
 import { Badge, Button, Card, Container, Section } from '@/components/ui'
 import { ExperienceCard } from '@/components/sections/experiences/ExperienceCard'
+import { ExperienceGallery } from '@/components/sections/experiences/ExperienceGallery'
+import { getExperienceGalleryBySlug } from '@/lib/supabase/queries'
 import { PortableTextRenderer } from '@/components/sections/_shared/PortableTextRenderer'
 import {
   JsonLd,
@@ -138,6 +140,7 @@ export default async function ExperienceDetailPage({ params }: RouteParams) {
 
   const coverUrl = urlForImage(experience.coverImage).url()
   const season = formatSeason(experience)
+  const galleryImages = await getExperienceGalleryBySlug(params.slug)
 
   // Fetch related experiences (same category, exclude current, limit 3).
   const allExperiences = await sanityFetch<Experience[]>(experiencesQuery)
@@ -279,6 +282,9 @@ export default async function ExperienceDetailPage({ params }: RouteParams) {
           </div>
         </Container>
       </Section>
+
+      {/* ─── Photo gallery (admin-curated extra photos) ─────────────── */}
+      <ExperienceGallery images={galleryImages} experienceTitle={experience.title} />
 
       {/* ─── Related experiences ────────────────────────────────────── */}
       {relatedExperiences.length > 0 ? (
