@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { adminClient } from '@/lib/supabase/admin'
+import type { Villa } from '@/lib/supabase/types'
 
 // ─────────────────────────────────────────────────────────────────────────────
 // updateVilla — upsert the single villa row
@@ -54,7 +55,22 @@ export async function updateVilla(formData: FormData): Promise<void> {
     updated_at: new Date().toISOString(),
   }
 
-  const { error } = await adminClient.from('villa').upsert(payload)
+  // Villa is a singleton. A blind `upsert` with no id INSERTs a new row on every
+  // save (duplicates → getVilla's maybeSingle() errors → site falls back to mock).
+  // Update the existing row by id instead; only insert when none exists.
+  const { data: existing } = await adminClient
+    .from('villa')
+    .select('id')
+    .order('updated_at', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+
+  const writeVilla = (body: Partial<Villa>) =>
+    existing?.id
+      ? adminClient.from('villa').update(body).eq('id', existing.id)
+      : adminClient.from('villa').insert(body)
+
+  const { error } = await writeVilla(payload)
 
   if (error) {
     // Before migration 011 the `translations` column doesn't exist yet — retry
@@ -62,7 +78,7 @@ export async function updateVilla(formData: FormData): Promise<void> {
     if (!/translations/.test(error.message)) throw new Error(error.message)
     const { translations: _omit, ...enOnly } = payload
     void _omit
-    const { error: retryError } = await adminClient.from('villa').upsert(enOnly)
+    const { error: retryError } = await writeVilla(enOnly)
     if (retryError) throw new Error(retryError.message)
   }
 

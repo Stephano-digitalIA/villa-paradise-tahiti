@@ -7,7 +7,14 @@ export const metadata: Metadata = { title: 'Paramètres villa — Admin' }
 export const dynamic = 'force-dynamic'
 
 export default async function VillaEditPage() {
-  const { data } = await adminClient.from('villa').select('*').maybeSingle()
+  // Defensive limit(1): tolerate any stray duplicate row (maybeSingle alone
+  // errors on >1 rows and would fall back to the placeholder default).
+  const { data } = await adminClient
+    .from('villa')
+    .select('*')
+    .order('updated_at', { ascending: false })
+    .limit(1)
+    .maybeSingle()
 
   // Provide a safe default so the form always renders
   const villa: Villa = data ?? {

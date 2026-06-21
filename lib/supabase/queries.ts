@@ -45,9 +45,14 @@ export async function getSettings(): Promise<Settings | null> {
  */
 export async function getVilla(): Promise<Villa | null> {
   // supabase = adminClient (aliased above)
+  // Defensive `limit(1)` + order: villa is a singleton, but if a stray duplicate
+  // row ever exists, `maybeSingle()` alone would error and silently fall back to
+  // mock data. Take the most-recently-updated row instead.
   const { data, error } = await supabase
     .from('villa')
     .select('*')
+    .order('updated_at', { ascending: false })
+    .limit(1)
     .maybeSingle()
 
   if (error) {
