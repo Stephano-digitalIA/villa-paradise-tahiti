@@ -67,5 +67,6 @@ export async function updateVilla(formData: FormData): Promise<void> {
   }
 
   revalidatePath('/admin/content/villa')
+  revalidatePath('/villa')
   revalidatePath('/', 'layout')
 }
