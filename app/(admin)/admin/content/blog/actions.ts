@@ -37,7 +37,15 @@ function parsePost(formData: FormData) {
     .map((t) => t.trim())
     .filter(Boolean)
 
+  // Publish status: toggle ON → published_at is the chosen date (or now if the
+  // date is empty); toggle OFF → null (draft, hidden from the public blog).
+  const published = formData.get('published') === 'true'
   const publishedAtRaw = (formData.get('published_at') as string | null) || ''
+  const published_at = published
+    ? publishedAtRaw
+      ? new Date(publishedAtRaw).toISOString()
+      : new Date().toISOString()
+    : null
 
   return {
     title: (formData.get('title') as string).trim(),
@@ -54,7 +62,7 @@ function parsePost(formData: FormData) {
     reading_time_min: formData.get('reading_time_min')
       ? Number(formData.get('reading_time_min'))
       : null,
-    published_at: publishedAtRaw ? new Date(publishedAtRaw).toISOString() : null,
+    published_at,
     seo_title: (formData.get('seo_title') as string | null) || null,
     seo_description: (formData.get('seo_description') as string | null) || null,
   }

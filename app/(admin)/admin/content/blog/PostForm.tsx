@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { FormSection } from '@/components/admin/FormSection'
 import { BilingualField } from '@/components/admin/BilingualField'
 import { ImageUploadField } from '@/components/admin/ImageUploadField'
+import { ToggleSwitch } from '@/components/admin/ToggleSwitch'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 import type { Post } from '@/lib/supabase/types'
@@ -26,6 +27,8 @@ export function PostForm({ post }: Props) {
   const [isPending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
   const [slug, setSlug] = useState(post?.slug ?? '')
+  // Publish status — ON = published (uses the date below), OFF = draft (hidden).
+  const [published, setPublished] = useState(post?.published_at != null)
 
   const isEdit = Boolean(post)
   const tr = post?.translations ?? {}
@@ -184,19 +187,49 @@ export function PostForm({ post }: Props) {
                   />
                 </div>
               </div>
-              <div>
-                <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
-                  Publié le{' '}
-                  <span className="font-normal text-midnight-400">(laisser vide = brouillon)</span>
-                </label>
-                <Input
-                  type="datetime-local"
-                  name="published_at"
-                  defaultValue={
-                    post?.published_at ? post.published_at.slice(0, 16) : ''
-                  }
-                />
+              {/* Carries the toggle state to the server action. */}
+              <input type="hidden" name="published" value={published ? 'true' : 'false'} />
+              <div className="flex items-center justify-between gap-4 rounded-xl border border-pearl-400 bg-pearl/40 px-4 py-3">
+                <div>
+                  <p className="font-sans text-sm font-medium text-midnight">Statut</p>
+                  <p className="font-sans text-xs text-midnight-400">
+                    {published
+                      ? 'Publié — visible sur le blog'
+                      : 'Brouillon — caché du site'}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span
+                    className={`font-sans text-xs font-semibold ${
+                      published ? 'text-leaf' : 'text-midnight-400'
+                    }`}
+                  >
+                    {published ? 'Publié' : 'Brouillon'}
+                  </span>
+                  <ToggleSwitch
+                    checked={published}
+                    onToggle={async () => setPublished((v) => !v)}
+                    label="Publier l’article"
+                  />
+                </div>
               </div>
+              {published ? (
+                <div>
+                  <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
+                    Date de publication{' '}
+                    <span className="font-normal text-midnight-400">
+                      (vide = maintenant ; date future = programmé)
+                    </span>
+                  </label>
+                  <Input
+                    type="datetime-local"
+                    name="published_at"
+                    defaultValue={
+                      post?.published_at ? post.published_at.slice(0, 16) : ''
+                    }
+                  />
+                </div>
+              ) : null}
             </FormSection>
 
             <FormSection title="SEO">
