@@ -57,7 +57,28 @@ export function PostForm({ post }: Props) {
         <h1 className="font-heading text-2xl font-semibold text-midnight">
           {isEdit ? 'Éditer l\'article' : 'Nouvel article'}
         </h1>
-        <div className="flex gap-3">
+        <div className="flex items-center gap-3">
+          {/* Publish status — contrasted card (red = published, green = draft). */}
+          <div
+            className={`flex items-center gap-2.5 rounded-xl border px-3 py-1.5 ${
+              published
+                ? 'border-coral/40 bg-coral/10'
+                : 'border-leaf/40 bg-leaf/10'
+            }`}
+          >
+            <span
+              className={`font-sans text-xs font-bold uppercase tracking-wide ${
+                published ? 'text-coral' : 'text-leaf'
+              }`}
+            >
+              {published ? 'Publié' : 'Brouillon'}
+            </span>
+            <ToggleSwitch
+              checked={published}
+              onToggle={async () => setPublished((v) => !v)}
+              label="Publier l’article"
+            />
+          </div>
           <Button variant="outline" size="sm" onClick={() => router.push('/admin/content/blog')}>
             Annuler
           </Button>
@@ -187,32 +208,9 @@ export function PostForm({ post }: Props) {
                   />
                 </div>
               </div>
-              {/* Carries the toggle state to the server action. */}
+              {/* Carries the publish toggle state (controlled from the hero) to
+                  the server action — the toggle UI lives in the header above. */}
               <input type="hidden" name="published" value={published ? 'true' : 'false'} />
-              <div className="flex items-center justify-between gap-4 rounded-xl border border-pearl-400 bg-pearl/40 px-4 py-3">
-                <div>
-                  <p className="font-sans text-sm font-medium text-midnight">Statut</p>
-                  <p className="font-sans text-xs text-midnight-400">
-                    {published
-                      ? 'Publié — visible sur le blog'
-                      : 'Brouillon — caché du site'}
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span
-                    className={`font-sans text-xs font-semibold ${
-                      published ? 'text-leaf' : 'text-midnight-400'
-                    }`}
-                  >
-                    {published ? 'Publié' : 'Brouillon'}
-                  </span>
-                  <ToggleSwitch
-                    checked={published}
-                    onToggle={async () => setPublished((v) => !v)}
-                    label="Publier l’article"
-                  />
-                </div>
-              </div>
               {published ? (
                 <div>
                   <label className="mb-1.5 block font-sans text-sm font-medium text-midnight">
