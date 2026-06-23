@@ -19,10 +19,12 @@ import { BookingConfirmationGuest } from './templates/BookingConfirmationGuest'
 import { BookingNotificationOwner } from './templates/BookingNotificationOwner'
 import { ContactAutoReply } from './templates/ContactAutoReply'
 import { ContactInquiryNotification } from './templates/ContactInquiryNotification'
+import { ReservationCancelled } from './templates/ReservationCancelled'
 import type {
   BookingConfirmationData,
   ContactInquiryData,
   EmailResult,
+  ReservationCancelledData,
 } from './types'
 
 /* ---------------------------------------------------------------------------
@@ -149,6 +151,22 @@ export async function sendBookingNotificationOwner(
     }),
     replyTo: rest.customer.email,
     tag: 'booking-notification-owner',
+  })
+}
+
+/**
+ * Guest-facing cancellation notice, dispatched when an admin cancels a
+ * reservation from the back-office.
+ */
+export async function sendReservationCancelledGuest(
+  data: ReservationCancelledData,
+): Promise<EmailResult> {
+  return sendEmail({
+    to: data.customer.email,
+    subject: `Your Villa Paradise Tahiti reservation ${data.reservationId} has been cancelled`,
+    react: React.createElement(ReservationCancelled, { data, siteUrl: SITE_URL }),
+    replyTo: OWNER_EMAIL,
+    tag: 'reservation-cancelled-guest',
   })
 }
 

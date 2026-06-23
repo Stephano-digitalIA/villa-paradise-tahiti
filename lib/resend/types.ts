@@ -71,6 +71,31 @@ export interface BookingConfirmationData {
 }
 
 /* ---------------------------------------------------------------------------
+ * Reservation cancellation payload
+ * ------------------------------------------------------------------------- */
+
+/**
+ * Data needed to render the guest-facing cancellation notice, dispatched when
+ * an admin cancels a reservation from the back-office.
+ */
+export interface ReservationCancelledData {
+  /** Human-readable booking reference. */
+  reservationId: string
+  customer: {
+    firstName: string
+    email: string
+  }
+  booking: {
+    /** ISO `YYYY-MM-DD`. */
+    checkIn: string
+    /** ISO `YYYY-MM-DD`. */
+    checkOut: string
+  }
+  /** Optional admin-provided reason, shown to the guest when present. */
+  reason?: string | null
+}
+
+/* ---------------------------------------------------------------------------
  * Contact inquiry payload
  * ------------------------------------------------------------------------- */
 

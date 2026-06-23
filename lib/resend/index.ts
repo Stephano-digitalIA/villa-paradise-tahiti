@@ -22,10 +22,12 @@ export {
   sendContactAutoReply,
   sendContactInquiryNotification,
   sendCustomCustomerEmail,
+  sendReservationCancelledGuest,
 } from './send'
 
 export type {
   BookingConfirmationData,
   ContactInquiryData,
   EmailResult,
+  ReservationCancelledData,
 } from './types'
