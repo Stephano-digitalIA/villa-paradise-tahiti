@@ -40,6 +40,7 @@ function GoogleIcon() {
 function AuthErrorMessage() {
   const searchParams = useSearchParams()
   const error = searchParams.get('error')
+  const detail = searchParams.get('detail')
 
   if (!error) return null
 
@@ -54,6 +55,9 @@ function AuthErrorMessage() {
       className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
     >
       {message}
+      {detail ? (
+        <p className="mt-1 break-words font-mono text-xs text-red-600/80">{detail}</p>
+      ) : null}
     </div>
   )
 }

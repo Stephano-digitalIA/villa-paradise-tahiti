@@ -8,7 +8,22 @@ export async function GET(request: NextRequest) {
   const next = searchParams.get('next') ?? '/admin'
 
   if (!code) {
-    return NextResponse.redirect(`${origin}/admin/auth?error=auth_failed`)
+    // No code in the callback — usually Supabase forwarded a provider error
+    // (redirect-URL not allow-listed, Google OAuth misconfig, user denied…).
+    // Surface whatever params we did receive so the cause is visible.
+    const received =
+      [
+        searchParams.get('error'),
+        searchParams.get('error_code'),
+        searchParams.get('error_description'),
+      ]
+        .filter(Boolean)
+        .join(' · ') || 'no ?code returned by Supabase'
+    // eslint-disable-next-line no-console
+    console.error('[admin/auth/callback] no code', { received, search: request.nextUrl.search })
+    return NextResponse.redirect(
+      `${origin}/admin/auth?error=auth_failed&detail=${encodeURIComponent(`no_code: ${received}`)}`,
+    )
   }
 
   // We collect every cookie Supabase writes during this request so we can
@@ -68,7 +83,12 @@ export async function GET(request: NextRequest) {
       target = `${origin}/admin/auth?error=unauthorized`
     }
   } else {
-    target = `${origin}/admin/auth?error=auth_failed`
+    // Exchange failed — surface the exact Supabase error (PKCE verifier missing,
+    // invalid/expired code, provider misconfig…).
+    const reason = error?.message ?? 'exchange returned no user'
+    // eslint-disable-next-line no-console
+    console.error('[admin/auth/callback] exchange failed', { reason })
+    target = `${origin}/admin/auth?error=auth_failed&detail=${encodeURIComponent(reason)}`
   }
 
   // Build the redirect with every Set-Cookie we accumulated. This is what
