@@ -78,8 +78,12 @@ function CompleteInner() {
           return
         }
 
-        router.replace('/admin')
-        router.refresh()
+        // Hard navigation — NOT router.replace. Next's client router can hold a
+        // prefetched "no session → redirect to /admin/auth" result for /admin;
+        // a full document load re-runs the middleware with the freshly-written
+        // session cookies, so it sees the session and lets us in.
+        setMessage('Connexion réussie, redirection…')
+        window.location.replace('/admin')
       } catch (err) {
         fail(`complete_threw: ${err instanceof Error ? err.message : String(err)}`)
       }
