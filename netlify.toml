@@ -3,7 +3,8 @@
   publish   = ".next"
 
 [build.environment]
-  NODE_VERSION = "20"
+  # @netlify/plugin-nextjs (v5.15+) and the Next.js runtime require Node 22+.
+  NODE_VERSION = "22"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
