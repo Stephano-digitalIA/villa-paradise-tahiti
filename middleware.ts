@@ -10,23 +10,12 @@ import { type NextRequest, NextResponse } from 'next/server'
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // OAuth fallback catcher.
-  // When Supabase can't honour the requested redirect URL (the admin callback
-  // path isn't in the project's Redirect URLs allow-list), it falls back to the
-  // configured Site URL — the home page — with the `?code=` attached. Forward
-  // that code to the admin callback so Google sign-in still completes, without
-  // depending on the Supabase dashboard config. The code is a Supabase OAuth
-  // UUID, so we gate on that shape to avoid catching unrelated `?code=` params.
-  const oauthCode = request.nextUrl.searchParams.get('code')
-  if (
-    pathname === '/' &&
-    oauthCode &&
-    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(oauthCode)
-  ) {
-    const callbackUrl = new URL('/admin/auth/callback', request.url)
-    callbackUrl.search = request.nextUrl.search // preserve ?code=… (+ any extras)
-    return NextResponse.redirect(callbackUrl)
-  }
+  // NOTE: there used to be an "OAuth fallback catcher" here that forwarded any
+  // `/?code=<uuid>` on the home page to the admin callback. Both Google logins
+  // (admin + customer) now use the *implicit* flow, which returns tokens in the
+  // URL fragment (#…) — never a `?code` query on the home page — so the catcher
+  // was dead for its intended purpose AND was hijacking customer PKCE fallbacks
+  // into the admin flow (dropping guests onto /admin). Removed.
 
   let response = NextResponse.next({ request })
 

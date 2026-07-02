@@ -1,6 +1,6 @@
 'use client'
 
-import { createClient } from '@/lib/supabase/client'
+import { createImplicitClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui'
 
 function GoogleIcon() {
@@ -24,16 +24,22 @@ export function GoogleSignInButton({
   redirectTo = '/booking/checkout',
   className,
 }: GoogleSignInButtonProps) {
-  const supabase = createClient()
-
   function handleSignIn() {
-    const callbackUrl =
+    // Implicit flow (tokens returned in the URL fragment) + a client-side
+    // completion page — the same pattern the admin login uses. The old PKCE
+    // flow's server-side code exchange kept failing in production ("code
+    // verifier not found"), and when Supabase fell its ?code back to the home
+    // page the admin OAuth catcher grabbed it and dropped customers onto
+    // /admin. Implicit returns a #fragment (never a ?code on the home page),
+    // so neither failure mode can happen. No admin check here — any Google
+    // user is a valid guest.
+    const completeUrl =
       window.location.origin +
-      `/auth/callback?next=${encodeURIComponent(redirectTo)}`
+      `/auth/complete?next=${encodeURIComponent(redirectTo)}`
 
-    supabase.auth.signInWithOAuth({
+    createImplicitClient().auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: callbackUrl },
+      options: { redirectTo: completeUrl },
     })
   }
 
