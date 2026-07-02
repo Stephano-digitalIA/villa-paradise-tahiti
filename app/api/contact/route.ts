@@ -135,7 +135,7 @@ export async function POST(request: Request) {
   // surface as an error to the visitor.
   const [ownerResult, autoReplyResult] = await Promise.allSettled([
     sendContactInquiryNotification(inquiry),
-    sendContactAutoReply({ firstName, email: data.email }),
+    sendContactAutoReply(inquiry),
   ])
 
   // eslint-disable-next-line no-console

@@ -1,10 +1,10 @@
 /**
  * ContactAutoReply — React Email template (Phase E1).
  *
- * Auto-acknowledgement sent to a visitor immediately after they submit
- * the `/contact` form. Tone: warm, confident, short. The promise we make
- * here ("within 4 hours, Tahiti time") matches the inbox SLA shown in the
- * success state of the ContactForm.
+ * Auto-acknowledgement sent to a visitor immediately after they submit the
+ * `/contact` form. Tone: warm, confident, short. It now doubles as a receipt —
+ * it echoes back a copy of what the visitor sent (dates, party size, message)
+ * so they have a record of their submission.
  */
 
 import * as React from 'react'
@@ -21,6 +21,8 @@ import {
   Text,
 } from '@react-email/components'
 
+import type { ContactInquiryData } from '../types'
+
 const COLORS = {
   midnight: '#1A2A3A',
   midnight400: '#5A6B7E',
@@ -35,12 +37,46 @@ const FONT_HEADING =
 const FONT_SANS =
   '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
 
+function formatDate(iso?: string): string {
+  if (!iso) return ''
+  const d = new Date(iso)
+  if (Number.isNaN(d.getTime())) return iso
+  return d.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    timeZone: 'UTC',
+  })
+}
+
 interface Props {
-  firstName: string
+  data: ContactInquiryData
   siteUrl: string
 }
 
-export function ContactAutoReply({ firstName, siteUrl }: Props) {
+export function ContactAutoReply({ data, siteUrl }: Props) {
+  const { firstName, travelDateFrom, travelDateTo, guests, message } = data
+
+  const dates = travelDateFrom
+    ? travelDateTo
+      ? `${formatDate(travelDateFrom)} → ${formatDate(travelDateTo)}`
+      : formatDate(travelDateFrom)
+    : ''
+
+  const labelStyle = {
+    fontSize: '11px',
+    letterSpacing: '0.08em',
+    textTransform: 'uppercase' as const,
+    color: COLORS.midnight400,
+    margin: '0 0 2px',
+  }
+  const valueStyle = {
+    fontSize: '15px',
+    color: COLORS.midnight,
+    margin: '0 0 14px',
+    lineHeight: 1.6,
+  }
+
   return (
     <Html>
       <Head />
@@ -110,15 +146,58 @@ export function ContactAutoReply({ firstName, siteUrl }: Props) {
               fontSize: '16px',
               lineHeight: 1.7,
               color: COLORS.midnight400,
-              margin: '0 0 16px',
+              margin: '0 0 20px',
             }}
           >
             Our concierge team will respond personally{' '}
-            <strong style={{ color: COLORS.midnight }}>
-              within 4 hours
-            </strong>
-            , Monday to Sunday, Tahiti time (UTC−10).
+            <strong style={{ color: COLORS.midnight }}>within 4 hours</strong>, Monday
+            to Sunday, Tahiti time (UTC−10).
           </Text>
+
+          {/* Receipt — a copy of what the visitor sent */}
+          <Section
+            style={{
+              backgroundColor: COLORS.pearl,
+              border: `1px solid ${COLORS.sand}`,
+              borderRadius: '8px',
+              padding: '20px 24px',
+              margin: '0 0 24px',
+            }}
+          >
+            <Text
+              style={{
+                fontFamily: FONT_HEADING,
+                fontSize: '13px',
+                letterSpacing: '0.15em',
+                textTransform: 'uppercase',
+                color: COLORS.gold,
+                margin: '0 0 16px',
+              }}
+            >
+              A copy of your message
+            </Text>
+
+            {dates ? (
+              <>
+                <Text style={labelStyle}>Requested dates</Text>
+                <Text style={valueStyle}>{dates}</Text>
+              </>
+            ) : null}
+
+            {guests ? (
+              <>
+                <Text style={labelStyle}>Guests</Text>
+                <Text style={valueStyle}>
+                  {guests} guest{guests !== 1 ? 's' : ''}
+                </Text>
+              </>
+            ) : null}
+
+            <Text style={labelStyle}>Your message</Text>
+            <Text style={{ ...valueStyle, margin: 0, whiteSpace: 'pre-wrap' }}>
+              {message}
+            </Text>
+          </Section>
 
           <Text
             style={{
@@ -128,8 +207,8 @@ export function ContactAutoReply({ firstName, siteUrl }: Props) {
               margin: '0 0 24px',
             }}
           >
-            While you wait, you may enjoy a glimpse of what awaits — a
-            selection of curated experiences crafted for our guests alone.
+            While you wait, you may enjoy a glimpse of what awaits — a selection of
+            curated experiences crafted for our guests alone.
           </Text>
 
           <Section style={{ textAlign: 'center', margin: '0 0 8px' }}>
@@ -163,22 +242,13 @@ export function ContactAutoReply({ firstName, siteUrl }: Props) {
               Villa Paradise Tahiti · Punaauia, French Polynesia
             </Text>
             <Text style={{ fontSize: '12px', margin: 0 }}>
-              <Link
-                href={siteUrl}
-                style={{ color: COLORS.lagoon, marginRight: 12 }}
-              >
+              <Link href={siteUrl} style={{ color: COLORS.lagoon, marginRight: 12 }}>
                 Website
               </Link>
-              <Link
-                href={`${siteUrl}/villa`}
-                style={{ color: COLORS.lagoon, marginRight: 12 }}
-              >
+              <Link href={`${siteUrl}/villa`} style={{ color: COLORS.lagoon, marginRight: 12 }}>
                 The Villa
               </Link>
-              <Link
-                href={`${siteUrl}/rates`}
-                style={{ color: COLORS.lagoon }}
-              >
+              <Link href={`${siteUrl}/rates`} style={{ color: COLORS.lagoon }}>
                 Rates
               </Link>
             </Text>

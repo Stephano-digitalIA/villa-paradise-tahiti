@@ -274,15 +274,16 @@ function wrapBodyAsHtml(bodyText: string): string {
 
 /**
  * Visitor-facing auto-reply, dispatched after a contact form submission.
+ * Doubles as a receipt — echoes back the visitor's dates, party size and message.
  */
 export async function sendContactAutoReply(
-  data: Pick<ContactInquiryData, 'firstName' | 'email'>,
+  data: ContactInquiryData,
 ): Promise<EmailResult> {
   return sendEmail({
     to: data.email,
     subject: 'We have received your inquiry — Villa Paradise Tahiti',
     react: React.createElement(ContactAutoReply, {
-      firstName: data.firstName,
+      data,
       siteUrl: SITE_URL,
     }),
     replyTo: OWNER_EMAIL,
