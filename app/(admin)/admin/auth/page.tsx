@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useState, type FormEvent } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Lock, Mail } from 'lucide-react'
+import { Eye, EyeOff, Lock, Mail } from 'lucide-react'
 
 import { verifyAdminMembership } from '@/app/actions/admin-auth'
 import { createClient } from '@/lib/supabase/client'
@@ -166,6 +166,7 @@ function PasswordSignInForm() {
     'idle',
   )
   const [error, setError] = useState<string | null>(null)
+  const [showPassword, setShowPassword] = useState(false)
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -293,7 +294,7 @@ function PasswordSignInForm() {
         />
         <Input
           id="admin-password"
-          type="password"
+          type={showPassword ? 'text' : 'password'}
           autoComplete="current-password"
           required
           placeholder="Password"
@@ -301,8 +302,22 @@ function PasswordSignInForm() {
           onChange={(e) => setPassword(e.target.value)}
           disabled={status === 'submitting'}
           error={!!error}
-          className="pl-9"
+          className="pl-9 pr-10"
         />
+        <button
+          type="button"
+          onClick={() => setShowPassword((v) => !v)}
+          disabled={status === 'submitting'}
+          aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
+          aria-pressed={showPassword}
+          className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-1.5 text-midnight-300 transition-colors hover:text-midnight focus:outline-none focus:ring-2 focus:ring-gold disabled:opacity-50"
+        >
+          {showPassword ? (
+            <EyeOff className="h-4 w-4" aria-hidden="true" />
+          ) : (
+            <Eye className="h-4 w-4" aria-hidden="true" />
+          )}
+        </button>
       </div>
 
       <Button
