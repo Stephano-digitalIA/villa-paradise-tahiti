@@ -92,6 +92,34 @@ export async function POST(request: Request) {
   const data = parsed.data
   const { firstName, lastName } = splitName(data.fullName)
 
+  // Persist FIRST — before the (potentially slow) email sends. On Netlify the
+  // function can time out around 10s; if the emails run first and stall (e.g.
+  // Resend retrying while the sending domain isn't verified yet), the insert
+  // never runs and the inquiry is lost. Persisting first makes it durable.
+  //
+  // `|| null` (not `?? null`): the schema defaults empty optional fields to `''`,
+  // and inserting an empty string into the `date` columns (check_in/check_out)
+  // errors — coerce blanks to null so the insert always succeeds.
+  try {
+    const { error: insertError } = await adminClient.from('contact_inquiries').insert({
+      full_name: data.fullName,
+      email: data.email,
+      phone: data.phone || null,
+      check_in: data.checkIn || null,
+      check_out: data.checkOut || null,
+      guests: data.guests ? Number(data.guests) : null,
+      message: data.message,
+      replied: false,
+    })
+    if (insertError) {
+      // eslint-disable-next-line no-console
+      console.error('[api/contact] persist failed:', insertError.message)
+    }
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('[api/contact] persist threw:', err)
+  }
+
   const inquiry: ContactInquiryData = {
     firstName,
     lastName,
@@ -103,7 +131,7 @@ export async function POST(request: Request) {
     message: data.message,
   }
 
-  // Fire both emails in parallel. Best effort — never let one failure
+  // Then fire both emails in parallel. Best effort — never let one failure
   // surface as an error to the visitor.
   const [ownerResult, autoReplyResult] = await Promise.allSettled([
     sendContactInquiryNotification(inquiry),
@@ -116,23 +144,6 @@ export async function POST(request: Request) {
     owner: ownerResult.status,
     autoReply: autoReplyResult.status,
   })
-
-  // Persist contact inquiry (best-effort — never block the response)
-  try {
-    await adminClient.from('contact_inquiries').insert({
-      full_name: data.fullName,
-      email: data.email,
-      phone: data.phone ?? null,
-      check_in: data.checkIn ?? null,
-      check_out: data.checkOut ?? null,
-      guests: data.guests ? Number(data.guests) : null,
-      message: data.message,
-      replied: false,
-    })
-  } catch (err) {
-    // eslint-disable-next-line no-console
-    console.error('[api/contact] supabase persist failed:', err)
-  }
 
   return NextResponse.json({
     ok: true,
