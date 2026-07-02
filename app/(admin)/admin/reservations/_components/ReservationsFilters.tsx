@@ -5,12 +5,12 @@ import { useRef } from 'react'
 import type { PaymentStatus } from '@/lib/supabase/types'
 
 const STATUSES: { value: PaymentStatus | ''; label: string }[] = [
-  { value: '', label: 'All statuses' },
-  { value: 'pending', label: 'Pending' },
-  { value: 'deposit_paid', label: 'Deposit Paid' },
-  { value: 'fully_paid', label: 'Fully Paid' },
-  { value: 'cancelled', label: 'Cancelled' },
-  { value: 'refunded', label: 'Refunded' },
+  { value: '', label: 'Tous les statuts' },
+  { value: 'pending', label: 'En attente' },
+  { value: 'deposit_paid', label: 'Acompte payé' },
+  { value: 'fully_paid', label: 'Payé intégralement' },
+  { value: 'cancelled', label: 'Annulé' },
+  { value: 'refunded', label: 'Remboursé' },
 ]
 
 type Props = {

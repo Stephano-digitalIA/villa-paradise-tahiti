@@ -36,8 +36,8 @@ const STATUS_VARIANT: Record<
 
 const STATUS_LABEL: Record<PaymentStatus, string> = {
   pending: 'En attente',
-  deposit_paid: 'Acompte versé',
-  fully_paid: 'Soldé',
+  deposit_paid: 'Acompte payé',
+  fully_paid: 'Payé intégralement',
   cancelled: 'Annulé',
   refunded: 'Remboursé',
 }

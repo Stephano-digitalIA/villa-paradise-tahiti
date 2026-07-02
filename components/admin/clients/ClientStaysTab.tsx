@@ -19,11 +19,11 @@ const STATUS_VARIANT: Record<
 }
 
 const STATUS_LABEL: Record<PaymentStatus, string> = {
-  pending: 'Pending',
-  deposit_paid: 'Deposit paid',
-  fully_paid: 'Fully paid',
-  cancelled: 'Cancelled',
-  refunded: 'Refunded',
+  pending: 'En attente',
+  deposit_paid: 'Acompte payé',
+  fully_paid: 'Payé intégralement',
+  cancelled: 'Annulé',
+  refunded: 'Remboursé',
 }
 
 export function ClientStaysTab({ reservations }: ClientStaysTabProps) {

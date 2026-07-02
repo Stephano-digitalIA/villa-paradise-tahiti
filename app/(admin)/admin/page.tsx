@@ -24,11 +24,11 @@ const STATUS_VARIANT: Record<
 }
 
 const STATUS_LABEL: Record<PaymentStatus, string> = {
-  pending: 'Pending',
-  deposit_paid: 'Deposit Paid',
-  fully_paid: 'Fully Paid',
-  cancelled: 'Cancelled',
-  refunded: 'Refunded',
+  pending: 'En attente',
+  deposit_paid: 'Acompte payé',
+  fully_paid: 'Payé intégralement',
+  cancelled: 'Annulé',
+  refunded: 'Remboursé',
 }
 
 function formatUSD(amount: number | null | undefined): string {

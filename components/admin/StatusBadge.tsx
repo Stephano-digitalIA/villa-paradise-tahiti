@@ -16,11 +16,11 @@ const STATUS_MAP: Record<
   { label: string; variant: 'success' | 'warning' | 'info' | 'default' | 'luxe' | 'gold' }
 > = {
   // payment statuses
-  pending: { label: 'Pending', variant: 'warning' },
-  deposit_paid: { label: 'Deposit Paid', variant: 'info' },
-  fully_paid: { label: 'Fully Paid', variant: 'success' },
-  cancelled: { label: 'Cancelled', variant: 'default' },
-  refunded: { label: 'Refunded', variant: 'luxe' },
+  pending: { label: 'En attente', variant: 'warning' },
+  deposit_paid: { label: 'Acompte payé', variant: 'info' },
+  fully_paid: { label: 'Payé intégralement', variant: 'success' },
+  cancelled: { label: 'Annulé', variant: 'default' },
+  refunded: { label: 'Remboursé', variant: 'luxe' },
   // publish statuses
   published: { label: 'Published', variant: 'success' },
   draft: { label: 'Draft', variant: 'warning' },
