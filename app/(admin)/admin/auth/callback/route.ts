@@ -83,12 +83,19 @@ export async function GET(request: NextRequest) {
       target = `${origin}/admin/auth?error=unauthorized`
     }
   } else {
-    // Exchange failed — surface the exact Supabase error (PKCE verifier missing,
-    // invalid/expired code, provider misconfig…).
     const reason = error?.message ?? 'exchange returned no user'
     // eslint-disable-next-line no-console
     console.error('[admin/auth/callback] exchange failed', { reason })
-    target = `${origin}/admin/auth?error=auth_failed&detail=${encodeURIComponent(reason)}`
+    if (/verifier/i.test(reason)) {
+      // The code-verifier cookie didn't reach this serverless function, but it
+      // lives in the browser. The verifier check fails locally BEFORE any call
+      // to Supabase, so the code is still unconsumed — hand it to the
+      // client-side completion page, which exchanges it with its own cookies.
+      target = `${origin}/admin/auth/complete?code=${encodeURIComponent(code)}`
+    } else {
+      // Anything else (expired/consumed code, provider misconfig…) — surface it.
+      target = `${origin}/admin/auth?error=auth_failed&detail=${encodeURIComponent(reason)}`
+    }
   }
 
   // Build the redirect with every Set-Cookie we accumulated. This is what

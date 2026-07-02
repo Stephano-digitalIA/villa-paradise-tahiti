@@ -84,7 +84,11 @@ function SignInForm() {
     supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: window.location.origin + '/admin/auth/callback',
+        // Client-side completion page: the PKCE exchange happens in the
+        // browser (which owns the code-verifier cookie). The old server
+        // callback failed in production when that cookie didn't reach the
+        // serverless function ("PKCE code verifier not found in storage").
+        redirectTo: window.location.origin + '/admin/auth/complete',
         // Force the Google account chooser on every click — avoids silent
         // sign-in with whatever account Chrome happens to remember.
         queryParams: { prompt: 'select_account' },
