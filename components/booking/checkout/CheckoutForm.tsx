@@ -603,7 +603,7 @@ export function CheckoutForm({ initialProfile }: CheckoutFormProps) {
             id="pay-stripe"
             value="stripe"
             label="Credit / debit card"
-            description="Visa, Mastercard, Amex via Stripe"
+            description="Visa, Mastercard, Amex — no account needed"
             checked={paymentMethod === 'stripe'}
             onSelect={() =>
               setValue('paymentMethod', 'stripe', { shouldValidate: true })

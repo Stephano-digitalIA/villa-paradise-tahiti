@@ -85,6 +85,16 @@ const requestSchema = z.object({
 
 export const runtime = 'nodejs'
 
+/**
+ * Mock checkout — faking a paid reservation and jumping straight to
+ * /booking/success — is ONLY acceptable off the live site (local `npm run
+ * dev`). On any production build an unconfigured gateway must surface an error
+ * instead, so a visitor can never "confirm" a booking that was never paid for.
+ */
+function mockCheckoutAllowed(): boolean {
+  return process.env.NODE_ENV !== 'production'
+}
+
 export async function POST(request: Request) {
   let payload: unknown
   try {
@@ -222,6 +232,17 @@ export async function POST(request: Request) {
     reservationId,
   }
 
+  // Payment routing. The "Credit / debit card" option maps to Stripe, but when
+  // Stripe isn't configured we route the card through PayPal — its guest
+  // checkout accepts credit/debit cards without a PayPal account. Persist the
+  // processor that actually handles the money so the webhook (which matches on
+  // reservation_ref) and the admin records reconcile with reality.
+  const routeCardThroughPayPal =
+    customer.paymentMethod === 'stripe' && !isStripeConfigured() && isPayPalConfigured()
+  const effectiveMethod: 'stripe' | 'paypal' = routeCardThroughPayPal
+    ? 'paypal'
+    : customer.paymentMethod
+
   /* ----- Persist to DB (best-effort — never blocks checkout) ------------ */
   try {
     // UPSERT customer — email is the unique identifier
@@ -265,7 +286,7 @@ export async function POST(request: Request) {
       deposit_amount: chargeAmount,
       balance_amount: breakdown.total - chargeAmount,
       selected_experiences: booking.selectedExperiences as unknown as import('@/lib/supabase/types').SelectedExperienceSnapshot[],
-      payment_method: customer.paymentMethod,
+      payment_method: effectiveMethod,
       payment_status: 'pending',
     })
 
@@ -279,16 +300,29 @@ export async function POST(request: Request) {
     // Continue — DB failure must not block checkout
   }
 
-  /* ----- Stripe branch -------------------------------------------------- */
-  if (customer.paymentMethod === 'stripe') {
+  /* ----- Stripe branch (card option that keeps Stripe) ------------------ */
+  // Reached only when the guest picked the card option AND Stripe is configured
+  // (otherwise `effectiveMethod` was flipped to 'paypal' above to route the
+  // card through PayPal).
+  if (effectiveMethod === 'stripe') {
     if (!isStripeConfigured()) {
-      // Mock fallback — preserves the Phase D2 behaviour for dev/preview.
-      return NextResponse.json({
-        reservationId,
-        redirectUrl: `/booking/success?ref=${encodeURIComponent(reservationId)}`,
-        paymentMethod: 'stripe' as const,
-        mock: true,
-      })
+      // Neither Stripe nor PayPal is available to take the card. Mock only off
+      // production; on the live site refuse rather than fake a paid booking.
+      if (mockCheckoutAllowed()) {
+        return NextResponse.json({
+          reservationId,
+          redirectUrl: `/booking/success?ref=${encodeURIComponent(reservationId)}`,
+          paymentMethod: 'stripe' as const,
+          mock: true,
+        })
+      }
+      return NextResponse.json(
+        {
+          error:
+            'Card payments are temporarily unavailable. Please choose PayPal or contact us to complete your booking.',
+        },
+        { status: 503 },
+      )
     }
 
     const result = await createStripeCheckoutSession({
@@ -312,15 +346,24 @@ export async function POST(request: Request) {
     })
   }
 
-  /* ----- PayPal branch -------------------------------------------------- */
-  if (customer.paymentMethod === 'paypal') {
+  /* ----- PayPal branch (native PayPal + routed card payments) ----------- */
+  if (effectiveMethod === 'paypal') {
     if (!isPayPalConfigured()) {
-      return NextResponse.json({
-        reservationId,
-        redirectUrl: `/booking/success?ref=${encodeURIComponent(reservationId)}`,
-        paymentMethod: 'paypal' as const,
-        mock: true,
-      })
+      if (mockCheckoutAllowed()) {
+        return NextResponse.json({
+          reservationId,
+          redirectUrl: `/booking/success?ref=${encodeURIComponent(reservationId)}`,
+          paymentMethod: 'paypal' as const,
+          mock: true,
+        })
+      }
+      return NextResponse.json(
+        {
+          error:
+            'Online payment is temporarily unavailable. Please try again shortly or contact us to complete your booking.',
+        },
+        { status: 503 },
+      )
     }
 
     const result = await createPayPalOrder({
