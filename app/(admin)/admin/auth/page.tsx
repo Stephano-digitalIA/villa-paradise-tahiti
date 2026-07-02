@@ -221,9 +221,9 @@ function PasswordSignInForm() {
     const { error: recoveryError } = await supabase.auth.resetPasswordForEmail(
       email.trim(),
       {
-        // Supabase hosted reset page → user sets new password → can sign in here.
-        // Override with a custom /admin/auth/reset route later if needed.
-        redirectTo: window.location.origin + '/admin/auth',
+        // Land on our own reset page, which exchanges the recovery code and
+        // shows a "new password" form (supabase.auth.updateUser).
+        redirectTo: window.location.origin + '/admin/auth/reset',
       },
     )
     if (recoveryError) {
