@@ -5,21 +5,22 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { Loader2 } from 'lucide-react'
 
 import { verifyAdminMembership } from '@/app/actions/admin-auth'
-import { createClient } from '@/lib/supabase/client'
+import { createImplicitClient } from '@/lib/supabase/client'
 
 /**
- * /admin/auth/complete — finish the Google OAuth flow IN THE BROWSER.
+ * /admin/auth/complete — finish the admin Google OAuth flow IN THE BROWSER.
  *
- * The PKCE code verifier lives in a browser cookie written by
- * `createBrowserClient` when "Continue with Google" is clicked. Exchanging the
- * returned `?code=` on the server (the old /admin/auth/callback route) proved
- * fragile in production — the verifier cookie did not reliably reach the
- * serverless function, failing with "PKCE code verifier not found in storage".
+ * Primary path (implicit flow): Supabase returns the tokens in the URL
+ * fragment (#access_token=…). The implicit client's `detectSessionInUrl`
+ * consumes it during initialization — no PKCE code verifier involved, which is
+ * what kept failing in production ("code verifier not found in storage", on
+ * both the server and client exchange paths).
  *
- * Doing the exchange client-side is immune to that: the browser client reads
- * its own cookie jar directly. After the session is established we still
- * enforce the admin_users whitelist via a service-role server action, exactly
- * like the password flow does.
+ * Fallback path: if a ?code arrives instead (old links, middleware fallback
+ * forwarding a Site-URL bounce), attempt the PKCE exchange client-side.
+ *
+ * Either way, the admin_users whitelist is enforced via the service-role
+ * server action before landing on /admin — same guarantee as before.
  */
 function CompleteInner() {
   const router = useRouter()
@@ -28,30 +29,37 @@ function CompleteInner() {
   const ran = useRef(false)
 
   useEffect(() => {
-    // Guard against double-run (React strict mode / fast refresh) — the OAuth
-    // code is single-use, a second exchange would fail spuriously.
+    // Guard against double-run (React strict mode) — OAuth codes are single-use.
     if (ran.current) return
     ran.current = true
 
-    const supabase = createClient()
+    const supabase = createImplicitClient()
 
     function fail(detail: string) {
-      router.replace(
-        `/admin/auth?error=auth_failed&detail=${encodeURIComponent(detail)}`,
-      )
+      // Append where we are + which sb-* cookies exist: pinpoints origin
+      // mismatches and cookie-write failures in one glance.
+      const sbCookies =
+        document.cookie
+          .split(';')
+          .map((c) => c.trim().split('=')[0])
+          .filter((n) => n.startsWith('sb-'))
+          .join(',') || 'none'
+      const diag = `${detail} | origin=${window.location.origin} | sb-cookies=${sbCookies}`
+      router.replace(`/admin/auth?error=auth_failed&detail=${encodeURIComponent(diag)}`)
     }
 
     async function run() {
       try {
-        // A session may already exist (e.g. the server callback succeeded and
-        // forwarded here, or the user re-opened the page). Reuse it.
+        // getSession awaits the client's initialization, which consumes the
+        // implicit-flow tokens from the URL fragment when present.
         const { data: pre } = await supabase.auth.getSession()
         let userId = pre.session?.user.id ?? null
 
+        // Fallback: PKCE ?code (old links / middleware Site-URL bounce).
         if (!userId) {
           const code = searchParams.get('code')
           if (!code) {
-            fail('no_code_on_complete')
+            fail('no_session_and_no_code_on_complete')
             return
           }
           const { data, error } = await supabase.auth.exchangeCodeForSession(code)

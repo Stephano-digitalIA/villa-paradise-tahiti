@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { Eye, EyeOff, Lock, Mail } from 'lucide-react'
 
 import { verifyAdminMembership } from '@/app/actions/admin-auth'
-import { createClient } from '@/lib/supabase/client'
+import { createClient, createImplicitClient } from '@/lib/supabase/client'
 import { Button, Input } from '@/components/ui'
 
 function GoogleIcon() {
@@ -81,13 +81,13 @@ function SignInForm() {
   }, [supabase])
 
   function handleSignIn() {
-    supabase.auth.signInWithOAuth({
+    // Implicit flow: tokens come back in the URL fragment on the completion
+    // page — no PKCE code-verifier cookie involved. PKCE kept failing in
+    // production with "code verifier not found in storage" (both server- and
+    // client-side exchange), so the admin Google login avoids it entirely.
+    createImplicitClient().auth.signInWithOAuth({
       provider: 'google',
       options: {
-        // Client-side completion page: the PKCE exchange happens in the
-        // browser (which owns the code-verifier cookie). The old server
-        // callback failed in production when that cookie didn't reach the
-        // serverless function ("PKCE code verifier not found in storage").
         redirectTo: window.location.origin + '/admin/auth/complete',
         // Force the Google account chooser on every click — avoids silent
         // sign-in with whatever account Chrome happens to remember.
