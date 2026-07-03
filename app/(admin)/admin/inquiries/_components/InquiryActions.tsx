@@ -17,10 +17,10 @@ const MAILTO_SUBJECT = encodeURIComponent(
 /**
  * Inquiry actions — "Répondre" + "Marquer comme répondu".
  *
- * "Répondre" opens the guest's email in the admin's mail client (mailto) AND
- * flags the inquiry as replied — activating a reply opens the email. The
- * separate "Marquer comme répondu" only flips the flag (for replies handled by
- * phone or another channel) without opening an email.
+ * "Répondre" ONLY opens the guest's email in the admin's mail client (mailto);
+ * it does NOT change the replied flag. Marking is kept 100% manual through the
+ * separate "Marquer comme répondu" button (for replies handled by email, phone,
+ * or any other channel).
  */
 export function InquiryActions({ inquiryId, email, replied }: Props) {
   const [isPending, startTransition] = useTransition()
@@ -37,19 +37,11 @@ export function InquiryActions({ inquiryId, email, replied }: Props) {
     })
   }
 
-  function handleReply() {
-    // Open the email compose window, then mark the inquiry as replied.
-    window.location.href = `mailto:${email}?subject=${MAILTO_SUBJECT}`
-    flagReplied()
-  }
-
   return (
     <div className="flex shrink-0 flex-col gap-2 sm:items-end">
-      <button
-        type="button"
-        onClick={handleReply}
-        disabled={isPending}
-        className="inline-flex items-center gap-1.5 rounded-xl bg-midnight px-4 py-2 font-sans text-sm font-medium text-pearl transition-opacity hover:opacity-90 disabled:opacity-50"
+      <a
+        href={`mailto:${email}?subject=${MAILTO_SUBJECT}`}
+        className="inline-flex items-center gap-1.5 rounded-xl bg-midnight px-4 py-2 font-sans text-sm font-medium text-pearl transition-opacity hover:opacity-90"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -67,7 +59,7 @@ export function InquiryActions({ inquiryId, email, replied }: Props) {
           <polyline points="22,6 12,13 2,6" />
         </svg>
         Répondre
-      </button>
+      </a>
 
       {isReplied ? (
         <span className="font-sans text-xs text-leaf">Marqué comme répondu</span>
