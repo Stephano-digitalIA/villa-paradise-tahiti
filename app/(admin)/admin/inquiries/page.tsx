@@ -2,22 +2,13 @@ import type { Metadata } from 'next'
 import { adminClient } from '@/lib/supabase/admin'
 import { Badge } from '@/components/ui/Badge'
 import type { ContactInquiry } from '@/lib/supabase/types'
-import { InquiriesClient } from './_components/InquiriesClient'
+import { InquiryActions } from './_components/InquiryActions'
 
 export const metadata: Metadata = {
-  title: 'Inquiries — Villa Paradise Tahiti Admin',
+  title: 'Demandes de contact — Villa Paradise Tahiti Admin',
 }
 
 export const dynamic = 'force-dynamic'
-
-function formatDate(dateStr: string | null | undefined): string {
-  if (!dateStr) return '—'
-  return new Date(dateStr).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  })
-}
 
 export default async function InquiriesPage({
   searchParams,
@@ -48,14 +39,14 @@ export default async function InquiriesPage({
         <div>
           <div className="flex items-center gap-3">
             <h1 className="font-heading text-2xl font-semibold text-midnight">
-              Contact Inquiries
+              Demandes de contact
             </h1>
             {unrepliedCount > 0 && (
-              <Badge variant="warning">{unrepliedCount} unreplied</Badge>
+              <Badge variant="warning">{unrepliedCount} sans réponse</Badge>
             )}
           </div>
           <p className="mt-1 font-sans text-sm text-midnight-400">
-            {all.length} total inquiry{all.length !== 1 ? 's' : ''}
+            {all.length} demande{all.length !== 1 ? 's' : ''} au total
           </p>
         </div>
       </div>
@@ -63,14 +54,14 @@ export default async function InquiriesPage({
       {/* Filter tabs */}
       <div className="mt-6 flex gap-2 border-b border-pearl-400">
         {[
-          { value: 'all', label: `All (${all.length})` },
+          { value: 'all', label: `Toutes (${all.length})` },
           {
             value: 'unreplied',
-            label: `Unreplied (${unrepliedCount})`,
+            label: `Sans réponse (${unrepliedCount})`,
           },
           {
             value: 'replied',
-            label: `Replied (${all.length - unrepliedCount})`,
+            label: `Répondues (${all.length - unrepliedCount})`,
           },
         ].map((tab) => (
           <a
@@ -96,12 +87,12 @@ export default async function InquiriesPage({
         {filtered.length === 0 ? (
           <div className="rounded-2xl border border-pearl-400 bg-white px-8 py-16 text-center shadow-sm">
             <p className="font-heading text-lg text-midnight-400">
-              No inquiries here
+              Aucune demande ici
             </p>
             <p className="mt-1 font-sans text-sm text-midnight-400">
               {filter === 'unreplied'
-                ? 'All inquiries have been replied to!'
-                : 'Inquiries will appear here once guests contact you.'}
+                ? 'Toutes les demandes ont reçu une réponse !'
+                : 'Les demandes apparaîtront ici dès qu’un client vous contacte.'}
             </p>
           </div>
         ) : (
@@ -123,10 +114,6 @@ function InquiryCard({ inquiry }: { inquiry: ContactInquiry }) {
       ? inquiry.message.slice(0, 200) + '...'
       : inquiry.message
 
-  const mailtoSubject = encodeURIComponent(
-    'Re: Villa Paradise Tahiti — Your inquiry',
-  )
-
   return (
     <div className="rounded-2xl border border-pearl-400 bg-white p-6 shadow-sm">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -140,7 +127,7 @@ function InquiryCard({ inquiry }: { inquiry: ContactInquiry }) {
               variant={inquiry.replied ? 'success' : 'warning'}
               size="sm"
             >
-              {inquiry.replied ? 'Replied' : 'Pending'}
+              {inquiry.replied ? 'Répondu' : 'En attente'}
             </Badge>
           </div>
           <div className="mt-1 flex flex-wrap gap-3 font-sans text-sm text-midnight-400">
@@ -155,23 +142,23 @@ function InquiryCard({ inquiry }: { inquiry: ContactInquiry }) {
 
           {(inquiry.check_in || inquiry.check_out) && (
             <p className="mt-2 font-sans text-sm text-midnight">
-              <span className="font-semibold">Requested dates:</span>{' '}
+              <span className="font-semibold">Dates demandées :</span>{' '}
               {inquiry.check_in
-                ? new Date(inquiry.check_in).toLocaleDateString('en-US', {
-                    month: 'short',
+                ? new Date(inquiry.check_in).toLocaleDateString('fr-FR', {
                     day: 'numeric',
+                    month: 'short',
                     year: 'numeric',
                   })
                 : '?'}
               {' → '}
               {inquiry.check_out
-                ? new Date(inquiry.check_out).toLocaleDateString('en-US', {
-                    month: 'short',
+                ? new Date(inquiry.check_out).toLocaleDateString('fr-FR', {
                     day: 'numeric',
+                    month: 'short',
                     year: 'numeric',
                   })
                 : '?'}
-              {inquiry.guests && ` · ${inquiry.guests} guest${inquiry.guests !== 1 ? 's' : ''}`}
+              {inquiry.guests && ` · ${inquiry.guests} voyageur${inquiry.guests !== 1 ? 's' : ''}`}
             </p>
           )}
 
@@ -180,46 +167,25 @@ function InquiryCard({ inquiry }: { inquiry: ContactInquiry }) {
           </p>
 
           <p className="mt-2 font-sans text-xs text-midnight-400">
-            Received {new Date(inquiry.created_at).toLocaleString('en-US', {
-              month: 'short',
+            Reçu le {new Date(inquiry.created_at).toLocaleString('fr-FR', {
               day: 'numeric',
+              month: 'short',
               year: 'numeric',
               hour: '2-digit',
               minute: '2-digit',
             })}
             {inquiry.replied_at && (
-              <> · Replied {new Date(inquiry.replied_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</>
+              <> · Répondu le {new Date(inquiry.replied_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })}</>
             )}
           </p>
         </div>
 
         {/* Actions */}
-        <div className="flex shrink-0 flex-col gap-2 sm:items-end">
-          <a
-            href={`mailto:${inquiry.email}?subject=${mailtoSubject}`}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-midnight px-4 py-2 font-sans text-sm font-medium text-pearl transition-opacity hover:opacity-90"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-              <polyline points="22,6 12,13 2,6" />
-            </svg>
-            Reply
-          </a>
-          {!inquiry.replied && (
-            <InquiriesClient inquiryId={inquiry.id} />
-          )}
-        </div>
+        <InquiryActions
+          inquiryId={inquiry.id}
+          email={inquiry.email}
+          replied={inquiry.replied}
+        />
       </div>
     </div>
   )
