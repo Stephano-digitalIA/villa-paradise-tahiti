@@ -184,6 +184,8 @@ function InquiryCard({ inquiry }: { inquiry: ContactInquiry }) {
         <InquiryActions
           inquiryId={inquiry.id}
           email={inquiry.email}
+          guestName={inquiry.full_name}
+          message={inquiry.message}
           replied={inquiry.replied}
         />
       </div>

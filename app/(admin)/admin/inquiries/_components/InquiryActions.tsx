@@ -6,22 +6,43 @@ import { markInquiryReplied } from '@/app/actions/inquiries'
 type Props = {
   inquiryId: string
   email: string
+  guestName: string
+  message: string
   replied: boolean
 }
 
 // Prefilled reply subject (French — the admin is French-facing).
-const REPLY_SUBJECT = encodeURIComponent(
-  'Re : Villa Paradise Tahiti — Votre demande',
-)
+const REPLY_SUBJECT = 'Re : Villa Paradise Tahiti — Votre demande'
 
 /**
  * Gmail web compose URL. A plain `mailto:` link only works when the OS has a
  * desktop mail client registered — which the admin (running Gmail in the
  * browser) does not, so `mailto:` silently did nothing. Opening Gmail's compose
  * window in a new tab works with no local mail client.
+ *
+ * The body is prefilled with a greeting and the guest's original message quoted
+ * below, so the admin replies with the request in context.
  */
-function composeHref(email: string): string {
-  return `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}&su=${REPLY_SUBJECT}`
+function composeHref(email: string, guestName: string, message: string): string {
+  const firstName = guestName.trim().split(/\s+/)[0] || ''
+  const body = [
+    `Bonjour ${firstName},`,
+    '',
+    '',
+    '',
+    '— — —',
+    'Votre message :',
+    message,
+  ].join('\n')
+
+  const params = new URLSearchParams({
+    view: 'cm',
+    fs: '1',
+    to: email,
+    su: REPLY_SUBJECT,
+    body,
+  })
+  return `https://mail.google.com/mail/?${params.toString()}`
 }
 
 /**
@@ -31,7 +52,7 @@ function composeHref(email: string): string {
  * replied flag. Marking is kept 100% manual through the separate "Marquer comme
  * répondu" button (for replies handled by email, phone, or any other channel).
  */
-export function InquiryActions({ inquiryId, email, replied }: Props) {
+export function InquiryActions({ inquiryId, email, guestName, message, replied }: Props) {
   const [isPending, startTransition] = useTransition()
   const [isReplied, setIsReplied] = useState(replied)
   const [error, setError] = useState<string | null>(null)
@@ -49,7 +70,7 @@ export function InquiryActions({ inquiryId, email, replied }: Props) {
   return (
     <div className="flex shrink-0 flex-col gap-2 sm:items-end">
       <a
-        href={composeHref(email)}
+        href={composeHref(email, guestName, message)}
         target="_blank"
         rel="noopener noreferrer"
         className="inline-flex items-center gap-1.5 rounded-xl bg-midnight px-4 py-2 font-sans text-sm font-medium text-pearl transition-opacity hover:opacity-90"
