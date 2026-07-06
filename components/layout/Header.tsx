@@ -8,7 +8,6 @@ import { Button } from '@/components/ui'
 import { useAuth } from '@/components/auth/AuthProvider'
 import { bookingHref, mainNav } from '@/lib/navigation'
 import { cn } from '@/lib/utils'
-import { LanguageSwitcher } from './LanguageSwitcher'
 import { MobileDrawer } from './MobileDrawer'
 import { UserMenu } from './UserMenu'
 
@@ -20,7 +19,8 @@ import { UserMenu } from './UserMenu'
  *  - Variant transparent au repos (au-dessus du hero) → `bg-pearl/95 backdrop-blur`
  *    après ~60px de scroll vertical.
  *  - Logo texte "Villa Paradise" en Cormorant italic + icône palmier (Lucide).
- *  - Desktop ≥ md : nav inline + LanguageSwitcher + CTA primaire "Book Now".
+ *  - Desktop ≥ md : nav inline + CTA primaire "Book Now". (Le site public est
+ *    EN-only ; la traduction est laissée au navigateur, pas de sélecteur de langue.)
  *  - Mobile < md : burger qui ouvre `MobileDrawer`.
  *
  * Note serveur/client : "use client" est nécessaire car le composant écoute
@@ -133,12 +133,8 @@ export function Header() {
             </ul>
           </nav>
 
-          {/* Cluster droit : LanguageSwitcher (desktop) + UserMenu si connecté + CTA Book Now + Burger (mobile) */}
+          {/* Cluster droit : UserMenu si connecté + CTA Book Now + Burger (mobile) */}
           <div className="flex items-center gap-2 sm:gap-3">
-            <div className="hidden md:block">
-              <LanguageSwitcher variant={opaque ? 'default' : 'light'} />
-            </div>
-
             {/* UserMenu — visible dès qu'on est connecté (sauf pendant le 1er chargement pour éviter le flash) */}
             {!loading && user ? (
               <div className="hidden sm:block">

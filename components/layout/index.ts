@@ -5,7 +5,8 @@
  *   import { Header, Footer, SkipToContent } from '@/components/layout'
  *
  * `MobileDrawer` est exporté mais consommé uniquement par `Header`.
- * `LanguageSwitcher` est exporté mais consommé uniquement par `Header` à ce stade.
+ * `LanguageSwitcher` n'est plus rendu (site EN-only, traduction laissée au
+ * navigateur) ; conservé pour une éventuelle i18n Phase 2.
  */
 
 export { ChromeGate } from './ChromeGate'
