@@ -65,6 +65,9 @@ export function adaptVilla(v: Villa) {
 export function adaptExperience(e: Experience) {
   return {
     ...e,
+    // Sanity-shaped stable id. The DB column is `id`; components key on `_id`
+    // (the Sanity shape). Without this the React list key is undefined.
+    _id: e.id,
     shortDescription: e.short_description,
     coverImage: e.cover_image_url
       ? { url: e.cover_image_url, alt: e.cover_image_alt ?? e.title }
@@ -92,6 +95,8 @@ export function adaptExperience(e: Experience) {
 export function adaptReview(r: Review) {
   return {
     ...r,
+    // Sanity-shaped stable id (DB column is `id`); components key on `_id`.
+    _id: r.id,
     authorName: r.author_name,
     authorLocation: r.author_location,
     authorPhoto: r.author_photo_url ? { url: r.author_photo_url } : null,
@@ -107,6 +112,8 @@ export function adaptReview(r: Review) {
 export function adaptPost(p: Post) {
   return {
     ...p,
+    // Sanity-shaped stable id (DB column is `id`); components key on `_id`.
+    _id: p.id,
     excerpt: p.excerpt,
     coverImage: p.cover_image_url
       ? { url: p.cover_image_url, alt: p.cover_image_alt ?? p.title }
@@ -136,6 +143,10 @@ export function adaptPost(p: Post) {
 export function adaptFAQ(f: FAQ) {
   return {
     ...f,
+    // Sanity-shaped stable id (DB column is `id`); FaqAccordion keys AND
+    // toggles on `_id` — undefined here makes every FAQ share one key, so
+    // opening one opens all. Mapping it fixes a real functional bug.
+    _id: f.id,
     // answer is already a plain string (Markdown) — no transformation needed.
     // NOTE: components using <PortableText> must be updated to a Markdown
     // renderer (e.g. react-markdown) since there are no PortableTextBlocks here.
