@@ -52,7 +52,7 @@ Includes seasonal rates (low/high/peak — keep in sync with `components/section
 
 ## Auth, middleware, and required env
 
-- `middleware.ts` refreshes the Supabase SSR session cookie on every request and gates `/admin/*` (redirects to `/admin/auth` when no `sb-*-auth-token` cookie). Full `admin_users` verification happens in the admin layout server component.
+- `middleware.ts` refreshes the Supabase SSR session cookie on every request and **authorizes** `/admin/*`: it verifies the caller is a row in `admin_users` (RLS self-read via the user's session), not just that a session cookie exists. This matters because admin and customer sign-ins share one Supabase session, so a signed-in customer holds a valid cookie; `admin_users` membership is what grants admin access. Non-admins are bounced (unauthenticated → `/admin/auth`; authenticated-but-not-admin → `/`, preserving their customer session). The admin API routes (`/api/admin/*`) repeat the same `admin_users` check independently. `/admin/auth` is intentionally left open to avoid a redirect loop. The admin page layouts do **not** re-check membership, so the middleware is the authoritative gate for admin pages.
 - **`NEXT_PUBLIC_SUPABASE_URL` + `NEXT_PUBLIC_SUPABASE_ANON_KEY` are required or every route 500s** (the middleware constructs a Supabase client unconditionally). Server-side queries also need `SUPABASE_SERVICE_ROLE_KEY`.
 - ⚠️ `.env.example` does **not** list the Supabase vars even though they're mandatory. Copy it to `.env.local` and add the three Supabase keys. The other integrations (Stripe, PayPal, Resend, Sanity, iCal, GA/Hotjar) all have mock fallbacks documented in the README and degrade gracefully when their keys are absent.
 
