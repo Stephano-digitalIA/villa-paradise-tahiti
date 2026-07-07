@@ -67,12 +67,12 @@ export function AnonymizeConfirmModal({
     <div
       role="dialog"
       aria-modal="true"
-      aria-label="Anonymize customer"
+      aria-label="Anonymiser le client"
       className="fixed inset-0 z-50 flex items-center justify-center px-4"
     >
       <button
         type="button"
-        aria-label="Close"
+        aria-label="Fermer"
         onClick={() => !pending && onClose()}
         className="absolute inset-0 bg-midnight/60 backdrop-blur-sm"
       />
@@ -82,7 +82,7 @@ export function AnonymizeConfirmModal({
           type="button"
           onClick={onClose}
           disabled={pending}
-          aria-label="Close"
+          aria-label="Fermer"
           className="absolute right-4 top-4 rounded-full p-1.5 text-midnight-400 transition-colors hover:bg-pearl-300/60 hover:text-midnight disabled:opacity-50"
         >
           <X className="h-4 w-4" aria-hidden="true" />
@@ -94,27 +94,27 @@ export function AnonymizeConfirmModal({
           </span>
           <div>
             <h2 className="font-heading text-lg font-semibold text-midnight">
-              Anonymize {customerName}?
+              Anonymiser {customerName} ?
             </h2>
             <p className="mt-1 font-sans text-sm text-midnight-400">
-              GDPR right-to-be-forgotten. This action is{' '}
-              <strong className="text-midnight">irreversible</strong>.
+              Droit à l&apos;oubli RGPD. Cette action est{' '}
+              <strong className="text-midnight">irréversible</strong>.
             </p>
           </div>
         </div>
 
         <div className="mt-5 rounded-xl border border-coral/20 bg-coral/5 p-4">
           <p className="font-sans text-sm font-semibold text-midnight">
-            What will happen:
+            Ce qui va se passer :
           </p>
           <ul className="mt-2 space-y-1 font-sans text-sm text-midnight-400">
-            <li>· Name, email, phone, address replaced by «&nbsp;[Anonymized]&nbsp;»</li>
-            <li>· Private notes are permanently deleted</li>
-            <li>· Tags are unassigned</li>
-            <li>· Marketing consent is revoked</li>
+            <li>· Nom, e-mail, téléphone, adresse remplacés par «&nbsp;[Anonymisé]&nbsp;»</li>
+            <li>· Les notes privées sont définitivement supprimées</li>
+            <li>· Les tags sont retirés</li>
+            <li>· Le consentement marketing est révoqué</li>
             <li>
-              · <strong className="text-midnight">Reservations are kept</strong> (10-year
-              accounting obligation), but no longer linked to identifiable information.
+              · <strong className="text-midnight">Les réservations sont conservées</strong> (obligation
+              comptable de 10 ans), mais ne sont plus liées à des informations identifiables.
             </li>
           </ul>
         </div>
@@ -124,11 +124,11 @@ export function AnonymizeConfirmModal({
             htmlFor="anonymize-confirm"
             className="block font-sans text-sm font-medium text-midnight"
           >
-            Type{' '}
+            Saisissez{' '}
             <code className="rounded bg-pearl-300 px-1.5 py-0.5 font-mono text-xs font-bold text-coral">
               {TOKEN}
             </code>{' '}
-            below to confirm:
+            ci-dessous pour confirmer :
           </label>
           <input
             ref={inputRef}
@@ -158,7 +158,7 @@ export function AnonymizeConfirmModal({
               disabled={pending}
               className="inline-flex items-center gap-1.5 rounded-xl border border-pearl-400 bg-white px-4 py-2 font-sans text-sm font-medium text-midnight hover:border-midnight"
             >
-              Cancel
+              Annuler
             </button>
             <button
               type="submit"
@@ -166,7 +166,7 @@ export function AnonymizeConfirmModal({
               className="inline-flex items-center gap-1.5 rounded-xl bg-coral px-4 py-2 font-sans text-sm font-semibold text-white hover:bg-coral/90 disabled:cursor-not-allowed disabled:opacity-50"
             >
               <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
-              {pending ? 'Anonymizing…' : 'Anonymize permanently'}
+              {pending ? 'Anonymisation…' : 'Anonymiser définitivement'}
             </button>
           </div>
         </form>

@@ -6,7 +6,7 @@ import type { Reservation, PaymentStatus, Customer } from '@/lib/supabase/types'
 import { ReservationsFilters } from './_components/ReservationsFilters'
 
 export const metadata: Metadata = {
-  title: 'Reservations — Villa Paradise Tahiti Admin',
+  title: 'Réservations — Villa Paradise Tahiti Admin',
 }
 
 export const dynamic = 'force-dynamic'
@@ -114,10 +114,10 @@ export default async function ReservationsPage({ searchParams }: PageProps) {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="font-heading text-2xl font-semibold text-midnight">
-            Reservations
+            Réservations
           </h1>
           <p className="mt-1 font-sans text-sm text-midnight-400">
-            {count ?? 0} total reservation{(count ?? 0) !== 1 ? 's' : ''}
+            {count ?? 0} réservation{(count ?? 0) !== 1 ? 's' : ''} au total
           </p>
         </div>
         <a
@@ -140,7 +140,7 @@ export default async function ReservationsPage({ searchParams }: PageProps) {
             <polyline points="7 10 12 15 17 10" />
             <line x1="12" y1="15" x2="12" y2="3" />
           </svg>
-          Export CSV
+          Exporter CSV
         </a>
       </div>
 
@@ -156,10 +156,10 @@ export default async function ReservationsPage({ searchParams }: PageProps) {
       {rows.length === 0 ? (
         <div className="mt-6 rounded-2xl border border-pearl-400 bg-white px-8 py-16 text-center shadow-sm">
           <p className="font-heading text-lg text-midnight-400">
-            No reservations found
+            Aucune réservation trouvée
           </p>
           <p className="mt-1 font-sans text-sm text-midnight-400">
-            Try adjusting your filters or search term.
+            Essayez d&apos;ajuster vos filtres ou votre recherche.
           </p>
         </div>
       ) : (
@@ -249,7 +249,7 @@ export default async function ReservationsPage({ searchParams }: PageProps) {
                         href={`/admin/reservations/${r.id}`}
                         className="font-sans text-sm font-medium text-gold hover:underline"
                       >
-                        View →
+                        Voir →
                       </Link>
                     </td>
                   </tr>
@@ -264,7 +264,7 @@ export default async function ReservationsPage({ searchParams }: PageProps) {
       {totalPages > 1 && (
         <div className="mt-6 flex items-center justify-between">
           <p className="font-sans text-sm text-midnight-400">
-            Page {page} of {totalPages} &mdash; {count ?? 0} reservations
+            Page {page} sur {totalPages}, {count ?? 0} réservations
           </p>
           <div className="flex gap-2">
             {page > 1 && (
@@ -272,7 +272,7 @@ export default async function ReservationsPage({ searchParams }: PageProps) {
                 href={buildUrl(page - 1)}
                 className="rounded-xl border border-pearl-400 bg-white px-4 py-2 font-sans text-sm font-medium text-midnight shadow-sm transition-colors hover:border-midnight"
               >
-                ← Previous
+                ← Précédent
               </Link>
             )}
             {page < totalPages && (
@@ -280,7 +280,7 @@ export default async function ReservationsPage({ searchParams }: PageProps) {
                 href={buildUrl(page + 1)}
                 className="rounded-xl border border-pearl-400 bg-white px-4 py-2 font-sans text-sm font-medium text-midnight shadow-sm transition-colors hover:border-midnight"
               >
-                Next →
+                Suivant →
               </Link>
             )}
           </div>

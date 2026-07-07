@@ -68,8 +68,8 @@ export default async function ClientsPage({ searchParams }: PageProps) {
             Clients
           </h1>
           <p className="mt-1 font-sans text-sm text-midnight-400">
-            {count.toLocaleString('fr-FR')} client{count !== 1 ? 's' : ''} — unified CRM
-            across direct bookings and external channels.
+            {count.toLocaleString('fr-FR')} client{count !== 1 ? 's' : ''}, CRM unifié
+            entre réservations directes et canaux externes.
           </p>
         </div>
         <NewClientButton />
@@ -94,7 +94,7 @@ export default async function ClientsPage({ searchParams }: PageProps) {
       {totalPages > 1 ? (
         <div className="mt-6 flex items-center justify-between">
           <p className="font-sans text-sm text-midnight-400">
-            Page {page} of {totalPages} — {count} clients
+            Page {page} sur {totalPages}, {count} clients
           </p>
           <div className="flex gap-2">
             {page > 1 ? (
@@ -102,7 +102,7 @@ export default async function ClientsPage({ searchParams }: PageProps) {
                 href={buildUrl(page - 1)}
                 className="rounded-xl border border-pearl-400 bg-white px-4 py-2 font-sans text-sm font-medium text-midnight shadow-sm transition-colors hover:border-midnight"
               >
-                ← Previous
+                ← Précédent
               </Link>
             ) : null}
             {page < totalPages ? (
@@ -110,7 +110,7 @@ export default async function ClientsPage({ searchParams }: PageProps) {
                 href={buildUrl(page + 1)}
                 className="rounded-xl border border-pearl-400 bg-white px-4 py-2 font-sans text-sm font-medium text-midnight shadow-sm transition-colors hover:border-midnight"
               >
-                Next →
+                Suivant →
               </Link>
             ) : null}
           </div>
@@ -176,7 +176,7 @@ async function fetchKpis(): Promise<KpiData> {
           check_in: string
           customers: { first_name: string; last_name: string } | null
         }).customers
-        const name = c ? `${c.first_name} ${c.last_name}`.trim() : 'Unknown guest'
+        const name = c ? `${c.first_name} ${c.last_name}`.trim() : 'Voyageur inconnu'
         return { name, date: (nextArrivalRes.data as { check_in: string }).check_in }
       })()
     : null

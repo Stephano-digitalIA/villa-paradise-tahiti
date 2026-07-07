@@ -11,9 +11,9 @@ const SOURCE_LABELS: Record<AcquisitionSource, string> = {
   airbnb: 'Airbnb',
   booking: 'Booking.com',
   vrbo: 'VRBO',
-  referral: 'Referral',
-  manual: 'Manual',
-  imported: 'Imported',
+  referral: 'Recommandation',
+  manual: 'Manuel',
+  imported: 'Importé',
 }
 
 interface ClientFiltersProps {
@@ -75,7 +75,7 @@ export function ClientFilters({ tags }: ClientFiltersProps) {
             type="search"
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="Search name, email, phone…"
+            placeholder="Rechercher nom, e-mail, téléphone…"
             className="w-full rounded-xl border border-pearl-400 bg-white py-2.5 pl-9 pr-3 font-sans text-sm text-midnight placeholder:text-midnight-400 focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/30"
           />
         </div>
@@ -84,9 +84,9 @@ export function ClientFilters({ tags }: ClientFiltersProps) {
           value={activeSource}
           onChange={(e) => navigate(buildHref({ source: e.target.value || null }))}
           className="rounded-xl border border-pearl-400 bg-white px-3 py-2.5 font-sans text-sm text-midnight focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/30"
-          aria-label="Filter by source"
+          aria-label="Filtrer par source"
         >
-          <option value="">All sources</option>
+          <option value="">Toutes les sources</option>
           {(Object.keys(SOURCE_LABELS) as AcquisitionSource[]).map((src) => (
             <option key={src} value={src}>
               {SOURCE_LABELS[src]}
@@ -101,12 +101,12 @@ export function ClientFilters({ tags }: ClientFiltersProps) {
             className="inline-flex items-center gap-1.5 rounded-xl border border-pearl-400 bg-white px-3 py-2.5 font-sans text-sm font-medium text-midnight-400 transition-colors hover:border-midnight hover:text-midnight"
           >
             <X className="h-3.5 w-3.5" aria-hidden="true" />
-            Clear filters
+            Réinitialiser les filtres
           </button>
         ) : null}
 
         {isPending ? (
-          <span className="font-sans text-xs text-midnight-400">Updating…</span>
+          <span className="font-sans text-xs text-midnight-400">Mise à jour…</span>
         ) : null}
       </form>
 

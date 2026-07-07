@@ -85,7 +85,7 @@ export function LinkClientPanel({
         <div className="mb-3 flex items-center gap-2">
           <LinkIcon className="h-4 w-4 text-midnight-400" aria-hidden="true" />
           <p className="font-sans text-sm font-medium text-midnight">
-            Link this reservation to a client
+            Lier cette réservation à un client
           </p>
         </div>
 
@@ -99,7 +99,7 @@ export function LinkClientPanel({
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             disabled={pending}
-            placeholder="Search by name or email…"
+            placeholder="Rechercher par nom ou e-mail…"
             className="w-full rounded-xl border border-pearl-400 bg-white py-2 pl-9 pr-3 font-sans text-sm text-midnight placeholder:text-midnight-400 focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/30 disabled:opacity-60"
           />
         </div>
@@ -108,11 +108,11 @@ export function LinkClientPanel({
           <ul className="mt-2 max-h-56 overflow-y-auto rounded-xl border border-pearl-400 bg-white shadow-sm">
             {searching ? (
               <li className="px-3 py-3 font-sans text-xs text-midnight-400">
-                Searching…
+                Recherche…
               </li>
             ) : results.length === 0 ? (
               <li className="px-3 py-3 font-sans text-xs text-midnight-400">
-                No match. Create a new client below.
+                Aucun résultat. Créez un nouveau client ci-dessous.
               </li>
             ) : (
               results.map((c) => (
@@ -132,7 +132,7 @@ export function LinkClientPanel({
                       </span>
                     </span>
                     <span className="font-sans text-xs font-medium text-gold">
-                      Link →
+                      Lier →
                     </span>
                   </button>
                 </li>
@@ -143,7 +143,7 @@ export function LinkClientPanel({
 
         <div className="mt-3 flex items-center justify-between gap-3">
           <p className="font-sans text-xs text-midnight-400">
-            Not in the CRM yet?
+            Pas encore dans le CRM ?
           </p>
           <button
             type="button"
@@ -152,7 +152,7 @@ export function LinkClientPanel({
             className="inline-flex items-center gap-1.5 rounded-lg border border-pearl-400 bg-white px-3 py-1.5 font-sans text-xs font-semibold text-midnight transition-colors hover:border-midnight"
           >
             <Plus className="h-3 w-3" aria-hidden="true" />
-            New client
+            Nouveau client
           </button>
         </div>
 

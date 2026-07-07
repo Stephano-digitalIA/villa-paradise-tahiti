@@ -20,9 +20,9 @@ export function ClientsListTable({ rows }: ClientsListTableProps) {
   if (rows.length === 0) {
     return (
       <div className="rounded-2xl border border-pearl-400 bg-white px-8 py-16 text-center shadow-sm">
-        <p className="font-heading text-lg text-midnight-400">No clients found</p>
+        <p className="font-heading text-lg text-midnight-400">Aucun client trouvé</p>
         <p className="mt-1 font-sans text-sm text-midnight-400">
-          Try adjusting your filters or create one from the button above.
+          Ajustez les filtres ou créez-en un depuis le bouton ci-dessus.
         </p>
       </div>
     )
@@ -37,7 +37,7 @@ export function ClientsListTable({ rows }: ClientsListTableProps) {
               {[
                 '',
                 'Nom',
-                'Email',
+                'E-mail',
                 'Téléphone',
                 'Pays',
                 'Tags',
@@ -81,7 +81,7 @@ export function ClientsListTable({ rows }: ClientsListTableProps) {
                       href={`/admin/clients/${c.id}`}
                       className="font-sans text-sm font-medium text-midnight hover:text-gold"
                     >
-                      {isAnon ? '[Anonymized]' : `${c.first_name} ${c.last_name}`}
+                      {isAnon ? '[Anonymisé]' : `${c.first_name} ${c.last_name}`}
                     </Link>
                   </td>
                   <td className="px-4 py-4 font-sans text-sm text-midnight-400">
@@ -143,7 +143,7 @@ export function ClientsListTable({ rows }: ClientsListTableProps) {
                       href={`/admin/clients/${c.id}`}
                       className="font-sans text-sm font-medium text-gold hover:underline"
                     >
-                      View →
+                      Voir →
                     </Link>
                   </td>
                 </tr>

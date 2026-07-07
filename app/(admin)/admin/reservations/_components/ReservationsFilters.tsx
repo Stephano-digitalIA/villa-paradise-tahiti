@@ -58,7 +58,7 @@ export function ReservationsFilters({ currentStatus, currentQ }: Props) {
       <input
         ref={qRef}
         type="text"
-        placeholder="Search by reference..."
+        placeholder="Rechercher par référence..."
         defaultValue={currentQ ?? ''}
         className="flex-1 rounded-lg border border-pearl-400 bg-pearl px-3 py-2 font-sans text-sm text-midnight placeholder-midnight-300 focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
       />
@@ -68,7 +68,7 @@ export function ReservationsFilters({ currentStatus, currentQ }: Props) {
           type="submit"
           className="rounded-xl bg-midnight px-4 py-2 font-sans text-sm font-medium text-pearl transition-colors hover:bg-midnight-700"
         >
-          Apply
+          Appliquer
         </button>
         {(currentStatus || currentQ) && (
           <button
@@ -76,7 +76,7 @@ export function ReservationsFilters({ currentStatus, currentQ }: Props) {
             onClick={handleReset}
             className="rounded-xl border border-pearl-400 bg-white px-4 py-2 font-sans text-sm font-medium text-midnight transition-colors hover:border-midnight"
           >
-            Clear
+            Réinitialiser
           </button>
         )}
       </div>

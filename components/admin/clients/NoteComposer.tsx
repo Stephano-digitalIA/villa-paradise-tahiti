@@ -38,21 +38,21 @@ export function NoteComposer({ customerId }: NoteComposerProps) {
       className="rounded-2xl border border-pearl-400 bg-white p-4 shadow-sm"
     >
       <label htmlFor="note-body" className="sr-only">
-        New private note
+        Nouvelle note privée
       </label>
       <textarea
         id="note-body"
         rows={3}
         value={body}
         onChange={(e) => setBody(e.target.value)}
-        placeholder="Add a private note — preferences, incidents, follow-ups…"
+        placeholder="Ajouter une note privée : préférences, incidents, suivis…"
         disabled={pending}
         maxLength={4000}
         className="w-full resize-y rounded-xl border border-pearl-400 bg-white px-3 py-2.5 font-sans text-sm text-midnight placeholder:text-midnight-400 focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/30 disabled:opacity-60"
       />
       <div className="mt-2 flex items-center justify-between gap-3">
         <p className="font-sans text-xs text-midnight-400">
-          {body.length}/4000 · only visible to admins
+          {body.length}/4000 · visible uniquement par les administrateurs
         </p>
         <button
           type="submit"
@@ -60,7 +60,7 @@ export function NoteComposer({ customerId }: NoteComposerProps) {
           className="inline-flex items-center gap-2 rounded-xl bg-midnight px-4 py-2 font-sans text-sm font-semibold text-pearl shadow-sm transition-colors hover:bg-midnight/90 disabled:cursor-not-allowed disabled:bg-midnight/40"
         >
           <Send className="h-3.5 w-3.5" aria-hidden="true" />
-          {pending ? 'Saving…' : 'Add note'}
+          {pending ? 'Enregistrement…' : 'Ajouter une note'}
         </button>
       </div>
       {error ? (

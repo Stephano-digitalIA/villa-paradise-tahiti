@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   const name = data
     ? data.anonymized_at
-      ? '[Anonymized]'
+      ? '[Anonymisé]'
       : `${data.first_name} ${data.last_name}`.trim()
     : 'Client'
   return {
@@ -114,7 +114,7 @@ export default async function ClientDetailPage({
         <span className="font-sans text-sm text-midnight-400">/</span>
         <span className="font-sans text-sm font-medium text-midnight truncate">
           {summary.anonymized_at
-            ? '[Anonymized]'
+            ? '[Anonymisé]'
             : `${summary.first_name} ${summary.last_name}`.trim()}
         </span>
       </div>

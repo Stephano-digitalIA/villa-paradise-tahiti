@@ -30,8 +30,8 @@ export function ClientStaysTab({ reservations }: ClientStaysTabProps) {
   if (reservations.length === 0) {
     return (
       <EmptyState
-        title="No stays yet"
-        subtitle="When this client books — directly or via an external channel — their reservations will appear here."
+        title="Aucun séjour"
+        subtitle="Lorsque ce client réservera (directement ou via un canal externe), ses réservations apparaîtront ici."
       />
     )
   }
@@ -42,13 +42,13 @@ export function ClientStaysTab({ reservations }: ClientStaysTabProps) {
   return (
     <div className="flex flex-col gap-6">
       {upcoming.length > 0 ? (
-        <Section title="Upcoming" count={upcoming.length}>
+        <Section title="À venir" count={upcoming.length}>
           <StaysTable rows={upcoming} />
         </Section>
       ) : null}
 
       {past.length > 0 ? (
-        <Section title="Past" count={past.length}>
+        <Section title="Passés" count={past.length}>
           <StaysTable rows={past} />
         </Section>
       ) : null}
@@ -109,7 +109,7 @@ function StaysTable({ rows }: { rows: Reservation[] }) {
                     href={`/admin/reservations/${r.id}`}
                     className="font-sans text-sm font-medium text-gold hover:underline"
                   >
-                    View →
+                    Voir →
                   </Link>
                 </td>
               </tr>

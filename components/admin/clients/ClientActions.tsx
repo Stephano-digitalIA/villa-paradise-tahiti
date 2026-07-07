@@ -35,29 +35,29 @@ export function ClientActions({
 
         <ActionButton
           icon={<Mail className="h-4 w-4" />}
-          label="Send an email"
+          label="Envoyer un e-mail"
           onClick={() => setEmailOpen(true)}
           disabled={isAnonymized}
-          hint={isAnonymized ? 'Anonymized' : undefined}
+          hint={isAnonymized ? 'Anonymisé' : undefined}
         />
 
         <ActionButton
           icon={<CalendarPlus className="h-4 w-4" />}
-          label="New reservation"
+          label="Nouvelle réservation"
           disabled
-          hint="Coming P5"
+          hint="À venir"
         />
 
         <ActionButton
           icon={<Download className="h-4 w-4" />}
-          label="Export data (GDPR)"
+          label="Exporter les données (RGPD)"
           href={`/api/admin/clients/${customerId}/export`}
           download
         />
 
         <ActionButton
           icon={<Trash2 className="h-4 w-4 text-coral" />}
-          label={isAnonymized ? 'Already anonymized' : 'Anonymize (GDPR)'}
+          label={isAnonymized ? 'Déjà anonymisé' : 'Anonymiser (RGPD)'}
           onClick={() => setAnonymizeOpen(true)}
           disabled={isAnonymized}
           hint={isAnonymized && anonymizedAt ? formatDate(anonymizedAt) : undefined}

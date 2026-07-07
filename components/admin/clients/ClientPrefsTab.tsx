@@ -7,13 +7,13 @@ interface ClientPrefsTabProps {
 }
 
 const SOURCE_LABEL: Record<string, string> = {
-  direct: 'Direct booking',
+  direct: 'Réservation directe',
   airbnb: 'Airbnb',
   booking: 'Booking.com',
   vrbo: 'VRBO',
-  referral: 'Referral',
-  manual: 'Manual entry',
-  imported: 'Imported',
+  referral: 'Recommandation',
+  manual: 'Saisie manuelle',
+  imported: 'Importé',
 }
 
 const LANGUAGE_LABEL: Record<string, string> = {
@@ -30,12 +30,12 @@ export function ClientPrefsTab({ customer }: ClientPrefsTabProps) {
   return (
     <div className="flex flex-col gap-4">
       <p className="rounded-xl border border-pearl-400 bg-pearl-300/40 px-4 py-2.5 font-sans text-xs italic text-midnight-400">
-        Read-only view — preference editing arrives in P3.
+        Vue en lecture seule : l&apos;édition des préférences arrive en P3.
       </p>
 
-      <Section title="Marketing consent">
+      <Section title="Consentement marketing">
         <Row
-          label="Accepts marketing emails"
+          label="Accepte les e-mails marketing"
           value={
             <span
               className={`inline-flex items-center gap-1.5 font-sans text-sm font-medium ${
@@ -47,38 +47,38 @@ export function ClientPrefsTab({ customer }: ClientPrefsTabProps) {
               ) : (
                 <X className="h-4 w-4" />
               )}
-              {customer.accept_marketing ? 'Yes' : 'No'}
+              {customer.accept_marketing ? 'Oui' : 'Non'}
             </span>
           }
         />
         <Row
-          label="Consent recorded at"
+          label="Consentement enregistré le"
           value={
             customer.marketing_consent_at
               ? formatDateTime(customer.marketing_consent_at)
-              : '—'
+              : '·'
           }
         />
       </Section>
 
-      <Section title="Locale & language">
+      <Section title="Localisation & langue">
         <Row
-          label="Preferred language"
+          label="Langue préférée"
           value={
             customer.preferred_language
               ? LANGUAGE_LABEL[customer.preferred_language] ?? customer.preferred_language
-              : '—'
+              : '·'
           }
         />
       </Section>
 
-      <Section title="Dietary & special notes">
+      <Section title="Préférences alimentaires & notes spéciales">
         {customer.dietary_notes ? (
           <p className="whitespace-pre-wrap font-sans text-sm text-midnight">
             {customer.dietary_notes}
           </p>
         ) : (
-          <p className="font-sans text-sm italic text-midnight-400">No notes recorded</p>
+          <p className="font-sans text-sm italic text-midnight-400">Aucune note enregistrée</p>
         )}
       </Section>
 
@@ -88,10 +88,10 @@ export function ClientPrefsTab({ customer }: ClientPrefsTabProps) {
           value={
             customer.acquisition_source
               ? SOURCE_LABEL[customer.acquisition_source] ?? customer.acquisition_source
-              : '—'
+              : '·'
           }
         />
-        <Row label="Customer since" value={formatDate(customer.created_at)} />
+        <Row label="Client depuis" value={formatDate(customer.created_at)} />
       </Section>
     </div>
   )

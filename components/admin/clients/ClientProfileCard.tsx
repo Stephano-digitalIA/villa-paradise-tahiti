@@ -13,7 +13,7 @@ interface ClientProfileCardProps {
 export function ClientProfileCard({ customer, allTags }: ClientProfileCardProps) {
   const isAnon = !!customer.anonymized_at
   const fullName = isAnon
-    ? '[Anonymized]'
+    ? '[Anonymisé]'
     : `${customer.first_name} ${customer.last_name}`.trim()
   const initial = (customer.first_name?.[0] ?? '?').toUpperCase()
   const status = deriveStatus(customer)
@@ -33,7 +33,7 @@ export function ClientProfileCard({ customer, allTags }: ClientProfileCardProps)
             {fullName}
           </h2>
           <p className="mt-1 font-sans text-xs text-midnight-400">
-            Customer since {formatDate(customer.created_at)}
+            Client depuis {formatDate(customer.created_at)}
           </p>
           {status ? (
             <span className="mt-2 inline-flex items-center gap-1 rounded-full bg-gold/15 px-2 py-0.5 font-sans text-xs font-semibold text-midnight">
@@ -60,7 +60,7 @@ export function ClientProfileCard({ customer, allTags }: ClientProfileCardProps)
         </div>
       ) : (
         <p className="border-t border-pearl-400 pt-4 font-sans text-xs italic text-midnight-400">
-          Contact details removed (GDPR anonymization).
+          Coordonnées supprimées (anonymisation RGPD).
         </p>
       )}
 
@@ -75,14 +75,14 @@ export function ClientProfileCard({ customer, allTags }: ClientProfileCardProps)
 
       {/* ─── KPIs synthèse ──────────────────────────────── */}
       <div className="grid grid-cols-2 gap-3 border-t border-pearl-400 pt-4">
-        <Kpi label="Stays" value={String(customer.n_stays)} />
-        <Kpi label="Revenue" value={formatUSD(customer.total_revenue)} />
+        <Kpi label="Séjours" value={String(customer.n_stays)} />
+        <Kpi label="Chiffre d'affaires" value={formatUSD(customer.total_revenue)} />
         <Kpi
-          label="Last stay"
+          label="Dernier séjour"
           value={customer.last_check_in ? formatDate(customer.last_check_in) : '—'}
         />
         <Kpi
-          label="Next stay"
+          label="Prochain séjour"
           value={customer.next_check_in ? formatDate(customer.next_check_in) : '—'}
           highlight={!!customer.next_check_in}
         />
@@ -158,8 +158,8 @@ function Kpi({
 function deriveStatus(c: CustomerSummary): string | null {
   if (c.anonymized_at) return null
   if (c.n_stays >= 3) return 'VIP'
-  if (c.n_stays >= 2) return 'Repeat'
-  if (c.n_stays === 1) return 'Returning'
+  if (c.n_stays >= 2) return 'Récurrent'
+  if (c.n_stays === 1) return 'Fidèle'
   return 'Prospect'
 }
 

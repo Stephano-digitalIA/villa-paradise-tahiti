@@ -3,10 +3,10 @@ import Link from 'next/link'
 export type ClientTab = 'stays' | 'notes' | 'emails' | 'prefs'
 
 const TABS: { id: ClientTab; label: string; badgeKey: 'stays' | 'notes' | 'emails' | null }[] = [
-  { id: 'stays',  label: 'Stays',       badgeKey: 'stays' },
-  { id: 'notes',  label: 'Notes',       badgeKey: 'notes' },
-  { id: 'emails', label: 'Emails',      badgeKey: 'emails' },
-  { id: 'prefs',  label: 'Preferences', badgeKey: null },
+  { id: 'stays',  label: 'Séjours',      badgeKey: 'stays' },
+  { id: 'notes',  label: 'Notes',        badgeKey: 'notes' },
+  { id: 'emails', label: 'E-mails',      badgeKey: 'emails' },
+  { id: 'prefs',  label: 'Préférences',  badgeKey: null },
 ]
 
 interface ClientTabsProps {
@@ -22,7 +22,7 @@ interface ClientTabsProps {
 export function ClientTabs({ customerId, active, counts }: ClientTabsProps) {
   return (
     <nav
-      aria-label="Client tabs"
+      aria-label="Onglets client"
       className="flex items-center gap-1 border-b border-pearl-400"
     >
       {TABS.map((tab) => {

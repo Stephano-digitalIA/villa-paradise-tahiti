@@ -12,17 +12,17 @@ const STATUS_STYLE: Record<
 > = {
   sent: {
     icon: <CheckCircle2 className="h-4 w-4" />,
-    label: 'Delivered',
+    label: 'Distribué',
     color: 'text-leaf',
   },
   failed: {
     icon: <XCircle className="h-4 w-4" />,
-    label: 'Failed',
+    label: 'Échec',
     color: 'text-coral',
   },
   bounced: {
     icon: <AlertCircle className="h-4 w-4" />,
-    label: 'Bounced',
+    label: 'Rejeté',
     color: 'text-coral',
   },
 }
@@ -33,10 +33,10 @@ export function ClientEmailsTab({ emails }: ClientEmailsTabProps) {
       <div className="rounded-2xl border border-pearl-400 bg-white px-8 py-16 text-center shadow-sm">
         <Mail className="mx-auto h-8 w-8 text-midnight-400" aria-hidden="true" />
         <p className="mt-3 font-heading text-lg text-midnight-400">
-          No emails sent yet
+          Aucun e-mail pour l&apos;instant
         </p>
         <p className="mt-1 font-sans text-sm text-midnight-400">
-          Transactional and custom emails sent to this client will appear here.
+          Les e-mails transactionnels et personnalisés envoyés à ce client apparaîtront ici.
         </p>
       </div>
     )

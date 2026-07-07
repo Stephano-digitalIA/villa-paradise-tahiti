@@ -69,7 +69,7 @@ type PageProps = { params: { id: string } }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   return {
-    title: `Reservation ${params.id} — Villa Paradise Tahiti Admin`,
+    title: `Réservation ${params.id} — Villa Paradise Tahiti Admin`,
   }
 }
 
@@ -134,7 +134,7 @@ export default async function ReservationDetailPage({ params }: PageProps) {
         >
           <polyline points="15 18 9 12 15 6" />
         </svg>
-        Back to reservations
+        Retour aux réservations
       </Link>
 
       {/* Header */}
@@ -149,7 +149,7 @@ export default async function ReservationDetailPage({ params }: PageProps) {
             </Badge>
           </div>
           <p className="mt-1 font-sans text-sm text-midnight-400">
-            Created {formatDateTime(r.created_at)}
+            Créée le {formatDateTime(r.created_at)}
             {r.payment_method && ` · ${r.payment_method}`}
           </p>
         </div>
@@ -162,14 +162,14 @@ export default async function ReservationDetailPage({ params }: PageProps) {
           {/* Client info */}
           <div className="rounded-2xl border border-pearl-400 bg-white p-6 shadow-sm">
             <h2 className="font-heading text-base font-semibold text-midnight">
-              Guest Information
+              Informations voyageur
             </h2>
             {customer ? (
               <>
                 <dl className="mt-4 space-y-3">
                   <div className="flex gap-4">
                     <dt className="w-28 flex-shrink-0 font-sans text-xs font-semibold uppercase tracking-wider text-midnight-400">
-                      Name
+                      Nom
                     </dt>
                     <dd className="font-sans text-sm text-midnight">
                       {customer.first_name} {customer.last_name}
@@ -177,7 +177,7 @@ export default async function ReservationDetailPage({ params }: PageProps) {
                   </div>
                   <div className="flex gap-4">
                     <dt className="w-28 flex-shrink-0 font-sans text-xs font-semibold uppercase tracking-wider text-midnight-400">
-                      Email
+                      E-mail
                     </dt>
                     <dd className="font-sans text-sm text-midnight">
                       <a
@@ -191,7 +191,7 @@ export default async function ReservationDetailPage({ params }: PageProps) {
                   {customer.phone && (
                     <div className="flex gap-4">
                       <dt className="w-28 flex-shrink-0 font-sans text-xs font-semibold uppercase tracking-wider text-midnight-400">
-                        Phone
+                        Téléphone
                       </dt>
                       <dd className="font-sans text-sm text-midnight">
                         {customer.phone}
@@ -201,7 +201,7 @@ export default async function ReservationDetailPage({ params }: PageProps) {
                   {customer.country && (
                     <div className="flex gap-4">
                       <dt className="w-28 flex-shrink-0 font-sans text-xs font-semibold uppercase tracking-wider text-midnight-400">
-                        Country
+                        Pays
                       </dt>
                       <dd className="font-sans text-sm text-midnight">
                         {customer.city ? `${customer.city}, ` : ''}
@@ -215,7 +215,7 @@ export default async function ReservationDetailPage({ params }: PageProps) {
                     href={`/admin/clients/${customer.id}`}
                     className="font-sans text-sm font-medium text-gold hover:underline"
                   >
-                    View full client profile →
+                    Voir la fiche client complète →
                   </Link>
                 </div>
               </>
@@ -227,7 +227,7 @@ export default async function ReservationDetailPage({ params }: PageProps) {
           {/* Internal notes */}
           <div className="rounded-2xl border border-pearl-400 bg-white p-6 shadow-sm">
             <h2 className="font-heading text-base font-semibold text-midnight">
-              Internal Notes
+              Notes internes
             </h2>
             <NotesForm
               reservationId={r.id}
@@ -239,7 +239,7 @@ export default async function ReservationDetailPage({ params }: PageProps) {
           {r.special_requests && (
             <div className="rounded-2xl border border-pearl-400 bg-white p-6 shadow-sm">
               <h2 className="font-heading text-base font-semibold text-midnight">
-                Special Requests
+                Demandes particulières
               </h2>
               <p className="mt-3 font-sans text-sm text-midnight">
                 {r.special_requests}
@@ -253,12 +253,12 @@ export default async function ReservationDetailPage({ params }: PageProps) {
           {/* Booking details */}
           <div className="rounded-2xl border border-pearl-400 bg-white p-6 shadow-sm">
             <h2 className="font-heading text-base font-semibold text-midnight">
-              Booking Details
+              Détails de la réservation
             </h2>
             <dl className="mt-4 space-y-3">
               <div className="flex gap-4">
                 <dt className="w-28 flex-shrink-0 font-sans text-xs font-semibold uppercase tracking-wider text-midnight-400">
-                  Check-in
+                  Arrivée
                 </dt>
                 <dd className="font-sans text-sm text-midnight">
                   {formatDate(r.check_in)}
@@ -266,7 +266,7 @@ export default async function ReservationDetailPage({ params }: PageProps) {
               </div>
               <div className="flex gap-4">
                 <dt className="w-28 flex-shrink-0 font-sans text-xs font-semibold uppercase tracking-wider text-midnight-400">
-                  Check-out
+                  Départ
                 </dt>
                 <dd className="font-sans text-sm text-midnight">
                   {formatDate(r.check_out)}
@@ -274,13 +274,13 @@ export default async function ReservationDetailPage({ params }: PageProps) {
               </div>
               <div className="flex gap-4">
                 <dt className="w-28 flex-shrink-0 font-sans text-xs font-semibold uppercase tracking-wider text-midnight-400">
-                  Nights
+                  Nuits
                 </dt>
                 <dd className="font-sans text-sm text-midnight">{nights}</dd>
               </div>
               <div className="flex gap-4">
                 <dt className="w-28 flex-shrink-0 font-sans text-xs font-semibold uppercase tracking-wider text-midnight-400">
-                  Guests
+                  Voyageurs
                 </dt>
                 <dd className="font-sans text-sm text-midnight">
                   {r.num_guests}
@@ -289,7 +289,7 @@ export default async function ReservationDetailPage({ params }: PageProps) {
               {r.arrival_flight && (
                 <div className="flex gap-4">
                   <dt className="w-28 flex-shrink-0 font-sans text-xs font-semibold uppercase tracking-wider text-midnight-400">
-                    Arrival
+                    Vol arrivée
                   </dt>
                   <dd className="font-sans text-sm text-midnight">
                     {r.arrival_flight}
@@ -299,7 +299,7 @@ export default async function ReservationDetailPage({ params }: PageProps) {
               {r.departure_flight && (
                 <div className="flex gap-4">
                   <dt className="w-28 flex-shrink-0 font-sans text-xs font-semibold uppercase tracking-wider text-midnight-400">
-                    Departure
+                    Vol départ
                   </dt>
                   <dd className="font-sans text-sm text-midnight">
                     {r.departure_flight}
@@ -311,13 +311,13 @@ export default async function ReservationDetailPage({ params }: PageProps) {
             {/* Price breakdown */}
             <div className="mt-6 border-t border-pearl-400 pt-4">
               <h3 className="font-heading text-sm font-semibold text-midnight">
-                Price Breakdown
+                Détail du prix
               </h3>
               <dl className="mt-3 space-y-2">
                 {r.villa_subtotal != null && (
                   <div className="flex justify-between">
                     <dt className="font-sans text-sm text-midnight-400">
-                      Villa ({nights} nights × {formatUSD(r.nightly_rate_usd)})
+                      Villa ({nights} nuits × {formatUSD(r.nightly_rate_usd)})
                     </dt>
                     <dd className="font-sans text-sm text-midnight">
                       {formatUSD(r.villa_subtotal)}
@@ -327,7 +327,7 @@ export default async function ReservationDetailPage({ params }: PageProps) {
                 {r.cleaning_fee != null && (
                   <div className="flex justify-between">
                     <dt className="font-sans text-sm text-midnight-400">
-                      Cleaning fee
+                      Frais de ménage
                     </dt>
                     <dd className="font-sans text-sm text-midnight">
                       {formatUSD(r.cleaning_fee)}
@@ -337,7 +337,7 @@ export default async function ReservationDetailPage({ params }: PageProps) {
                 {r.experiences_total != null && r.experiences_total > 0 && (
                   <div className="flex justify-between">
                     <dt className="font-sans text-sm text-midnight-400">
-                      Experiences
+                      Expériences
                     </dt>
                     <dd className="font-sans text-sm text-midnight">
                       {formatUSD(r.experiences_total)}
@@ -347,7 +347,7 @@ export default async function ReservationDetailPage({ params }: PageProps) {
                 {r.long_stay_discount != null && r.long_stay_discount > 0 && (
                   <div className="flex justify-between">
                     <dt className="font-sans text-sm text-leaf">
-                      Long-stay discount
+                      Remise long séjour
                     </dt>
                     <dd className="font-sans text-sm text-leaf">
                       −{formatUSD(r.long_stay_discount)}
@@ -374,7 +374,7 @@ export default async function ReservationDetailPage({ params }: PageProps) {
                 </div>
                 <div className="flex justify-between">
                   <dt className="font-sans text-sm text-midnight-400">
-                    Deposit (paid)
+                    Acompte (payé)
                   </dt>
                   <dd className="font-sans text-sm text-midnight">
                     {formatUSD(r.deposit_amount)}
@@ -382,7 +382,7 @@ export default async function ReservationDetailPage({ params }: PageProps) {
                 </div>
                 <div className="flex justify-between">
                   <dt className="font-sans text-sm text-midnight-400">
-                    Balance due
+                    Solde dû
                   </dt>
                   <dd className="font-sans text-sm font-semibold text-midnight">
                     {formatUSD(r.balance_amount)}
@@ -396,7 +396,7 @@ export default async function ReservationDetailPage({ params }: PageProps) {
           {experiences.length > 0 && (
             <div className="rounded-2xl border border-pearl-400 bg-white p-6 shadow-sm">
               <h2 className="font-heading text-base font-semibold text-midnight">
-                Selected Experiences
+                Expériences sélectionnées
               </h2>
               <ul className="mt-4 space-y-2">
                 {experiences.map((exp) => (
@@ -421,11 +421,11 @@ export default async function ReservationDetailPage({ params }: PageProps) {
       {/* Payment Events */}
       <div className="mt-6 rounded-2xl border border-pearl-400 bg-white p-6 shadow-sm">
         <h2 className="font-heading text-base font-semibold text-midnight">
-          Payment Events
+          Événements de paiement
         </h2>
         {paymentEvents.length === 0 ? (
           <p className="mt-4 font-sans text-sm text-midnight-400">
-            No payment events recorded.
+            Aucun événement de paiement enregistré.
           </p>
         ) : (
           <ol className="mt-4 space-y-3">
@@ -449,11 +449,11 @@ export default async function ReservationDetailPage({ params }: PageProps) {
       {/* Email Logs */}
       <div className="mt-6 rounded-2xl border border-pearl-400 bg-white p-6 shadow-sm">
         <h2 className="font-heading text-base font-semibold text-midnight">
-          Email Logs
+          Journal des e-mails
         </h2>
         {emailLogs.length === 0 ? (
           <p className="mt-4 font-sans text-sm text-midnight-400">
-            No emails sent for this reservation.
+            Aucun e-mail envoyé pour cette réservation.
           </p>
         ) : (
           <div className="mt-4 overflow-x-auto">

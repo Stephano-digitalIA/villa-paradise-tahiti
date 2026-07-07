@@ -68,7 +68,7 @@ export function NoteItem({ note, customerId }: NoteItemProps) {
       <div className="rounded-2xl border border-pearl-400 bg-white p-4 shadow-sm">
         <header className="flex items-center justify-between gap-2">
           <p className="font-sans text-xs font-semibold text-midnight-400">
-            {note.author_name ?? 'Unknown'}
+            {note.author_name ?? 'Inconnu'}
           </p>
           <div className="flex items-center gap-2">
             <time
@@ -83,7 +83,7 @@ export function NoteItem({ note, customerId }: NoteItemProps) {
                   type="button"
                   onClick={startEdit}
                   disabled={pending}
-                  aria-label="Edit note"
+                  aria-label="Modifier la note"
                   className="rounded-md p-1 text-midnight-400 transition-colors hover:bg-pearl-300/60 hover:text-midnight"
                 >
                   <Pencil className="h-3.5 w-3.5" aria-hidden="true" />
@@ -92,7 +92,7 @@ export function NoteItem({ note, customerId }: NoteItemProps) {
                   type="button"
                   onClick={() => setConfirmDelete(true)}
                   disabled={pending}
-                  aria-label="Delete note"
+                  aria-label="Supprimer la note"
                   className="rounded-md p-1 text-midnight-400 transition-colors hover:bg-coral/10 hover:text-coral"
                 >
                   <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
@@ -120,7 +120,7 @@ export function NoteItem({ note, customerId }: NoteItemProps) {
                 className="inline-flex items-center gap-1.5 rounded-lg border border-pearl-400 px-3 py-1.5 font-sans text-xs font-medium text-midnight-400 hover:border-midnight hover:text-midnight"
               >
                 <X className="h-3 w-3" aria-hidden="true" />
-                Cancel
+                Annuler
               </button>
               <button
                 type="button"
@@ -129,14 +129,14 @@ export function NoteItem({ note, customerId }: NoteItemProps) {
                 className="inline-flex items-center gap-1.5 rounded-lg bg-midnight px-3 py-1.5 font-sans text-xs font-semibold text-pearl hover:bg-midnight/90 disabled:cursor-not-allowed disabled:bg-midnight/40"
               >
                 <Check className="h-3 w-3" aria-hidden="true" />
-                {pending ? 'Saving…' : 'Save'}
+                {pending ? 'Enregistrement…' : 'Enregistrer'}
               </button>
             </div>
           </div>
         ) : confirmDelete ? (
           <div className="mt-2 rounded-lg border border-coral/30 bg-coral/5 p-3">
             <p className="font-sans text-sm text-midnight">
-              Delete this note permanently?
+              Supprimer définitivement cette note ?
             </p>
             <div className="mt-2 flex items-center justify-end gap-2">
               <button
@@ -145,7 +145,7 @@ export function NoteItem({ note, customerId }: NoteItemProps) {
                 disabled={pending}
                 className="inline-flex items-center gap-1.5 rounded-lg border border-pearl-400 px-3 py-1.5 font-sans text-xs font-medium text-midnight-400 hover:border-midnight hover:text-midnight"
               >
-                Cancel
+                Annuler
               </button>
               <button
                 type="button"
@@ -154,7 +154,7 @@ export function NoteItem({ note, customerId }: NoteItemProps) {
                 className="inline-flex items-center gap-1.5 rounded-lg bg-coral px-3 py-1.5 font-sans text-xs font-semibold text-white hover:bg-coral/90 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 <Trash2 className="h-3 w-3" aria-hidden="true" />
-                {pending ? 'Deleting…' : 'Delete'}
+                {pending ? 'Suppression…' : 'Supprimer'}
               </button>
             </div>
           </div>
@@ -166,7 +166,7 @@ export function NoteItem({ note, customerId }: NoteItemProps) {
 
         {!isEditing && !confirmDelete && note.updated_at !== note.created_at ? (
           <p className="mt-1.5 font-sans text-[10px] italic text-midnight-400">
-            Edited {formatDateTime(note.updated_at)}
+Modifié le {formatDateTime(note.updated_at)}
           </p>
         ) : null}
 

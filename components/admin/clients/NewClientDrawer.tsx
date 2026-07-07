@@ -89,7 +89,7 @@ export function NewClientDrawer({
       }
       const { id, isNew } = res.data!
       if (!isNew) {
-        setNotice('A client with this email already exists. Opening their profile.')
+        setNotice('Un client avec cet e-mail existe déjà. Ouverture de son profil.')
       }
       if (onCreated) {
         onCreated(id, isNew)
@@ -107,12 +107,12 @@ export function NewClientDrawer({
     <div
       role="dialog"
       aria-modal="true"
-      aria-label="New client"
+      aria-label="Nouveau client"
       className="fixed inset-0 z-50 flex"
     >
       <button
         type="button"
-        aria-label="Close"
+        aria-label="Fermer"
         onClick={() => !pending && onClose()}
         className="absolute inset-0 bg-midnight/60 backdrop-blur-sm"
       />
@@ -124,14 +124,14 @@ export function NewClientDrawer({
               <UserPlus className="h-4 w-4 text-gold" aria-hidden="true" />
             </span>
             <h2 className="font-heading text-lg font-semibold text-midnight">
-              New client
+              Nouveau client
             </h2>
           </div>
           <button
             type="button"
             onClick={onClose}
             disabled={pending}
-            aria-label="Close drawer"
+            aria-label="Fermer le panneau"
             className="rounded-full p-2 text-midnight-400 transition-colors hover:bg-pearl-300/60 hover:text-midnight disabled:opacity-50"
           >
             <X className="h-4 w-4" aria-hidden="true" />
@@ -141,7 +141,7 @@ export function NewClientDrawer({
         <form onSubmit={handleSubmit} className="flex flex-1 flex-col overflow-hidden">
           <div className="flex-1 overflow-y-auto p-6">
             <div className="flex flex-col gap-4">
-              <Field label="Email" required>
+              <Field label="E-mail" required>
                 <input
                   ref={firstFieldRef}
                   type="email"
@@ -156,7 +156,7 @@ export function NewClientDrawer({
               </Field>
 
               <div className="grid grid-cols-2 gap-3">
-                <Field label="First name" required>
+                <Field label="Prénom" required>
                   <input
                     type="text"
                     value={firstName}
@@ -167,7 +167,7 @@ export function NewClientDrawer({
                     className={inputClass}
                   />
                 </Field>
-                <Field label="Last name" required>
+                <Field label="Nom" required>
                   <input
                     type="text"
                     value={lastName}
@@ -180,7 +180,7 @@ export function NewClientDrawer({
                 </Field>
               </div>
 
-              <Field label="Phone">
+              <Field label="Téléphone">
                 <input
                   type="tel"
                   value={phone}
@@ -192,7 +192,7 @@ export function NewClientDrawer({
               </Field>
 
               <div className="grid grid-cols-2 gap-3">
-                <Field label="City">
+                <Field label="Ville">
                   <input
                     type="text"
                     value={city}
@@ -202,7 +202,7 @@ export function NewClientDrawer({
                     className={inputClass}
                   />
                 </Field>
-                <Field label="Country">
+                <Field label="Pays">
                   <input
                     type="text"
                     value={country}
@@ -223,13 +223,13 @@ export function NewClientDrawer({
                   className="h-4 w-4 rounded border-pearl-400 text-gold focus:ring-gold"
                 />
                 <span className="font-sans text-sm text-midnight">
-                  Has consented to marketing emails
+                  A consenti aux e-mails marketing
                 </span>
               </label>
 
               {acquisitionSource !== 'manual' ? (
                 <p className="rounded-lg bg-pearl-300/50 px-3 py-2 font-sans text-xs text-midnight-400">
-                  Acquisition source: <strong>{acquisitionSource}</strong>
+                  Source d’acquisition : <strong>{acquisitionSource}</strong>
                 </p>
               ) : null}
 
@@ -257,7 +257,7 @@ export function NewClientDrawer({
               disabled={pending}
               className="inline-flex items-center gap-1.5 rounded-xl border border-pearl-400 bg-white px-4 py-2 font-sans text-sm font-medium text-midnight hover:border-midnight"
             >
-              Cancel
+              Annuler
             </button>
             <button
               type="submit"
@@ -265,7 +265,7 @@ export function NewClientDrawer({
               className="inline-flex items-center gap-1.5 rounded-xl bg-gold px-4 py-2 font-sans text-sm font-semibold text-midnight shadow-sm transition-colors hover:bg-gold/90 disabled:cursor-not-allowed disabled:bg-gold/40"
             >
               <Save className="h-3.5 w-3.5" aria-hidden="true" />
-              {pending ? 'Saving…' : 'Create client'}
+              {pending ? 'Enregistrement…' : 'Créer le client'}
             </button>
           </footer>
         </form>

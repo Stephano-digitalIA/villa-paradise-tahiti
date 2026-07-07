@@ -16,21 +16,21 @@ interface EmailTemplate {
 const TEMPLATES: EmailTemplate[] = [
   {
     key: 'welcome',
-    label: 'Welcome',
+    label: 'Bienvenue',
     subject: (n) => `Welcome to Villa Paradise Tahiti, ${n}`,
     body: (n) =>
       `Dear ${n},\n\nThank you for choosing Villa Paradise Tahiti. We are looking forward to welcoming you.\n\nIf you have any questions before your arrival — flight transfers, dietary preferences, special requests — simply reply to this email and I will get back to you within a few hours.\n\nWarmly,\nThierry`,
   },
   {
     key: 'pre_arrival',
-    label: '7 days before arrival',
+    label: '7 jours avant l’arrivée',
     subject: () => 'Your arrival at Villa Paradise Tahiti — last details',
     body: (n) =>
       `Dear ${n},\n\nYour stay begins in one week. To make sure everything is perfect, could you confirm:\n\n• Your arrival flight number and landing time\n• Any dietary preferences or allergies for our chef\n• Whether you would like us to organize any of our signature experiences\n\nWe look forward to welcoming you to paradise.\n\nWarmly,\nThierry`,
   },
   {
     key: 'review_request',
-    label: 'Review request (post-stay)',
+    label: 'Demande d’avis (après séjour)',
     subject: () => 'Thank you for staying with us',
     body: (n) =>
       `Dear ${n},\n\nIt was a pleasure hosting you at Villa Paradise Tahiti. We hope your stay matched everything you imagined.\n\nIf you have a moment, we would be honoured to read your impressions — your feedback helps us welcome future guests with even more care.\n\nWith gratitude,\nThierry`,
@@ -105,13 +105,13 @@ export function EmailComposerDrawer({
     <div
       role="dialog"
       aria-modal="true"
-      aria-label="Compose email"
+      aria-label="Rédiger un e-mail"
       className="fixed inset-0 z-50 flex"
     >
       {/* Backdrop */}
       <button
         type="button"
-        aria-label="Close"
+        aria-label="Fermer"
         onClick={() => !pending && onClose()}
         className="absolute inset-0 bg-midnight/60 backdrop-blur-sm"
       />
@@ -126,10 +126,10 @@ export function EmailComposerDrawer({
             </span>
             <div>
               <h2 className="font-heading text-lg font-semibold text-midnight">
-                Send email
+                Envoyer un e-mail
               </h2>
               <p className="font-sans text-xs text-midnight-400 truncate">
-                to {customerEmail}
+                à {customerEmail}
               </p>
             </div>
           </div>
@@ -137,7 +137,7 @@ export function EmailComposerDrawer({
             type="button"
             onClick={onClose}
             disabled={pending}
-            aria-label="Close drawer"
+            aria-label="Fermer le panneau"
             className="rounded-full p-2 text-midnight-400 transition-colors hover:bg-pearl-300/60 hover:text-midnight disabled:opacity-50"
           >
             <X className="h-4 w-4" aria-hidden="true" />
@@ -149,7 +149,7 @@ export function EmailComposerDrawer({
           <div className="flex-1 overflow-y-auto p-6">
             <div className="mb-4">
               <p className="mb-2 font-sans text-xs font-semibold uppercase tracking-wider text-midnight-400">
-                Quick templates
+                Modèles rapides
               </p>
               <div className="flex flex-wrap gap-1.5">
                 {TEMPLATES.map((t) => (
@@ -171,7 +171,7 @@ export function EmailComposerDrawer({
                 htmlFor="email-subject"
                 className="mb-1.5 block font-sans text-xs font-semibold uppercase tracking-wider text-midnight-400"
               >
-                Subject
+                Objet
               </label>
               <input
                 ref={firstFieldRef}
@@ -181,7 +181,7 @@ export function EmailComposerDrawer({
                 onChange={(e) => setSubject(e.target.value)}
                 disabled={pending}
                 maxLength={200}
-                placeholder="Subject line"
+                placeholder="Objet de l’e-mail"
                 className="w-full rounded-xl border border-pearl-400 bg-white px-3 py-2.5 font-sans text-sm text-midnight focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/30 disabled:opacity-60"
               />
             </div>
@@ -204,8 +204,9 @@ export function EmailComposerDrawer({
                 className="w-full resize-y rounded-xl border border-pearl-400 bg-white px-3 py-2.5 font-sans text-sm text-midnight focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/30 disabled:opacity-60"
               />
               <p className="mt-1.5 font-sans text-xs text-midnight-400">
-                {body.length}/10 000 — line breaks preserved. Sender appears as Villa
-                Paradise Tahiti, reply-to is the owner inbox.
+                {body.length}/10 000 · sauts de ligne préservés. L’expéditeur apparaît
+                comme Villa Paradise Tahiti, l’adresse de réponse est la boîte du
+                propriétaire.
               </p>
             </div>
 
@@ -227,7 +228,7 @@ export function EmailComposerDrawer({
               disabled={pending}
               className="inline-flex items-center gap-1.5 rounded-xl border border-pearl-400 bg-white px-4 py-2 font-sans text-sm font-medium text-midnight hover:border-midnight"
             >
-              Cancel
+              Annuler
             </button>
             <button
               type="submit"
@@ -235,7 +236,7 @@ export function EmailComposerDrawer({
               className="inline-flex items-center gap-1.5 rounded-xl bg-gold px-4 py-2 font-sans text-sm font-semibold text-midnight shadow-sm transition-colors hover:bg-gold/90 disabled:cursor-not-allowed disabled:bg-gold/40"
             >
               <Send className="h-3.5 w-3.5" aria-hidden="true" />
-              {pending ? 'Sending…' : 'Send email'}
+              {pending ? 'Envoi…' : 'Envoyer l’e-mail'}
             </button>
           </footer>
         </form>

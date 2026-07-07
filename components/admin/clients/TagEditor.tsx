@@ -105,7 +105,7 @@ export function TagEditor({ customerId, assignedLabels, allTags }: TagEditorProp
               type="button"
               onClick={() => handleRemove(tag.id)}
               disabled={pending}
-              aria-label={`Remove tag ${tag.label}`}
+              aria-label={`Retirer le tag ${tag.label}`}
               className="rounded-full p-0.5 transition-colors hover:bg-midnight/10 disabled:opacity-40"
             >
               <X className="h-2.5 w-2.5" aria-hidden="true" />
@@ -123,7 +123,7 @@ export function TagEditor({ customerId, assignedLabels, allTags }: TagEditorProp
             className="inline-flex items-center gap-1 rounded-full border border-dashed border-pearl-400 px-2.5 py-0.5 font-sans text-xs font-medium text-midnight-400 transition-colors hover:border-midnight hover:text-midnight disabled:opacity-50"
           >
             <Plus className="h-3 w-3" aria-hidden="true" />
-            Add tag
+            Ajouter un tag
           </button>
 
           {open ? (
@@ -204,7 +204,7 @@ function TagPopover({ unassignedTags, pending, onPick, onCreated }: TagPopoverPr
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search or create a tag…"
+          placeholder="Rechercher ou créer un tag…"
           className="w-full rounded-lg border border-pearl-400 bg-white px-2.5 py-1.5 font-sans text-sm text-midnight focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/30"
         />
       </div>
@@ -237,7 +237,7 @@ function TagPopover({ unassignedTags, pending, onPick, onCreated }: TagPopoverPr
       {canCreate ? (
         <div className="border-t border-pearl-400 p-2">
           <p className="mb-1.5 font-sans text-[10px] uppercase tracking-wider text-midnight-400">
-            Create new tag
+            Créer un nouveau tag
           </p>
           <div className="mb-2 flex flex-wrap gap-1">
             {COLOR_OPTIONS.map((c) => (
@@ -245,7 +245,7 @@ function TagPopover({ unassignedTags, pending, onPick, onCreated }: TagPopoverPr
                 key={c.value}
                 type="button"
                 onClick={() => setColor(c.value)}
-                aria-label={`Color ${c.value}`}
+                aria-label={`Couleur ${c.value}`}
                 aria-pressed={color === c.value}
                 className={
                   'h-5 w-5 rounded-full transition-transform ' +
@@ -262,7 +262,7 @@ function TagPopover({ unassignedTags, pending, onPick, onCreated }: TagPopoverPr
             className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg bg-midnight px-3 py-1.5 font-sans text-xs font-semibold text-pearl hover:bg-midnight/90 disabled:cursor-not-allowed disabled:bg-midnight/40"
           >
             <Plus className="h-3 w-3" aria-hidden="true" />
-            {creating ? 'Creating…' : `Create "${query.trim()}"`}
+            {creating ? 'Création…' : `Créer "${query.trim()}"`}
           </button>
           {error ? (
             <p role="alert" className="mt-1.5 font-sans text-xs text-coral">
@@ -272,7 +272,7 @@ function TagPopover({ unassignedTags, pending, onPick, onCreated }: TagPopoverPr
         </div>
       ) : filtered.length === 0 ? (
         <p className="px-3 py-3 text-center font-sans text-xs italic text-midnight-400">
-          {query.trim() ? 'No match.' : 'No tag available. Type to create one.'}
+          {query.trim() ? 'Aucun résultat.' : 'Aucun tag disponible. Saisissez du texte pour en créer un.'}
         </p>
       ) : null}
     </div>

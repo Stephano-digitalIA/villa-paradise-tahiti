@@ -34,7 +34,7 @@ export function NotesForm({ reservationId, initialNotes }: Props) {
         value={notes}
         onChange={(e) => setNotes(e.target.value)}
         rows={4}
-        placeholder="Add internal notes about this reservation..."
+        placeholder="Ajouter des notes internes sur cette réservation..."
         className="w-full rounded-xl border border-pearl-400 bg-pearl px-4 py-3 font-sans text-sm text-midnight placeholder-midnight-300 focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
       />
       <div className="mt-2 flex items-center gap-3">
@@ -44,10 +44,10 @@ export function NotesForm({ reservationId, initialNotes }: Props) {
           disabled={isPending}
           className="rounded-xl bg-midnight px-4 py-2 font-sans text-sm font-medium text-pearl transition-opacity hover:opacity-90 disabled:opacity-50"
         >
-          {isPending ? 'Saving...' : 'Save Notes'}
+          {isPending ? 'Enregistrement...' : 'Enregistrer les notes'}
         </button>
         {saved && (
-          <span className="font-sans text-sm text-leaf">Saved!</span>
+          <span className="font-sans text-sm text-leaf">Enregistré !</span>
         )}
         {error && (
           <span className="font-sans text-sm text-coral">{error}</span>

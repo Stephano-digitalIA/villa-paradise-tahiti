@@ -21,19 +21,19 @@ export function KpiCards({ data }: KpiCardsProps) {
         icon={<Users className="h-4 w-4" />}
       />
       <Card
-        label="New this month"
+        label="Nouveaux ce mois-ci"
         value={data.newThisMonth.toLocaleString('fr-FR')}
         delta={data.newThisMonthDelta}
         icon={<UserPlus className="h-4 w-4" />}
       />
       <Card
-        label="Next arrival"
+        label="Prochaine arrivée"
         value={data.nextArrival ? data.nextArrival.name : '—'}
-        subtitle={data.nextArrival ? formatDate(data.nextArrival.date) : 'No upcoming stay'}
+        subtitle={data.nextArrival ? formatDate(data.nextArrival.date) : 'Aucun séjour à venir'}
         icon={<CalendarClock className="h-4 w-4" />}
       />
       <Card
-        label="Top 10 revenue · 12 m"
+        label="Top 10 CA · 12 m"
         value={formatUSD(data.topRevenue12m)}
         icon={<TrendingUp className="h-4 w-4" />}
       />
@@ -67,7 +67,7 @@ function Card({ label, value, subtitle, delta, icon }: CardProps) {
             (delta > 0 ? 'text-leaf' : 'text-coral')
           }
         >
-          {delta > 0 ? '↑' : '↓'} {Math.abs(delta)} vs last month
+          {delta > 0 ? '↑' : '↓'} {Math.abs(delta)} vs mois dernier
         </p>
       ) : null}
     </div>

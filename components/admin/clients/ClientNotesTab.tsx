@@ -19,10 +19,10 @@ export function ClientNotesTab({ customerId, notes }: ClientNotesTabProps) {
         <div className="rounded-2xl border border-pearl-400 bg-white px-8 py-16 text-center shadow-sm">
           <StickyNote className="mx-auto h-8 w-8 text-midnight-400" aria-hidden="true" />
           <p className="mt-3 font-heading text-lg text-midnight-400">
-            No notes yet
+            Aucune note pour l&apos;instant
           </p>
           <p className="mt-1 font-sans text-sm text-midnight-400">
-            Use the composer above to add your first private note.
+            Utilisez le champ ci-dessus pour ajouter votre première note privée.
           </p>
         </div>
       ) : (

@@ -32,7 +32,7 @@ export function ReservationActions({
       if (result.error) {
         setErrorMsg(result.error)
       } else {
-        setSuccessMsg('Reservation marked as fully paid.')
+        setSuccessMsg('Réservation marquée comme payée intégralement.')
       }
     })
   }
@@ -45,7 +45,7 @@ export function ReservationActions({
       if (result.error) {
         setErrorMsg(result.error)
       } else {
-        setSuccessMsg('Reservation has been cancelled.')
+        setSuccessMsg('La réservation a été annulée.')
         setShowCancelConfirm(false)
       }
     })
@@ -58,7 +58,7 @@ export function ReservationActions({
   return (
     <div className="rounded-2xl border border-pearl-400 bg-white p-6 shadow-sm">
       <h2 className="font-heading text-base font-semibold text-midnight">
-        Admin Actions
+        Actions admin
       </h2>
 
       {(errorMsg || successMsg) && (
@@ -82,12 +82,12 @@ export function ReservationActions({
             disabled={isPending}
             className="rounded-xl bg-leaf px-5 py-2.5 font-sans text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-50"
           >
-            {isPending ? 'Updating...' : 'Mark as Fully Paid'}
+            {isPending ? 'Mise à jour...' : 'Marquer comme payé intégralement'}
           </button>
         )}
         {isFullyPaid && (
           <span className="inline-flex items-center rounded-xl border border-leaf/30 bg-leaf/10 px-5 py-2.5 font-sans text-sm font-medium text-leaf">
-            Payment complete
+            Paiement complet
           </span>
         )}
 
@@ -101,17 +101,17 @@ export function ReservationActions({
                 disabled={isPending}
                 className="rounded-xl border border-coral/30 bg-coral/5 px-5 py-2.5 font-sans text-sm font-medium text-coral transition-colors hover:bg-coral/10 disabled:opacity-50"
               >
-                Cancel Reservation
+                Annuler la réservation
               </button>
             ) : (
               <div className="w-full rounded-xl border border-coral/20 bg-coral/5 p-4">
                 <p className="font-sans text-sm font-medium text-coral">
-                  Are you sure you want to cancel this reservation?
+                  Voulez-vous vraiment annuler cette réservation ?
                 </p>
                 <textarea
                   value={cancelReason}
                   onChange={(e) => setCancelReason(e.target.value)}
-                  placeholder="Cancellation reason (optional)"
+                  placeholder="Motif d'annulation (facultatif)"
                   rows={2}
                   className="mt-3 w-full rounded-lg border border-pearl-400 bg-white px-3 py-2 font-sans text-sm text-midnight placeholder-midnight-300 focus:border-coral focus:outline-none focus:ring-1 focus:ring-coral"
                 />
@@ -122,7 +122,7 @@ export function ReservationActions({
                     disabled={isPending}
                     className="rounded-xl bg-coral px-4 py-2 font-sans text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-50"
                   >
-                    {isPending ? 'Cancelling...' : 'Confirm Cancel'}
+                    {isPending ? 'Annulation...' : "Confirmer l'annulation"}
                   </button>
                   <button
                     type="button"
@@ -130,7 +130,7 @@ export function ReservationActions({
                     disabled={isPending}
                     className="rounded-xl border border-pearl-400 bg-white px-4 py-2 font-sans text-sm font-medium text-midnight transition-colors hover:border-midnight"
                   >
-                    Nevermind
+                    Retour
                   </button>
                 </div>
               </div>
@@ -143,10 +143,10 @@ export function ReservationActions({
           <button
             type="button"
             disabled
-            title="Coming soon"
+            title="Bientôt disponible"
             className="cursor-not-allowed rounded-xl border border-pearl-400 bg-pearl px-5 py-2.5 font-sans text-sm font-medium text-midnight-400 opacity-50"
           >
-            Send Balance Reminder (TODO)
+            Envoyer un rappel de solde (TODO)
           </button>
         )}
       </div>

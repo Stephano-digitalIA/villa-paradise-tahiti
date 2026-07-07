@@ -19,7 +19,7 @@ export function NewClientButton() {
         className="inline-flex items-center gap-2 rounded-xl bg-midnight px-4 py-2.5 font-sans text-sm font-semibold text-pearl shadow-sm transition-colors hover:bg-midnight/90"
       >
         <Plus className="h-4 w-4" aria-hidden="true" />
-        New client
+        Nouveau client
       </button>
       <NewClientDrawer open={open} onClose={() => setOpen(false)} />
     </>
