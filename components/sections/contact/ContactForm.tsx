@@ -1,11 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import { useForm, type SubmitHandler } from 'react-hook-form'
+import { useForm, Controller, type SubmitHandler } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CheckCircle2 } from 'lucide-react'
-import { Button, Input } from '@/components/ui'
+import { Button, DateField, Input } from '@/components/ui'
 import { cn } from '@/lib/utils'
+import { todayISO, addDaysISO } from '@/lib/booking'
 import {
   contactFormSchema,
   type ContactFormInput,
@@ -39,6 +40,8 @@ export function ContactForm() {
 
   const {
     register,
+    control,
+    watch,
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
@@ -55,6 +58,10 @@ export function ContactForm() {
     },
     mode: 'onBlur',
   })
+
+  // Check-out can't precede check-in; when a check-in is picked, bound the
+  // check-out calendar to the day after. Both fields stay optional.
+  const checkInValue = watch('checkIn')
 
   const onSubmit: SubmitHandler<ContactFormValues> = async (data) => {
     try {
@@ -193,12 +200,20 @@ export function ContactForm() {
           optional
           error={errors.checkIn?.message}
         >
-          <Input
-            id="contact-checkIn"
-            type="date"
-            {...register('checkIn')}
-            error={Boolean(errors.checkIn)}
-            aria-describedby={errors.checkIn ? 'contact-checkIn-error' : undefined}
+          <Controller
+            control={control}
+            name="checkIn"
+            render={({ field }) => (
+              <DateField
+                id="contact-checkIn"
+                value={field.value ?? ''}
+                onChange={field.onChange}
+                min={todayISO()}
+                error={Boolean(errors.checkIn)}
+                aria-describedby={errors.checkIn ? 'contact-checkIn-error' : undefined}
+                aria-label="Choose a check-in date"
+              />
+            )}
           />
         </Field>
 
@@ -208,12 +223,20 @@ export function ContactForm() {
           optional
           error={errors.checkOut?.message}
         >
-          <Input
-            id="contact-checkOut"
-            type="date"
-            {...register('checkOut')}
-            error={Boolean(errors.checkOut)}
-            aria-describedby={errors.checkOut ? 'contact-checkOut-error' : undefined}
+          <Controller
+            control={control}
+            name="checkOut"
+            render={({ field }) => (
+              <DateField
+                id="contact-checkOut"
+                value={field.value ?? ''}
+                onChange={field.onChange}
+                min={checkInValue ? addDaysISO(checkInValue, 1) : addDaysISO(todayISO(), 1)}
+                error={Boolean(errors.checkOut)}
+                aria-describedby={errors.checkOut ? 'contact-checkOut-error' : undefined}
+                aria-label="Choose a check-out date"
+              />
+            )}
           />
         </Field>
       </fieldset>
