@@ -1,4 +1,4 @@
-import { Facebook, Instagram, Mail, MapPin, Phone } from 'lucide-react'
+import { Mail, MapPin, Phone } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { Settings } from '@/lib/sanity'
 
@@ -7,7 +7,7 @@ import type { Settings } from '@/lib/sanity'
  *
  * Server component: reads the optional `Settings` document from Sanity
  * and falls back to sensible defaults when fields are missing. Each
- * block is keyboard-focusable when interactive (mailto:, tel:, social).
+ * block is keyboard-focusable when interactive (mailto:, tel:).
  */
 
 interface ContactInfoProps {
@@ -18,8 +18,6 @@ const DEFAULT_EMAIL = 'villaparadisetahiti@gmail.com'
 const DEFAULT_PHONE_DISPLAY = '+689 89 21 00 53'
 const DEFAULT_PHONE_RAW = '+68989210053'
 const DEFAULT_ADDRESS = 'Punaauia, Tahiti, French Polynesia'
-const DEFAULT_INSTAGRAM = '#'
-const DEFAULT_FACEBOOK = '#'
 
 export function ContactInfo({ settings }: ContactInfoProps) {
   const email = settings?.contactEmail || DEFAULT_EMAIL
@@ -27,8 +25,6 @@ export function ContactInfo({ settings }: ContactInfoProps) {
   const phoneHref = settings?.contactPhone
     ? `tel:${settings.contactPhone.replace(/\s+/g, '')}`
     : `tel:${DEFAULT_PHONE_RAW}`
-  const instagram = settings?.socialLinks?.instagram || DEFAULT_INSTAGRAM
-  const facebook = settings?.socialLinks?.facebook || DEFAULT_FACEBOOK
 
   return (
     <aside
@@ -100,22 +96,6 @@ export function ContactInfo({ settings }: ContactInfoProps) {
           <span className="text-midnight">{DEFAULT_ADDRESS}</span>
         </InfoRow>
       </dl>
-
-      <div className="mt-8 border-t border-pearl-400 pt-6">
-        <p className="text-eyebrow font-semibold uppercase text-gold">Follow us</p>
-        <div className="mt-3 flex items-center gap-2">
-          <SocialLink
-            href={instagram}
-            label="Instagram"
-            icon={<Instagram className="h-4 w-4" aria-hidden="true" />}
-          />
-          <SocialLink
-            href={facebook}
-            label="Facebook"
-            icon={<Facebook className="h-4 w-4" aria-hidden="true" />}
-          />
-        </div>
-      </div>
     </aside>
   )
 }
@@ -147,30 +127,5 @@ function InfoRow({ icon, label, children }: InfoRowProps) {
         <dd className="mt-1 font-sans text-body-md leading-relaxed">{children}</dd>
       </div>
     </div>
-  )
-}
-
-interface SocialLinkProps {
-  href: string
-  label: string
-  icon: React.ReactNode
-}
-
-function SocialLink({ href, label, icon }: SocialLinkProps) {
-  return (
-    <a
-      href={href}
-      aria-label={label}
-      target={href.startsWith('http') ? '_blank' : undefined}
-      rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}
-      className={cn(
-        'inline-flex h-9 w-9 items-center justify-center rounded-full',
-        'border border-pearl-400 text-midnight-400',
-        'transition-all duration-200',
-        'hover:border-gold hover:text-gold'
-      )}
-    >
-      {icon}
-    </a>
   )
 }
