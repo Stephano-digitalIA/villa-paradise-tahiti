@@ -17,7 +17,41 @@ import type { Database } from '@/lib/supabase/types'
  *   RLS. This middleware is the single server-side choke point that keeps admin
  *   access independent from public-site login. The admin API routes
  *   (/api/admin/*) enforce the same `admin_users` check independently.
+ *
+ * Membership is verified with the SERVICE ROLE (a direct PostgREST read), not
+ * the caller's RLS-scoped session. An RLS self-read race-failed on the very
+ * first request right after login — the session isn't always primed for an
+ * RLS SELECT yet — which bounced legitimate admins to the public site. The
+ * service-role read is deterministic (same guarantee the login flow uses). We
+ * only ever send someone to `/` when we have POSITIVELY confirmed they are not
+ * an admin; if we can't tell, we keep them inside the admin zone.
  */
+
+/**
+ * `true` = in `admin_users`, `false` = positively not, `null` = couldn't tell
+ * (missing key / transient error). Runs on the Edge via a plain fetch so it
+ * doesn't depend on the Node-oriented admin client.
+ */
+async function checkAdminMembership(userId: string): Promise<boolean | null> {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+  if (!url || !serviceKey) return null
+  try {
+    const res = await fetch(
+      `${url}/rest/v1/admin_users?select=id&limit=1&id=eq.${encodeURIComponent(userId)}`,
+      {
+        headers: { apikey: serviceKey, Authorization: `Bearer ${serviceKey}` },
+        cache: 'no-store',
+      },
+    )
+    if (!res.ok) return null
+    const rows = (await res.json()) as unknown
+    return Array.isArray(rows) && rows.length > 0
+  } catch {
+    return null
+  }
+}
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
@@ -58,30 +92,30 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  // Authorize /admin/* — the auth page itself stays open (else the redirect
-  // target below would loop). Everything else requires admin_users membership.
+  // Authorize /admin/* — the auth page itself stays open (else the redirects
+  // below would loop). Everything else requires admin_users membership.
   if (pathname.startsWith('/admin') && !pathname.startsWith('/admin/auth')) {
-    // Not signed in at all → send to the admin login.
+    // Not signed in at all → send to the admin login (stays in the admin zone).
     if (!user) {
       return NextResponse.redirect(new URL('/admin/auth', request.url))
     }
 
-    // Signed in, but is this user actually an admin? RLS policy
-    // `admin_users_self` lets a user read (only) their own row, so a match
-    // proves membership without the service-role key (never expose it here).
-    const { data: adminRow } = await supabase
-      .from('admin_users')
-      .select('id')
-      .eq('id', user.id)
-      .maybeSingle()
+    const membership = await checkAdminMembership(user.id)
 
-    if (!adminRow) {
-      // Authenticated but not an admin — typically a customer who signed in on
-      // the public site and then hit an /admin URL. Deny admin access WITHOUT
-      // destroying their (shared) customer session: bounce them to the public
-      // home page rather than the admin login (which force-signs-out on load).
+    if (membership === false) {
+      // POSITIVELY not an admin — a customer who signed in on the public site
+      // and then hit an /admin URL. Deny admin access without destroying their
+      // (shared) customer session: send them to the public home page.
       return NextResponse.redirect(new URL('/', request.url))
     }
+
+    if (membership === null) {
+      // Couldn't verify (missing key / transient error). Do NOT bounce a
+      // possible admin to the public site — keep them in the admin zone and let
+      // them retry from the login page.
+      return NextResponse.redirect(new URL('/admin/auth', request.url))
+    }
+    // membership === true → allowed through.
   }
 
   return response
