@@ -5,14 +5,30 @@ import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import type { Settings } from '@/lib/supabase/types'
 import { saveSettings } from '@/app/actions/settings'
+import { cn } from '@/lib/utils'
 
 type Props = {
   initialSettings: Partial<Settings> | null
 }
 
-function FieldLabel({ children }: { children: React.ReactNode }) {
+/** Shared card shell — raised off the pearl background for clear contrast. */
+const CARD_CLASS =
+  'rounded-2xl border border-pearl-400 bg-white p-6 shadow-card ring-1 ring-midnight/5 transition-shadow duration-300 hover:shadow-card-hover'
+
+function FieldLabel({
+  children,
+  accent,
+}: {
+  children: React.ReactNode
+  accent?: boolean
+}) {
   return (
-    <label className="block font-sans text-xs font-semibold uppercase tracking-wider text-midnight-400">
+    <label
+      className={cn(
+        'block font-sans text-xs font-semibold uppercase tracking-wider',
+        accent ? 'text-gold' : 'text-midnight-400',
+      )}
+    >
       {children}
     </label>
   )
@@ -27,6 +43,7 @@ function NumberInput({
   max,
   step,
   unit,
+  accent,
 }: {
   label: string
   name: string
@@ -36,10 +53,17 @@ function NumberInput({
   max?: number
   step?: number
   unit?: string
+  /** Highlight this field in gold to draw attention (e.g. the FX rate). */
+  accent?: boolean
 }) {
   return (
-    <div className="flex flex-col gap-1.5">
-      <FieldLabel>{label}</FieldLabel>
+    <div
+      className={cn(
+        'flex flex-col gap-1.5',
+        accent && 'rounded-xl bg-gold/5 p-3 ring-1 ring-gold/40',
+      )}
+    >
+      <FieldLabel accent={accent}>{label}</FieldLabel>
       <div className="relative flex items-center">
         <input
           type="number"
@@ -49,10 +73,20 @@ function NumberInput({
           min={min}
           max={max}
           step={step ?? 1}
-          className="w-full rounded-xl border border-pearl-400 bg-pearl px-3 py-2 font-sans text-sm text-midnight placeholder-midnight-300 focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
+          className={cn(
+            'w-full rounded-xl border px-3 py-2 font-sans text-sm placeholder-midnight-300 focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold',
+            accent
+              ? 'border-gold bg-gold/10 font-semibold text-midnight'
+              : 'border-pearl-400 bg-pearl text-midnight',
+          )}
         />
         {unit && (
-          <span className="pointer-events-none absolute right-3 font-sans text-xs text-midnight-400">
+          <span
+            className={cn(
+              'pointer-events-none absolute right-3 font-sans text-xs',
+              accent ? 'font-semibold text-gold' : 'text-midnight-400',
+            )}
+          >
             {unit}
           </span>
         )}
@@ -181,7 +215,7 @@ export function SettingsForm({ initialSettings }: Props) {
       )}
 
       {/* Section 1 — Pricing */}
-      <div className="rounded-2xl border border-pearl-400 bg-white p-6 shadow-sm">
+      <div className={CARD_CLASS}>
         <SectionTitle>Tarification</SectionTitle>
         <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <NumberInput
@@ -275,12 +309,13 @@ export function SettingsForm({ initialSettings }: Props) {
             step={0.0001}
             placeholder="0.88"
             unit="EUR / USD"
+            accent
           />
         </div>
       </div>
 
       {/* Section 2 — Contact */}
-      <div className="rounded-2xl border border-pearl-400 bg-white p-6 shadow-sm">
+      <div className={CARD_CLASS}>
         <SectionTitle>Contact</SectionTitle>
         <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
           <TextInput
@@ -314,7 +349,7 @@ export function SettingsForm({ initialSettings }: Props) {
       </div>
 
       {/* Section 3 — Social */}
-      <div className="rounded-2xl border border-pearl-400 bg-white p-6 shadow-sm">
+      <div className={CARD_CLASS}>
         <SectionTitle>Réseaux sociaux</SectionTitle>
         <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
           <TextInput
@@ -349,7 +384,7 @@ export function SettingsForm({ initialSettings }: Props) {
       </div>
 
       {/* Section 4 — Cancellation Policy */}
-      <div className="rounded-2xl border border-pearl-400 bg-white p-6 shadow-sm">
+      <div className={CARD_CLASS}>
         <SectionTitle>Politique d'annulation</SectionTitle>
         <p className="mt-1 font-sans text-xs text-midnight-400">
           Markdown supported. Live preview shown below.
