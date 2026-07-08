@@ -241,6 +241,8 @@ export interface Settings {
   defaultDepositPercent: number
   defaultNightlyRateUSD?: number
   cleaningFeeUSD?: number
+  /** USD → EUR rate for the public currency switcher. Admin-managed; defaults to 0.88. */
+  usdToEurRate?: number
   /** Per-season nightly rates (USD). Supabase-only; override the hardcoded SEASONAL_RATES. */
   rate_low_usd?: number | null
   rate_high_usd?: number | null

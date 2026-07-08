@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { Clock, Users } from 'lucide-react'
 
 import { Badge, Card, CardContent } from '@/components/ui'
+import { Price } from '@/components/currency'
 import { cn } from '@/lib/utils'
 import { urlForImage, type Experience } from '@/lib/sanity'
 
@@ -28,16 +29,15 @@ const categoryLabels: Record<Experience['category'], string> = {
   adventure: 'Adventure',
 }
 
-function formatPrice(experience: Experience): string {
-  const usd = experience.priceUSD
-  switch (experience.priceUnit) {
+function priceUnitSuffix(unit: Experience['priceUnit']): string {
+  switch (unit) {
     case 'flat':
-      return `$${usd}`
+      return ''
     case 'per_group':
-      return `$${usd} / group`
+      return '/ group'
     case 'per_person':
     default:
-      return `$${usd} / person`
+      return '/ person'
   }
 }
 
@@ -112,7 +112,7 @@ export function ExperienceCard({ experience, className }: ExperienceCardProps) {
           </div>
           <div className="flex items-center justify-end gap-2 text-midnight">
             <span className="font-heading text-base font-semibold text-midnight">
-              {formatPrice(experience)}
+              <Price valueUSD={experience.priceUSD} /> {priceUnitSuffix(experience.priceUnit)}
             </span>
           </div>
           {experience.maxGuests ? (

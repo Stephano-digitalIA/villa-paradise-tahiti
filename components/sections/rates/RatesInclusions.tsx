@@ -1,6 +1,7 @@
 import { Check, Plus } from 'lucide-react'
 
 import { Container, Section } from '@/components/ui'
+import { Price } from '@/components/currency'
 
 const INCLUDED: ReadonlyArray<{ title: string; detail: string }> = [
   {
@@ -33,7 +34,7 @@ const INCLUDED: ReadonlyArray<{ title: string; detail: string }> = [
   },
 ]
 
-const EXTRAS: ReadonlyArray<{ title: string; detail: string; from?: string }> = [
+const EXTRAS: ReadonlyArray<{ title: string; detail: string; fromUSD?: number }> = [
   {
     title: 'Excursions with our partners',
     detail:
@@ -43,7 +44,7 @@ const EXTRAS: ReadonlyArray<{ title: string; detail: string; from?: string }> = 
     title: 'Private chef & catering',
     detail:
       'Polynesian-French menus prepared on the terrace by a chef from our concierge network.',
-    from: 'from $70 / dinner',
+    fromUSD: 70,
   },
   {
     title: 'In-villa spa services',
@@ -126,9 +127,9 @@ export function RatesInclusions() {
                       <p className="font-sans text-body-md font-semibold text-midnight">
                         {item.title}
                       </p>
-                      {item.from ? (
+                      {item.fromUSD ? (
                         <span className="text-eyebrow uppercase tracking-widest2 text-gold">
-                          {item.from}
+                          from <Price valueUSD={item.fromUSD} /> / dinner
                         </span>
                       ) : null}
                     </div>

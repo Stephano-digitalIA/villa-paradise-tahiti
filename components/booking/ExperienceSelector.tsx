@@ -19,7 +19,8 @@ import { Minus, Plus, Check } from 'lucide-react'
 
 import { Badge } from '@/components/ui'
 import { cn } from '@/lib/utils'
-import { calculateExperienceLineTotal, formatUSD } from '@/lib/booking'
+import { calculateExperienceLineTotal } from '@/lib/booking'
+import { useCurrency } from '@/components/currency'
 import type { Experience, PriceUnit } from '@/lib/sanity'
 
 import { useBooking } from './BookingProvider'
@@ -72,6 +73,7 @@ function ExperienceLine({ experience }: LineProps) {
     toggleExperience,
     setExperienceQuantity,
   } = useBooking()
+  const { format } = useCurrency()
 
   const slug = experience.slug.current
   const selected = state.selectedExperiences.find((e) => e.slug === slug)
@@ -153,7 +155,7 @@ function ExperienceLine({ experience }: LineProps) {
 
             <div className="flex flex-col items-end gap-1 text-right">
               <p className="font-heading text-base font-semibold text-midnight">
-                {formatUSD(experience.priceUSD)}
+                {format(experience.priceUSD)}
               </p>
               {unitSuffix(experience.priceUnit) ? (
                 <p className="font-sans text-xs text-midnight-400">
@@ -210,12 +212,12 @@ function ExperienceLine({ experience }: LineProps) {
                   </button>
                 </div>
                 <span className="font-sans text-body-sm font-semibold text-midnight">
-                  {formatUSD(lineTotal)}
+                  {format(lineTotal)}
                 </span>
               </div>
             ) : isSelected ? (
               <span className="font-sans text-body-sm font-semibold text-midnight">
-                {formatUSD(lineTotal)}
+                {format(lineTotal)}
               </span>
             ) : null}
           </div>

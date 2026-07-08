@@ -132,6 +132,7 @@ export function SettingsForm({ initialSettings }: Props) {
         num('default_deposit_percent') ?? s.default_deposit_percent ?? 30,
       default_nightly_rate_usd: num('default_nightly_rate_usd'),
       cleaning_fee_usd: num('cleaning_fee_usd'),
+      usd_to_eur_rate: num('usd_to_eur_rate'),
       rate_low_usd: num('rate_low_usd'),
       rate_high_usd: num('rate_high_usd'),
       rate_peak_usd: num('rate_peak_usd'),
@@ -265,6 +266,15 @@ export function SettingsForm({ initialSettings }: Props) {
             step={0.01}
             placeholder="10"
             unit="%"
+          />
+          <NumberInput
+            label="Taux de change USD → EUR"
+            name="usd_to_eur_rate"
+            defaultValue={s.usd_to_eur_rate}
+            min={0}
+            step={0.0001}
+            placeholder="0.88"
+            unit="EUR / USD"
           />
         </div>
       </div>

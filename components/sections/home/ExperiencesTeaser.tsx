@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { ArrowRight } from 'lucide-react'
 
 import { Button, Container, Section } from '@/components/ui'
+import { Price } from '@/components/currency'
 import { sanityFetch } from '@/lib/sanity/fetcher'
 import {
   featuredExperiencesQuery,
@@ -21,15 +22,12 @@ export async function ExperiencesTeaser() {
 
   const featured = experiences.slice(0, 4)
 
-  const priceLabel = (exp: Experience) => {
-    const unit =
-      exp.priceUnit === 'per_person'
-        ? '/ person'
-        : exp.priceUnit === 'per_group'
-        ? '/ group'
-        : ''
-    return `From $${exp.priceUSD.toLocaleString('en-US')} ${unit}`.trim()
-  }
+  const unitSuffix = (exp: Experience) =>
+    exp.priceUnit === 'per_person'
+      ? '/ person'
+      : exp.priceUnit === 'per_group'
+      ? '/ group'
+      : ''
 
   return (
     <Section tone="pearl" spacing="default">
@@ -88,7 +86,7 @@ export async function ExperiencesTeaser() {
                       {exp.shortDescription}
                     </p>
                     <p className="mt-2 font-sans text-body-sm font-semibold text-midnight">
-                      {priceLabel(exp)}
+                      From <Price valueUSD={exp.priceUSD} /> {unitSuffix(exp)}
                     </p>
                   </div>
                 </Link>

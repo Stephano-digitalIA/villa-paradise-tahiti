@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { CalendarCheck, LogOut, UserCircle, X } from 'lucide-react'
 import { Button } from '@/components/ui'
 import { useAuth, getDisplayName } from '@/components/auth/AuthProvider'
+import { CurrencySwitcher } from '@/components/currency'
 import { bookingHref, mainNav } from '@/lib/navigation'
 import { cn } from '@/lib/utils'
 
@@ -254,6 +255,14 @@ export function MobileDrawer({ open, onClose }: MobileDrawerProps) {
               </Link>
             </Button>
           )}
+
+          {/* Sélecteur de devise (mobile) */}
+          <div className="flex items-center justify-between gap-3 rounded-lg border border-pearl-400 px-3 py-2.5">
+            <span className="text-eyebrow font-medium uppercase tracking-widest2 text-midnight-400">
+              Currency
+            </span>
+            <CurrencySwitcher block className="max-w-[10rem]" />
+          </div>
 
           <p className="text-center text-eyebrow text-midnight-400">
             Tahiti · French Polynesia

@@ -1,5 +1,6 @@
 import { Container, Section } from '@/components/ui'
 import { Badge } from '@/components/ui'
+import { Price } from '@/components/currency'
 import { SEASONAL_RATES } from '@/lib/booking/pricing'
 import type { Season } from '@/lib/booking/types'
 import type { Settings } from '@/lib/sanity'
@@ -73,9 +74,9 @@ export function RatesGrid({ settings = null }: { settings?: Settings | null }) {
             Pricing by season
           </h2>
           <p className="max-w-prose font-sans text-body-md text-midnight-400">
-            Prices are quoted in USD and apply to the entire villa
-            (sleeps 8). A 5-night minimum stay applies in low and high
-            season; 7 nights during the peak holiday weeks.
+            Prices apply to the entire villa (sleeps 8). A 5-night minimum
+            stay applies in low and high season; 7 nights during the peak
+            holiday weeks.
           </p>
         </div>
 
@@ -116,9 +117,10 @@ export function RatesGrid({ settings = null }: { settings?: Settings | null }) {
                 </header>
 
                 <div className="mt-8 flex items-baseline gap-2">
-                  <span className="font-heading text-h1-luxe font-medium text-midnight">
-                    ${priceUSD.toLocaleString('en-US')}
-                  </span>
+                  <Price
+                    valueUSD={priceUSD}
+                    className="font-heading text-h1-luxe font-medium text-midnight"
+                  />
                   <span className="font-sans text-body-sm text-midnight-400">
                     / {season.unit}
                   </span>

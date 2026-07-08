@@ -22,6 +22,7 @@ INSERT INTO settings (
   default_deposit_percent,
   default_nightly_rate_usd,
   cleaning_fee_usd,
+  usd_to_eur_rate,
   cancellation_policy,
   booking_terms_url,
   response_time_hours
@@ -39,6 +40,7 @@ INSERT INTO settings (
   30.00,
   690.00,
   150.00,
+  0.8800,
   'Full refund if cancelled more than 60 days before check-in. 50% refund between 30 and 60 days. No refund inside 30 days. Travel insurance strongly recommended.',
   '/legal/terms',
   4

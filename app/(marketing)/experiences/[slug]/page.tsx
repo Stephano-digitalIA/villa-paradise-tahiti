@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation'
 import { Calendar, Check, Clock, MapPin, Users } from 'lucide-react'
 
 import { Badge, Button, Card, Container, Section } from '@/components/ui'
+import { Price } from '@/components/currency'
 import { ExperienceCard } from '@/components/sections/experiences/ExperienceCard'
 import { ExperienceGallery } from '@/components/sections/experiences/ExperienceGallery'
 import { getExperienceGalleryBySlug } from '@/lib/supabase/queries'
@@ -103,16 +104,15 @@ const DEFAULT_INCLUSIONS = [
 
 /* ─── Helpers ────────────────────────────────────────────────────────── */
 
-function formatPrice(experience: Experience): string {
-  const usd = experience.priceUSD
-  switch (experience.priceUnit) {
+function priceUnitSuffix(unit: Experience['priceUnit']): string {
+  switch (unit) {
     case 'flat':
-      return `$${usd}`
+      return ''
     case 'per_group':
-      return `$${usd} / group`
+      return '/ group'
     case 'per_person':
     default:
-      return `$${usd} / person`
+      return '/ person'
   }
 }
 
@@ -240,7 +240,7 @@ export default async function ExperienceDetailPage({ params }: RouteParams) {
                 <div className="border-b border-pearl-400 bg-midnight px-6 py-5 text-center">
                   <p className="text-eyebrow tracking-wider2 text-pearl/60">From</p>
                   <p className="mt-1 font-heading text-h2-luxe font-medium text-gold">
-                    {formatPrice(experience)}
+                    <Price valueUSD={experience.priceUSD} /> {priceUnitSuffix(experience.priceUnit)}
                   </p>
                 </div>
                 <dl className="divide-y divide-pearl-400 px-6 py-2">

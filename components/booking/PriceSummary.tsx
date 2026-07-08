@@ -14,7 +14,8 @@ import { Lock, ShieldCheck, X } from 'lucide-react'
 
 import { Button } from '@/components/ui'
 import { cn } from '@/lib/utils'
-import { calculateExperienceLineTotal, formatUSD } from '@/lib/booking'
+import { calculateExperienceLineTotal } from '@/lib/booking'
+import { useCurrency } from '@/components/currency'
 
 import { useBooking } from './BookingProvider'
 import { SeasonBadge } from './SeasonBadge'
@@ -33,6 +34,7 @@ export function PriceSummary({ className }: PriceSummaryProps) {
     removeExperience,
     availabilityConflict,
   } = useBooking()
+  const { format } = useCurrency()
 
   // Block the CTA when the picked range overlaps a blocked period —
   // even if the pricing/min-nights validation is otherwise green.
@@ -84,14 +86,14 @@ export function PriceSummary({ className }: PriceSummaryProps) {
         <Row
           label={
             hasNights
-              ? `Villa · ${breakdown.nights} ${breakdown.nights === 1 ? 'night' : 'nights'} × ${formatUSD(breakdown.nightlyRate)}`
+              ? `Villa · ${breakdown.nights} ${breakdown.nights === 1 ? 'night' : 'nights'} × ${format(breakdown.nightlyRate)}`
               : 'Villa'
           }
-          value={hasNights ? formatUSD(breakdown.villaSubtotal) : '—'}
+          value={hasNights ? format(breakdown.villaSubtotal) : '—'}
         />
         <Row
           label="Cleaning fee"
-          value={hasNights ? formatUSD(breakdown.cleaningFee) : '—'}
+          value={hasNights ? format(breakdown.cleaningFee) : '—'}
         />
       </div>
 
@@ -116,7 +118,7 @@ export function PriceSummary({ className }: PriceSummaryProps) {
                   </span>
                 </div>
                 <span className="font-sans font-semibold text-midnight">
-                  {formatUSD(calculateExperienceLineTotal(exp))}
+                  {format(calculateExperienceLineTotal(exp))}
                 </span>
                 <button
                   type="button"
@@ -134,20 +136,20 @@ export function PriceSummary({ className }: PriceSummaryProps) {
 
       {/* ─── Totals ──────────────────────────────────────────────────── */}
       <div className="flex flex-col gap-2 border-t border-pearl-400 pt-4">
-        <Row label="Subtotal" value={hasNights ? formatUSD(breakdown.subtotal) : '—'} />
+        <Row label="Subtotal" value={hasNights ? format(breakdown.subtotal) : '—'} />
         {breakdown.longStayDiscountApplied ? (
           <div className="flex items-baseline justify-between gap-3 text-body-sm">
             <span className="font-sans text-leaf">
               Long-stay discount ({breakdown.longStayDiscountPercent}% · {breakdown.longStayMinNights}+ nights)
             </span>
             <span className="font-sans font-semibold text-leaf">
-              −{formatUSD(breakdown.longStayDiscount)}
+              −{format(breakdown.longStayDiscount)}
             </span>
           </div>
         ) : null}
         <Row
           label="Taxes & fees"
-          value={hasNights ? formatUSD(breakdown.taxes) : '—'}
+          value={hasNights ? format(breakdown.taxes) : '—'}
           hint="No tax in French Polynesia."
         />
       </div>
@@ -157,7 +159,7 @@ export function PriceSummary({ className }: PriceSummaryProps) {
           Total
         </span>
         <span className="font-heading text-2xl font-medium text-midnight">
-          {hasNights ? formatUSD(breakdown.total) : '—'}
+          {hasNights ? format(breakdown.total) : '—'}
         </span>
       </div>
 
@@ -168,7 +170,7 @@ export function PriceSummary({ className }: PriceSummaryProps) {
               Deposit today ({depositPercent}%)
             </span>
             <span className="font-heading font-semibold text-midnight">
-              {formatUSD(breakdown.depositAmount)}
+              {format(breakdown.depositAmount)}
             </span>
           </div>
           <div className="flex items-center justify-between">
@@ -176,7 +178,7 @@ export function PriceSummary({ className }: PriceSummaryProps) {
               Balance · 30 days before arrival
             </span>
             <span className="font-sans font-semibold text-midnight">
-              {formatUSD(breakdown.balanceAmount)}
+              {format(breakdown.balanceAmount)}
             </span>
           </div>
         </div>

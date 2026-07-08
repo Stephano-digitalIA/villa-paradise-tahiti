@@ -17,7 +17,8 @@ import Link from 'next/link'
 import { ArrowLeft, Lock, ShieldCheck, Star } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
-import { calculateExperienceLineTotal, formatUSD } from '@/lib/booking'
+import { calculateExperienceLineTotal } from '@/lib/booking'
+import { useCurrency } from '@/components/currency'
 
 import { useBooking } from '../BookingProvider'
 import { SeasonBadge } from '../SeasonBadge'
@@ -28,6 +29,7 @@ interface CheckoutSummaryProps {
 
 export function CheckoutSummary({ className }: CheckoutSummaryProps) {
   const { state, breakdown, settings } = useBooking()
+  const { format } = useCurrency()
   const depositPercent = settings?.defaultDepositPercent ?? 30
 
   return (
@@ -75,14 +77,14 @@ export function CheckoutSummary({ className }: CheckoutSummaryProps) {
         <Row
           label={
             breakdown.nights > 0
-              ? `Villa · ${breakdown.nights} ${breakdown.nights === 1 ? 'night' : 'nights'} × ${formatUSD(breakdown.nightlyRate)}`
+              ? `Villa · ${breakdown.nights} ${breakdown.nights === 1 ? 'night' : 'nights'} × ${format(breakdown.nightlyRate)}`
               : 'Villa'
           }
-          value={breakdown.nights > 0 ? formatUSD(breakdown.villaSubtotal) : '—'}
+          value={breakdown.nights > 0 ? format(breakdown.villaSubtotal) : '—'}
         />
         <Row
           label="Cleaning fee"
-          value={breakdown.nights > 0 ? formatUSD(breakdown.cleaningFee) : '—'}
+          value={breakdown.nights > 0 ? format(breakdown.cleaningFee) : '—'}
         />
       </div>
 
@@ -105,7 +107,7 @@ export function CheckoutSummary({ className }: CheckoutSummaryProps) {
                   ) : null}
                 </span>
                 <span className="font-sans font-semibold text-midnight">
-                  {formatUSD(calculateExperienceLineTotal(exp))}
+                  {format(calculateExperienceLineTotal(exp))}
                 </span>
               </li>
             ))}
@@ -115,20 +117,20 @@ export function CheckoutSummary({ className }: CheckoutSummaryProps) {
 
       {/* ─── Subtotals ─────────────────────────────────────────────── */}
       <div className="flex flex-col gap-2 border-t border-pearl-400 pt-4">
-        <Row label="Subtotal" value={breakdown.nights > 0 ? formatUSD(breakdown.subtotal) : '—'} />
+        <Row label="Subtotal" value={breakdown.nights > 0 ? format(breakdown.subtotal) : '—'} />
         {breakdown.longStayDiscountApplied ? (
           <div className="flex items-baseline justify-between gap-3 text-body-sm">
             <span className="font-sans text-leaf">
               Long-stay discount ({breakdown.longStayDiscountPercent}% · {breakdown.longStayMinNights}+ nights)
             </span>
             <span className="font-sans font-semibold text-leaf">
-              −{formatUSD(breakdown.longStayDiscount)}
+              −{format(breakdown.longStayDiscount)}
             </span>
           </div>
         ) : null}
         <Row
           label="Taxes & fees"
-          value={breakdown.nights > 0 ? formatUSD(breakdown.taxes) : '—'}
+          value={breakdown.nights > 0 ? format(breakdown.taxes) : '—'}
           hint="No tax in French Polynesia."
         />
       </div>
@@ -139,7 +141,7 @@ export function CheckoutSummary({ className }: CheckoutSummaryProps) {
           Total
         </span>
         <span className="font-heading text-2xl font-medium text-midnight">
-          {breakdown.nights > 0 ? formatUSD(breakdown.total) : '—'}
+          {breakdown.nights > 0 ? format(breakdown.total) : '—'}
         </span>
       </div>
 
@@ -156,7 +158,7 @@ export function CheckoutSummary({ className }: CheckoutSummaryProps) {
               </span>
             </div>
             <span className="font-heading text-2xl font-semibold text-midnight">
-              {formatUSD(breakdown.depositAmount)}
+              {format(breakdown.depositAmount)}
             </span>
           </div>
           <div className="flex items-baseline justify-between gap-3 border-t border-midnight/10 pt-3 text-body-sm">
@@ -164,7 +166,7 @@ export function CheckoutSummary({ className }: CheckoutSummaryProps) {
               Balance · 30 days before arrival
             </span>
             <span className="font-sans font-semibold text-midnight-400">
-              {formatUSD(breakdown.balanceAmount)}
+              {format(breakdown.balanceAmount)}
             </span>
           </div>
         </div>

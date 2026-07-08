@@ -48,6 +48,7 @@ import {
 import { Button, Input } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { formatUSD } from '@/lib/booking'
+import { useCurrency } from '@/components/currency'
 import {
   SUPPORTED_COUNTRIES,
   checkoutFormDefaults,
@@ -207,6 +208,7 @@ interface CheckoutFormProps {
 export function CheckoutForm({ initialProfile }: CheckoutFormProps) {
   const router = useRouter()
   const { state, breakdown } = useBooking()
+  const { format } = useCurrency()
   const [submitError, setSubmitError] = useState<string | null>(null)
   const errorBannerId = useId()
 
@@ -288,13 +290,13 @@ export function CheckoutForm({ initialProfile }: CheckoutFormProps) {
   // Label shown on the submit button — reflects the actual charge.
   const chargeLabel: string = (() => {
     if (paymentOption === 'full') {
-      return `Pay ${formatUSD(breakdown.total)} — Pay in full`
+      return `Pay ${format(breakdown.total)} in full`
     }
     if (paymentOption === 'custom') {
-      const amt = customAmountUSD && customAmountUSD > 0 ? formatUSD(customAmountUSD) : 'your amount'
+      const amt = customAmountUSD && customAmountUSD > 0 ? format(customAmountUSD) : 'your amount'
       return `Pay ${amt}`
     }
-    return `Pay ${formatUSD(breakdown.depositAmount)} deposit`
+    return `Pay ${format(breakdown.depositAmount)} deposit`
   })()
 
   return (
@@ -506,7 +508,7 @@ export function CheckoutForm({ initialProfile }: CheckoutFormProps) {
             value="deposit"
             label="Deposit (30%)"
             description="Minimum required to confirm your reservation"
-            amount={formatUSD(breakdown.depositAmount)}
+            amount={format(breakdown.depositAmount)}
             checked={paymentOption === 'deposit'}
             onSelect={() => setValue('paymentOption', 'deposit', { shouldValidate: true })}
             register={register('paymentOption')}
@@ -568,7 +570,7 @@ export function CheckoutForm({ initialProfile }: CheckoutFormProps) {
             value="full"
             label="Pay in full"
             description="No balance due — simplify your pre-arrival admin"
-            amount={formatUSD(breakdown.total)}
+            amount={format(breakdown.total)}
             checked={paymentOption === 'full'}
             onSelect={() => setValue('paymentOption', 'full', { shouldValidate: true })}
             register={register('paymentOption')}

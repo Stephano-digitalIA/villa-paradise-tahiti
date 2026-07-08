@@ -8,6 +8,7 @@ import { Button } from '@/components/ui'
 import { useAuth } from '@/components/auth/AuthProvider'
 import { bookingHref, mainNav } from '@/lib/navigation'
 import { cn } from '@/lib/utils'
+import { CurrencySwitcher } from '@/components/currency'
 import { MobileDrawer } from './MobileDrawer'
 import { UserMenu } from './UserMenu'
 
@@ -133,8 +134,13 @@ export function Header() {
             </ul>
           </nav>
 
-          {/* Cluster droit : UserMenu si connecté + CTA Book Now + Burger (mobile) */}
+          {/* Cluster droit : sélecteur de devise + UserMenu si connecté + CTA Book Now + Burger (mobile) */}
           <div className="flex items-center gap-2 sm:gap-3">
+            {/* Sélecteur de devise USD / EUR (desktop) */}
+            <div className="hidden md:block">
+              <CurrencySwitcher variant={opaque ? 'default' : 'light'} />
+            </div>
+
             {/* UserMenu — visible dès qu'on est connecté (sauf pendant le 1er chargement pour éviter le flash) */}
             {!loading && user ? (
               <div className="hidden sm:block">

@@ -14,10 +14,10 @@ export async function saveSettings(
 
   if (error) return { error: error.message }
 
-  // Admin + every public surface that shows settings-derived pricing.
+  // Admin + every public surface. Pricing AND the currency rate are shown
+  // site-wide (the rate feeds the header currency switcher on every page), so
+  // revalidate the whole app rather than a handful of routes.
   revalidatePath('/admin/settings')
-  revalidatePath('/rates')
-  revalidatePath('/booking')
-  revalidatePath('/booking/checkout')
+  revalidatePath('/', 'layout')
   return {}
 }

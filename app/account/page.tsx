@@ -4,6 +4,7 @@ import type { Metadata } from 'next'
 import { ArrowRight, CalendarCheck, Mail, UserCircle } from 'lucide-react'
 
 import { Button, Container, Section } from '@/components/ui'
+import { Price } from '@/components/currency'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { adminClient } from '@/lib/supabase/admin'
 import type { PaymentStatus, Reservation } from '@/lib/supabase/types'
@@ -31,17 +32,6 @@ const STATUS_STYLES: Record<PaymentStatus, string> = {
   fully_paid: 'bg-emerald-500/10 text-emerald-700',
   cancelled: 'bg-midnight/5 text-midnight-400',
   refunded: 'bg-midnight/5 text-midnight-400',
-}
-
-function formatUSD(amount: number | null | undefined): string {
-  if (amount == null) return '—'
-  const hasCents = Math.round(amount * 100) % 100 !== 0
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: hasCents ? 2 : 0,
-    maximumFractionDigits: hasCents ? 2 : 0,
-  }).format(amount)
 }
 
 function formatDate(dateStr: string | null | undefined): string {
@@ -145,7 +135,11 @@ export default async function AccountPage() {
                         Ref {r.reservation_ref} · {r.num_guests}{' '}
                         {r.num_guests > 1 ? 'guests' : 'guest'}
                       </span>
-                      <span className="font-medium text-midnight">{formatUSD(r.total)}</span>
+                      {r.total != null ? (
+                        <Price valueUSD={r.total} className="font-medium text-midnight" />
+                      ) : (
+                        <span className="font-medium text-midnight">—</span>
+                      )}
                     </div>
                   </li>
                 ))}

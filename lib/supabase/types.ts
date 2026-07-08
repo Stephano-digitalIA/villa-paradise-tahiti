@@ -24,6 +24,8 @@ export type Settings = {
   rate_peak_usd: number | null
   long_stay_min_nights: number | null
   long_stay_discount_percent: number | null
+  /** USD → EUR exchange rate for the public currency switcher. Admin-managed. */
+  usd_to_eur_rate: number | null
   season_windows: Array<{ from: string; to: string; label: string }>
   cancellation_policy: string | null
   terms_of_service: string | null

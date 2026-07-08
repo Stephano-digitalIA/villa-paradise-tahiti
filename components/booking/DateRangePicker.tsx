@@ -20,7 +20,8 @@
 import { AlertCircle } from 'lucide-react'
 
 import { DateField } from '@/components/ui'
-import { todayISO, addDaysISO, calculateNights, getNightlyRate, formatUSD } from '@/lib/booking'
+import { todayISO, addDaysISO, calculateNights, getNightlyRate } from '@/lib/booking'
+import { useCurrency } from '@/components/currency'
 
 import { useBooking } from './BookingProvider'
 import { SeasonBadge } from './SeasonBadge'
@@ -51,6 +52,7 @@ export function DateRangePicker() {
     availabilityConflict,
     blockedRanges,
   } = useBooking()
+  const { format } = useCurrency()
 
   const today = todayISO()
   const checkOutMin = state.checkIn ? addDaysISO(state.checkIn, 1) : addDaysISO(today, 1)
@@ -117,7 +119,7 @@ export function DateRangePicker() {
               <>
                 Rate:{' '}
                 <span className="font-semibold text-midnight">
-                  {formatUSD(getNightlyRate(state.checkIn))}
+                  {format(getNightlyRate(state.checkIn))}
                 </span>{' '}
                 / night
               </>
@@ -169,7 +171,7 @@ export function DateRangePicker() {
         <SeasonBadge season={breakdown.season} />
         {nights > 0 && breakdown.meetsMinNights ? (
           <span className="font-sans text-xs text-midnight-400">
-            Total villa: <span className="font-semibold text-midnight">{formatUSD(breakdown.villaSubtotal)}</span>
+            Total villa: <span className="font-semibold text-midnight">{format(breakdown.villaSubtotal)}</span>
           </span>
         ) : null}
       </div>

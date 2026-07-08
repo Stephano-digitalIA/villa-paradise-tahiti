@@ -774,5 +774,6 @@ export const mockSettings: Settings = {
   defaultDepositPercent: 30,
   defaultNightlyRateUSD: 690,
   cleaningFeeUSD: 150,
+  usdToEurRate: 0.88,
   bookingTermsUrl: '/legal/terms',
 }
