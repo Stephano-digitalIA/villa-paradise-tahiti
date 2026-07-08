@@ -208,7 +208,7 @@ interface CheckoutFormProps {
 export function CheckoutForm({ initialProfile }: CheckoutFormProps) {
   const router = useRouter()
   const { state, breakdown } = useBooking()
-  const { format } = useCurrency()
+  const { format, currency } = useCurrency()
   const [submitError, setSubmitError] = useState<string | null>(null)
   const errorBannerId = useId()
 
@@ -249,6 +249,9 @@ export function CheckoutForm({ initialProfile }: CheckoutFormProps) {
             specialRequests: data.specialRequests || state.specialRequests || '',
           },
           customer: data,
+          // The chosen display currency becomes the CHARGE currency. The
+          // server reads the exchange rate from settings; we never send it.
+          currency,
         }),
       })
 

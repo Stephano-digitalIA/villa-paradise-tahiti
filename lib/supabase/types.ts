@@ -337,6 +337,13 @@ export type Reservation = {
   total: number | null
   deposit_amount: number | null
   balance_amount: number | null
+  /** Currency the guest was actually charged in. USD columns above stay the
+   *  canonical ledger; these three record the charge for reconciliation. */
+  display_currency: string | null
+  /** Frozen USD → EUR rate at order time (null when charged in USD). */
+  exchange_rate: number | null
+  /** Amount charged today, expressed in `display_currency`. */
+  amount_charged_currency: number | null
   selected_experiences: SelectedExperienceSnapshot[]
   payment_method: PaymentMethod | null
   payment_status: PaymentStatus

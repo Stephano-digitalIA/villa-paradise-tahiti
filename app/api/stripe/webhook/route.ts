@@ -72,6 +72,9 @@ function buildEmailData(session: Stripe.Checkout.Session): BookingConfirmationDa
   const meta = session.metadata ?? {}
   return {
     reservationId: meta.reservationId ?? 'UNKNOWN',
+    // Breakdown numbers below are USD; these convert them for display.
+    currency: meta.currency === 'EUR' ? 'EUR' : 'USD',
+    exchangeRate: Number(meta.exchangeRate) || 1,
     customer: {
       firstName: meta.firstName ?? 'Guest',
       lastName: meta.lastName ?? '',
@@ -176,6 +179,10 @@ export async function POST(request: Request) {
               payment_status: 'deposit_paid',
               deposit_paid_at: new Date().toISOString(),
               stripe_session_id: session.id,
+              // Record what Stripe actually captured (currency + amount).
+              display_currency: session.currency ? session.currency.toUpperCase() : null,
+              amount_charged_currency:
+                session.amount_total != null ? session.amount_total / 100 : null,
             })
             .eq('reservation_ref', reservationRef)
         } catch (err) {

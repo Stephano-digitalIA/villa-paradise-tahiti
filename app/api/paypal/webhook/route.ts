@@ -93,6 +93,10 @@ function buildEmailDataFromCapture(
 
   return {
     reservationId,
+    // The capture amount is already in the charged currency, so display it
+    // as-is (exchangeRate 1 = no further conversion).
+    currency: capture.amount?.currency_code === 'EUR' ? 'EUR' : 'USD',
+    exchangeRate: 1,
     customer: {
       firstName: capture.payer?.name?.given_name ?? 'Guest',
       lastName: capture.payer?.name?.surname ?? '',
@@ -216,6 +220,11 @@ export async function POST(request: Request) {
               payment_status: 'deposit_paid',
               deposit_paid_at: new Date().toISOString(),
               paypal_order_id: orderId ?? null,
+              // Record what PayPal actually captured (currency + amount).
+              display_currency: capture.amount?.currency_code ?? null,
+              amount_charged_currency: capture.amount?.value
+                ? Number(capture.amount.value)
+                : null,
             })
             .eq('reservation_ref', reservationRef)
         } catch (err) {

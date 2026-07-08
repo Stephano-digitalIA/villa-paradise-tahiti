@@ -28,6 +28,7 @@ import {
   Text,
 } from '@react-email/components'
 
+import { formatMoney } from '@/lib/currency'
 import type { BookingConfirmationData } from '../types'
 
 const COLORS = {
@@ -43,14 +44,6 @@ const FONT_HEADING =
   '"Cormorant Garamond", "Playfair Display", Georgia, "Times New Roman", serif'
 const FONT_SANS =
   '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
-
-function formatUSD(amount: number): string {
-  return amount.toLocaleString('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    maximumFractionDigits: 0,
-  })
-}
 
 function formatDate(iso: string): string {
   // We accept the ISO YYYY-MM-DD string as-is; constructing a `Date` here
@@ -76,6 +69,8 @@ interface Props {
 export function BookingConfirmationGuest({ data, siteUrl }: Props) {
   const { customer, booking, breakdown, selectedExperiences, reservationId } =
     data
+  const money = (value: number) =>
+    formatMoney(value, data.currency ?? 'USD', data.exchangeRate ?? 1)
 
   return (
     <Html>
@@ -227,31 +222,31 @@ export function BookingConfirmationGuest({ data, siteUrl }: Props) {
             </Text>
             <DetailRow
               label="Villa"
-              value={formatUSD(breakdown.villaSubtotal)}
+              value={money(breakdown.villaSubtotal)}
             />
             {breakdown.experiencesTotal > 0 ? (
               <DetailRow
                 label="Experiences"
-                value={formatUSD(breakdown.experiencesTotal)}
+                value={money(breakdown.experiencesTotal)}
               />
             ) : null}
             <DetailRow
               label="Cleaning fee"
-              value={formatUSD(breakdown.cleaningFee)}
+              value={money(breakdown.cleaningFee)}
             />
             <Hr style={{ borderColor: COLORS.sand, margin: '12px 0' }} />
             <DetailRow
               label="Total"
-              value={formatUSD(breakdown.total)}
+              value={money(breakdown.total)}
               strong
             />
             <DetailRow
               label="Deposit paid"
-              value={formatUSD(breakdown.depositAmount)}
+              value={money(breakdown.depositAmount)}
             />
             <DetailRow
               label="Balance due (30 days before arrival)"
-              value={formatUSD(breakdown.balanceAmount)}
+              value={money(breakdown.balanceAmount)}
             />
           </Section>
 

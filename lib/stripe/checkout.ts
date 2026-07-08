@@ -24,6 +24,7 @@
 import type Stripe from 'stripe'
 
 import type { BookingState, PriceBreakdown } from '@/lib/booking'
+import { convertUsdToEur, type Currency } from '@/lib/currency'
 
 import { stripe } from './client'
 import type { ReservationLineItem } from '@/lib/booking'
@@ -51,8 +52,12 @@ export interface CreateStripeSessionParams {
    *  only used to derive a single deposit line in the actual session today. */
   lineItems: ReservationLineItem[]
   metadata: Record<string, string>
-  /** Actual amount charged today (may differ from breakdown.depositAmount). */
-  chargeAmountUSD: number
+  /** Actual amount charged today, already expressed in `currency`. */
+  chargeAmount: number
+  /** Currency the session charges in (USD or EUR). */
+  currency: Currency
+  /** Frozen USD → EUR rate when `currency` is EUR, else null. */
+  exchangeRate: number | null
   /** Human-readable label shown in the Stripe Checkout line item name. */
   paymentLabel: string
 }
@@ -72,18 +77,30 @@ export async function createStripeCheckoutSession(
     return { error: 'Stripe is not configured on the server.' }
   }
 
-  const { reservationId, customer, breakdown, metadata, chargeAmountUSD, paymentLabel } = params
+  const { reservationId, customer, breakdown, metadata, chargeAmount, currency, exchangeRate, paymentLabel } = params
 
-  if (!chargeAmountUSD || chargeAmountUSD <= 0) {
+  if (!chargeAmount || chargeAmount <= 0) {
     return { error: 'Charge amount is zero — refusing to create session.' }
   }
 
   const siteUrl = getSiteUrl()
 
-  // Stripe wants integer minor units (cents for USD).
-  const chargeCents = Math.round(chargeAmountUSD * 100)
-  const totalCents = Math.round(breakdown.total * 100)
-  const balanceDue = Math.max(0, breakdown.total - chargeAmountUSD)
+  // Everything below is expressed in the charge currency. The stay total is
+  // converted from its canonical USD value at the frozen rate so the
+  // description and the balance line match what the guest sees on the site.
+  const rate = exchangeRate ?? 1
+  const totalInCurrency =
+    currency === 'EUR' ? convertUsdToEur(breakdown.total, rate) : breakdown.total
+
+  // Stripe wants integer minor units (both USD and EUR have 2 decimals).
+  const chargeCents = Math.round(chargeAmount * 100)
+  const totalCents = Math.round(totalInCurrency * 100)
+  const balanceDue = Math.max(0, Math.round((totalInCurrency - chargeAmount) * 100) / 100)
+
+  const nf = new Intl.NumberFormat(currency === 'EUR' ? 'fr-FR' : 'en-US', {
+    style: 'currency',
+    currency,
+  })
 
   const stayLabel =
     breakdown.nights > 0
@@ -92,7 +109,7 @@ export async function createStripeCheckoutSession(
 
   const balanceNote =
     balanceDue > 0
-      ? `Balance $${balanceDue.toFixed(2)} due 30 days before arrival`
+      ? `Balance ${nf.format(balanceDue)} due 30 days before arrival`
       : 'No balance remaining'
 
   try {
@@ -104,11 +121,11 @@ export async function createStripeCheckoutSession(
       line_items: [
         {
           price_data: {
-            currency: 'usd',
+            currency: currency.toLowerCase(),
             unit_amount: chargeCents,
             product_data: {
               name: `Villa Paradise Tahiti — ${paymentLabel}`,
-              description: `Reservation ${reservationId} • ${stayLabel} • Stay total $${breakdown.total.toFixed(2)} • ${balanceNote}`,
+              description: `Reservation ${reservationId} • ${stayLabel} • Stay total ${nf.format(totalInCurrency)} • ${balanceNote}`,
             },
           },
           quantity: 1,
@@ -117,11 +134,15 @@ export async function createStripeCheckoutSession(
       success_url: `${siteUrl}/booking/success?session_id={CHECKOUT_SESSION_ID}&ref=${encodeURIComponent(reservationId)}`,
       cancel_url: `${siteUrl}/booking/cancel?session_id={CHECKOUT_SESSION_ID}&ref=${encodeURIComponent(reservationId)}`,
       metadata: {
+        // Breakdown fields inside `...metadata` stay in USD (the webhook email
+        // converts them via these currency hints).
         ...metadata,
         reservationId,
-        chargeAmount: String(chargeAmountUSD),
-        totalDue: String(breakdown.total),
-        balanceDue: String(balanceDue),
+        currency,
+        exchangeRate: exchangeRate != null ? String(exchangeRate) : '',
+        chargeAmountCurrency: String(chargeAmount),
+        totalCurrency: String(totalInCurrency),
+        balanceDueCurrency: String(balanceDue),
         totalCents: String(totalCents),
       },
       // The deposit description is a "what they pay now" reminder, but we

@@ -43,6 +43,16 @@ export type EmailResult =
 export interface BookingConfirmationData {
   /** Human-readable booking reference shown in subject + body. */
   reservationId: string
+  /**
+   * Currency the amounts should be DISPLAYED in. Combined with `exchangeRate`:
+   *  - Stripe path: breakdown numbers are USD, `exchangeRate` is the real rate.
+   *  - PayPal path: numbers already in the charged currency, `exchangeRate` = 1.
+   * Both format correctly via `formatMoney(value, currency, exchangeRate)`.
+   * Defaults to USD when absent.
+   */
+  currency?: 'USD' | 'EUR'
+  /** USD → target-currency rate used to display amounts. Defaults to 1. */
+  exchangeRate?: number
   customer: {
     firstName: string
     lastName: string

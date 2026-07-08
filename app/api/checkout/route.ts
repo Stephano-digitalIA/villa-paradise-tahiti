@@ -41,6 +41,7 @@ import {
   type BookingState,
 } from '@/lib/booking'
 import { checkAvailability } from '@/lib/booking/availability'
+import { convertUsdToEur } from '@/lib/currency'
 import { createStripeCheckoutSession, isStripeConfigured } from '@/lib/stripe'
 import { createPayPalOrder, isPayPalConfigured } from '@/lib/paypal'
 import { sanityFetch } from '@/lib/sanity/fetcher'
@@ -77,6 +78,10 @@ const bookingPayloadSchema = z.object({
 const requestSchema = z.object({
   booking: bookingPayloadSchema,
   customer: checkoutSchema,
+  // The visitor's chosen display currency becomes the charge currency. The
+  // exchange rate is NEVER accepted from the client — it is read server-side
+  // from settings. Defaults to USD for older clients that don't send it.
+  currency: z.enum(['USD', 'EUR']).default('USD'),
 })
 
 /* ---------------------------------------------------------------------------
@@ -111,7 +116,7 @@ export async function POST(request: Request) {
     )
   }
 
-  const { booking, customer } = parsed.data
+  const { booking, customer, currency } = parsed.data
 
   // Build the canonical BookingState the pricing engine consumes.
   const state: BookingState = {
@@ -225,6 +230,14 @@ export async function POST(request: Request) {
     )
   }
 
+  // Currency conversion — server-authoritative. The pricing engine and the
+  // stored ledger stay in USD; when the guest picked EUR we convert the amount
+  // to actually charge at the admin-managed rate (read from settings, never
+  // from the client). This is the ONLY place the charge currency is derived.
+  const exchangeRate = settings?.usdToEurRate ?? 0.88
+  const chargeAmountCurrency =
+    currency === 'EUR' ? convertUsdToEur(chargeAmount, exchangeRate) : chargeAmount
+
   const reservationId = generateReservationId()
   const lineItems = buildLineItems(state, breakdown, experienceCatalog)
   const metadata = {
@@ -288,6 +301,11 @@ export async function POST(request: Request) {
       selected_experiences: booking.selectedExperiences as unknown as import('@/lib/supabase/types').SelectedExperienceSnapshot[],
       payment_method: effectiveMethod,
       payment_status: 'pending',
+      // Currency ledger: USD columns above stay canonical; these record what
+      // the guest is actually charged and at which frozen rate.
+      display_currency: currency,
+      exchange_rate: currency === 'EUR' ? exchangeRate : null,
+      amount_charged_currency: chargeAmountCurrency,
     })
 
     if (insertErr) {
@@ -332,7 +350,9 @@ export async function POST(request: Request) {
       breakdown,
       lineItems,
       metadata,
-      chargeAmountUSD: chargeAmount,
+      chargeAmount: chargeAmountCurrency,
+      currency,
+      exchangeRate,
       paymentLabel,
     })
     if ('error' in result) {
@@ -368,7 +388,8 @@ export async function POST(request: Request) {
 
     const result = await createPayPalOrder({
       reservationId,
-      chargeAmountUSD: chargeAmount,
+      chargeAmount: chargeAmountCurrency,
+      currency,
       paymentLabel,
       customer: { email: customer.email },
       metadata,

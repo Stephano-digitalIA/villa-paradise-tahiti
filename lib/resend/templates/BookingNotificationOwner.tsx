@@ -21,6 +21,7 @@ import {
   Text,
 } from '@react-email/components'
 
+import { formatMoney } from '@/lib/currency'
 import type { BookingConfirmationData } from '../types'
 
 const COLORS = {
@@ -37,14 +38,6 @@ const FONT_HEADING =
   '"Cormorant Garamond", "Playfair Display", Georgia, "Times New Roman", serif'
 const FONT_SANS =
   '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
-
-function formatUSD(amount: number): string {
-  return amount.toLocaleString('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    maximumFractionDigits: 0,
-  })
-}
 
 function formatDate(iso: string): string {
   if (!iso) return ''
@@ -72,12 +65,14 @@ export function BookingNotificationOwner({
 }: Props) {
   const { customer, booking, breakdown, selectedExperiences, reservationId } =
     data
+  const money = (value: number) =>
+    formatMoney(value, data.currency ?? 'USD', data.exchangeRate ?? 1)
 
   return (
     <Html>
       <Head />
       <Preview>
-        {`New booking ${reservationId} — ${customer.firstName} ${customer.lastName} (${formatUSD(breakdown.total)})`}
+        {`New booking ${reservationId} — ${customer.firstName} ${customer.lastName} (${money(breakdown.total)})`}
       </Preview>
       <Body
         style={{
@@ -145,7 +140,7 @@ export function BookingNotificationOwner({
             <strong style={{ color: COLORS.midnight }}>
               {paymentMethod === 'stripe' ? 'Stripe' : 'PayPal'}
             </strong>{' '}
-            · {formatUSD(breakdown.depositAmount)} deposit collected
+            · {money(breakdown.depositAmount)} deposit collected
           </Text>
 
           {/* Guest */}
@@ -198,30 +193,30 @@ export function BookingNotificationOwner({
 
           <Section>
             <Text style={eyebrowStyle}>Breakdown</Text>
-            <DetailRow label="Villa" value={formatUSD(breakdown.villaSubtotal)} />
+            <DetailRow label="Villa" value={money(breakdown.villaSubtotal)} />
             {breakdown.experiencesTotal > 0 ? (
               <DetailRow
                 label="Experiences"
-                value={formatUSD(breakdown.experiencesTotal)}
+                value={money(breakdown.experiencesTotal)}
               />
             ) : null}
             <DetailRow
               label="Cleaning"
-              value={formatUSD(breakdown.cleaningFee)}
+              value={money(breakdown.cleaningFee)}
             />
             <Hr style={{ borderColor: COLORS.sand, margin: '8px 0' }} />
             <DetailRow
               label="Total"
-              value={formatUSD(breakdown.total)}
+              value={money(breakdown.total)}
               strong
             />
             <DetailRow
               label="Deposit collected"
-              value={formatUSD(breakdown.depositAmount)}
+              value={money(breakdown.depositAmount)}
             />
             <DetailRow
               label="Balance due"
-              value={formatUSD(breakdown.balanceAmount)}
+              value={money(breakdown.balanceAmount)}
             />
           </Section>
 

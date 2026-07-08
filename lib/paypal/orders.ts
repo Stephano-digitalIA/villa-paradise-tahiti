@@ -31,7 +31,10 @@ function getSiteUrl(): string {
 
 export interface CreatePayPalOrderParams {
   reservationId: string
-  chargeAmountUSD: number
+  /** Amount to charge today, already expressed in `currency`. */
+  chargeAmount: number
+  /** ISO currency the order is created in (USD or EUR). */
+  currency: 'USD' | 'EUR'
   paymentLabel: string
   customer: { email: string }
   metadata: Record<string, string>
@@ -77,9 +80,9 @@ interface PayPalOrderResponse {
 export async function createPayPalOrder(
   params: CreatePayPalOrderParams,
 ): Promise<CreatePayPalOrderResult> {
-  const { reservationId, chargeAmountUSD, paymentLabel, customer, metadata } = params
+  const { reservationId, chargeAmount, currency, paymentLabel, customer, metadata } = params
 
-  if (!chargeAmountUSD || chargeAmountUSD <= 0) {
+  if (!chargeAmount || chargeAmount <= 0) {
     return { error: 'Charge amount is zero — refusing to create PayPal order.' }
   }
 
@@ -99,8 +102,8 @@ export async function createPayPalOrder(
         invoice_id: reservationId,
         description: `Villa Paradise Tahiti — ${paymentLabel}`,
         amount: {
-          currency_code: 'USD',
-          value: chargeAmountUSD.toFixed(2),
+          currency_code: currency,
+          value: chargeAmount.toFixed(2),
         },
       },
     ],
