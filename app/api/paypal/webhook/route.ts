@@ -12,16 +12,15 @@
  *
  * Note on emailData reconstruction: unlike Stripe we cannot stash arbitrary
  * metadata on a PayPal order — only `custom_id`, `reference_id`,
- * `invoice_id`, and `description`. All three carry the reservation id, but
- * we don't have the customer name, breakdown, etc. server-side without a
- * persistent store.
+ * `invoice_id`, and `description`, all of which carry just the reservation
+ * ref. The capture event therefore knows the amount and nothing else: no
+ * dates, guest count, breakdown or customer name.
  *
- * Phase E2 mitigation: we send a **degraded** owner notification (still
- * mentions the reservation id + amount + payer email) and SKIP the guest
- * confirmation when we don't have the full data. The webhook event from
- * PayPal **does** include the payer's email, so the owner notification can
- * be sent reliably. Phase F will persist the booking up-front so the
- * webhook can recover the full payload.
+ * We recover the rest from the `reservations` row the checkout route wrote
+ * before redirecting to PayPal — one read (step 4) that also feeds the
+ * date-blocking guard. When that row is missing we fall back to the bare
+ * capture payload, which still names the reservation, the amount and the
+ * payer email, so the owner is notified either way.
  */
 
 import { NextResponse } from 'next/server'
@@ -122,6 +121,101 @@ function buildEmailDataFromCapture(
   }
 }
 
+/**
+ * Columns needed to rebuild a full confirmation email from the persisted
+ * reservation. Kept as a const so the `select()` string and the row type
+ * below can't drift apart.
+ */
+const RESERVATION_EMAIL_COLUMNS =
+  'check_in, check_out, num_guests, villa_subtotal, cleaning_fee, experiences_total, ' +
+  'total, deposit_amount, balance_amount, display_currency, exchange_rate, ' +
+  'selected_experiences, customers(first_name, last_name, email)'
+
+interface ReservationEmailRow {
+  check_in: string | null
+  check_out: string | null
+  num_guests: number | null
+  villa_subtotal: number | null
+  cleaning_fee: number | null
+  experiences_total: number | null
+  total: number | null
+  deposit_amount: number | null
+  balance_amount: number | null
+  display_currency: string | null
+  exchange_rate: number | null
+  selected_experiences: Array<{ title?: string; quantity?: number }> | null
+  customers: {
+    first_name: string | null
+    last_name: string | null
+    email: string | null
+  } | null
+}
+
+/** Whole nights between two ISO `YYYY-MM-DD` dates. 0 when either is absent. */
+function nightsBetween(checkIn: string | null, checkOut: string | null): number {
+  if (!checkIn || !checkOut) return 0
+  const from = Date.parse(`${checkIn}T00:00:00Z`)
+  const to = Date.parse(`${checkOut}T00:00:00Z`)
+  if (!Number.isFinite(from) || !Number.isFinite(to) || to <= from) return 0
+  return Math.round((to - from) / 86_400_000)
+}
+
+/**
+ * Build the confirmation email from the persisted reservation.
+ *
+ * PayPal cannot round-trip arbitrary metadata the way Stripe does — the
+ * only field that survives the redirect is `custom_id` (the reservation
+ * ref). So where the Stripe webhook reads `session.metadata`, this one
+ * reads the row the checkout route already wrote. Without it the guest
+ * receives an email with blank dates and zeroed amounts.
+ *
+ * Money follows the same contract as the Stripe path: the breakdown stays
+ * in canonical USD and `exchangeRate` carries the rate frozen at order
+ * time, so `formatMoney` renders the guest's currency consistently with
+ * what the checkout page showed.
+ */
+function buildEmailDataFromReservation(
+  row: ReservationEmailRow,
+  fallback: BookingConfirmationData,
+): BookingConfirmationData {
+  const customer = row.customers
+  const currency = row.display_currency === 'EUR' ? 'EUR' : 'USD'
+
+  return {
+    reservationId: fallback.reservationId,
+    currency,
+    // The breakdown is canonical USD, so a rate only applies when the guest
+    // is billed in EUR. Guarding here keeps a stray `exchange_rate` on a
+    // USD reservation from inflating every amount in the email.
+    exchangeRate: currency === 'EUR' ? (row.exchange_rate ?? 1) : 1,
+    customer: {
+      // The guest-checkout card flow gives PayPal no payer name, so the
+      // checkout form is the better source — fall back to the capture.
+      firstName: customer?.first_name || fallback.customer.firstName,
+      lastName: customer?.last_name || fallback.customer.lastName,
+      email: customer?.email || fallback.customer.email,
+    },
+    booking: {
+      checkIn: row.check_in ?? '',
+      checkOut: row.check_out ?? '',
+      guests: row.num_guests ?? 0,
+      nights: nightsBetween(row.check_in, row.check_out),
+    },
+    breakdown: {
+      villaSubtotal: row.villa_subtotal ?? 0,
+      experiencesTotal: row.experiences_total ?? 0,
+      cleaningFee: row.cleaning_fee ?? 0,
+      total: row.total ?? 0,
+      depositAmount: row.deposit_amount ?? fallback.breakdown.depositAmount,
+      balanceAmount: row.balance_amount ?? 0,
+    },
+    selectedExperiences: (row.selected_experiences ?? []).map((item) => ({
+      title: item.title ?? '',
+      quantity: item.quantity ?? 1,
+    })),
+  }
+}
+
 /* ---------------------------------------------------------------------------
  * Handler
  * ------------------------------------------------------------------------- */
@@ -209,7 +303,7 @@ export async function POST(request: Request) {
       const reservationRef =
         enriched?.reservationId ?? capture.custom_id ?? capture.invoice_id ?? null
 
-      const emailData = buildEmailDataFromCapture(capture, enriched)
+      let emailData = buildEmailDataFromCapture(capture, enriched)
 
       // 3. Update reservation status
       if (reservationRef) {
@@ -233,14 +327,27 @@ export async function POST(request: Request) {
         }
       }
 
-      // 4. Block dates — requires check_in / check_out from the reservation row
+      // 4. Recover the full booking from the reservation row, then block the
+      //    dates. One read serves both: the capture event alone carries no
+      //    dates, guest count or breakdown, so without this the guest gets a
+      //    confirmation with blank dates and zeroed amounts.
       if (reservationRef) {
         try {
           const { data: res } = await adminClient
             .from('reservations')
-            .select('check_in, check_out')
+            .select(RESERVATION_EMAIL_COLUMNS)
             .eq('reservation_ref', reservationRef)
-            .maybeSingle()
+            .maybeSingle<ReservationEmailRow>()
+
+          if (res) {
+            emailData = buildEmailDataFromReservation(res, emailData)
+          } else {
+            // eslint-disable-next-line no-console
+            console.warn(
+              '[paypal:webhook] reservation row not found — sending minimal email',
+              { reservationRef },
+            )
+          }
 
           if (res?.check_in && res?.check_out) {
             // Final race guard — same logic as the Stripe webhook.
