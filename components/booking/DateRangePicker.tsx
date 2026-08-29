@@ -100,7 +100,7 @@ export function DateRangePicker() {
             htmlFor="booking-checkin"
             className="text-eyebrow font-medium uppercase tracking-widest2 text-midnight-400"
           >
-            Check-in
+            Arrival
           </label>
           <DateField
             id="booking-checkin"
@@ -134,7 +134,7 @@ export function DateRangePicker() {
             htmlFor="booking-checkout"
             className="text-eyebrow font-medium uppercase tracking-widest2 text-midnight-400"
           >
-            Check-out
+            Departure
           </label>
           <DateField
             id="booking-checkout"

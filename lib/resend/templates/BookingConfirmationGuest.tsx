@@ -167,8 +167,8 @@ export function BookingConfirmationGuest({ data, siteUrl }: Props) {
             >
               Your Stay
             </Text>
-            <DetailRow label="Check-in" value={formatDate(booking.checkIn)} />
-            <DetailRow label="Check-out" value={formatDate(booking.checkOut)} />
+            <DetailRow label="Arrival" value={formatDate(booking.checkIn)} />
+            <DetailRow label="Departure" value={formatDate(booking.checkOut)} />
             <DetailRow
               label="Guests"
               value={`${booking.guests} ${booking.guests === 1 ? 'guest' : 'guests'}`}
@@ -272,7 +272,7 @@ export function BookingConfirmationGuest({ data, siteUrl }: Props) {
                 margin: '0 0 12px',
               }}
             >
-              You will receive your detailed check-in instructions —
+              You will receive your detailed arrival instructions —
               including driver pickup, villa access, and a personalized
               itinerary preview — exactly <strong>7 days before arrival</strong>.
             </Text>

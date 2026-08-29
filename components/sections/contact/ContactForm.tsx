@@ -196,7 +196,7 @@ export function ContactForm() {
 
         <Field
           id="contact-checkIn"
-          label="Check-in"
+          label="Arrival"
           optional
           error={errors.checkIn?.message}
         >
@@ -219,7 +219,7 @@ export function ContactForm() {
 
         <Field
           id="contact-checkOut"
-          label="Check-out"
+          label="Departure"
           optional
           error={errors.checkOut?.message}
         >

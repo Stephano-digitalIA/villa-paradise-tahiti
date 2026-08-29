@@ -165,8 +165,8 @@ export function BookingNotificationOwner({
           {/* Dates */}
           <Section>
             <Text style={eyebrowStyle}>Stay</Text>
-            <DetailRow label="Check-in" value={formatDate(booking.checkIn)} />
-            <DetailRow label="Check-out" value={formatDate(booking.checkOut)} />
+            <DetailRow label="Arrival" value={formatDate(booking.checkIn)} />
+            <DetailRow label="Departure" value={formatDate(booking.checkOut)} />
             <DetailRow
               label="Guests"
               value={`${booking.guests} (${booking.nights} nights)`}
