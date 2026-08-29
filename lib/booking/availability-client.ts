@@ -27,25 +27,54 @@ export const GUEST_STAY_SOURCES = new Set([
   'direct_booking',
 ])
 
-/** Synthetic source tag for the day right after a guest stay. */
+/** Synthetic source tag for the days right after a guest stay. */
 export const TURNOVER_SOURCE = 'turnover'
 
 /**
- * Add an ISO day. `iso` must be `YYYY-MM-DD`. Returns the same format.
+ * Days kept free after a guest's last night, for cleaning and turnaround.
+ *
+ * Two, by the owner's decision: a stay ending the morning of the 22nd
+ * frees the 22nd and the 23rd, so the next arrival is the 24th. Applies
+ * to every guest-stay source, so a direct booking and an Airbnb stay
+ * leave the same gap.
+ *
+ * Set to 1 to go back to a single cleaning day.
  */
-export function nextIsoDay(iso: string): string {
+export const TURNOVER_DAYS = 2
+
+/**
+ * Shift an ISO `YYYY-MM-DD` date by `days` (negative shifts backwards).
+ * Returns the same format.
+ */
+export function shiftIsoDay(iso: string, days: number): string {
   const [y, m, d] = iso.split('-').map(Number)
   const date = new Date(Date.UTC(y || 1970, (m || 1) - 1, d || 1))
-  date.setUTCDate(date.getUTCDate() + 1)
+  date.setUTCDate(date.getUTCDate() + days)
   const yy = date.getUTCFullYear()
   const mm = String(date.getUTCMonth() + 1).padStart(2, '0')
   const dd = String(date.getUTCDate()).padStart(2, '0')
   return `${yy}-${mm}-${dd}`
 }
 
+/** Add one ISO day. */
+export function nextIsoDay(iso: string): string {
+  return shiftIsoDay(iso, 1)
+}
+
 /**
- * For every guest-stay block in `ranges`, inject a synthetic 1-day
- * "turnover" range right after it (for cleaning / maintenance). The
+ * Subtract one ISO day.
+ *
+ * Mostly used to turn an exclusive `check_out` into the inclusive
+ * `blocked_to` that `blocked_dates` stores: a guest leaving the morning
+ * of the 22nd occupied their last night on the 21st.
+ */
+export function previousIsoDay(iso: string): string {
+  return shiftIsoDay(iso, -1)
+}
+
+/**
+ * For every guest-stay block in `ranges`, inject `TURNOVER_DAYS` synthetic
+ * one-day "turnover" ranges right after it (cleaning / turnaround). A
  * turnover day is skipped when another block already covers it
  * (back-to-back stays — the next stay's first day shadows the turnover).
  *
@@ -58,24 +87,27 @@ export function applyTurnoverDays(
   const result = [...ranges]
   for (const block of ranges) {
     if (!GUEST_STAY_SOURCES.has(block.source)) continue
-    const turnoverDay = nextIsoDay(block.end)
 
-    // Skip when another block already covers the turnover day
-    // (e.g. back-to-back stays). The picker will show that day in the
-    // other block's colour, which is what we want.
-    const shadowed = ranges.some(
-      (other) =>
-        other !== block &&
-        other.start <= turnoverDay &&
-        other.end >= turnoverDay,
-    )
-    if (shadowed) continue
+    for (let offset = 1; offset <= TURNOVER_DAYS; offset += 1) {
+      const turnoverDay = shiftIsoDay(block.end, offset)
 
-    result.push({
-      start: turnoverDay,
-      end: turnoverDay,
-      source: TURNOVER_SOURCE,
-    })
+      // Skip when another block already covers this day (e.g. back-to-back
+      // stays). The picker will show it in the other block's colour, which
+      // is what we want.
+      const shadowed = ranges.some(
+        (other) =>
+          other !== block &&
+          other.start <= turnoverDay &&
+          other.end >= turnoverDay,
+      )
+      if (shadowed) continue
+
+      result.push({
+        start: turnoverDay,
+        end: turnoverDay,
+        source: TURNOVER_SOURCE,
+      })
+    }
   }
   return result
 }

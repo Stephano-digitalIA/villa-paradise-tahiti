@@ -31,6 +31,8 @@ import { NextResponse } from 'next/server'
 
 import { parseExperiencesMetadata } from '@/lib/booking'
 import { checkAvailability } from '@/lib/booking/availability'
+import { previousIsoDay } from '@/lib/booking/availability-client'
+import { linkPaymentEventToReservation } from '@/lib/booking/payment-events'
 import {
   sendBookingConfirmationGuest,
   sendBookingNotificationOwner,
@@ -190,6 +192,11 @@ export async function POST(request: Request) {
           console.error('[stripe:webhook] reservation update failed:', err)
         }
 
+        // Backfill the event recorded in step 2, which ran before the
+        // reservation was known. Without it the admin detail page shows
+        // no payment events at all.
+        await linkPaymentEventToReservation(event.id, reservationRef)
+
         if (metadata.checkIn && metadata.checkOut) {
           try {
             // Final race guard — re-check just before we INSERT. Catches
@@ -227,7 +234,10 @@ export async function POST(request: Request) {
             } else {
               await adminClient.from('blocked_dates').insert({
                 blocked_from: metadata.checkIn,
-                blocked_to: metadata.checkOut,
+                // `checkOut` is exclusive (the guest leaves that morning)
+                // while `blocked_to` is inclusive — store the last night
+                // actually slept. The turnover days are added at read time.
+                blocked_to: previousIsoDay(metadata.checkOut),
                 reason: `Booking ${reservationRef}`,
                 source: 'direct_booking',
                 source_ref: reservationRef,

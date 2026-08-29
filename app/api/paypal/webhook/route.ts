@@ -32,6 +32,8 @@ import {
 } from '@/lib/resend'
 import { getPayPalOrder, verifyPayPalWebhook } from '@/lib/paypal'
 import { checkAvailability } from '@/lib/booking/availability'
+import { previousIsoDay } from '@/lib/booking/availability-client'
+import { linkPaymentEventToReservation } from '@/lib/booking/payment-events'
 import { adminClient } from '@/lib/supabase/admin'
 
 export const runtime = 'nodejs'
@@ -325,6 +327,11 @@ export async function POST(request: Request) {
           // eslint-disable-next-line no-console
           console.error('[paypal:webhook] reservation update failed:', err)
         }
+
+        // Backfill the event recorded in step 2, which ran before the
+        // reservation was known. Without it the admin detail page shows
+        // no payment events at all.
+        await linkPaymentEventToReservation(event.id, reservationRef)
       }
 
       // 4. Recover the full booking from the reservation row, then block the
@@ -375,7 +382,10 @@ export async function POST(request: Request) {
             } else {
               await adminClient.from('blocked_dates').insert({
                 blocked_from: res.check_in,
-                blocked_to: res.check_out,
+                // `check_out` is exclusive (the guest leaves that morning)
+                // while `blocked_to` is inclusive — store the last night
+                // actually slept. The turnover days are added at read time.
+                blocked_to: previousIsoDay(res.check_out),
                 reason: `Booking ${reservationRef}`,
                 source: 'direct_booking',
                 source_ref: reservationRef,

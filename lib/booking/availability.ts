@@ -24,16 +24,22 @@
  * Client-safe helpers (pure overlap check, public range type) live in
  * `./availability-client` so that importing them from `BookingProvider`
  * doesn't drag the Supabase admin client into the browser bundle.
+ *
+ * Every read here goes through `liveAdminClient`, never the cached
+ * `adminClient`: these queries decide whether a stay can be sold, and a
+ * cached answer means the picker offers dates that checkout then refuses.
  */
 
-import { adminClient } from '@/lib/supabase/admin'
+import { liveAdminClient } from '@/lib/supabase/admin'
 import type { BlockedDateSource } from '@/lib/supabase/types'
 
 import {
   GUEST_STAY_SOURCES,
+  TURNOVER_DAYS,
   TURNOVER_SOURCE,
   applyTurnoverDays,
-  nextIsoDay,
+  previousIsoDay,
+  shiftIsoDay,
   type PublicBlockedRange,
 } from './availability-client'
 
@@ -107,14 +113,14 @@ export async function checkAvailability(
   const { excludeReservationRef } = options
 
   // ─── 1. blocked_dates (all sources) ───────────────────────────────────
-  // Expand the range by 1 day backwards so we also pick up blocks that
-  // END the day before check-in — those generate a turnover day that
-  // overlaps `checkIn`.
-  const blockedQuery = adminClient
+  // Expand the range backwards by the turnover window so we also pick up
+  // blocks that END shortly before check-in — those generate turnover
+  // days that overlap `checkIn`.
+  const blockedQuery = liveAdminClient
     .from('blocked_dates')
     .select('id, blocked_from, blocked_to, source, source_ref, reason')
     .lt('blocked_from', checkOut)
-    .gte('blocked_to', previousIsoDay(checkIn))
+    .gte('blocked_to', shiftIsoDay(checkIn, -TURNOVER_DAYS))
 
   // Exclude this reservation's own block (idempotency replay safety).
   const blockedPromise = excludeReservationRef
@@ -124,7 +130,7 @@ export async function checkAvailability(
     : blockedQuery
 
   // ─── 2. pending reservations (not yet in blocked_dates) ──────────────
-  let pendingQuery = adminClient
+  let pendingQuery = liveAdminClient
     .from('reservations')
     .select('reservation_ref, check_in, check_out, payment_status')
     .eq('payment_status', 'pending')
@@ -164,19 +170,21 @@ export async function checkAvailability(
         ref: row.source_ref ?? row.id,
       })
     } else if (GUEST_STAY_SOURCES.has(row.source)) {
-      // Block ends the day before check-in → turnover-day conflict.
-      // (Owner / maintenance blocks don't generate a turnover day.)
-      const turnoverDay = nextIsoDay(row.blocked_to)
-      if (turnoverDay >= checkIn && turnoverDay < checkOut) {
-        const sourceLabel = SOURCE_LABELS[row.source as BlockedDateSource] || row.source
-        conflicts.push({
-          origin: 'turnover',
-          from: turnoverDay,
-          to: turnoverDay,
-          label: `Cleaning day after ${sourceLabel} stay`,
-          source: TURNOVER_SOURCE,
-          ref: `turnover-${row.id}`,
-        })
+      // Block ends shortly before check-in → turnover-day conflict.
+      // (Owner / maintenance blocks don't generate turnover days.)
+      for (let offset = 1; offset <= TURNOVER_DAYS; offset += 1) {
+        const turnoverDay = shiftIsoDay(row.blocked_to, offset)
+        if (turnoverDay >= checkIn && turnoverDay < checkOut) {
+          const sourceLabel = SOURCE_LABELS[row.source as BlockedDateSource] || row.source
+          conflicts.push({
+            origin: 'turnover',
+            from: turnoverDay,
+            to: turnoverDay,
+            label: `Cleaning day after ${sourceLabel} stay`,
+            source: TURNOVER_SOURCE,
+            ref: `turnover-${row.id}`,
+          })
+        }
       }
     }
   }
@@ -213,13 +221,13 @@ export async function getPublicBlockedRanges(
     .slice(0, 10)
 
   const [blockedRes, pendingRes] = await Promise.all([
-    adminClient
+    liveAdminClient
       .from('blocked_dates')
       .select('blocked_from, blocked_to, source')
       .gte('blocked_to', today)
       .lte('blocked_from', horizonIso)
       .order('blocked_from', { ascending: true }),
-    adminClient
+    liveAdminClient
       .from('reservations')
       .select('check_in, check_out')
       .eq('payment_status', 'pending')
@@ -251,14 +259,4 @@ export async function getPublicBlockedRanges(
   // can render the cleaning day in red and reject any booking starting
   // on it. Back-to-back stays are detected and skipped automatically.
   return applyTurnoverDays(ranges)
-}
-
-function previousIsoDay(iso: string): string {
-  const [y, m, d] = iso.split('-').map(Number)
-  const date = new Date(Date.UTC(y || 1970, (m || 1) - 1, d || 1))
-  date.setUTCDate(date.getUTCDate() - 1)
-  const yy = date.getUTCFullYear()
-  const mm = String(date.getUTCMonth() + 1).padStart(2, '0')
-  const dd = String(date.getUTCDate()).padStart(2, '0')
-  return `${yy}-${mm}-${dd}`
 }
