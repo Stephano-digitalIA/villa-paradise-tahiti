@@ -37,6 +37,37 @@ export async function cancelReservation(
 
   if (error) return { error: error.message }
 
+  // Free the dates. The payment webhooks write a `direct_booking` row into
+  // `blocked_dates` keyed on the reservation ref, and nothing else ever
+  // removes it — cancelling used to leave the week closed to new bookings,
+  // silently, with no trace in the admin beyond the calendar itself.
+  //
+  // Scoped to `direct_booking` so an owner or maintenance block covering the
+  // same dates, or an iCal row from a platform, is never touched.
+  try {
+    const { data: ref } = await adminClient
+      .from('reservations')
+      .select('reservation_ref')
+      .eq('id', reservationId)
+      .maybeSingle()
+
+    if (ref?.reservation_ref) {
+      const { error: unblockError } = await adminClient
+        .from('blocked_dates')
+        .delete()
+        .eq('source', 'direct_booking')
+        .eq('source_ref', ref.reservation_ref)
+
+      if (unblockError) {
+        // eslint-disable-next-line no-console
+        console.error('[cancelReservation] failed to free the dates:', unblockError)
+      }
+    }
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('[cancelReservation] failed to free the dates:', err)
+  }
+
   // Notify the guest by email. Best-effort: a mail failure must not block the
   // cancellation (the DB update already succeeded). Degrades to a no-op in mock
   // mode (no RESEND_API_KEY).
@@ -76,6 +107,9 @@ export async function cancelReservation(
   revalidatePath(`/admin/reservations/${reservationId}`)
   revalidatePath('/admin/reservations')
   revalidatePath('/admin')
+  // The dates just went back on sale — the calendar must not keep showing
+  // them as booked.
+  revalidatePath('/admin/calendar')
   return {}
 }
 
