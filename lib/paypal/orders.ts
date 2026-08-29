@@ -26,6 +26,29 @@ function getSiteUrl(): string {
 }
 
 /* ---------------------------------------------------------------------------
+ * Error decoding
+ * ------------------------------------------------------------------------- */
+
+/**
+ * Pull the short `issue` code out of a PayPal error body so the visitor
+ * (and the operator reading a support email) sees *why* the call failed
+ * rather than a bare HTTP status. PayPal issue codes are non-sensitive
+ * enum values such as `ORDER_NOT_APPROVED` or `INSTRUMENT_DECLINED`;
+ * the human-readable `description` and `debug_id` stay in the logs.
+ */
+function extractPayPalIssue(errorText: string): string | undefined {
+  try {
+    const parsed = JSON.parse(errorText) as {
+      name?: string
+      details?: Array<{ issue?: string }>
+    }
+    return parsed.details?.[0]?.issue ?? parsed.name ?? undefined
+  } catch {
+    return undefined
+  }
+}
+
+/* ---------------------------------------------------------------------------
  * Create order
  * ------------------------------------------------------------------------- */
 
@@ -223,7 +246,12 @@ export async function capturePayPalOrder(
       }
       // eslint-disable-next-line no-console
       console.error('[paypal:capture] failed', res.status, errorText, { orderId })
-      return { error: `PayPal capture failed (${res.status}).` }
+      const issue = extractPayPalIssue(errorText)
+      return {
+        error: issue
+          ? `PayPal capture failed (${res.status}: ${issue}).`
+          : `PayPal capture failed (${res.status}).`,
+      }
     }
 
     const data = (await res.json()) as PayPalOrderResponse & {
