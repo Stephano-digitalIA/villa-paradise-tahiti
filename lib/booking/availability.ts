@@ -14,7 +14,9 @@
  * the hourly iCal sync (`/api/ical/sync`), the admin manual block form
  * (owner / maintenance), and the payment webhooks (direct_booking). For
  * the in-flight gap between checkout creation and webhook completion,
- * we also consult the `reservations` table for rows still in `pending`.
+ * we also consult the `reservations` table for rows still in `pending`
+ * — but only those inside the `PENDING_HOLD_MINUTES` window, so an
+ * abandoned checkout releases its dates instead of holding them forever.
  *
  * Range semantics: `checkIn` inclusive, `checkOut` exclusive (the guest
  * leaves the morning of `checkOut`). A blocked row from `[a, b]` is
@@ -72,6 +74,28 @@ export interface CheckAvailabilityOptions {
    * `reservation_ref` so it's excluded from the conflict set.
    */
   excludeReservationRef?: string
+}
+
+/**
+ * How long an unpaid reservation holds its dates.
+ *
+ * `/api/checkout` writes the reservation as `pending` before redirecting
+ * to Stripe or PayPal, so the dates are held during the payment. Nothing
+ * ever settles that row when the guest walks away, and an abandoned cart
+ * used to hold its week off the market forever — one visitor clicking
+ * "continue to payment" and closing the tab was enough.
+ *
+ * An hour is comfortably longer than any real checkout, including a slow
+ * 3-D Secure round trip. Should a payment somehow land after the hold
+ * lapses, the webhook re-checks availability before writing to
+ * `blocked_dates` and flags a conflict for the operator rather than
+ * silently double-booking.
+ */
+export const PENDING_HOLD_MINUTES = 60
+
+/** ISO timestamp before which a `pending` reservation no longer holds. */
+function pendingHoldCutoff(): string {
+  return new Date(Date.now() - PENDING_HOLD_MINUTES * 60_000).toISOString()
 }
 
 const SOURCE_LABELS: Record<BlockedDateSource, string> = {
@@ -134,6 +158,7 @@ export async function checkAvailability(
     .from('reservations')
     .select('reservation_ref, check_in, check_out, payment_status')
     .eq('payment_status', 'pending')
+    .gte('created_at', pendingHoldCutoff())
     .lt('check_in', checkOut)
     .gt('check_out', checkIn)
 
@@ -231,6 +256,7 @@ export async function getPublicBlockedRanges(
       .from('reservations')
       .select('check_in, check_out')
       .eq('payment_status', 'pending')
+      .gte('created_at', pendingHoldCutoff())
       .gte('check_out', today)
       .lte('check_in', horizonIso)
       .order('check_in', { ascending: true }),
