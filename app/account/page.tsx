@@ -8,6 +8,7 @@ import { Price } from '@/components/currency'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { adminClient } from '@/lib/supabase/admin'
 import type { PaymentStatus, Reservation } from '@/lib/supabase/types'
+import { CONTACT_EMAIL } from '@/lib/constants'
 
 export const metadata: Metadata = {
   title: 'My account — Villa Paradise Tahiti',
@@ -188,8 +189,8 @@ export default async function AccountPage() {
             arrival logistics.
           </p>
           <Button asChild variant="outline" size="md">
-            <a href="mailto:contact@villaparadisetahiti.com">
-              contact@villaparadisetahiti.com
+            <a href={`mailto:${CONTACT_EMAIL}`}>
+              {CONTACT_EMAIL}
             </a>
           </Button>
         </div>
