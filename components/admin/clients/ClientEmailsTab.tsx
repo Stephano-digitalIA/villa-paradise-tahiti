@@ -1,6 +1,7 @@
 import { AlertCircle, CheckCircle2, Mail, XCircle } from 'lucide-react'
 
 import type { EmailLog, EmailLogStatus } from '@/lib/supabase/types'
+import { VILLA_TIME_ZONE } from '@/lib/format/date'
 
 interface ClientEmailsTabProps {
   emails: EmailLog[]
@@ -115,5 +116,6 @@ function formatDateTime(iso: string): string {
     year: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
+    timeZone: VILLA_TIME_ZONE,
   })
 }

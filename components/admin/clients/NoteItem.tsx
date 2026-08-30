@@ -6,6 +6,7 @@ import { Check, Pencil, Trash2, X } from 'lucide-react'
 
 import { deleteNote, updateNote } from '@/app/actions/clients'
 import type { CustomerNote } from '@/lib/supabase/types'
+import { VILLA_TIME_ZONE } from '@/lib/format/date'
 
 interface NoteItemProps {
   note: CustomerNote & { author_name?: string | null }
@@ -187,5 +188,6 @@ function formatDateTime(iso: string): string {
     year: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
+    timeZone: VILLA_TIME_ZONE,
   })
 }

@@ -5,6 +5,7 @@ import { CalendarPlus, Download, Mail, Trash2 } from 'lucide-react'
 
 import { AnonymizeConfirmModal } from './AnonymizeConfirmModal'
 import { EmailComposerDrawer } from './EmailComposerDrawer'
+import { VILLA_TIME_ZONE } from '@/lib/format/date'
 
 interface ClientActionsProps {
   customerId: string
@@ -160,5 +161,6 @@ function formatDate(iso: string): string {
     month: 'short',
     day: 'numeric',
     year: 'numeric',
+    timeZone: VILLA_TIME_ZONE,
   })
 }

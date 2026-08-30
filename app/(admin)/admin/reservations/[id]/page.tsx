@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { adminClient } from '@/lib/supabase/admin'
+import { formatInstant, formatStayDate } from '@/lib/format/date'
 import { Badge } from '@/components/ui/Badge'
 import type { PaymentStatus, SelectedExperienceSnapshot, Reservation, Customer } from '@/lib/supabase/types'
 import { LinkClientPanel } from '@/components/admin/clients/LinkClientPanel'
@@ -38,25 +39,23 @@ function formatUSD(amount: number | null | undefined): string {
   }).format(amount)
 }
 
+/** Arrival / departure: a calendar date, kept in UTC. */
 function formatDate(dateStr: string | null | undefined): string {
   if (!dateStr) return '—'
-  return new Date(dateStr).toLocaleDateString('en-US', {
-    weekday: 'long',
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-  })
+  return (
+    formatStayDate(dateStr, 'en-US', {
+      weekday: 'long',
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric',
+    }) || '—'
+  )
 }
 
+/** When something happened, in the villa's own time zone. */
 function formatDateTime(dateStr: string | null | undefined): string {
   if (!dateStr) return '—'
-  return new Date(dateStr).toLocaleString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
+  return formatInstant(dateStr, 'en-US') || '—'
 }
 
 function nightsBetween(checkIn: string, checkOut: string): number {

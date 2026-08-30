@@ -4,6 +4,7 @@ import type { CustomerSummary, CustomerTag } from '@/lib/supabase/types'
 
 import { ClientActions } from './ClientActions'
 import { TagEditor } from './TagEditor'
+import { VILLA_TIME_ZONE } from '@/lib/format/date'
 
 interface ClientProfileCardProps {
   customer: CustomerSummary
@@ -79,11 +80,11 @@ export function ClientProfileCard({ customer, allTags }: ClientProfileCardProps)
         <Kpi label="Chiffre d'affaires" value={formatUSD(customer.total_revenue)} />
         <Kpi
           label="Dernier séjour"
-          value={customer.last_check_in ? formatDate(customer.last_check_in) : '—'}
+          value={customer.last_check_in ? formatStay(customer.last_check_in) : '—'}
         />
         <Kpi
           label="Prochain séjour"
-          value={customer.next_check_in ? formatDate(customer.next_check_in) : '—'}
+          value={customer.next_check_in ? formatStay(customer.next_check_in) : '—'}
           highlight={!!customer.next_check_in}
         />
       </div>
@@ -177,5 +178,19 @@ function formatDate(iso: string): string {
     month: 'short',
     day: 'numeric',
     year: 'numeric',
+    timeZone: VILLA_TIME_ZONE,
+  })
+}
+
+/**
+ * Stay dates carry no time of day, so they stay in UTC. Formatting them in
+ * Tahiti's negative offset would roll each one back a day.
+ */
+function formatStay(iso: string): string {
+  return new Date(iso).toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    timeZone: 'UTC',
   })
 }

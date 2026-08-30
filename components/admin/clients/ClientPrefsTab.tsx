@@ -1,6 +1,7 @@
 import { Check, X } from 'lucide-react'
 
 import type { Customer } from '@/lib/supabase/types'
+import { VILLA_TIME_ZONE } from '@/lib/format/date'
 
 interface ClientPrefsTabProps {
   customer: Customer
@@ -134,11 +135,13 @@ function formatDate(iso: string): string {
     month: 'short',
     day: 'numeric',
     year: 'numeric',
+    timeZone: VILLA_TIME_ZONE,
   })
 }
 
 function formatDateTime(iso: string): string {
   return new Date(iso).toLocaleString('en-US', {
+    timeZone: VILLA_TIME_ZONE,
     month: 'short',
     day: 'numeric',
     year: 'numeric',

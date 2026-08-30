@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { ReviewFeaturedToggle } from './ReviewFeaturedToggle'
 import type { ReviewSource } from '@/lib/supabase/types'
+import { VILLA_TIME_ZONE } from '@/lib/format/date'
 
 export const metadata: Metadata = { title: 'Avis — Admin' }
 export const dynamic = 'force-dynamic'
@@ -39,6 +40,7 @@ export default async function ReviewsPage() {
       day: '2-digit',
       month: 'short',
       year: 'numeric',
+      timeZone: VILLA_TIME_ZONE,
     })
   }
 

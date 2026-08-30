@@ -172,10 +172,12 @@ function formatUSD(amount: number | null): string {
   }).format(amount)
 }
 
+/** A stay date: no time of day, so keep it in UTC. */
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString('en-US', {
     month: 'short',
     day: 'numeric',
     year: 'numeric',
+    timeZone: 'UTC',
   })
 }

@@ -166,9 +166,12 @@ function formatUSD(amount: number): string {
 }
 
 function formatDate(iso: string): string {
+  // A stay date, not an instant: keep it in UTC or Tahiti's negative
+  // offset would show the day before.
   return new Date(iso).toLocaleDateString('en-US', {
     month: 'short',
     day: 'numeric',
     year: 'numeric',
+    timeZone: 'UTC',
   })
 }

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { adminClient } from '@/lib/supabase/admin'
+import { formatStayDate } from '@/lib/format/date'
 import { Badge } from '@/components/ui/Badge'
 import type { Reservation, Customer } from '@/lib/supabase/types'
 
@@ -41,13 +42,16 @@ function formatUSD(amount: number | null | undefined): string {
   }).format(amount)
 }
 
+/** Arrival / departure: a calendar date, kept in UTC. */
 function formatDate(dateStr: string | null | undefined): string {
   if (!dateStr) return '—'
-  return new Date(dateStr).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  })
+  return (
+    formatStayDate(dateStr, 'en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    }) || '—'
+  )
 }
 
 type KpiCardProps = {

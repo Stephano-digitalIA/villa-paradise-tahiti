@@ -15,6 +15,7 @@ import {
   TURNOVER_SOURCE,
   applyTurnoverDays,
 } from '@/lib/booking/availability-client'
+import { formatInstant, formatStayDate } from '@/lib/format/date'
 
 export const metadata: Metadata = {
   title: 'Calendar — Villa Paradise Tahiti Admin',
@@ -41,24 +42,22 @@ const STATUS_LABEL: Record<PaymentStatus, string> = {
   refunded: 'Remboursé',
 }
 
+/** Arrival / departure: a calendar date, kept in UTC. */
 function formatDate(dateStr: string | null | undefined): string {
   if (!dateStr) return '—'
-  return new Date(dateStr).toLocaleDateString('fr-FR', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-  })
+  return (
+    formatStayDate(dateStr, 'fr-FR', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+    }) || '—'
+  )
 }
 
+/** When the last sync ran, in the villa's own time zone. */
 function formatDateTime(dateStr: string | null | undefined): string {
   if (!dateStr) return '—'
-  return new Date(dateStr).toLocaleString('fr-FR', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
+  return formatInstant(dateStr, 'fr-FR') || '—'
 }
 
 function nightsBetween(checkIn: string, checkOut: string): number {

@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { adminClient } from '@/lib/supabase/admin'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
+import { VILLA_TIME_ZONE } from '@/lib/format/date'
 
 export const metadata: Metadata = { title: 'Blog — Admin' }
 export const dynamic = 'force-dynamic'
@@ -18,6 +19,7 @@ function formatDate(str: string | null) {
     day: '2-digit',
     month: 'short',
     year: 'numeric',
+      timeZone: VILLA_TIME_ZONE,
   })
 }
 

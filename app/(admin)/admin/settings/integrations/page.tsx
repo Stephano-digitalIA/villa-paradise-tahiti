@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { adminClient } from '@/lib/supabase/admin'
 import { IcalSyncButton } from '@/components/admin/IcalSyncButton'
+import { VILLA_TIME_ZONE } from '@/lib/format/date'
 
 export const metadata: Metadata = {
   title: 'Intégrations — Villa Paradise Tahiti Admin',
@@ -104,7 +105,7 @@ export default async function IntegrationsPage() {
                         : minutesAgo < 60
                         ? `${minutesAgo} minute${minutesAgo !== 1 ? 's' : ''} ago`
                         : `${Math.round(minutesAgo / 60)} hour${Math.round(minutesAgo / 60) !== 1 ? 's' : ''} ago`
-                    } (${new Date(lastSync!).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })})`
+                    } (${new Date(lastSync!).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: VILLA_TIME_ZONE })})`
                   : 'No sync data found'}
               </p>
             </div>

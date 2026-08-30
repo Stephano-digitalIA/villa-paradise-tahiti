@@ -34,12 +34,18 @@ const STATUS_STYLES: Record<PaymentStatus, string> = {
   refunded: 'bg-midnight/5 text-midnight-400',
 }
 
+/**
+ * Arrival / departure. These are calendar dates with no time of day, so
+ * they must be read in UTC: any other zone shifts the guest's own stay by
+ * a day depending on where they open the page.
+ */
 function formatDate(dateStr: string | null | undefined): string {
   if (!dateStr) return '—'
   return new Date(dateStr).toLocaleDateString('en-US', {
     month: 'short',
     day: 'numeric',
     year: 'numeric',
+    timeZone: 'UTC',
   })
 }
 

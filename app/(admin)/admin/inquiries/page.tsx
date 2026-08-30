@@ -1,5 +1,10 @@
 import type { Metadata } from 'next'
 import { adminClient } from '@/lib/supabase/admin'
+import {
+  VILLA_TIME_ZONE,
+  formatInstantDate,
+  formatStayDate,
+} from '@/lib/format/date'
 import { Badge } from '@/components/ui/Badge'
 import type { ContactInquiry } from '@/lib/supabase/types'
 import { InquiryActions } from './_components/InquiryActions'
@@ -9,6 +14,17 @@ export const metadata: Metadata = {
 }
 
 export const dynamic = 'force-dynamic'
+
+/** Instant with caller-supplied options, pinned to the villa's time zone. */
+function formatInstantLegacy(
+  iso: string,
+  options: Intl.DateTimeFormatOptions,
+): string {
+  return new Date(iso).toLocaleString('fr-FR', {
+    ...options,
+    timeZone: VILLA_TIME_ZONE,
+  })
+}
 
 export default async function InquiriesPage({
   searchParams,
@@ -144,7 +160,7 @@ function InquiryCard({ inquiry }: { inquiry: ContactInquiry }) {
             <p className="mt-2 font-sans text-sm text-midnight">
               <span className="font-semibold">Dates demandées :</span>{' '}
               {inquiry.check_in
-                ? new Date(inquiry.check_in).toLocaleDateString('fr-FR', {
+                ? formatStayDate(inquiry.check_in, 'fr-FR', {
                     day: 'numeric',
                     month: 'short',
                     year: 'numeric',
@@ -152,7 +168,7 @@ function InquiryCard({ inquiry }: { inquiry: ContactInquiry }) {
                 : '?'}
               {' → '}
               {inquiry.check_out
-                ? new Date(inquiry.check_out).toLocaleDateString('fr-FR', {
+                ? formatStayDate(inquiry.check_out, 'fr-FR', {
                     day: 'numeric',
                     month: 'short',
                     year: 'numeric',
@@ -167,7 +183,7 @@ function InquiryCard({ inquiry }: { inquiry: ContactInquiry }) {
           </p>
 
           <p className="mt-2 font-sans text-xs text-midnight-400">
-            Reçu le {new Date(inquiry.created_at).toLocaleString('fr-FR', {
+            Reçu le {formatInstantLegacy(inquiry.created_at, {
               day: 'numeric',
               month: 'short',
               year: 'numeric',
@@ -175,7 +191,7 @@ function InquiryCard({ inquiry }: { inquiry: ContactInquiry }) {
               minute: '2-digit',
             })}
             {inquiry.replied_at && (
-              <> · Répondu le {new Date(inquiry.replied_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })}</>
+              <> · Répondu le {formatInstantDate(inquiry.replied_at, 'fr-FR')}</>
             )}
           </p>
         </div>
