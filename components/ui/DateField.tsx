@@ -34,10 +34,10 @@ export interface DateFieldProps {
   max?: string
   disabled?: boolean
   /**
-   * Ranges that can't be selected. The optional `source` tag is used to
-   * style them differently — a row with `source === 'turnover'` renders
-   * in red (the 1-day cleaning block after every guest stay), everything
-   * else renders in coral with a strikethrough.
+   * Ranges that can't be selected. The optional `source` tag drives the
+   * styling: `turnover` marks the cleaning days that follow a stay,
+   * `gap` marks days held before an arrival (unsellable, but nothing to
+   * clean yet), and everything else renders in coral with a strikethrough.
    */
   disabledRanges?: ReadonlyArray<{ start: string; end: string; source?: string }>
   placeholder?: string
@@ -62,6 +62,21 @@ function isoToDate(iso: string | undefined): Date | undefined {
   // Local time — DayPicker compares dates without time-of-day, and using
   // local-zone Date avoids "off by one" rendering in negative UTC offsets.
   return new Date(y, m - 1, d)
+}
+
+/** DayPicker ranges for every disabled row carrying `source`. */
+function rangesWithSource(
+  ranges: ReadonlyArray<{ start: string; end: string; source?: string }> | undefined,
+  source: string,
+): Array<{ from: Date; to: Date }> {
+  const list: Array<{ from: Date; to: Date }> = []
+  for (const range of ranges ?? []) {
+    if (range.source !== source) continue
+    const from = isoToDate(range.start)
+    const to = isoToDate(range.end)
+    if (from && to) list.push({ from, to })
+  }
+  return list
 }
 
 function dateToIso(date: Date): string {
@@ -126,16 +141,17 @@ export function DateField({
   // Days that belong to a `source === 'turnover'` range — passed to
   // DayPicker as a custom modifier so the CSS can paint them red on
   // top of the default disabled styling.
-  const turnoverModifier = useMemo(() => {
-    const list: Array<{ from: Date; to: Date }> = []
-    for (const range of disabledRanges ?? []) {
-      if (range.source !== 'turnover') continue
-      const from = isoToDate(range.start)
-      const to = isoToDate(range.end)
-      if (from && to) list.push({ from, to })
-    }
-    return list
-  }, [disabledRanges])
+  const turnoverModifier = useMemo(
+    () => rangesWithSource(disabledRanges, 'turnover'),
+    [disabledRanges],
+  )
+
+  // Days held before an arrival rather than cleaned. Painted apart so the
+  // guest isn't told the villa is being cleaned when nobody has left yet.
+  const gapModifier = useMemo(
+    () => rangesWithSource(disabledRanges, 'gap'),
+    [disabledRanges],
+  )
 
   function handleSelect(date: Date | undefined) {
     if (date) {
@@ -200,8 +216,16 @@ export function DateField({
             onSelect={handleSelect}
             defaultMonth={selected ?? minDate ?? new Date()}
             disabled={disabledMatchers as never}
-            modifiers={{ turnover: turnoverModifier as never }}
-            modifiersClassNames={{ turnover: 'rdp-day-turnover' }}
+            modifiers={
+              {
+                turnover: turnoverModifier,
+                gap: gapModifier,
+              } as never
+            }
+            modifiersClassNames={{
+              turnover: 'rdp-day-turnover',
+              gap: 'rdp-day-gap',
+            }}
             startMonth={minDate}
             endMonth={maxDate}
             showOutsideDays

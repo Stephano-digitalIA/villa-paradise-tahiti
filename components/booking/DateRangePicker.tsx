@@ -87,8 +87,18 @@ export function DateRangePicker() {
             />
             <p className="font-sans text-xs text-midnight-400">
               <span className="font-semibold text-midnight">Dark green</span>{' '}
-              dates are mandatory cleaning &amp; turnover days (the day after
-              every guest stay) and are reserved for housekeeping.
+              dates are reserved for housekeeping after a departure.
+            </p>
+          </div>
+          <div className="inline-flex items-center gap-2 self-start rounded-full border border-midnight/20 bg-midnight/5 px-3 py-1.5">
+            <span
+              className="inline-block h-3 w-3 shrink-0 rounded-full border border-midnight/25 bg-midnight/10"
+              aria-hidden="true"
+            />
+            <p className="font-sans text-xs text-midnight-400">
+              <span className="font-semibold text-midnight">Grey</span> dates
+              sit too close to the next arrival to leave time for
+              housekeeping, so they can&apos;t be booked.
             </p>
           </div>
         </div>

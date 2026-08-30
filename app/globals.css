@@ -129,6 +129,22 @@
   font-weight: 600;
 }
 
+/* Gap day — held because a stay starts within the turnover window, so
+   nothing can be sold here. Deliberately quieter than both the coral
+   booked days and the emerald cleaning days: it is an absence of
+   availability, not an event. */
+.rdp-day.rdp-day-gap:not(.rdp-outside) .rdp-day_button,
+.rdp-day.rdp-day-gap.rdp-disabled:not(.rdp-outside) .rdp-day_button {
+  background-color: rgba(15, 33, 55, 0.07);
+  color: rgba(15, 33, 55, 0.55);
+  text-decoration: line-through;
+  text-decoration-color: rgba(15, 33, 55, 0.35);
+  text-decoration-thickness: 1.5px;
+  opacity: 1;
+  cursor: not-allowed;
+  border-radius: 9999px;
+}
+
 /* Outside-month days stay almost invisible (don't compete with blocks). */
 .rdp-day.rdp-outside .rdp-day_button {
   color: rgba(12, 31, 51, 0.18);

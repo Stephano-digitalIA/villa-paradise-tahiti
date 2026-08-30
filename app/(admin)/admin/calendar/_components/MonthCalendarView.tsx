@@ -96,6 +96,9 @@ const BLOCK_STYLE: Record<string, { bar: string; dot: string; label: string }> =
   owner:          { bar: 'bg-midnight       text-pearl',  dot: 'bg-midnight',    label: 'Propriétaire' },
   maintenance:    { bar: 'bg-amber-600/80   text-white',  dot: 'bg-amber-600',   label: 'Entretien' },
   turnover:       { bar: 'bg-emerald-800    text-white',  dot: 'bg-emerald-800', label: 'Ménage' },
+  // Held before an arrival, not cleaned: no one has left yet. The stay
+  // that could cover these days would leave too little turnaround time.
+  gap:            { bar: 'bg-midnight-200   text-midnight', dot: 'bg-midnight-200', label: 'Indisponible' },
 }
 
 function blockStyle(source: string) {
@@ -387,6 +390,7 @@ function Legend() {
     { dot: BLOCK_STYLE.owner!.dot, label: 'Propriétaire' },
     { dot: BLOCK_STYLE.maintenance!.dot, label: 'Entretien' },
     { dot: BLOCK_STYLE.turnover!.dot, label: 'Ménage' },
+    { dot: BLOCK_STYLE.gap!.dot, label: 'Indisponible' },
   ]
   return (
     <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">

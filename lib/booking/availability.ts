@@ -36,6 +36,7 @@ import { liveAdminClient } from '@/lib/supabase/admin'
 import type { BlockedDateSource } from '@/lib/supabase/types'
 
 import {
+  GAP_SOURCE,
   GUEST_STAY_SOURCES,
   TURNOVER_DAYS,
   TURNOVER_SOURCE,
@@ -56,7 +57,7 @@ export interface AvailabilityConflict {
   /** Source label suitable for showing in the UI / logs. */
   label: string
   /** Underlying source code (so callers can filter or branch). */
-  source: BlockedDateSource | 'pending_reservation' | 'turnover'
+  source: BlockedDateSource | 'pending_reservation' | 'turnover' | 'gap'
   /** Optional reservation_ref or block id for traceability. */
   ref?: string | null
 }
@@ -208,19 +209,30 @@ export async function checkAvailability(
         // After the block: the villa is being cleaned once that stay leaves.
         // Before it: this stay would have to be cleaned up before that one
         // arrives, so its own departure must clear the gap too.
-        const days: Array<[string, string]> = [
-          [shiftIsoDay(row.blocked_to, offset), `Cleaning day after ${sourceLabel} stay`],
-          [shiftIsoDay(row.blocked_from, -offset), `Cleaning day before ${sourceLabel} stay`],
+        // Two different reasons, and the guest deserves the right one:
+        // after the block the villa is being cleaned, before it there is
+        // simply not enough room left to clean up afterwards.
+        const days: Array<[string, string, AvailabilityConflict['source']]> = [
+          [
+            shiftIsoDay(row.blocked_to, offset),
+            `Cleaning day after ${sourceLabel} stay`,
+            TURNOVER_SOURCE,
+          ],
+          [
+            shiftIsoDay(row.blocked_from, -offset),
+            `Too close to the ${sourceLabel} stay to allow for housekeeping`,
+            GAP_SOURCE,
+          ],
         ]
 
-        for (const [day, label] of days) {
+        for (const [day, label, daySource] of days) {
           if (day >= checkIn && day < checkOut) {
             conflicts.push({
               origin: 'turnover',
               from: day,
               to: day,
               label,
-              source: TURNOVER_SOURCE,
+              source: daySource,
               ref: `turnover-${row.id}`,
             })
           }

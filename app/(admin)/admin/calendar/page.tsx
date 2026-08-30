@@ -12,9 +12,8 @@ import {
   type CalendarReservation,
 } from './_components/MonthCalendarView'
 import {
-  GUEST_STAY_SOURCES,
   TURNOVER_SOURCE,
-  nextIsoDay,
+  applyTurnoverDays,
 } from '@/lib/booking/availability-client'
 
 export const metadata: Metadata = {
@@ -137,26 +136,27 @@ export default async function CalendarPage() {
     reason: b.reason,
   }))
 
-  // Inject a synthetic 1-day "turnover" block after every guest stay
-  // (Airbnb / Booking / VRBO / direct booking) — but skip when another
-  // block already covers that day (back-to-back stays). Same rule as
-  // the public availability layer; rendered in red by MonthCalendarView.
-  for (const block of allBlocks) {
-    if (!GUEST_STAY_SOURCES.has(block.source)) continue
-    const turnoverDay = nextIsoDay(block.blocked_to)
-    const shadowed = allBlocks.some(
-      (other) =>
-        other.id !== block.id &&
-        other.blocked_from <= turnoverDay &&
-        other.blocked_to >= turnoverDay,
-    )
-    if (shadowed) continue
+  // Cleaning days come from the same helper the public availability layer
+  // uses. This page used to carry its own copy of the rule, which silently
+  // fell behind: it still drew a single day, and only after a stay, while
+  // the booking funnel had moved to TURNOVER_DAYS on both sides. The admin
+  // calendar then showed dates as free that checkout would have refused.
+  // Deriving both views from one function is what keeps them honest.
+  const turnoverDays = applyTurnoverDays(
+    allBlocks.map((b) => ({
+      start: b.blocked_from,
+      end: b.blocked_to,
+      source: b.source,
+    })),
+  ).filter((r) => r.source === TURNOVER_SOURCE)
+
+  for (const [index, day] of turnoverDays.entries()) {
     calendarBlocks.push({
-      id: `turnover-${block.id}`,
-      blocked_from: turnoverDay,
-      blocked_to: turnoverDay,
+      id: `turnover-${index}-${day.start}`,
+      blocked_from: day.start,
+      blocked_to: day.end,
       source: TURNOVER_SOURCE,
-      reason: `Cleaning day after ${block.source} stay`,
+      reason: 'Jour de ménage',
     })
   }
 

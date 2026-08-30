@@ -27,8 +27,19 @@ export const GUEST_STAY_SOURCES = new Set([
   'direct_booking',
 ])
 
-/** Synthetic source tag for the days right after a guest stay. */
+/** Synthetic source tag for the cleaning days right after a guest stay. */
 export const TURNOVER_SOURCE = 'turnover'
+
+/**
+ * Synthetic source tag for days held before a stay begins.
+ *
+ * These are not cleaning days: nobody has left yet. They are unsellable
+ * because any stay covering them would have to be turned around in less
+ * than `TURNOVER_DAYS` before the next guest arrives. Tagging them apart
+ * keeps the calendar honest — an operator reading four green "cleaning"
+ * days in a row would reasonably assume four days of housekeeping.
+ */
+export const GAP_SOURCE = 'gap'
 
 /**
  * Days kept free after a guest's last night, for cleaning and turnaround.
@@ -100,37 +111,36 @@ export function applyTurnoverDays(
   ranges: ReadonlyArray<PublicBlockedRange>,
 ): PublicBlockedRange[] {
   const result = [...ranges]
+  const emitted = new Set<string>()
 
   const isCovered = (day: string, self: PublicBlockedRange) =>
     ranges.some(
       (other) => other !== self && other.start <= day && other.end >= day,
     )
 
+  const emit = (day: string, block: PublicBlockedRange, source: string) => {
+    if (isCovered(day, block) || emitted.has(day)) return
+    emitted.add(day)
+    result.push({ start: day, end: day, source })
+  }
+
+  // Cleaning first, so that a date claimed by both sides — two stays
+  // exactly TURNOVER_DAYS apart share one set of days — is labelled as
+  // actual housekeeping rather than as an unsellable gap.
   for (const block of ranges) {
     if (!GUEST_STAY_SOURCES.has(block.source)) continue
-
     for (let offset = 1; offset <= TURNOVER_DAYS; offset += 1) {
-      for (const day of [
-        shiftIsoDay(block.end, offset),
-        shiftIsoDay(block.start, -offset),
-      ]) {
-        if (isCovered(day, block)) continue
-
-        // Both sides can name the same date (two stays exactly
-        // TURNOVER_DAYS apart). Emitting it twice would be harmless for
-        // overlap checks but would draw a duplicate range in the picker.
-        if (
-          result.some(
-            (r) => r.source === TURNOVER_SOURCE && r.start === day,
-          )
-        ) {
-          continue
-        }
-
-        result.push({ start: day, end: day, source: TURNOVER_SOURCE })
-      }
+      emit(shiftIsoDay(block.end, offset), block, TURNOVER_SOURCE)
     }
   }
+
+  for (const block of ranges) {
+    if (!GUEST_STAY_SOURCES.has(block.source)) continue
+    for (let offset = 1; offset <= TURNOVER_DAYS; offset += 1) {
+      emit(shiftIsoDay(block.start, -offset), block, GAP_SOURCE)
+    }
+  }
+
   return result
 }
 
