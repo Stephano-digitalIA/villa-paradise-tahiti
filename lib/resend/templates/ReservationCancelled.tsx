@@ -141,8 +141,10 @@ export function ReservationCancelled({ data, siteUrl }: Props) {
           </Section>
 
           <Text style={{ fontSize: '16px', lineHeight: 1.7, color: COLORS.midnight400, margin: '0 0 16px' }}>
-            Any payment made will be refunded in accordance with our cancellation policy. If you have
-            any question, simply reply to this email — we&apos;ll get back to you personally.
+            If you have already paid, our team will contact you within 48 hours to
+            arrange the refund you are entitled to under our cancellation policy.
+            For any question, simply reply to this email and we will get back to
+            you personally.
           </Text>
 
           <Text style={{ fontSize: '16px', lineHeight: 1.7, color: COLORS.midnight400, margin: '0 0 8px' }}>

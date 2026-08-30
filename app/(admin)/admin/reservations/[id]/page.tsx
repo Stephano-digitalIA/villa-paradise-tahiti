@@ -72,6 +72,18 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 }
 
+/** The amount actually taken, in the currency the guest was charged in. */
+function formatCharged(
+  amount: number | null | undefined,
+  currency: string | null | undefined,
+): string {
+  if (amount == null) return ''
+  return new Intl.NumberFormat('fr-FR', {
+    style: 'currency',
+    currency: currency || 'USD',
+  }).format(amount)
+}
+
 // Explicit row type for the reservation detail query
 type ReservationDetailRow = Reservation & {
   customers: Customer | null
@@ -153,6 +165,36 @@ export default async function ReservationDetailPage({ params }: PageProps) {
           </p>
         </div>
       </div>
+
+      {/* Cancelling does not move any money: PayPal and Stripe are never
+          called. The guest has been emailed that we will arrange their
+          refund, so someone has to actually do it — this is the only place
+          that says so. */}
+      {r.payment_status === 'cancelled' && r.deposit_paid_at ? (
+        <div className="mt-6 rounded-2xl border border-coral/40 bg-coral/5 p-5">
+          <h2 className="font-heading text-base font-semibold text-midnight">
+            Remboursement à effectuer manuellement
+          </h2>
+          <p className="mt-2 font-sans text-sm text-midnight-400">
+            Cette réservation a été annulée alors qu&apos;un acompte de{' '}
+            <strong className="text-midnight">
+              {formatCharged(r.amount_charged_currency, r.display_currency) ||
+                formatUSD(r.deposit_amount)}
+            </strong>{' '}
+            avait été encaissé le {formatDateTime(r.deposit_paid_at)}.
+          </p>
+          <p className="mt-2 font-sans text-sm text-midnight-400">
+            L&apos;annulation libère les dates et prévient le client, mais elle
+            ne rembourse rien. Le remboursement se fait depuis le tableau de
+            bord {r.payment_method === 'paypal' ? 'PayPal' : 'Stripe'}
+            {r.paypal_order_id ? ` (commande ${r.paypal_order_id})` : ''}.
+          </p>
+          <p className="mt-2 font-sans text-sm text-midnight-400">
+            Le client a reçu un email lui indiquant qu&apos;il serait recontacté
+            sous 48 heures.
+          </p>
+        </div>
+      ) : null}
 
       {/* 2-column layout */}
       <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
