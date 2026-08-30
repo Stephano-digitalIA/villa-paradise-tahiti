@@ -52,7 +52,30 @@ async function checkAdminMembership(userId: string): Promise<boolean | null> {
   }
 }
 
+/**
+ * Last-resort guard around the whole middleware.
+ *
+ * This runs on nearly every request, so anything that escapes it renders
+ * an "edge function has crashed" page instead of the site. Public pages
+ * are served on failure — a broken session must never cost a booking —
+ * while the admin zone fails closed, since we cannot prove membership.
+ */
 export async function middleware(request: NextRequest) {
+  try {
+    return await handleRequest(request)
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('[middleware] unhandled failure', err)
+
+    const { pathname } = request.nextUrl
+    if (pathname.startsWith('/admin') && !pathname.startsWith('/admin/auth')) {
+      return NextResponse.redirect(new URL('/admin/auth', request.url))
+    }
+    return NextResponse.next({ request })
+  }
+}
+
+async function handleRequest(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // NOTE: there used to be an "OAuth fallback catcher" here that forwarded any
@@ -88,9 +111,22 @@ export async function middleware(request: NextRequest) {
 
   // Refresh session (keeps auth cookie alive) and capture the user so the
   // admin authorization check below doesn't need a second round-trip.
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  //
+  // Never let this throw. It runs on EVERY request, so an exception here
+  // takes the whole site down for that visitor with an opaque "edge
+  // function invocation failed" — not just the admin area. A malformed or
+  // stale auth cookie is enough to trigger it, and cookies outlive
+  // deployments and domain changes. Treat a failure as "not signed in":
+  // public pages carry on, and the admin guard below still refuses entry.
+  let user: Awaited<ReturnType<typeof supabase.auth.getUser>>['data']['user'] =
+    null
+  try {
+    const result = await supabase.auth.getUser()
+    user = result.data.user
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('[middleware] session lookup failed', err)
+  }
 
   // Authorize /admin/* — the auth page itself stays open (else the redirects
   // below would loop). Everything else requires admin_users membership.
