@@ -137,13 +137,15 @@ export async function checkAvailability(
   const { excludeReservationRef } = options
 
   // ─── 1. blocked_dates (all sources) ───────────────────────────────────
-  // Expand the range backwards by the turnover window so we also pick up
-  // blocks that END shortly before check-in — those generate turnover
-  // days that overlap `checkIn`.
+  // Widen the window by the turnover gap on BOTH sides: a block ending
+  // shortly before check-in needs cleaning days that eat into this stay,
+  // and a block starting shortly after check-out leaves no time to clean
+  // up after it. Without the second half a guest could book right up to
+  // the eve of an existing stay.
   const blockedQuery = liveAdminClient
     .from('blocked_dates')
     .select('id, blocked_from, blocked_to, source, source_ref, reason')
-    .lt('blocked_from', checkOut)
+    .lt('blocked_from', shiftIsoDay(checkOut, TURNOVER_DAYS))
     .gte('blocked_to', shiftIsoDay(checkIn, -TURNOVER_DAYS))
 
   // Exclude this reservation's own block (idempotency replay safety).
@@ -159,8 +161,10 @@ export async function checkAvailability(
     .select('reservation_ref, check_in, check_out, payment_status')
     .eq('payment_status', 'pending')
     .gte('created_at', pendingHoldCutoff())
-    .lt('check_in', checkOut)
-    .gt('check_out', checkIn)
+    // Same turnover gap as `blocked_dates`: a held stay starting just after
+    // this one ends leaves no room to clean between the two guests.
+    .lt('check_in', shiftIsoDay(checkOut, TURNOVER_DAYS))
+    .gt('check_out', shiftIsoDay(checkIn, -TURNOVER_DAYS))
 
   if (excludeReservationRef) {
     pendingQuery = pendingQuery.neq('reservation_ref', excludeReservationRef)
@@ -184,7 +188,7 @@ export async function checkAvailability(
   const conflicts: AvailabilityConflict[] = []
 
   for (const row of blockedRes.data ?? []) {
-    if (row.blocked_to >= checkIn) {
+    if (row.blocked_to >= checkIn && row.blocked_from < checkOut) {
       // Direct overlap with the picked range.
       conflicts.push({
         origin: 'blocked_dates',
@@ -195,20 +199,31 @@ export async function checkAvailability(
         ref: row.source_ref ?? row.id,
       })
     } else if (GUEST_STAY_SOURCES.has(row.source)) {
-      // Block ends shortly before check-in → turnover-day conflict.
-      // (Owner / maintenance blocks don't generate turnover days.)
+      // No direct overlap, but the cleaning gap either side of the block
+      // may still eat into the picked range. Owner and maintenance blocks
+      // don't generate one.
+      const sourceLabel = SOURCE_LABELS[row.source as BlockedDateSource] || row.source
+
       for (let offset = 1; offset <= TURNOVER_DAYS; offset += 1) {
-        const turnoverDay = shiftIsoDay(row.blocked_to, offset)
-        if (turnoverDay >= checkIn && turnoverDay < checkOut) {
-          const sourceLabel = SOURCE_LABELS[row.source as BlockedDateSource] || row.source
-          conflicts.push({
-            origin: 'turnover',
-            from: turnoverDay,
-            to: turnoverDay,
-            label: `Cleaning day after ${sourceLabel} stay`,
-            source: TURNOVER_SOURCE,
-            ref: `turnover-${row.id}`,
-          })
+        // After the block: the villa is being cleaned once that stay leaves.
+        // Before it: this stay would have to be cleaned up before that one
+        // arrives, so its own departure must clear the gap too.
+        const days: Array<[string, string]> = [
+          [shiftIsoDay(row.blocked_to, offset), `Cleaning day after ${sourceLabel} stay`],
+          [shiftIsoDay(row.blocked_from, -offset), `Cleaning day before ${sourceLabel} stay`],
+        ]
+
+        for (const [day, label] of days) {
+          if (day >= checkIn && day < checkOut) {
+            conflicts.push({
+              origin: 'turnover',
+              from: day,
+              to: day,
+              label,
+              source: TURNOVER_SOURCE,
+              ref: `turnover-${row.id}`,
+            })
+          }
         }
       }
     }

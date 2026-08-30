@@ -74,9 +74,24 @@ export function previousIsoDay(iso: string): string {
 
 /**
  * For every guest-stay block in `ranges`, inject `TURNOVER_DAYS` synthetic
- * one-day "turnover" ranges right after it (cleaning / turnaround). A
- * turnover day is skipped when another block already covers it
- * (back-to-back stays — the next stay's first day shadows the turnover).
+ * one-day "turnover" ranges on BOTH sides of it.
+ *
+ * After the block, the reason is obvious: the villa is cleaned once the
+ * guest leaves. Before it, the reason is the same cleaning seen from the
+ * other end — a stay that ended the previous evening would leave no time
+ * to turn the villa around. Without the leading days a guest could book
+ * right up to the eve of an existing stay, or even check out the very
+ * morning the next one checks in.
+ *
+ * The two sides never stack into a double gap. When two stays sit exactly
+ * `TURNOVER_DAYS` apart, the trailing days of the first and the leading
+ * days of the second are literally the same dates. A wider run of blocked
+ * days only appears when the interval is genuinely too short to sell — a
+ * stay would have to start after the first cleaning and end before the
+ * second, which no date satisfies.
+ *
+ * A day is skipped when a real block already covers it (back-to-back
+ * stays); the picker then shows it in that block's colour.
  *
  * Source of truth stays in `blocked_dates`; turnovers are computed at
  * read time so we don't need a migration or new column.
@@ -85,28 +100,35 @@ export function applyTurnoverDays(
   ranges: ReadonlyArray<PublicBlockedRange>,
 ): PublicBlockedRange[] {
   const result = [...ranges]
+
+  const isCovered = (day: string, self: PublicBlockedRange) =>
+    ranges.some(
+      (other) => other !== self && other.start <= day && other.end >= day,
+    )
+
   for (const block of ranges) {
     if (!GUEST_STAY_SOURCES.has(block.source)) continue
 
     for (let offset = 1; offset <= TURNOVER_DAYS; offset += 1) {
-      const turnoverDay = shiftIsoDay(block.end, offset)
+      for (const day of [
+        shiftIsoDay(block.end, offset),
+        shiftIsoDay(block.start, -offset),
+      ]) {
+        if (isCovered(day, block)) continue
 
-      // Skip when another block already covers this day (e.g. back-to-back
-      // stays). The picker will show it in the other block's colour, which
-      // is what we want.
-      const shadowed = ranges.some(
-        (other) =>
-          other !== block &&
-          other.start <= turnoverDay &&
-          other.end >= turnoverDay,
-      )
-      if (shadowed) continue
+        // Both sides can name the same date (two stays exactly
+        // TURNOVER_DAYS apart). Emitting it twice would be harmless for
+        // overlap checks but would draw a duplicate range in the picker.
+        if (
+          result.some(
+            (r) => r.source === TURNOVER_SOURCE && r.start === day,
+          )
+        ) {
+          continue
+        }
 
-      result.push({
-        start: turnoverDay,
-        end: turnoverDay,
-        source: TURNOVER_SOURCE,
-      })
+        result.push({ start: day, end: day, source: TURNOVER_SOURCE })
+      }
     }
   }
   return result
