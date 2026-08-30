@@ -19,6 +19,7 @@
  */
 
 import { Resend } from 'resend'
+import { CONTACT_EMAIL } from '@/lib/constants'
 
 /**
  * Trimmed env value, or `undefined` when missing / empty.
@@ -64,7 +65,7 @@ export function isResendConfigured(): boolean {
 export const FROM_EMAIL: string =
   readEnv('EMAIL_FROM') ??
   readEnv('RESEND_FROM_EMAIL') ??
-  'villaparadisetahiti@gmail.com'
+  CONTACT_EMAIL
 
 /**
  * Owner inbox — where booking and contact notifications land.

@@ -25,6 +25,7 @@ import { Button, Container, Section } from '@/components/ui'
 import { clearBookingState } from '@/lib/booking'
 
 import { CheckoutBreadcrumb } from './CheckoutBreadcrumb'
+import { CONTACT_EMAIL } from '@/lib/constants'
 
 export function SuccessPageClient() {
   const searchParams = useSearchParams()
@@ -86,7 +87,7 @@ export function SuccessPageClient() {
             <NextStep
               icon={<Mail className="h-5 w-5" />}
               title="Check your inbox"
-              body="A detailed confirmation email is on its way. Add villa.paradise.tahiti@gmail.com to your contacts so it doesn't get lost."
+              body={`A detailed confirmation email is on its way. Add ${CONTACT_EMAIL} to your contacts so it doesn't get lost.`}
             />
             <NextStep
               icon={<Wallet className="h-5 w-5" />}
@@ -105,10 +106,10 @@ export function SuccessPageClient() {
                 <>
                   Reply directly to your confirmation email, or write to{' '}
                   <a
-                    href="mailto:villa.paradise.tahiti@gmail.com"
+                    href={`mailto:${CONTACT_EMAIL}`}
                     className="font-semibold text-lagoon underline-offset-2 hover:underline"
                   >
-                    villa.paradise.tahiti@gmail.com
+                    {CONTACT_EMAIL}
                   </a>
                   .
                 </>

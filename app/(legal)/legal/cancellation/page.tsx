@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { CancellationTiers, LegalMarkdown, LegalPageHeader } from '@/components/sections/legal'
 import { getSiteContent } from '@/lib/content'
 import { buildMetadata } from '@/lib/seo'
+import { CONTACT_EMAIL } from '@/lib/constants'
 
 const LAST_UPDATED = 'May 1, 2026'
 
@@ -191,8 +192,8 @@ export default async function CancellationPage() {
       <h2>8. How to cancel or change a booking</h2>
       <p>
         Send a written request from the email address used to book to{' '}
-        <a href="mailto:villaparadisetahiti@gmail.com">
-          villaparadisetahiti@gmail.com
+        <a href={`mailto:${CONTACT_EMAIL}`}>
+          {CONTACT_EMAIL}
         </a>
         , quoting your booking reference. We will reply within four (4)
         hours during Tahiti business hours and confirm the applicable

@@ -1,6 +1,7 @@
 import { Mail, MapPin, Phone } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { Settings } from '@/lib/sanity'
+import { CONTACT_EMAIL } from '@/lib/constants'
 
 /**
  * ContactInfo — right-column block on /contact.
@@ -14,7 +15,7 @@ interface ContactInfoProps {
   settings: Settings | null
 }
 
-const DEFAULT_EMAIL = 'villaparadisetahiti@gmail.com'
+const DEFAULT_EMAIL = CONTACT_EMAIL
 const DEFAULT_PHONE_DISPLAY = '+689 89 21 00 53'
 const DEFAULT_PHONE_RAW = '+68989210053'
 const DEFAULT_ADDRESS = 'Punaauia, Tahiti, French Polynesia'

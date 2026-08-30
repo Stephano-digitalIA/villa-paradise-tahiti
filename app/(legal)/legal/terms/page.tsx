@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { LegalMarkdown, LegalPageHeader } from '@/components/sections/legal'
 import { getSiteContent } from '@/lib/content'
 import { buildMetadata } from '@/lib/seo'
+import { CONTACT_EMAIL } from '@/lib/constants'
 
 const LAST_UPDATED = 'June 6, 2026'
 
@@ -295,8 +296,8 @@ export default async function TermsPage() {
       <h2>14. Contact</h2>
       <p>
         Questions about these Terms can be sent to{' '}
-        <a href="mailto:villaparadisetahiti@gmail.com">
-          villaparadisetahiti@gmail.com
+        <a href={`mailto:${CONTACT_EMAIL}`}>
+          {CONTACT_EMAIL}
         </a>{' '}
         or via the <a href="/contact">contact form</a>.
       </p>

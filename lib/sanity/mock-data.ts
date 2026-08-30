@@ -23,6 +23,8 @@ import type {
   Villa,
 } from './types'
 
+import { CONTACT_EMAIL } from '@/lib/constants'
+
 /* ---------------------------------------------------------------------------
  * Helpers
  * ------------------------------------------------------------------------- */
@@ -759,7 +761,7 @@ export const mockSettings: Settings = {
   siteName: 'Villa Paradise Tahiti',
   siteDescription:
     'A private oceanfront villa in Tahiti, French Polynesia. Direct booking, lagoon views, curated experiences.',
-  contactEmail: 'villaparadisetahiti@gmail.com',
+  contactEmail: CONTACT_EMAIL,
   contactPhone: '+689 89 21 00 53',
   whatsappNumber: '68989210053',
   socialLinks: {

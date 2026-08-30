@@ -7,6 +7,8 @@
  * `.env.local` for previews and per-environment in Vercel for production.
  */
 
+import { CONTACT_EMAIL } from '@/lib/constants'
+
 export const SITE_URL: string =
   process.env.NEXT_PUBLIC_SITE_URL ?? 'https://villaparadisetahiti.com'
 
@@ -46,7 +48,7 @@ export const SITE_TWITTER_HANDLE = ''
 
 /** Brand contact metadata used in Organization JSON-LD. */
 export const ORG_CONTACT = {
-  email: 'villaparadisetahiti@gmail.com',
+  email: CONTACT_EMAIL,
   phone: '+689 89 21 00 53',
   streetAddress: 'Punaauia Coast Road',
   city: 'Punaauia',

@@ -30,6 +30,7 @@ import {
 
 import { formatMoney } from '@/lib/currency'
 import type { BookingConfirmationData } from '../types'
+import { CONTACT_EMAIL } from '@/lib/constants'
 
 const COLORS = {
   midnight: '#1A2A3A',
@@ -287,10 +288,10 @@ export function BookingConfirmationGuest({ data, siteUrl }: Props) {
               In the meantime, our concierge team is at your service. Reply
               directly to this email or write to{' '}
               <Link
-                href="mailto:villaparadisetahiti@gmail.com"
+                href={`mailto:${CONTACT_EMAIL}`}
                 style={{ color: COLORS.lagoon, textDecoration: 'underline' }}
               >
-                villaparadisetahiti@gmail.com
+                {CONTACT_EMAIL}
               </Link>
               .
             </Text>

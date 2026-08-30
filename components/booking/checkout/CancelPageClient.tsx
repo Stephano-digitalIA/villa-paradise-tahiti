@@ -20,6 +20,7 @@ import { useSearchParams } from 'next/navigation'
 import { ArrowLeft, RefreshCcw, XCircle } from 'lucide-react'
 
 import { Button, Container, Section } from '@/components/ui'
+import { CONTACT_EMAIL } from '@/lib/constants'
 
 export function CancelPageClient() {
   const searchParams = useSearchParams()
@@ -84,10 +85,10 @@ export function CancelPageClient() {
             <p className="text-xs text-midnight-400">
               Need help? Write to{' '}
               <a
-                href="mailto:villaparadisetahiti@gmail.com"
+                href={`mailto:${CONTACT_EMAIL}`}
                 className="font-semibold text-lagoon underline-offset-2 hover:underline"
               >
-                villaparadisetahiti@gmail.com
+                {CONTACT_EMAIL}
               </a>{' '}
               and a human will get back to you within the hour.
             </p>

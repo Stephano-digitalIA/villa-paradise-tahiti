@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { LegalMarkdown, LegalPageHeader } from '@/components/sections/legal'
 import { getSiteContent } from '@/lib/content'
 import { buildMetadata } from '@/lib/seo'
+import { CONTACT_EMAIL } from '@/lib/constants'
 
 const LAST_UPDATED = 'June 2, 2026'
 
@@ -291,8 +292,8 @@ export default async function PrivacyPolicyPage() {
         <strong>Villa Paradise Tahiti &mdash; Privacy</strong>
         <br />
         Email:{' '}
-        <a href="mailto:villaparadisetahiti@gmail.com">
-          villaparadisetahiti@gmail.com
+        <a href={`mailto:${CONTACT_EMAIL}`}>
+          {CONTACT_EMAIL}
         </a>
         <br />
         Postal: Punaauia, Tahiti, French Polynesia

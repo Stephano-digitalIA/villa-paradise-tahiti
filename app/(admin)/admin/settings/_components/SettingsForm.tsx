@@ -6,6 +6,7 @@ import remarkGfm from 'remark-gfm'
 import type { Settings } from '@/lib/supabase/types'
 import { saveSettings } from '@/app/actions/settings'
 import { cn } from '@/lib/utils'
+import { CONTACT_EMAIL } from '@/lib/constants'
 
 type Props = {
   initialSettings: Partial<Settings> | null
@@ -323,7 +324,7 @@ export function SettingsForm({ initialSettings }: Props) {
             name="contact_email"
             defaultValue={s.contact_email}
             type="email"
-            placeholder="contact@villaparadisetahiti.com"
+            placeholder={CONTACT_EMAIL}
           />
           <TextInput
             label="Téléphone de contact"
