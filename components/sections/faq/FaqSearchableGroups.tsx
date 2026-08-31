@@ -1,6 +1,6 @@
 'use client'
 
-import { useDeferredValue, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Search, X } from 'lucide-react'
 
 import { Container, Section } from '@/components/ui'
@@ -60,21 +60,27 @@ function normalize(value: string): string {
  * rendered in full on the page already, so there is nothing to fetch and
  * no index to build.
  *
+ * Deliberately NOT deferred. An earlier version ran the query through
+ * `useDeferredValue`, which lets React keep showing a stale tree while the
+ * next one prepares. With a count derived from the deferred value and a
+ * message quoting the live one, the page contradicted itself mid-keystroke:
+ * "13 questions found" above "Nothing found for pi". Fourteen entries filter
+ * in well under a frame, so there was nothing to defer and the optimisation
+ * only bought an inconsistency.
+ *
  * `FaqGroups` drops empty categories on its own, so a narrow search
  * naturally collapses the page to the matching sections.
  */
 export function FaqSearchableGroups({ faqs }: FaqSearchableGroupsProps) {
   const [query, setQuery] = useState('')
-  // Typing stays responsive while the list re-renders behind it.
-  const deferredQuery = useDeferredValue(query)
 
   const filtered = useMemo(() => {
-    const needle = normalize(deferredQuery)
+    const needle = normalize(query)
     if (!needle) return faqs
     return faqs.filter((faq) => normalize(searchableText(faq)).includes(needle))
-  }, [faqs, deferredQuery])
+  }, [faqs, query])
 
-  const searching = deferredQuery.trim().length > 0
+  const searching = query.trim().length > 0
 
   return (
     <>
@@ -119,16 +125,17 @@ export function FaqSearchableGroups({ faqs }: FaqSearchableGroupsProps) {
                 ) : null}
               </div>
 
-              {/* Announced to screen readers as the count changes. */}
+              {/* Announced to screen readers as the count changes.
+                  Silent when nothing matches: the panel below already says
+                  so, in full, and quotes the term back. Two lines saying the
+                  same thing read as a stutter. */}
               <p
                 role="status"
                 aria-live="polite"
                 className="mt-3 text-center font-sans text-body-sm text-midnight-400"
               >
-                {searching
-                  ? filtered.length === 0
-                    ? 'No question matches your search.'
-                    : `${filtered.length} question${filtered.length > 1 ? 's' : ''} found.`
+                {searching && filtered.length > 0
+                  ? `${filtered.length} question${filtered.length > 1 ? 's' : ''} found.`
                   : ''}
               </p>
             </div>
@@ -143,9 +150,6 @@ export function FaqSearchableGroups({ faqs }: FaqSearchableGroupsProps) {
           <Container className="max-w-4xl">
             <div className="rounded-2xl border border-pearl-400 bg-pearl px-8 py-12 text-center">
               <p className="font-heading text-h3-luxe font-medium text-midnight">
-                {/* `query`, not `deferredQuery`: the deferred value lags by a
-                    keystroke, so the message quoted a truncated word back at
-                    the visitor — "acompt" for "acompte". */}
                 Nothing found for “{query.trim()}”
               </p>
               <p className="mt-3 font-sans text-body-md text-midnight-400">
