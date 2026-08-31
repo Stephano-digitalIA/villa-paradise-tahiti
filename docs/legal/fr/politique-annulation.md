@@ -60,8 +60,8 @@ peuvent s'écouler avant que le crédit n'apparaisse sur votre relevé.
 Quel que soit le palier applicable, les remboursements excluent les éléments
 non remboursables suivants :
 
-- les frais retenus par les prestataires de paiement Stripe ou PayPal (en
-  général 2,9 % plus 0,30 USD par transaction) ;
+- les frais retenus par le prestataire de paiement PayPal (en général 2,9 %
+  plus 0,30 USD par transaction) ;
 - les acomptes d'excursions déjà versés à nos partenaires sur l'île (chef
   privé, capitaine du bateau affrété, tour en hélicoptère, etc.) ;
 - les frais de conversion de devise prélevés par votre banque ou votre réseau

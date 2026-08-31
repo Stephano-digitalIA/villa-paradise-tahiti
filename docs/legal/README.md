@@ -52,12 +52,25 @@ prestataires. Corrigé dans la page publiée et dans les deux transcriptions :
   implémente. Déclarer une collecte qui n'a pas lieu inquiète le visiteur sans
   raison. La catégorie marketing indique désormais qu'aucun cookie n'est déposé.
 
-## Reste à vérifier
+## Corrigé le 31 août 2026 : Stripe retiré
 
-**Stripe est cité comme prestataire de paiement** (sections 1.1 et 3), mais il
-n'est pas configuré : le test de paiement en production a routé la carte vers
-PayPal, ce que le code ne fait que lorsque Stripe est absent. Le mentionner
-n'est pas faux si vous prévoyez de l'activer ; à retirer sinon.
+Stripe était présenté comme prestataire de paiement dans les documents légaux
+et comme gage de sécurité sur sept écrans destinés aux clients (accueil,
+tarifs, contact, récapitulatif de prix, badges de confiance du tunnel). Il n'est
+pas configuré : le paiement par carte passe par le parcours invité de PayPal.
+Un visiteur lisait donc « Secure booking by Stripe » puis payait via PayPal.
+
+Toutes ces mentions ont été remplacées par PayPal. **Si Stripe est activé un
+jour, il faudra les rétablir**, ainsi que la ligne correspondante en section 3
+de la politique de confidentialité. Le code Stripe reste en place dans
+`lib/stripe/` et `app/api/stripe/`, il est simplement inactif.
+
+Reste à corriger **dans la FAQ** (`/admin/content/faq`), qui n'est pas dans le
+code mais en base : la réponse à « What payment methods are accepted? » annonce
+encore « credit/debit cards via Stripe (Visa, Mastercard, American Express) and
+PayPal ».
+
+## Reste à vérifier
 
 Le dépôt de garantie de 2 000 USD, annoncé en section 3.1 mais implémenté nulle
 part, a été retiré des conditions générales le 31 août 2026.

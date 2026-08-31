@@ -45,7 +45,7 @@ export function RatesCta() {
 
         <p className="mt-8 font-sans text-caption text-pearl/60">
           Best-rate guarantee · 100% refund if cancelled more than 60 days ahead · Secure
-          payment via Stripe
+          payment via PayPal
         </p>
       </Container>
     </Section>

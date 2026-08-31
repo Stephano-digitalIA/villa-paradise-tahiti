@@ -81,7 +81,7 @@ export async function FinalCTA() {
             <span className="hidden h-4 w-px bg-pearl/20 sm:block" aria-hidden="true" />
             <span className="font-sans text-body-sm">{t('home.cta.trust_cancel', '100% refund if cancelled more than 60 days before')}</span>
             <span className="hidden h-4 w-px bg-pearl/20 sm:block" aria-hidden="true" />
-            <span className="font-sans text-body-sm">{t('home.cta.trust_secure', 'Secure booking by Stripe')}</span>
+            <span className="font-sans text-body-sm">{t('home.cta.trust_secure', 'Secure booking by PayPal')}</span>
           </div>
         </div>
       </Container>

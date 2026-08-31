@@ -31,7 +31,7 @@ const STATS: readonly Stat[] = [
     value: '100%',
     label: 'Secure payments',
     description:
-      'Stripe and PayPal protected. We never store your card details on our servers.',
+      'PayPal protected. We never store your card details on our servers.',
   },
 ] as const
 

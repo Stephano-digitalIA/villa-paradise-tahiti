@@ -176,7 +176,7 @@ export function CheckoutSummary({ className }: CheckoutSummaryProps) {
       <div className="flex flex-col gap-2 border-t border-pearl-400 pt-4 text-xs text-midnight-400">
         <div className="flex items-center gap-2">
           <Lock className="h-3 w-3 text-gold" aria-hidden="true" />
-          <span>Secure payment · Stripe & PayPal</span>
+          <span>Secure payment · PayPal</span>
         </div>
         <div className="flex items-center gap-2">
           <ShieldCheck className="h-3 w-3 text-leaf" aria-hidden="true" />

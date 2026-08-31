@@ -91,7 +91,7 @@ export default async function CancellationPage() {
       <p>Refunds exclude the following non-refundable items, in every tier:</p>
       <ul>
         <li>
-          payment-processor fees retained by Stripe or PayPal (typically
+          payment-processor fees retained by PayPal (typically
           2.9% + USD 0.30 per transaction);
         </li>
         <li>

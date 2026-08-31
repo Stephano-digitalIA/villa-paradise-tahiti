@@ -24,7 +24,7 @@ third parties acting on our behalf.
   other notes you share to help us tailor the stay.
 - **Payment data:** we do not store full payment card numbers on our servers.
   Card details are entered directly into our PCI-DSS Level 1 payment processors
-  (Stripe and PayPal); we receive only a token plus the last four digits,
+  (PayPal); we receive only a token plus the last four digits,
   expiration month, and a truncated authorization response for our records.
 - **Identity verification:** for select bookings we may request a copy of a
   government-issued ID at check-in to comply with French Polynesia hospitality
@@ -70,9 +70,8 @@ Section 6.4 below).
 
 We disclose information to a limited number of trusted third parties:
 
-- **Stripe, Inc.** payment processing. Privacy practices at
-  [stripe.com/privacy](https://stripe.com/privacy).
-- **PayPal, Inc.** alternative payment processing. See
+- **PayPal, Inc.** payment processing, including card payments made without a
+  PayPal account. See
   [paypal.com/us/legalhub/privacy-full](https://www.paypal.com/us/legalhub/privacy-full).
 - **Resend, Inc.** transactional email delivery (booking confirmations,
   password resets, contact-form notifications).

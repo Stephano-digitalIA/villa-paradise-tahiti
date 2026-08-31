@@ -58,7 +58,7 @@ export function RatesPolicy({ settings }: RatesPolicyProps) {
                   Payment methods
                 </dt>
                 <dd className="font-sans text-body-sm font-semibold text-midnight">
-                  Stripe · PayPal · Wire
+                  PayPal · Credit and debit cards
                 </dd>
               </div>
             </dl>

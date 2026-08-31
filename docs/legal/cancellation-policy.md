@@ -53,7 +53,7 @@ your statement.
 
 Refunds exclude the following non-refundable items, in every tier:
 
-- payment-processor fees retained by Stripe or PayPal (typically 2.9% + USD
+- payment-processor fees retained by PayPal (typically 2.9% + USD
   0.30 per transaction);
 - third-party experience deposits already disbursed to our on-island partners
   (private chef, charter boat captain, helicopter tour, etc.);

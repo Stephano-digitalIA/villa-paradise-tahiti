@@ -217,7 +217,7 @@ export function PriceSummary({ className }: PriceSummaryProps) {
 
         <div className="flex items-center justify-center gap-3 text-xs text-midnight-400">
           <Lock className="h-3 w-3" aria-hidden="true" />
-          <span>Secure checkout · Stripe & PayPal</span>
+          <span>Secure checkout · PayPal</span>
         </div>
         <div className="flex items-center justify-center gap-2 text-xs text-midnight-400">
           <ShieldCheck className="h-3 w-3 text-leaf" aria-hidden="true" />

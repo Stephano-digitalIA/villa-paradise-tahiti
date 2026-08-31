@@ -24,7 +24,7 @@ const BADGES: TrustBadge[] = [
   {
     icon: Lock,
     title: 'Secure payment',
-    body: '256-bit SSL · Stripe & PayPal · We never store card details',
+    body: '256-bit SSL · PayPal · We never store card details',
   },
   {
     icon: ShieldCheck,

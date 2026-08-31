@@ -27,8 +27,7 @@ transmises par des tiers de confiance agissant pour notre compte.
   permettre de personnaliser le séjour.
 - **Données de paiement :** nous ne conservons aucun numéro de carte bancaire
   complet sur nos serveurs. Les coordonnées bancaires sont saisies directement
-  auprès de nos prestataires de paiement certifiés PCI-DSS niveau 1 (Stripe et
-  PayPal) ; nous ne recevons qu'un jeton, les quatre derniers chiffres, le mois
+  auprès de notre prestataire de paiement certifié PCI-DSS niveau 1 (PayPal) ; nous ne recevons qu'un jeton, les quatre derniers chiffres, le mois
   d'expiration et une réponse d'autorisation tronquée, à des fins d'archivage.
 - **Vérification d'identité :** pour certaines réservations, nous pouvons
   demander la copie d'une pièce d'identité officielle à l'arrivée, afin de
@@ -78,9 +77,8 @@ résidents de Californie peuvent s'y opposer à tout moment (voir section 6.4).
 
 Nous communiquons des informations à un nombre restreint de tiers de confiance :
 
-- **Stripe, Inc.** traitement des paiements. Pratiques de confidentialité sur
-  [stripe.com/privacy](https://stripe.com/privacy).
-- **PayPal, Inc.** traitement alternatif des paiements. Voir
+- **PayPal, Inc.** traitement des paiements, y compris les paiements par carte
+  effectués sans compte PayPal. Voir
   [paypal.com/us/legalhub/privacy-full](https://www.paypal.com/us/legalhub/privacy-full).
 - **Resend, Inc.** acheminement des emails transactionnels (confirmations de
   réservation, réinitialisations de mot de passe, notifications du formulaire de

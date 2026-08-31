@@ -61,7 +61,7 @@ export default async function PrivacyPolicyPage() {
         <li>
           <strong>Payment data:</strong> we do not store full payment card
           numbers on our servers. Card details are entered directly into our
-          PCI-DSS Level 1 payment processors (Stripe and PayPal); we receive
+          PCI-DSS Level 1 payment processor (PayPal); we receive
           only a token plus the last four digits, expiration month, and a
           truncated authorization response for our records.
         </li>
@@ -120,16 +120,8 @@ export default async function PrivacyPolicyPage() {
       <p>We disclose information to a limited number of trusted third parties:</p>
       <ul>
         <li>
-          <strong>Stripe, Inc.</strong> &mdash; payment processing.
-          Stripe&apos;s privacy practices are available at{' '}
-          <a href="https://stripe.com/privacy" rel="noopener noreferrer">
-            stripe.com/privacy
-          </a>
-          .
-        </li>
-        <li>
-          <strong>PayPal, Inc.</strong> &mdash; alternative payment processing.
-          See{' '}
+          <strong>PayPal, Inc.</strong> &mdash; payment processing, including
+          card payments made without a PayPal account. See{' '}
           <a href="https://www.paypal.com/us/legalhub/privacy-full" rel="noopener noreferrer">
             paypal.com/us/legalhub/privacy-full
           </a>
