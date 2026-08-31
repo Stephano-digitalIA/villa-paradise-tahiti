@@ -7,13 +7,18 @@ import { Loader2 } from 'lucide-react'
 import { createImplicitClient } from '@/lib/supabase/client'
 
 /**
- * /auth/complete — finish the CUSTOMER Google OAuth flow in the browser.
+ * /auth/complete — finish a CUSTOMER sign-in in the browser: Google OAuth, and
+ * email magic links since they hit the same wall.
  *
  * Mirrors /admin/auth/complete but WITHOUT any admin_users check: every
- * authenticated Google user is a valid guest. The implicit flow returns the
- * tokens in the URL fragment (#access_token=…), which the client consumes on
- * init — no PKCE code verifier (that kept failing in production) and no ?code
- * bouncing off the home page into the admin catcher.
+ * authenticated user is a valid guest. The implicit flow returns the tokens in
+ * the URL fragment (#access_token=…), which the client consumes on init — no
+ * PKCE code verifier (that kept failing in production) and no ?code bouncing
+ * off the home page into the admin catcher.
+ *
+ * That verifier matters even more for magic links than for OAuth: it lives in
+ * the browser that requested the link, while the link itself is opened
+ * wherever the mailbox is, typically the guest's phone.
  *
  * After the session is established we HARD-navigate to `next` so the server
  * components (e.g. /account, /booking/checkout) re-read the freshly written

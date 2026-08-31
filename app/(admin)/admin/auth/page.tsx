@@ -226,11 +226,17 @@ function PasswordSignInForm() {
       return
     }
     setError(null)
-    const { error: recoveryError } = await supabase.auth.resetPasswordForEmail(
+    // Implicit flow, like the Google button above. PKCE stores a code verifier
+    // in the browser that made the request, and a recovery link is opened
+    // wherever the mailbox happens to be: the phone, another browser, the
+    // Gmail app. The verifier is missing there and the link reads as invalid.
+    // Implicit returns the tokens in the URL fragment and needs no verifier,
+    // so the link works from any device.
+    const { error: recoveryError } = await createImplicitClient().auth.resetPasswordForEmail(
       email.trim(),
       {
-        // Land on our own reset page, which exchanges the recovery code and
-        // shows a "new password" form (supabase.auth.updateUser).
+        // Land on our own reset page, which establishes the recovery session
+        // and shows a "new password" form (supabase.auth.updateUser).
         redirectTo: window.location.origin + '/admin/auth/reset',
       },
     )

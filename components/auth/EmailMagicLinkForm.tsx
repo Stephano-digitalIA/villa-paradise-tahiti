@@ -4,16 +4,11 @@ import { useState, type FormEvent } from 'react'
 import { CheckCircle2, Mail } from 'lucide-react'
 
 import { Button, Input } from '@/components/ui'
-import { createClient } from '@/lib/supabase/client'
+import { createImplicitClient } from '@/lib/supabase/client'
 
 interface EmailMagicLinkFormProps {
+  /** Path to land on once signed in. Internal path, never a URL. */
   redirectTo?: string
-  /**
-   * Path of the route handler that exchanges the OAuth code for a session.
-   * Defaults to the customer callback `/auth/callback`. Admin callers must
-   * pass `/admin/auth/callback` so the `admin_users` whitelist is enforced.
-   */
-  callbackPath?: string
   className?: string
 }
 
@@ -21,7 +16,6 @@ type Status = 'idle' | 'sending' | 'sent' | 'error'
 
 export function EmailMagicLinkForm({
   redirectTo = '/booking/checkout',
-  callbackPath = '/auth/callback',
   className,
 }: EmailMagicLinkFormProps) {
   const [email, setEmail] = useState('')
@@ -35,14 +29,20 @@ export function EmailMagicLinkForm({
     setStatus('sending')
     setErrorMsg(null)
 
-    const supabase = createClient()
-    const callbackUrl =
+    // Implicit flow and the client-side completion page, same as the Google
+    // button. A magic link is opened wherever the mailbox is — usually the
+    // phone, while the booking was started on a laptop. PKCE keeps its code
+    // verifier in the browser that asked for the link, so on any other device
+    // the exchange failed and the guest landed on the checkout with
+    // `?auth_error=1` and no explanation. Implicit carries the tokens in the
+    // URL fragment and needs no verifier, so the link works from anywhere.
+    const completeUrl =
       window.location.origin +
-      `${callbackPath}?next=${encodeURIComponent(redirectTo)}`
+      `/auth/complete?next=${encodeURIComponent(redirectTo)}`
 
-    const { error } = await supabase.auth.signInWithOtp({
+    const { error } = await createImplicitClient().auth.signInWithOtp({
       email,
-      options: { emailRedirectTo: callbackUrl },
+      options: { emailRedirectTo: completeUrl },
     })
 
     if (error) {
