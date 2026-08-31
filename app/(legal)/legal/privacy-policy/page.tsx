@@ -140,13 +140,18 @@ export default async function PrivacyPolicyPage() {
           (booking confirmations, password resets, contact-form notifications).
         </li>
         <li>
-          <strong>Vercel, Inc.</strong> &mdash; website hosting, edge
+          <strong>Netlify, Inc.</strong> &mdash; website hosting, edge
           functions, and content delivery. Server logs may include truncated
           IP addresses.
         </li>
         <li>
-          <strong>Sanity.io</strong> &mdash; headless CMS hosting editorial
-          content. Visitor data is not stored in Sanity.
+          <strong>Supabase, Inc.</strong> &mdash; database hosting,
+          authentication, and file storage. This is where your reservation
+          records, contact details, and account credentials are stored.
+        </li>
+        <li>
+          <strong>ImprovMX</strong> &mdash; forwarding of email sent to our
+          domain addresses to the mailbox our team reads.
         </li>
         <li>
           <strong>Google LLC (Google Analytics 4).</strong> &mdash; aggregated
@@ -199,9 +204,9 @@ export default async function PrivacyPolicyPage() {
           measure traffic and improve the site (Google Analytics 4, Hotjar).
         </li>
         <li>
-          <strong>Marketing:</strong> set only with consent &mdash; used to
-          measure the effectiveness of paid campaigns (Meta Pixel, Pinterest
-          Tag).
+          <strong>Marketing:</strong> none are currently set. Should we
+          introduce advertising cookies, they will be placed only with your
+          consent and this policy will be updated first.
         </li>
       </ul>
       <p>

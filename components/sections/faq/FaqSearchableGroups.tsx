@@ -12,17 +12,6 @@ interface FaqSearchableGroupsProps {
 }
 
 /**
- * Lowercase, strip accents, and drop everything that is not a letter or a
- * digit.
- *
- * Guests type "wifi" and the answer says "Wi-Fi"; they type "check in" and
- * it reads "check-in". A plain substring match finds neither, and an empty
- * result on the most-asked question reads as a broken search rather than a
- * spelling mismatch. Removing the separators on both sides makes those
- * pairs equal. Accents are folded too, since the page is read in French
- * through auto-translate.
- */
-/**
  * Everything a visitor might type to find this entry: the published English
  * question and answer, plus the French source when it has been filled in
  * `/admin/content/faq`.
@@ -40,9 +29,17 @@ function searchableText(faq: FAQ): string {
     .join(' ')
 }
 
+/**
+ * Lowercase, and drop everything that is not a letter or a digit.
+ *
+ * Guests type "wifi" where the answer says "Wi-Fi", or "check in" where it
+ * reads "check-in". A plain substring match finds neither, and an empty
+ * result on a common question reads as a broken search rather than a
+ * spelling mismatch. Removing the separators on both sides makes those pairs
+ * equal. NFD splits "é" into "e" plus a combining mark, which the same filter
+ * then drops, so accents are folded in the one pass.
+ */
 function normalize(value: string): string {
-  // NFD splits "é" into "e" + a combining mark, which the final filter then
-  // drops along with the hyphens and spaces. One pass covers both.
   return value
     .toLowerCase()
     .normalize('NFD')
@@ -86,7 +83,7 @@ export function FaqSearchableGroups({ faqs }: FaqSearchableGroupsProps) {
     <>
       {/* The field belongs with the intro above and the list below, so it
           carries almost no vertical space of its own. */}
-      <Section tone="pearl" spacing="none" className="py-4 sm:py-6">
+      <Section tone="pearl" spacing="none" className="py-2 sm:py-3">
         <Container>
           <div className="flex flex-col items-center">
             <div className="w-full max-w-xl">
@@ -149,7 +146,7 @@ export function FaqSearchableGroups({ faqs }: FaqSearchableGroupsProps) {
         <FaqGroups faqs={filtered} />
       ) : (
         // Same rhythm as FaqGroups, which this replaces.
-        <Section tone="pearl" spacing="compact">
+        <Section tone="pearl" spacing="tight">
           <Container className="max-w-4xl">
             <div className="rounded-2xl border border-pearl-400 bg-pearl px-8 py-12 text-center">
               <p className="font-heading text-h3-luxe font-medium text-midnight">
