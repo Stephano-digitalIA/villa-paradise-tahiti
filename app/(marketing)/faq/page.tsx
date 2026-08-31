@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 
 import { JsonLd, breadcrumbSchema, faqPageSchema } from '@/components/seo'
 import { FaqContactCta } from '@/components/sections/faq/FaqContactCta'
-import { FaqGroups } from '@/components/sections/faq/FaqGroups'
 import { FaqHero } from '@/components/sections/faq/FaqHero'
+import { FaqSearchableGroups } from '@/components/sections/faq/FaqSearchableGroups'
 import { sanityFetch } from '@/lib/sanity/fetcher'
 import { faqsQuery, type FAQ } from '@/lib/sanity'
 import { SITE_URL, absoluteUrl, buildMetadata } from '@/lib/seo'
@@ -66,7 +66,7 @@ export default async function FaqPage() {
         ])}
       />
       <FaqHero />
-      <FaqGroups faqs={faqs} />
+      <FaqSearchableGroups faqs={faqs} />
       <FaqContactCta />
     </>
   )

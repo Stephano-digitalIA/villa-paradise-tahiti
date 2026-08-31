@@ -1,14 +1,11 @@
-import { Search } from 'lucide-react'
-
 import { Container, Section } from '@/components/ui'
 
 /**
- * FaqHero — page intro with a (UI-only) search field.
+ * FaqHero — page intro.
  *
- * The search input has no behaviour yet. It exists for layout stability
- * and to signal to users that FAQ search is a planned affordance.
- * Phase D / E will wire it up — likely an in-memory filter over the
- * already-rendered list.
+ * The search field used to sit here as a non-functional placeholder. It now
+ * lives in `FaqSearchableGroups`, directly above the list it filters, since
+ * the two need to share state. This component stays a server component.
  */
 export function FaqHero() {
   return (
@@ -34,30 +31,6 @@ export function FaqHero() {
             we reply within the hour during Tahiti daylight.
           </p>
 
-          <form
-            className="mt-10 w-full max-w-xl"
-            // TODO Phase D — wire to client-side filter over the rendered list.
-            action="#"
-            method="get"
-            role="search"
-          >
-            <label htmlFor="faq-search" className="sr-only">
-              Search the FAQ
-            </label>
-            <div className="relative">
-              <Search
-                aria-hidden="true"
-                className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-midnight-400"
-              />
-              <input
-                id="faq-search"
-                type="search"
-                name="q"
-                placeholder="Search by keyword (cancellation, pool, transfer…)"
-                className="h-14 w-full rounded-full border border-pearl-500 bg-pearl pl-12 pr-5 font-sans text-body-md text-midnight placeholder:text-midnight-300 shadow-soft focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/30"
-              />
-            </div>
-          </form>
         </div>
       </Container>
     </Section>
