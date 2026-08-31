@@ -22,6 +22,24 @@ interface FaqSearchableGroupsProps {
  * pairs equal. Accents are folded too, since the page is read in French
  * through auto-translate.
  */
+/**
+ * Everything a visitor might type to find this entry: the published English
+ * question and answer, plus the French source when it has been filled in
+ * `/admin/content/faq`.
+ *
+ * The page is English and read in French through the browser's own
+ * translation, so a French speaker searches with French words while the data
+ * stays English. "acompte" cannot match "deposit". Including the French
+ * source closes that gap for every entry that has one; entries left
+ * untranslated simply keep matching in English only.
+ */
+function searchableText(faq: FAQ): string {
+  const fr = faq.translations
+  return [faq.question, faq.answer, fr?.question, fr?.answer]
+    .filter(Boolean)
+    .join(' ')
+}
+
 function normalize(value: string): string {
   // NFD splits "é" into "e" + a combining mark, which the final filter then
   // drops along with the hyphens and spaces. One pass covers both.
@@ -53,9 +71,7 @@ export function FaqSearchableGroups({ faqs }: FaqSearchableGroupsProps) {
   const filtered = useMemo(() => {
     const needle = normalize(deferredQuery)
     if (!needle) return faqs
-    return faqs.filter((faq) =>
-      normalize(`${faq.question ?? ''} ${faq.answer ?? ''}`).includes(needle),
-    )
+    return faqs.filter((faq) => normalize(searchableText(faq)).includes(needle))
   }, [faqs, deferredQuery])
 
   const searching = deferredQuery.trim().length > 0
@@ -127,7 +143,10 @@ export function FaqSearchableGroups({ faqs }: FaqSearchableGroupsProps) {
           <Container className="max-w-4xl">
             <div className="rounded-2xl border border-pearl-400 bg-pearl px-8 py-12 text-center">
               <p className="font-heading text-h3-luxe font-medium text-midnight">
-                Nothing found for “{deferredQuery.trim()}”
+                {/* `query`, not `deferredQuery`: the deferred value lags by a
+                    keystroke, so the message quoted a truncated word back at
+                    the visitor — "acompt" for "acompte". */}
+                Nothing found for “{query.trim()}”
               </p>
               <p className="mt-3 font-sans text-body-md text-midnight-400">
                 Try a broader word, or send us a note below and we will answer

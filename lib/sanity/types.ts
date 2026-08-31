@@ -213,6 +213,16 @@ export interface FAQ {
   answer: string
   category: FaqCategory
   order: number
+  /**
+   * French source text, keyed `question` / `answer`, as written in
+   * `/admin/content/faq`. The published page stays English, but the FAQ
+   * search reads these too: visitors browse through auto-translate and
+   * type French words, which cannot match the English source.
+   *
+   * Already carried end to end (the query selects `*`, `adaptFAQ` spreads
+   * the row); it just had to be declared to be usable.
+   */
+  translations?: Record<string, string>
 }
 
 /* ---------------------------------------------------------------------------
