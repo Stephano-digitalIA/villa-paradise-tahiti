@@ -145,6 +145,17 @@
   border-radius: 9999px;
 }
 
+/* FAQ search: hide the browser's own clear button.
+   `type="search"` makes WebKit and Chrome draw a cancel cross of their own,
+   which sat right next to the styled one we render, so the field showed two
+   crosses doing the same thing. Ours stays: it is keyboard reachable, labelled
+   for screen readers, and looks like the rest of the page. */
+#faq-search::-webkit-search-cancel-button,
+#faq-search::-webkit-search-decoration {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
 /* Outside-month days stay almost invisible (don't compete with blocks). */
 .rdp-day.rdp-outside .rdp-day_button {
   color: rgba(12, 31, 51, 0.18);
