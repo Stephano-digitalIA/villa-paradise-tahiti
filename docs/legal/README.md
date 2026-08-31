@@ -59,13 +59,14 @@ n'est pas configuré : le test de paiement en production a routé la carte vers
 PayPal, ce que le code ne fait que lorsque Stripe est absent. Le mentionner
 n'est pas faux si vous prévoyez de l'activer ; à retirer sinon.
 
-**Écarts entre les conditions générales et le site :**
+Le dépôt de garantie de 2 000 USD, annoncé en section 3.1 mais implémenté nulle
+part, a été retiré des conditions générales le 31 août 2026.
+
+**Écarts restants entre les conditions générales et le site :**
 
 - Les tarifs cités (590, 890, 1 290 USD) sont écrits en dur dans le texte, alors
   que les tarifs réels se modifient dans `/admin/settings`. Toute évolution
   tarifaire rendra les conditions fausses sans que rien ne le signale.
-- Le dépôt de garantie de 2 000 USD (section 3.1) n'est implémenté nulle part :
-  aucune empreinte bancaire n'est prise avant l'arrivée.
 - Le prélèvement automatique du solde 30 jours avant l'arrivée (section 2) n'est
   pas implémenté non plus. Le solde doit être encaissé à la main.
 

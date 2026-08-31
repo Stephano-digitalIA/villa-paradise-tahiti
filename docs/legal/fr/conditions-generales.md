@@ -100,17 +100,7 @@ groupe. En réservant, vous vous engagez, pour vous-même et pour votre groupe,
 
 Le non-respect de ces règles peut entraîner l'expulsion immédiate sans
 remboursement et, en cas de dommage ou de nettoyage excessif, la facturation de
-frais supplémentaires imputés sur le dépôt de garantie ou sur la carte
-bancaire enregistrée.
-
-### 3.1 Dommages et dépôt de garantie
-
-Une autorisation de prélèvement pouvant aller jusqu'à 2 000 USD est enregistrée
-sur la carte bancaire du Voyageur principal 24 heures avant l'arrivée. Cette
-empreinte est libérée dans les sept (7) jours ouvrés suivant le départ, sous
-réserve que la villa soit laissée dans un état comparable à celui constaté à
-l'arrivée. Toute retenue est détaillée et justifiée par des photographies ou
-des factures.
+frais supplémentaires au Voyageur principal.
 
 ## 4. Usage de la propriété
 

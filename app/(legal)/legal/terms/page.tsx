@@ -160,17 +160,7 @@ export default async function TermsPage() {
       <p>
         Failure to comply with these rules may result in immediate eviction
         without refund and, where damage or excessive cleaning is incurred,
-        in additional charges against the security deposit or credit card on
-        file.
-      </p>
-
-      <h3>3.1 Damage and security deposit</h3>
-      <p>
-        A security authorization of up to USD 2,000 is placed on the Primary
-        Guest&apos;s credit card 24 hours before arrival. The hold is released
-        within seven (7) business days after departure provided the villa is
-        left in similar condition to check-in. Any deductions are itemized
-        and supported by photos or invoices.
+        in additional charges invoiced to the Primary Guest.
       </p>
 
       <h2>4. Property use</h2>
