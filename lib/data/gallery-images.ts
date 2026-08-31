@@ -8,6 +8,7 @@
 
 export type GalleryCategory =
   | 'interior'
+  | 'bedroom'
   | 'exterior'
   | 'pool'
   | 'lagoon'
@@ -28,6 +29,7 @@ export const galleryCategories: { value: GalleryCategory | 'all'; label: string 
   { value: 'all', label: 'All' },
   { value: 'exterior', label: 'Exterior' },
   { value: 'interior', label: 'Interior' },
+  { value: 'bedroom', label: 'Bedrooms' },
   { value: 'pool', label: 'Pool & Garden' },
   { value: 'lagoon', label: 'Lagoon' },
   { value: 'sunset', label: 'Sunset' },
@@ -123,7 +125,7 @@ export const galleryImages: GalleryImage[] = [
     id: 'gal-int-8',
     url: '/images/villa/interior-bedroom-desk.webp',
     alt: 'Master bedroom desk with tiaré blossoms at Villa Paradise Tahiti',
-    category: 'interior',
+    category: 'bedroom',
     width: 1400,
     height: 1050,
     caption: 'The master bedroom desk — tiaré blossoms and morning light.',
@@ -132,7 +134,7 @@ export const galleryImages: GalleryImage[] = [
     id: 'gal-int-9',
     url: '/images/villa/interior-bedroom-master.webp',
     alt: 'Master bedroom at Villa Paradise Tahiti',
-    category: 'interior',
+    category: 'bedroom',
     width: 1400,
     height: 1050,
     caption: 'The master bedroom — pale wood and ocean light.',

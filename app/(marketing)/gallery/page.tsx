@@ -29,7 +29,7 @@ const CATEGORY_MAP: Record<string, GalleryCategory> = {
   lagoon: 'lagoon',
   sunset: 'sunset',
   experiences: 'experiences',
-  bedrooms: 'interior',
+  bedrooms: 'bedroom',
   night: 'sunset',
 }
 
@@ -55,7 +55,9 @@ async function loadGalleryImages(): Promise<GalleryImage[]> {
  *    the masonry rendering, and the lightbox interaction.
  *  - Closing CTA pushes visitors toward `/booking`.
  *
- * Image data lives in `lib/data/gallery-images.ts` for now; the rest of
+ * Image data comes from Supabase (`gallery_items`);
+ * `lib/data/gallery-images.ts` is only the fallback when the table is empty.
+ * CATEGORY_MAP translates the DB category onto the filter chips: the rest of
  * the UI is data-shape agnostic so we can drop in a Sanity feed later
  * without touching this file.
  */
