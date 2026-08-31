@@ -8,8 +8,12 @@ import { Container, Section } from '@/components/ui'
  * the two need to share state. This component stays a server component.
  */
 export function FaqHero() {
+  // `tight` rather than `default`: the search field follows immediately, and
+  // three stacked sections at default spacing pushed it most of a screen away
+  // from the intro it belongs to. The Container keeps its own top padding for
+  // the fixed header.
   return (
-    <Section tone="pearl" spacing="default">
+    <Section tone="pearl" spacing="tight">
       <Container className="pt-24">
         <div className="flex flex-col items-center text-center">
           <p className="eyebrow mb-6 flex items-center justify-center gap-3">

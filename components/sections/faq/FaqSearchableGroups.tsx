@@ -84,7 +84,9 @@ export function FaqSearchableGroups({ faqs }: FaqSearchableGroupsProps) {
 
   return (
     <>
-      <Section tone="pearl" spacing="tight">
+      {/* The field belongs with the intro above and the list below, so it
+          carries almost no vertical space of its own. */}
+      <Section tone="pearl" spacing="none" className="py-4 sm:py-6">
         <Container>
           <div className="flex flex-col items-center">
             <div className="w-full max-w-xl">
@@ -146,7 +148,8 @@ export function FaqSearchableGroups({ faqs }: FaqSearchableGroupsProps) {
       {filtered.length > 0 ? (
         <FaqGroups faqs={filtered} />
       ) : (
-        <Section tone="pearl" spacing="default">
+        // Same rhythm as FaqGroups, which this replaces.
+        <Section tone="pearl" spacing="compact">
           <Container className="max-w-4xl">
             <div className="rounded-2xl border border-pearl-400 bg-pearl px-8 py-12 text-center">
               <p className="font-heading text-h3-luxe font-medium text-midnight">

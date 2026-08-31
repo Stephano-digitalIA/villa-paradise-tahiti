@@ -59,8 +59,10 @@ export function FaqGroups({ faqs }: FaqGroupsProps) {
     list.sort((a, b) => a.order - b.order)
   }
 
+  // `compact` rather than `default`: the search field sits directly above and
+  // the two read as one block. Only the FAQ page renders this component.
   return (
-    <Section tone="pearl" spacing="default">
+    <Section tone="pearl" spacing="compact">
       <Container className="max-w-4xl">
         <div className="flex flex-col gap-16">
           {CATEGORY_ORDER.map(({ key, label, description }) => {
