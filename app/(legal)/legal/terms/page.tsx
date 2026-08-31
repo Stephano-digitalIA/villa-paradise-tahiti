@@ -64,9 +64,10 @@ export default async function TermsPage() {
         </li>
         <li>
           pay a deposit equal to thirty percent (30%) of the total booking
-          value at the time of reservation; the remaining seventy percent
-          (70%) is automatically charged thirty (30) days before the
-          scheduled arrival date. The deposit is refundable in accordance
+          value at the time of reservation. We email a payment request for
+          the remaining seventy percent (70%) thirty (30) days before the
+          scheduled arrival date, and the balance is due within seven (7)
+          days of that request. The deposit is refundable in accordance
           with our <a href="/legal/cancellation">Cancellation Policy</a> &mdash;
           in full for cancellations made more than sixty (60) days before
           arrival.

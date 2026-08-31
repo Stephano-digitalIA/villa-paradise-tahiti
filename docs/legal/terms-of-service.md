@@ -27,8 +27,9 @@ concierge team. To book a stay you must:
 - accept these Terms and the applicable rate, taxes, and fees displayed at
   checkout;
 - pay a deposit equal to thirty percent (30%) of the total booking value at the
-  time of reservation; the remaining seventy percent (70%) is automatically
-  charged thirty (30) days before the scheduled arrival date. The deposit is
+  time of reservation. We email a payment request for the remaining seventy
+  percent (70%) thirty (30) days before the scheduled arrival date, and the
+  balance is due within seven (7) days of that request. The deposit is
   refundable in accordance with our Cancellation Policy, in full for
   cancellations made more than sixty (60) days before arrival.
 

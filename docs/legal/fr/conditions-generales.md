@@ -30,11 +30,12 @@ Les réservations sont effectuées en ligne ou par échange direct avec notre
 - accepter les présentes Conditions ainsi que le tarif, les taxes et les frais
   affichés au moment du paiement ;
 - verser un acompte égal à trente pour cent (30 %) du montant total de la
-  réservation au moment de celle-ci. Les soixante-dix pour cent (70 %) restants
-  sont prélevés automatiquement trente (30) jours avant la date d'arrivée
-  prévue. L'acompte est remboursable conformément à notre politique
-  d'annulation, intégralement pour toute annulation intervenant plus de
-  soixante (60) jours avant l'arrivée.
+  réservation au moment de celle-ci. Nous vous adressons par email une demande
+  de règlement des soixante-dix pour cent (70 %) restants trente (30) jours
+  avant la date d'arrivée prévue ; le solde est exigible dans les sept (7)
+  jours suivant cette demande. L'acompte est remboursable conformément à notre
+  politique d'annulation, intégralement pour toute annulation intervenant plus
+  de soixante (60) jours avant l'arrivée.
 
 Une réservation n'est confirmée qu'à réception d'une confirmation écrite de
 notre part portant une référence de réservation unique. Jusque-là, les dates

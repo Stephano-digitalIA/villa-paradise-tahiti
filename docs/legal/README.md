@@ -75,13 +75,16 @@ PayPal ».
 Le dépôt de garantie de 2 000 USD, annoncé en section 3.1 mais implémenté nulle
 part, a été retiré des conditions générales le 31 août 2026.
 
+Le prélèvement automatique du solde à 30 jours, annoncé en section 2 mais
+jamais implémenté, a été reformulé le 31 août 2026 : les conditions annoncent
+désormais une demande de règlement par email. Un rappel automatique prévient
+l'administrateur cinq jours avant l'échéance (`/api/cron/balance-reminders`).
+
 **Écarts restants entre les conditions générales et le site :**
 
 - Les tarifs cités (590, 890, 1 290 USD) sont écrits en dur dans le texte, alors
   que les tarifs réels se modifient dans `/admin/settings`. Toute évolution
   tarifaire rendra les conditions fausses sans que rien ne le signale.
-- Le prélèvement automatique du solde 30 jours avant l'arrivée (section 2) n'est
-  pas implémenté non plus. Le solde doit être encaissé à la main.
 
 **À contrôler dans le pied de page :** la politique mentionne un lien « Cookie
 preferences » et un lien « Do Not Sell or Share My Personal Information ».
