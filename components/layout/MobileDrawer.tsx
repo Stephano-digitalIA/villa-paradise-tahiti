@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { CalendarCheck, LogOut, UserCircle, X } from 'lucide-react'
 import { Button } from '@/components/ui'
 import { useAuth, getDisplayName } from '@/components/auth/AuthProvider'
@@ -32,8 +32,11 @@ export function MobileDrawer({ open, onClose }: MobileDrawerProps) {
   const panelRef = useRef<HTMLDivElement>(null)
   const closeButtonRef = useRef<HTMLButtonElement>(null)
   const router = useRouter()
+  const pathname = usePathname()
   const { user, signOut } = useAuth()
   const displayName = getDisplayName(user)
+
+  const signInHref = `/signin?next=${encodeURIComponent(pathname || '/')}`
 
   async function handleSignOut() {
     onClose()
@@ -249,11 +252,25 @@ export function MobileDrawer({ open, onClose }: MobileDrawerProps) {
               </button>
             </>
           ) : (
-            <Button asChild variant="primary" size="lg" className="w-full">
-              <Link href={bookingHref} onClick={onClose}>
-                Book Now
+            <>
+              <Button asChild variant="primary" size="lg" className="w-full">
+                <Link href={bookingHref} onClick={onClose}>
+                  Book Now
+                </Link>
+              </Button>
+
+              {/* Returning guests need a way in that isn't the booking funnel.
+                  Same destination as the desktop header, carrying the current
+                  page so signing in doesn't lose their place. */}
+              <Link
+                href={signInHref}
+                onClick={onClose}
+                className="flex items-center justify-center gap-2 rounded-lg border border-pearl-400 px-3 py-3 font-sans text-body-sm font-medium text-midnight transition-colors hover:bg-sand"
+              >
+                <UserCircle className="h-4 w-4 text-gold" aria-hidden="true" />
+                Sign in
               </Link>
-            </Button>
+            </>
           )}
 
           {/* Sélecteur de devise (mobile) */}

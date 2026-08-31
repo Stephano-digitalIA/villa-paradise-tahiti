@@ -12,14 +12,10 @@
 
 import { useMemo } from 'react'
 import Link from 'next/link'
-import { AlertCircle, ArrowLeft, Lock, ShieldCheck } from 'lucide-react'
+import { AlertCircle, ArrowLeft } from 'lucide-react'
 
 import { Button, Container, Section } from '@/components/ui'
-import {
-  EmailMagicLinkForm,
-  GoogleSignInButton,
-  useAuth,
-} from '@/components/auth'
+import { SignInPanel, useAuth } from '@/components/auth'
 
 import { useBooking } from '../BookingProvider'
 import { CheckoutBreadcrumb } from './CheckoutBreadcrumb'
@@ -116,49 +112,16 @@ function AuthGate() {
   return (
     <Section tone="pearl" spacing="compact">
       <Container className="flex justify-center">
-        <div className="flex w-full max-w-md flex-col items-center gap-6 rounded-2xl border border-pearl-400 bg-pearl p-8 shadow-soft sm:p-10">
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gold/10">
-            <ShieldCheck className="h-7 w-7 text-gold" aria-hidden="true" />
-          </div>
-
-          <div className="text-center">
-            <h2 className="font-heading text-h3-luxe font-medium text-midnight">
-              Sign in to continue
-            </h2>
-            <p className="mt-2 font-sans text-body-sm text-midnight-400">
-              We need to confirm your identity before payment. Choose your preferred method —
-              your details are pre-filled and a confirmation is sent to your inbox.
-            </p>
-          </div>
-
-          <GoogleSignInButton redirectTo="/booking/checkout" className="w-full" />
-
-          <div className="flex w-full items-center gap-3" aria-hidden="true">
-            <span className="h-px flex-1 bg-pearl-400" />
-            <span className="text-eyebrow font-medium uppercase tracking-widest2 text-midnight-400">
-              or
-            </span>
-            <span className="h-px flex-1 bg-pearl-400" />
-          </div>
-
-          <EmailMagicLinkForm
-            redirectTo="/booking/checkout"
-            className="w-full"
-          />
-
-          <ul className="flex flex-col gap-2 self-start text-body-sm text-midnight-400">
-            {[
-              'Your name and email are pre-filled automatically',
-              'No password to remember',
-              'Booking confirmation sent to your inbox',
-            ].map((item) => (
-              <li key={item} className="flex items-center gap-2">
-                <Lock className="h-3.5 w-3.5 flex-none text-gold" aria-hidden="true" />
-                {item}
-              </li>
-            ))}
-          </ul>
-        </div>
+        <SignInPanel
+          title="Sign in to continue"
+          description="We need to confirm your identity before payment. Choose your preferred method, your details are pre-filled and a confirmation is sent to your inbox."
+          redirectTo="/booking/checkout"
+          benefits={[
+            'Your name and email are pre-filled automatically',
+            'No password to remember',
+            'Booking confirmation sent to your inbox',
+          ]}
+        />
       </Container>
     </Section>
   )

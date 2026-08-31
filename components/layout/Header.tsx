@@ -38,6 +38,10 @@ export function Header() {
   const burgerRef = useRef<HTMLButtonElement>(null)
   const { user, loading } = useAuth()
 
+  // Signing in shouldn't cost the visitor their place: carry the current page
+  // so `/auth/complete` brings them straight back to it.
+  const signInHref = `/signin?next=${encodeURIComponent(pathname || '/')}`
+
   // Always opaque — hero is now a light beige card, transparent white text was invisible
   const opaque = true
 
@@ -146,6 +150,23 @@ export function Header() {
               <div className="hidden sm:block">
                 <UserMenu variant={opaque ? 'default' : 'light'} />
               </div>
+            ) : null}
+
+            {/* Sign in — pour les visiteurs déconnectés uniquement. Un client qui
+                revient n'avait aucun moyen d'atteindre ses réservations : il
+                fallait entamer une réservation pour voir un écran de connexion.
+                Volontairement discret, "Book Now" reste l'action principale.
+                `!loading` évite l'apparition-disparition au premier rendu, comme
+                pour UserMenu juste au-dessus. */}
+            {!loading && !user ? (
+              <Button
+                asChild
+                variant="ghost"
+                size="sm"
+                className="hidden sm:inline-flex"
+              >
+                <Link href={signInHref}>Sign in</Link>
+              </Button>
             ) : null}
 
             {/* CTA Book Now — masqué pour les visiteurs connectés (UserMenu prend la place visuellement) */}
