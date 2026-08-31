@@ -336,6 +336,13 @@ function DayCell({
 
 function ReservationBar({ reservation }: { reservation: CalendarReservation }) {
   const style = RESERVATION_STYLE[reservation.payment_status]
+  // Cancelled and refunded stays are kept on the calendar as history, but they
+  // hold no dates. Colour alone did not carry that: a grey bar next to a blue
+  // one reads as "another booking", so the month looked busier than it is and
+  // an operator could refuse an enquiry over dates that are actually free.
+  const isInactive =
+    reservation.payment_status === 'cancelled' ||
+    reservation.payment_status === 'refunded'
   const tooltip = `${reservation.guest_name ?? 'Unknown guest'} · ${reservation.num_guests} guest${reservation.num_guests !== 1 ? 's' : ''} · ${reservation.reservation_ref} · ${reservation.payment_status}`
   return (
     <Link
@@ -345,6 +352,7 @@ function ReservationBar({ reservation }: { reservation: CalendarReservation }) {
         'mt-1 block truncate rounded-md px-1.5 py-0.5',
         'font-medium leading-tight',
         style.bar,
+        isInactive ? 'line-through decoration-2 opacity-80' : '',
         'transition-opacity hover:opacity-90',
       ].join(' ')}
     >
