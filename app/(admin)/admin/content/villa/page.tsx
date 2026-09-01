@@ -2,6 +2,9 @@ import type { Metadata } from 'next'
 import { adminClient } from '@/lib/supabase/admin'
 import { VillaForm } from './VillaForm'
 import type { Villa } from '@/lib/supabase/types'
+import { getSiteContentEntries } from '@/lib/content'
+import { VILLA_CONTENT_DEFAULTS, VILLA_CONTENT_GROUPS } from '@/lib/content/villa'
+import { SiteContentForm } from '../site/SiteContentForm'
 
 export const metadata: Metadata = { title: 'Paramètres villa — Admin' }
 export const dynamic = 'force-dynamic'
@@ -47,5 +50,36 @@ export default async function VillaEditPage() {
     updated_at: new Date().toISOString(),
   }
 
-  return <VillaForm villa={villa} />
+  const contentValues = await getSiteContentEntries()
+
+  return (
+    <>
+      <VillaForm villa={villa} />
+
+      {/*
+        Second, independent editor. The form above writes the `villa` table
+        (name, capacity, address, SEO); this one writes `site_content` for the
+        page copy that has no column of its own. Two forms, two save buttons,
+        on purpose: they persist to different places.
+      */}
+      <div className="border-t border-pearl-400 p-8">
+        <h2 className="font-heading text-2xl font-semibold text-midnight">
+          Textes de la page Villa
+        </h2>
+        <p className="mt-1 max-w-2xl font-sans text-sm text-midnight-400">
+          Le bloc « Le cadre » de la page Villa : la carte, le paragraphe de présentation du
+          quartier et les quatre distances. Laisse un champ vide pour garder le texte par
+          défaut. Vider le lieu d’une distance retire la ligne de la page.
+        </p>
+
+        <div className="mt-8 max-w-5xl">
+          <SiteContentForm
+            groups={VILLA_CONTENT_GROUPS}
+            values={contentValues}
+            defaults={VILLA_CONTENT_DEFAULTS}
+          />
+        </div>
+      </div>
+    </>
+  )
 }
