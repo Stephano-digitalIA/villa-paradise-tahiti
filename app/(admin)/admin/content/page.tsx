@@ -68,6 +68,12 @@ const SECTIONS = [
     title: 'FAQ',
     description: 'Éditer les questions fréquentes en ligne, groupées par catégorie',
   },
+  {
+    href: '/admin/content/contact',
+    title: 'Contact',
+    description:
+      'Modifier la page Contact : accroche, libellés du formulaire, coordonnées et chiffres clés',
+  },
 ]
 
 export default function ContentPage() {
@@ -94,10 +100,6 @@ export default function ContentPage() {
         ))}
       </div>
 
-      <p className="mt-8 max-w-3xl font-sans text-xs text-midnight-400">
-        Une page du menu n&apos;a pas encore d&apos;éditeur : « Contact ». Ses textes sont
-        pour l&apos;instant modifiables uniquement dans le code.
-      </p>
     </div>
   )
 }

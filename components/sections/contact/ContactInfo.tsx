@@ -2,13 +2,16 @@ import { Mail, MapPin, Phone } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { Settings } from '@/lib/sanity'
 import { CONTACT_EMAIL } from '@/lib/constants'
+import { getSiteContent } from '@/lib/content'
 
 /**
  * ContactInfo — right-column block on /contact.
  *
- * Server component: reads the optional `Settings` document from Sanity
- * and falls back to sensible defaults when fields are missing. Each
- * block is keyboard-focusable when interactive (mailto:, tel:).
+ * Server component. The email and phone themselves come from Réglages
+ * (`settings.contactEmail` / `contactPhone`), which stays the one place a
+ * contact detail is changed; only the words around them are overridable from
+ * /admin/content/contact. The strings below are the published defaults and
+ * must mirror `CONTACT_CONTENT_DEFAULTS`.
  */
 
 interface ContactInfoProps {
@@ -18,9 +21,10 @@ interface ContactInfoProps {
 const DEFAULT_EMAIL = CONTACT_EMAIL
 const DEFAULT_PHONE_DISPLAY = '+689 89 21 00 53'
 const DEFAULT_PHONE_RAW = '+68989210053'
-const DEFAULT_ADDRESS = 'Punaauia, Tahiti, French Polynesia'
 
-export function ContactInfo({ settings }: ContactInfoProps) {
+export async function ContactInfo({ settings }: ContactInfoProps) {
+  const t = await getSiteContent()
+
   const email = settings?.contactEmail || DEFAULT_EMAIL
   const phoneDisplay = settings?.contactPhone || DEFAULT_PHONE_DISPLAY
   const phoneHref = settings?.contactPhone
@@ -39,17 +43,19 @@ export function ContactInfo({ settings }: ContactInfoProps) {
         id="contact-info-heading"
         className="font-heading text-h3-luxe text-midnight"
       >
-        Reach us directly
+        {t('contact.info.title', 'Reach us directly')}
       </h2>
       <p className="mt-3 font-sans text-body-md text-midnight-400">
-        Our concierge team is based in Tahiti and replies in English, French, and
-        Polynesian.
+        {t(
+          'contact.info.intro',
+          'Our concierge team is based in Tahiti and replies in English, French, and Polynesian.',
+        )}
       </p>
 
       <dl className="mt-8 space-y-6">
         <InfoRow
           icon={<Mail className="h-5 w-5" aria-hidden="true" />}
-          label="Email"
+          label={t('contact.info.label_email', 'Email')}
         >
           <a
             href={`mailto:${email}`}
@@ -61,7 +67,7 @@ export function ContactInfo({ settings }: ContactInfoProps) {
 
         <InfoRow
           icon={<Phone className="h-5 w-5" aria-hidden="true" />}
-          label="Phone & WhatsApp"
+          label={t('contact.info.label_phone', 'Phone & WhatsApp')}
         >
           <a
             href={phoneHref}
@@ -80,21 +86,23 @@ export function ContactInfo({ settings }: ContactInfoProps) {
               {'⏱'}
             </span>
           }
-          label="Response time"
+          label={t('contact.info.label_response', 'Response time')}
         >
           <span className="text-midnight">
-            We respond within 4 hours
+            {t('contact.info.response_value', 'We respond within 4 hours')}
             <span className="block text-body-sm text-midnight-400">
-              Tahiti time (UTC&minus;10), 7 days a week
+              {t('contact.info.response_sub', 'Tahiti time (UTC−10), 7 days a week')}
             </span>
           </span>
         </InfoRow>
 
         <InfoRow
           icon={<MapPin className="h-5 w-5" aria-hidden="true" />}
-          label="Location"
+          label={t('contact.info.label_location', 'Location')}
         >
-          <span className="text-midnight">{DEFAULT_ADDRESS}</span>
+          <span className="text-midnight">
+            {t('contact.info.location_value', 'Punaauia, Tahiti, French Polynesia')}
+          </span>
         </InfoRow>
       </dl>
     </aside>

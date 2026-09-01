@@ -8,6 +8,7 @@
  */
 
 import { RATES_CONTENT_GROUPS } from './rates'
+import { CONTACT_CONTENT_GROUPS } from './contact'
 import { GETTING_HERE_CONTENT_GROUPS } from './getting-here'
 import { VILLA_CONTENT_GROUPS } from './villa'
 
@@ -120,8 +121,8 @@ export const SITE_CONTENT_GROUPS: ContentGroup[] = [
 
 /**
  * Flat list of every valid key — used by the save action to whitelist writes.
- * Every editor (/admin/content/site, /rates, /villa, /getting-here) shares one
- * action and one `site_content` table, so every registry belongs here.
+ * Every editor (site, rates, villa, getting-here, contact) shares one action
+ * and one `site_content` table, so every registry belongs here.
  */
 export const SITE_CONTENT_KEYS: ReadonlySet<string> = new Set(
   [
@@ -129,6 +130,7 @@ export const SITE_CONTENT_KEYS: ReadonlySet<string> = new Set(
     ...RATES_CONTENT_GROUPS,
     ...VILLA_CONTENT_GROUPS,
     ...GETTING_HERE_CONTENT_GROUPS,
+    ...CONTACT_CONTENT_GROUPS,
   ].flatMap((g) => g.fields.map((f) => f.key)),
 )
 

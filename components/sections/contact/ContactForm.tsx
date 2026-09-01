@@ -12,6 +12,10 @@ import {
   type ContactFormInput,
   type ContactFormValues,
 } from './contact-schema'
+import {
+  CONTACT_FORM_LABEL_DEFAULTS,
+  type ContactFormLabels,
+} from '@/lib/content/contact'
 
 /**
  * ContactForm — client-side inquiry form.
@@ -20,6 +24,11 @@ import {
  * through `@hookform/resolvers/zod`. The schema is also intended to be
  * imported by the Phase E `/api/contact` route handler so client and
  * server share the exact same contract.
+ *
+ * Copy: every visible string arrives via the `labels` prop, resolved
+ * server-side from the content registry, because this is a client component
+ * and `getSiteContent()` is server-only. Falls back to the published English
+ * when the prop is omitted.
  *
  * Submission: in this phase we only `console.log` the payload and switch
  * to a "thank you" success state. Phase E will replace the handler body
@@ -35,7 +44,12 @@ import {
  *  - On success we render a status region with `role="status"` for SR
  *    feedback without stealing focus from later sections.
  */
-export function ContactForm() {
+export function ContactForm({
+  labels = CONTACT_FORM_LABEL_DEFAULTS,
+}: {
+  /** Resolved server-side from the content registry; see lib/content/contact.ts. */
+  labels?: ContactFormLabels
+} = {}) {
   const [submitState, setSubmitState] = useState<'idle' | 'success' | 'error'>('idle')
 
   const {
@@ -110,12 +124,11 @@ export function ContactForm() {
           <CheckCircle2 className="h-6 w-6" />
         </span>
         <div>
-          <h3 className="font-heading text-h3-luxe text-midnight">Thank you.</h3>
+          <h3 className="font-heading text-h3-luxe text-midnight">{labels.successTitle}</h3>
           <p className="mt-2 font-sans text-body-md text-midnight-400">
-            We&apos;ll be in touch within 4 hours (Tahiti time, UTC&minus;10). In the
-            meantime, feel free to explore our{' '}
+            {labels.successBody}{' '}
             <a href="/experiences" className="text-lagoon underline-offset-4 hover:underline">
-              curated experiences
+              {labels.successLink}
             </a>
             .
           </p>
@@ -126,7 +139,7 @@ export function ContactForm() {
           size="md"
           onClick={() => setSubmitState('idle')}
         >
-          Send another inquiry
+          {labels.successAgain}
         </Button>
       </div>
     )
@@ -142,7 +155,7 @@ export function ContactForm() {
       {/* Full name */}
       <Field
         id="contact-fullName"
-        label="Full name"
+        label={labels.name}
         required
         error={errors.fullName?.message}
       >
@@ -157,7 +170,7 @@ export function ContactForm() {
       </Field>
 
       {/* Email */}
-      <Field id="contact-email" label="Email" required error={errors.email?.message}>
+      <Field id="contact-email" label={labels.email} required error={errors.email?.message}>
         <Input
           id="contact-email"
           type="email"
@@ -172,9 +185,10 @@ export function ContactForm() {
       {/* Phone (optional) */}
       <Field
         id="contact-phone"
-        label="Phone"
+        label={labels.phone}
         optional
-        helperText="So we can reach you faster if needed."
+        optionalLabel={labels.optional}
+        helperText={labels.phoneHelper}
         error={errors.phone?.message}
       >
         <Input
@@ -192,12 +206,13 @@ export function ContactForm() {
 
       {/* Travel dates */}
       <fieldset className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-        <legend className="sr-only">Travel dates</legend>
+        <legend className="sr-only">{labels.datesLegend}</legend>
 
         <Field
           id="contact-checkIn"
-          label="Arrival"
+          label={labels.arrival}
           optional
+          optionalLabel={labels.optional}
           error={errors.checkIn?.message}
         >
           <Controller
@@ -211,7 +226,7 @@ export function ContactForm() {
                 min={todayISO()}
                 error={Boolean(errors.checkIn)}
                 aria-describedby={errors.checkIn ? 'contact-checkIn-error' : undefined}
-                aria-label="Choose a check-in date"
+                aria-label={labels.arrivalAria}
               />
             )}
           />
@@ -219,8 +234,9 @@ export function ContactForm() {
 
         <Field
           id="contact-checkOut"
-          label="Departure"
+          label={labels.departure}
           optional
+          optionalLabel={labels.optional}
           error={errors.checkOut?.message}
         >
           <Controller
@@ -234,7 +250,7 @@ export function ContactForm() {
                 min={checkInValue ? addDaysISO(checkInValue, 1) : addDaysISO(todayISO(), 1)}
                 error={Boolean(errors.checkOut)}
                 aria-describedby={errors.checkOut ? 'contact-checkOut-error' : undefined}
-                aria-label="Choose a check-out date"
+                aria-label={labels.departureAria}
               />
             )}
           />
@@ -244,8 +260,9 @@ export function ContactForm() {
       {/* Guests */}
       <Field
         id="contact-guests"
-        label="Number of guests"
+        label={labels.guests}
         optional
+        optionalLabel={labels.optional}
         error={errors.guests?.message}
       >
         <Input
@@ -264,9 +281,9 @@ export function ContactForm() {
       {/* Message */}
       <Field
         id="contact-message"
-        label="How can we help?"
+        label={labels.message}
         required
-        helperText="Share your travel plans, questions, or special requests (20+ characters)."
+        helperText={labels.messageHelper}
         error={errors.message?.message}
       >
         <textarea
@@ -300,7 +317,7 @@ export function ContactForm() {
           aria-busy={isSubmitting || undefined}
           className="w-full sm:w-auto"
         >
-          {isSubmitting ? 'Sending…' : 'Send Inquiry'}
+          {isSubmitting ? labels.submitting : labels.submit}
         </Button>
 
         {submitState === 'error' ? (
@@ -309,17 +326,17 @@ export function ContactForm() {
             role="alert"
             className="mt-4 font-sans text-body-sm text-coral"
           >
-            Something went wrong. Please try again or email us directly.
+            {labels.error}
           </p>
         ) : null}
 
         <p className="mt-4 font-sans text-body-sm text-midnight-400">
-          By submitting, you agree to our{' '}
+          {labels.privacyText}{' '}
           <a
             href="/legal/privacy-policy"
             className="text-lagoon underline-offset-4 hover:underline"
           >
-            Privacy Policy
+            {labels.privacyLink}
           </a>
           .
         </p>
@@ -335,6 +352,8 @@ interface FieldProps {
   label: string
   required?: boolean
   optional?: boolean
+  /** Wording of the "optional" marker, so it travels with the rest of the copy. */
+  optionalLabel?: string
   helperText?: string
   error?: string
   children: React.ReactNode
@@ -345,6 +364,7 @@ function Field({
   label,
   required,
   optional,
+  optionalLabel = CONTACT_FORM_LABEL_DEFAULTS.optional,
   helperText,
   error,
   children,
@@ -363,7 +383,7 @@ function Field({
         ) : null}
         {optional ? (
           <span className="ml-2 text-eyebrow font-normal uppercase text-midnight-400">
-            Optional
+            {optionalLabel}
           </span>
         ) : null}
       </label>

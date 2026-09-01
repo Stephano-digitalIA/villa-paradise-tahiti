@@ -59,6 +59,8 @@ export async function saveSiteContent(
   revalidatePath('/admin/content/villa')
   revalidatePath('/getting-here')
   revalidatePath('/admin/content/getting-here')
+  revalidatePath('/contact')
+  revalidatePath('/admin/content/contact')
   revalidatePath('/legal/terms')
   revalidatePath('/legal/cancellation')
   revalidatePath('/legal/privacy-policy')
