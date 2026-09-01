@@ -7,6 +7,8 @@
  * `t('<key>', '<current text>')` and add the key below.
  */
 
+import { RATES_CONTENT_GROUPS } from './rates'
+
 export interface ContentField {
   key: string
   label: string
@@ -114,9 +116,15 @@ export const SITE_CONTENT_GROUPS: ContentGroup[] = [
   },
 ]
 
-/** Flat list of every valid key — used by the save action to whitelist writes. */
+/**
+ * Flat list of every valid key — used by the save action to whitelist writes.
+ * Covers both editors: /admin/content/site and /admin/content/rates share one
+ * action and one `site_content` table, so both registries belong here.
+ */
 export const SITE_CONTENT_KEYS: ReadonlySet<string> = new Set(
-  SITE_CONTENT_GROUPS.flatMap((g) => g.fields.map((f) => f.key)),
+  [...SITE_CONTENT_GROUPS, ...RATES_CONTENT_GROUPS].flatMap((g) =>
+    g.fields.map((f) => f.key),
+  ),
 )
 
 /**
@@ -184,7 +192,7 @@ export const SITE_CONTENT_DEFAULTS: Readonly<Record<string, string>> = {
   'home.cta.cta_primary': 'Book Now',
   'home.cta.cta_secondary': 'Message the Owner',
   'home.cta.trust_cancel': '100% refund if cancelled more than 60 days before',
-  'home.cta.trust_secure': 'Secure booking by Stripe',
+  'home.cta.trust_secure': 'Secure booking by PayPal',
   // Accueil — Aperçu villa (components/sections/home/VillaPreview.tsx)
   'home.villa.eyebrow': 'The Villa',
   'home.villa.title1': 'A sanctuary of calm',

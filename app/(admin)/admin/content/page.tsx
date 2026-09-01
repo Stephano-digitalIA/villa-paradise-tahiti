@@ -10,6 +10,12 @@ const SECTIONS = [
     description: 'Modifier les textes marketing de la page d’accueil (titres, accroches, boutons)',
   },
   {
+    href: '/admin/content/rates',
+    title: 'Tarifs',
+    description:
+      'Modifier les textes de la page Tarifs (saisons, inclus, options, annulation). Les montants se règlent dans Réglages',
+  },
+  {
     href: '/admin/content/villa',
     title: 'Villa',
     description: 'Modifier nom, description, caractéristiques, équipements, localisation et SEO',

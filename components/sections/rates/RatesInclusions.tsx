@@ -2,75 +2,108 @@ import { Check, Plus } from 'lucide-react'
 
 import { Container, Section } from '@/components/ui'
 import { Price } from '@/components/currency'
-
-const INCLUDED: ReadonlyArray<{ title: string; detail: string }> = [
-  {
-    title: 'Tropical welcome basket',
-    detail:
-      'Fresh papaya, mango, passion fruit, croissants and vanilla coffee awaiting you on the counter upon arrival.',
-  },
-  {
-    title: 'Daily housekeeping (on request), weekly complimentary for long stays',
-    detail: 'Linen, towels and kitchen refreshed on your schedule.',
-  },
-  {
-    title: 'Private compact car',
-    detail:
-      'A small island car, five seats, fuel-efficient and parked at the villa, available for the entire duration of your stay.',
-  },
-  {
-    title: 'Free airport transfer',
-    detail:
-      'Complimentary transfer by our taxi partner for the 25-minute journey from Faaʻa International Airport (PPT) or the ferry port.',
-  },
-  {
-    title: 'High-speed Wi-Fi',
-    detail:
-      'Fibre optic available throughout the property, fast enough for video calls from the terrace or remote working.',
-  },
-  {
-    title: 'Snorkelling equipment',
-    detail: 'Fins, masks and reef-safe sunscreen are available.',
-  },
-]
-
-const EXTRAS: ReadonlyArray<{ title: string; detail: string; fromUSD?: number }> = [
-  {
-    title: 'Excursions with our partners',
-    detail:
-      'Snorkelling in the lagoon, 4×4 island tour, catamaran excursion, VIP private boat excursion, sunset cruise, whale watching (in season).',
-  },
-  {
-    title: 'Private chef & catering',
-    detail:
-      'Polynesian-French menus prepared on the terrace by a chef from our concierge network.',
-    fromUSD: 70,
-  },
-  {
-    title: 'In-villa spa services',
-    detail:
-      'Taurumi massage with warm monoï oil, manicure, facial — book same-day subject to availability.',
-  },
-  {
-    title: 'In-home Thai massage',
-    detail:
-      'Taurumi in-villa massage with warm monoï oil by our certified partner therapist — on request.',
-  },
-]
+import { getSiteContent } from '@/lib/content'
 
 /**
  * RatesInclusions — two-column "What's included / What's extra".
  * Splits the stay into all-in items and bookable add-ons so visitors
  * can mental-budget without surprises.
+ *
+ * Copy is overridable from /admin/content/rates; the strings below are the
+ * published defaults and must mirror `RATES_CONTENT_DEFAULTS`. Emptying an
+ * item's title in the admin removes that item from the list, which is how an
+ * operator drops a perk without a code change.
  */
-export function RatesInclusions() {
+export async function RatesInclusions() {
+  const t = await getSiteContent()
+
+  const included: ReadonlyArray<{ title: string; detail: string }> = [
+    {
+      title: t('rates.inclusions.i1.title', 'Tropical welcome basket'),
+      detail: t(
+        'rates.inclusions.i1.body',
+        'Fresh papaya, mango, passion fruit, croissants and vanilla coffee awaiting you on the counter upon arrival.',
+      ),
+    },
+    {
+      title: t(
+        'rates.inclusions.i2.title',
+        'Daily housekeeping (on request), weekly complimentary for long stays',
+      ),
+      detail: t(
+        'rates.inclusions.i2.body',
+        'Linen, towels and kitchen refreshed on your schedule.',
+      ),
+    },
+    {
+      title: t('rates.inclusions.i3.title', 'Private compact car'),
+      detail: t(
+        'rates.inclusions.i3.body',
+        'A small island car, five seats, fuel-efficient and parked at the villa, available for the entire duration of your stay.',
+      ),
+    },
+    {
+      title: t('rates.inclusions.i4.title', 'Free airport transfer'),
+      detail: t(
+        'rates.inclusions.i4.body',
+        'Complimentary transfer by our taxi partner for the 25-minute journey from Faaʻa International Airport (PPT) or the ferry port.',
+      ),
+    },
+    {
+      title: t('rates.inclusions.i5.title', 'High-speed Wi-Fi'),
+      detail: t(
+        'rates.inclusions.i5.body',
+        'Fibre optic available throughout the property, fast enough for video calls from the terrace or remote working.',
+      ),
+    },
+    {
+      title: t('rates.inclusions.i6.title', 'Snorkelling equipment'),
+      detail: t(
+        'rates.inclusions.i6.body',
+        'Fins, masks and reef-safe sunscreen are available.',
+      ),
+    },
+  ].filter((item) => item.title.trim() !== '')
+
+  const extras: ReadonlyArray<{ title: string; detail: string; fromUSD?: number }> = [
+    {
+      title: t('rates.inclusions.e1.title', 'Excursions with our partners'),
+      detail: t(
+        'rates.inclusions.e1.body',
+        'Snorkelling in the lagoon, 4×4 island tour, catamaran excursion, VIP private boat excursion, sunset cruise, whale watching (in season).',
+      ),
+    },
+    {
+      title: t('rates.inclusions.e2.title', 'Private chef & catering'),
+      detail: t(
+        'rates.inclusions.e2.body',
+        'Polynesian-French menus prepared on the terrace by a chef from our concierge network.',
+      ),
+      fromUSD: 70,
+    },
+    {
+      title: t('rates.inclusions.e3.title', 'In-villa spa services'),
+      detail: t(
+        'rates.inclusions.e3.body',
+        'Taurumi massage with warm monoï oil, manicure, facial. Book same-day subject to availability.',
+      ),
+    },
+    {
+      title: t('rates.inclusions.e4.title', 'In-home Thai massage'),
+      detail: t(
+        'rates.inclusions.e4.body',
+        'Taurumi in-villa massage with warm monoï oil by our certified partner therapist, on request.',
+      ),
+    },
+  ].filter((item) => item.title.trim() !== '')
+
   return (
     <Section tone="pearl" spacing="default">
       <Container>
         <div className="mb-12">
-          <p className="eyebrow mb-3">What you get</p>
+          <p className="eyebrow mb-3">{t('rates.inclusions.eyebrow', 'What you get')}</p>
           <h2 className="font-heading text-h2-luxe font-medium text-midnight">
-            The price includes your well-being and:
+            {t('rates.inclusions.title', 'The price includes your well-being and:')}
           </h2>
         </div>
 
@@ -82,11 +115,11 @@ export function RatesInclusions() {
                 <Check className="h-5 w-5" aria-hidden="true" />
               </span>
               <h3 className="font-heading text-h3-luxe font-medium text-midnight">
-                Included in every stay
+                {t('rates.inclusions.included_title', 'Included in every stay')}
               </h3>
             </header>
             <ul className="flex flex-col gap-5">
-              {INCLUDED.map((item) => (
+              {included.map((item) => (
                 <li key={item.title} className="flex gap-3">
                   <Check
                     className="mt-1 h-4 w-4 shrink-0 text-leaf"
@@ -112,11 +145,11 @@ export function RatesInclusions() {
                 <Plus className="h-5 w-5" aria-hidden="true" />
               </span>
               <h3 className="font-heading text-h3-luxe font-medium text-midnight">
-                Optional add-ons
+                {t('rates.inclusions.extras_title', 'Optional add-ons')}
               </h3>
             </header>
             <ul className="flex flex-col gap-5">
-              {EXTRAS.map((item) => (
+              {extras.map((item) => (
                 <li key={item.title} className="flex gap-3">
                   <Plus
                     className="mt-1 h-4 w-4 shrink-0 text-gold"

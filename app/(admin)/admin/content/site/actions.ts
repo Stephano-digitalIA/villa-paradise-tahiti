@@ -53,6 +53,8 @@ export async function saveSiteContent(
   }
 
   revalidatePath('/')
+  revalidatePath('/rates')
+  revalidatePath('/admin/content/rates')
   revalidatePath('/legal/terms')
   revalidatePath('/legal/cancellation')
   revalidatePath('/legal/privacy-policy')
