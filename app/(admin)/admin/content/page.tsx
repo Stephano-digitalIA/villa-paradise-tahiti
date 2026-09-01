@@ -48,6 +48,12 @@ const SECTIONS = [
       'Modifier les textes de la page Tarifs (saisons, inclus, options, annulation). Les montants se règlent dans Réglages',
   },
   {
+    href: '/admin/content/getting-here',
+    title: 'Comment venir',
+    description:
+      'Modifier la page Comment venir : accroche, liaisons aériennes, transfert et conseils de voyage',
+  },
+  {
     href: '/admin/content/reviews',
     title: 'Avis',
     description: 'Ajouter et gérer les avis clients de toutes les sources',
@@ -89,8 +95,8 @@ export default function ContentPage() {
       </div>
 
       <p className="mt-8 max-w-3xl font-sans text-xs text-midnight-400">
-        Deux pages du menu n&apos;ont pas encore d&apos;éditeur : « Comment venir » et
-        « Contact ». Leurs textes sont pour l&apos;instant modifiables uniquement dans le code.
+        Une page du menu n&apos;a pas encore d&apos;éditeur : « Contact ». Ses textes sont
+        pour l&apos;instant modifiables uniquement dans le code.
       </p>
     </div>
   )
