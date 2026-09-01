@@ -73,13 +73,20 @@ export function SiteContentForm({ groups, values, defaults = {} }: SiteContentFo
       const en = state[key]?.en ?? ''
       const fr = state[key]?.fr ?? ''
       const def = defaults[key]
-      // If EN is still exactly the site default and no FR source was written,
-      // persist nothing so the key stays on its in-code default and the
-      // "clear to revert" semantics hold — we never freeze the default into the DB.
-      const isUntouchedDefault = fr === '' && def !== undefined && en === def
-      entries[key] = isUntouchedDefault
-        ? { value: '', value_fr: '' }
-        : { value: en, value_fr: fr }
+      // The two columns are decided independently. An English field still on
+      // its in-code default persists as empty whatever the French holds, so
+      // the page keeps reading that default and a later edit to it in code
+      // still reaches the site.
+      //
+      // This used to also require an empty French field, which meant that once
+      // a French source existed, pressing Save with nothing changed pinned all
+      // the English to whatever it said that day. Any later correction in code
+      // was then silently overridden by the table.
+      //
+      // The save action deletes the row when both halves come out empty, which
+      // is what makes "clear the field to revert" work.
+      const isDefaultEn = def !== undefined && en === def
+      entries[key] = { value: isDefaultEn ? '' : en, value_fr: fr }
     }
     startSaving(async () => {
       const result = await saveSiteContent(entries)
