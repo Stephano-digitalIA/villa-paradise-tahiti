@@ -98,7 +98,7 @@ export async function KeyFeatures({ onVideo = false }: KeyFeaturesProps) {
         <div className="mx-auto max-w-2xl text-center">
           <p className="eyebrow mb-4 flex items-center justify-center gap-3">
             <span className="h-px w-8 bg-gold" aria-hidden="true" />
-            Why Villa Paradise
+            {eyebrow}
             <span className="h-px w-8 bg-gold" aria-hidden="true" />
           </p>
           <h2 className="font-heading text-h2-luxe font-medium leading-tight text-midnight">

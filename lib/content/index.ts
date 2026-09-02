@@ -13,7 +13,7 @@
  */
 import { cache } from 'react'
 
-import { adminClient } from '@/lib/supabase/admin'
+import { contentClient, liveAdminClient } from '@/lib/supabase/admin'
 
 export type ContentLookup = (key: string, fallback: string) => string
 
@@ -21,7 +21,7 @@ export type ContentLookup = (key: string, fallback: string) => string
 export const getSiteContent = cache(async (): Promise<ContentLookup> => {
   const map = new Map<string, string>()
   try {
-    const { data } = await adminClient.from('site_content').select('key, value')
+    const { data } = await contentClient.from('site_content').select('key, value')
     if (data) for (const row of data) map.set(row.key, row.value as string)
   } catch {
     // Table absent (pre-migration) or transient error — fall back to defaults.
@@ -36,7 +36,7 @@ export const getSiteContent = cache(async (): Promise<ContentLookup> => {
 export async function getSiteContentMap(): Promise<Record<string, string>> {
   const out: Record<string, string> = {}
   try {
-    const { data } = await adminClient.from('site_content').select('key, value')
+    const { data } = await liveAdminClient.from('site_content').select('key, value')
     if (data) for (const row of data) out[row.key] = row.value as string
   } catch {
     /* table absent — empty map */
@@ -54,7 +54,7 @@ export async function getSiteContentEntries(): Promise<Record<string, SiteConten
   const out: Record<string, SiteContentEntry> = {}
   try {
     // value_fr may not exist before migration 010 — fall back to value-only.
-    const { data, error } = await adminClient
+    const { data, error } = await liveAdminClient
       .from('site_content')
       .select('key, value, value_fr')
     if (error) throw error
@@ -71,7 +71,7 @@ export async function getSiteContentEntries(): Promise<Record<string, SiteConten
     /* value_fr column or table absent — fall back to value-only below */
   }
   try {
-    const { data } = await adminClient.from('site_content').select('key, value')
+    const { data } = await liveAdminClient.from('site_content').select('key, value')
     if (data) for (const row of data) out[row.key] = { value: (row.value as string) ?? '', value_fr: '' }
   } catch {
     /* table absent — empty map */

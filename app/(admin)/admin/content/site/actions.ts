@@ -1,8 +1,8 @@
 'use server'
 
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
 
-import { adminClient } from '@/lib/supabase/admin'
+import { adminClient, SITE_CONTENT_TAG } from '@/lib/supabase/admin'
 import { SITE_CONTENT_KEYS } from '@/lib/content/registry'
 
 export interface SiteContentInput {
@@ -51,6 +51,11 @@ export async function saveSiteContent(
     const { error } = await adminClient.from('site_content').delete().in('key', deletes)
     if (error) return { error: error.message }
   }
+
+  // Drop the cached `site_content` read first. Revalidating the paths alone
+  // only re-renders them, and the re-render was being served the same cached
+  // Supabase response, so saved copy never reached the site.
+  revalidateTag(SITE_CONTENT_TAG)
 
   revalidatePath('/')
   revalidatePath('/rates')
