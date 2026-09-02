@@ -40,7 +40,7 @@ export default async function HomePage() {
       <JsonLd data={websiteSchema()} />
       {villa ? <JsonLd data={vacationRentalSchema(villa)} /> : null}
 
-      {/* Two-column layout: content scrolls left, portrait video sticky right */}
+      {/* Two-column layout: content scrolls left, square video sticky right */}
       {/* pb matches video bottom gap: p-4 + (100vh-95vh)/2 ≈ 2.5vh + 1rem */}
       <div className="relative lg:flex lg:pb-[calc(2.5vh+1rem)]">
 
@@ -48,9 +48,13 @@ export default async function HomePage() {
         <div className="min-w-0 lg:w-[55%]">
           <HeroHome />
 
-          {/* Mobile-only video — hidden on lg+ (shown in right column on desktop) */}
+          {/* Mobile-only video — hidden on lg+ (shown in right column on desktop).
+              `aspect-square` matches the source (Cloudflare Stream serves it at
+              720x720), like the desktop frame below. It used to be aspect-video:
+              a 1:1 video in a 16:9 box with object-cover kept only 56% of the
+              height, so a phone lost 44% of the frame, cropped top and bottom. */}
           {videoUrl ? (
-            <div className="relative mx-4 mb-8 aspect-video overflow-hidden rounded-2xl shadow-xl lg:hidden">
+            <div className="relative mx-4 mb-8 aspect-square overflow-hidden rounded-2xl shadow-xl lg:hidden">
               <HeroVideo videoUrl={videoUrl} posterUrl={posterUrl} />
             </div>
           ) : null}
