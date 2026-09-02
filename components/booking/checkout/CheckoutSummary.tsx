@@ -29,7 +29,7 @@ interface CheckoutSummaryProps {
 
 export function CheckoutSummary({ className }: CheckoutSummaryProps) {
   const { state, breakdown, settings } = useBooking()
-  const { format } = useCurrency()
+  const { format, currency, rate } = useCurrency()
   const depositPercent = settings?.defaultDepositPercent ?? 30
 
   return (
@@ -169,6 +169,16 @@ export function CheckoutSummary({ className }: CheckoutSummaryProps) {
               {format(breakdown.balanceAmount)}
             </span>
           </div>
+
+          {/* Devise de débit. Le choix fait dans le header devient la devise
+              réellement débitée (voir app/api/checkout/route.ts), ce que rien
+              n'indiquait ici : le client voyait des euros sans savoir s'il
+              serait débité en euros ou en dollars. */}
+          <p className="border-t border-midnight/10 pt-3 font-sans text-xs text-midnight-400">
+            {currency === 'EUR'
+              ? `You will be charged in euros, converted at the villa's rate of 1 USD = ${rate.toFixed(2)} EUR. Switch to USD in the header to be charged in US dollars.`
+              : 'You will be charged in US dollars. Switch to EUR in the header to be charged in euros.'}
+          </p>
         </div>
       ) : null}
 

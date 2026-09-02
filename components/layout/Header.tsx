@@ -90,18 +90,21 @@ export function Header() {
             href="/"
             aria-label="Villa Paradise Tahiti — Home"
             className={cn(
-              'group inline-flex items-center gap-2 transition-colors duration-300',
+              // `min-w-0` laisse le mot-symbole se tronquer sur un écran étroit
+              // plutôt que pousser le burger hors de la vue, maintenant que la
+              // pastille de devise occupe elle aussi la barre en mobile.
+              'group inline-flex min-w-0 items-center gap-2 transition-colors duration-300',
               opaque ? 'text-midnight' : 'text-pearl'
             )}
           >
             <Palmtree
               className={cn(
-                'h-5 w-5 transition-colors duration-300',
+                'h-5 w-5 shrink-0 transition-colors duration-300',
                 scrolled ? 'text-gold' : 'text-gold'
               )}
               aria-hidden="true"
             />
-            <span className="font-display text-lg italic tracking-wider sm:text-xl">
+            <span className="truncate font-display text-lg italic tracking-wider sm:text-xl">
               Villa Paradise Tahiti
             </span>
           </Link>
@@ -139,11 +142,13 @@ export function Header() {
           </nav>
 
           {/* Cluster droit : sélecteur de devise + UserMenu si connecté + CTA Book Now + Burger (mobile) */}
-          <div className="flex items-center gap-2 sm:gap-3">
-            {/* Sélecteur de devise USD / EUR (desktop) */}
-            <div className="hidden md:block">
-              <CurrencySwitcher variant={opaque ? 'default' : 'light'} />
-            </div>
+          <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+            {/* Sélecteur de devise USD / EUR, visible à tous les formats.
+                Il était réservé au desktop, sa seule présence mobile étant au
+                fond du menu burger : un visiteur qui n'ouvrait pas le menu
+                n'avait aucun moyen de le voir, alors que ce choix devient la
+                devise réellement débitée à la commande. */}
+            <CurrencySwitcher variant={opaque ? 'default' : 'light'} />
 
             {/* UserMenu — visible dès qu'on est connecté (sauf pendant le 1er chargement pour éviter le flash) */}
             {!loading && user ? (
