@@ -13,25 +13,28 @@
 --    gallery_items was the only content table without it, so photo captions
 --    had nowhere to store French.
 --
--- Apply manually via the Supabase SQL editor (this project has no migration
--- runner), the same way as migrations 009 to 017.
+-- Apply manually via the Supabase SQL editor: select everything, run once.
+-- Safe to run again, every statement tolerates already having been applied.
+--
+-- An earlier version of this file guarded the constraint with a DO $$ ... $$
+-- block. Dollar-quoting is the usual casualty of a partial paste, and the file
+-- silently did nothing. It is written as plain statements now.
 
 ALTER TABLE gallery_items
-  ADD COLUMN IF NOT EXISTS room_number  smallint,
+  ADD COLUMN IF NOT EXISTS room_number smallint;
+
+ALTER TABLE gallery_items
   ADD COLUMN IF NOT EXISTS translations jsonb NOT NULL DEFAULT '{}';
 
--- Postgres has no ADD CONSTRAINT IF NOT EXISTS, so guard it by name. Five
--- rooms is what the villa has; raise the bound here if that ever changes.
-DO $$
-BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_constraint WHERE conname = 'gallery_items_room_number_range'
-  ) THEN
-    ALTER TABLE gallery_items
-      ADD CONSTRAINT gallery_items_room_number_range
-      CHECK (room_number IS NULL OR (room_number BETWEEN 1 AND 5));
-  END IF;
-END $$;
+-- Postgres has no ADD CONSTRAINT IF NOT EXISTS, so drop then add. DROP ... IF
+-- EXISTS never fails, which makes the pair repeatable. Five rooms is what the
+-- villa has; raise the bound here if that ever changes.
+ALTER TABLE gallery_items
+  DROP CONSTRAINT IF EXISTS gallery_items_room_number_range;
+
+ALTER TABLE gallery_items
+  ADD CONSTRAINT gallery_items_room_number_range
+  CHECK (room_number IS NULL OR (room_number BETWEEN 1 AND 5));
 
 -- The public gallery groups bedrooms by room, so index the pair it filters on.
 CREATE INDEX IF NOT EXISTS gallery_items_category_room_idx
