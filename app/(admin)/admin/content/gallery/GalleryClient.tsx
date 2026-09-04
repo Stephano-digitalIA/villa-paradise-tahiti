@@ -13,6 +13,7 @@ import {
   updateGalleryOrder,
   updateGalleryText,
 } from './actions'
+import { translateBatch } from '@/app/actions/translate'
 
 const CATEGORIES: GalleryCategory[] = [
   'exterior', 'interior', 'pool', 'lagoon', 'bedrooms', 'night', 'sunset', 'experiences',
@@ -82,6 +83,9 @@ export function GalleryClient({ initialItems }: Props) {
   )
   const [dragId, setDragId] = useState<string | null>(null)
   const [overId, setOverId] = useState<string | null>(null)
+  // Id of the photo currently being translated, or 'all' for the bulk run.
+  const [translating, setTranslating] = useState<string | null>(null)
+  const [translateError, setTranslateError] = useState<string | null>(null)
 
   const live = useMemo(() => items.filter((i) => !i.deleted_at), [items])
   const trashed = useMemo(() => items.filter((i) => i.deleted_at), [items])
@@ -132,6 +136,90 @@ export function GalleryClient({ initialItems }: Props) {
   function handleRoomChange(id: string, value: string) {
     const roomNumber = value === '' ? null : Number(value)
     setTextMap((prev) => ({ ...prev, [id]: { ...(prev[id] ?? EMPTY), roomNumber } }))
+  }
+
+  /**
+   * Translate one photo's French into the English the site publishes.
+   *
+   * Both texts go in a single call: they are two short strings, and one round
+   * trip is faster than two. An empty French field is left alone rather than
+   * translated into nothing, so a half-filled card does not lose its English.
+   *
+   * Failures surface. The same button elsewhere in the admin swallowed them
+   * silently, and the operator was left staring at an unchanged field with no
+   * idea whether the call had even happened.
+   */
+  function handleTranslate(id: string) {
+    const t = textMap[id]
+    if (!t) return
+    const wanted: Array<'caption' | 'alt'> = []
+    if (t.captionFr.trim()) wanted.push('caption')
+    if (t.altFr.trim()) wanted.push('alt')
+    if (wanted.length === 0) {
+      setTranslateError('Écris d’abord le texte en français.')
+      return
+    }
+    setTranslateError(null)
+    setTranslating(id)
+    startTransition(async () => {
+      try {
+        const out = await translateBatch(
+          wanted.map((f) => (f === 'caption' ? t.captionFr : t.altFr)),
+        )
+        setTextMap((prev) => {
+          const cur = prev[id] ?? EMPTY
+          const next = { ...cur }
+          wanted.forEach((f, i) => {
+            if (out[i]) next[f] = out[i]
+          })
+          return { ...prev, [id]: next }
+        })
+      } catch {
+        setTranslateError(
+          'La traduction a échoué. Recharge la page puis réessaie : après un déploiement, un onglet resté ouvert ne peut plus appeler le serveur.',
+        )
+      } finally {
+        setTranslating(null)
+      }
+    })
+  }
+
+  /** Same thing across every photo whose French is filled and English is not. */
+  function handleTranslateAll() {
+    const targets = live.filter((i) => {
+      const t = textMap[i.id]
+      return t && (t.captionFr.trim() || t.altFr.trim())
+    })
+    if (targets.length === 0) {
+      setTranslateError('Aucun texte français à traduire.')
+      return
+    }
+    setTranslateError(null)
+    setTranslating('all')
+    startTransition(async () => {
+      try {
+        // One flat call for the whole screen, then split the answers back out.
+        const jobs: Array<{ id: string; field: 'caption' | 'alt'; text: string }> = []
+        for (const i of targets) {
+          const t = textMap[i.id]
+          if (t.captionFr.trim()) jobs.push({ id: i.id, field: 'caption', text: t.captionFr })
+          if (t.altFr.trim()) jobs.push({ id: i.id, field: 'alt', text: t.altFr })
+        }
+        const out = await translateBatch(jobs.map((j) => j.text))
+        setTextMap((prev) => {
+          const next = { ...prev }
+          jobs.forEach((j, idx) => {
+            if (!out[idx]) return
+            next[j.id] = { ...(next[j.id] ?? EMPTY), [j.field]: out[idx] }
+          })
+          return next
+        })
+      } catch {
+        setTranslateError('La traduction a échoué. Recharge la page puis réessaie.')
+      } finally {
+        setTranslating(null)
+      }
+    })
   }
 
   /* ---- Drag and drop ------------------------------------------------------
@@ -442,6 +530,15 @@ export function GalleryClient({ initialItems }: Props) {
                   </div>
                   <button
                     type="button"
+                    onClick={() => handleTranslate(item.id)}
+                    disabled={isPending}
+                    className="w-full rounded-lg border border-gold/50 bg-gold/15 py-1 font-sans text-xs font-semibold text-gold-700 transition-colors hover:bg-gold/25 disabled:opacity-50"
+                  >
+                    {translating === item.id ? 'Traduction…' : 'Traduire FR → EN'}
+                  </button>
+
+                  <button
+                    type="button"
                     onClick={() => handleTrash(item.id)}
                     disabled={isPending}
                     className="w-full rounded-lg border border-coral/20 bg-coral/5 py-1 font-sans text-xs font-medium text-coral transition-colors hover:bg-coral/10 disabled:opacity-50"
@@ -452,7 +549,28 @@ export function GalleryClient({ initialItems }: Props) {
               </div>
             ))}
           </div>
-          <div className="sticky bottom-0 flex items-center justify-end gap-3 border-t border-pearl-400 bg-pearl/80 py-3 backdrop-blur">
+          {translateError ? (
+            <p
+              role="alert"
+              className="rounded-xl border border-coral/30 bg-coral/5 px-4 py-2.5 font-sans text-sm text-coral"
+            >
+              {translateError}
+            </p>
+          ) : null}
+
+          <div className="sticky bottom-0 flex flex-wrap items-center justify-end gap-3 border-t border-pearl-400 bg-pearl/80 py-3 backdrop-blur">
+            <span className="mr-auto font-sans text-xs text-midnight-400">
+              La traduction remplit l’anglais à partir du français. Elle ne
+              s’enregistre pas toute seule.
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleTranslateAll}
+              disabled={isPending}
+            >
+              {translating === 'all' ? 'Traduction…' : 'Tout traduire FR → EN'}
+            </Button>
             {savedNotice ? (
               <span className="font-sans text-xs text-leaf">
                 Enregistré. Les descriptions sont en ligne.
