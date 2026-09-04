@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 
 import { liveAdminClient } from '@/lib/supabase/admin'
 import type { NewsletterCampaign, NewsletterSubscriber } from '@/lib/supabase/types'
+import { PREVIEW_UNSUBSCRIBE_URL } from '@/lib/newsletter'
 
 import { NewsletterClient } from './NewsletterClient'
 
@@ -21,13 +22,16 @@ export default async function NewsletterPage() {
 
   const tableMissing = Boolean(error)
 
+  // Drafts and sent newsletters share one table; `sent_at` tells them apart.
   const { data: camps } = tableMissing
     ? { data: [] }
     : await liveAdminClient
         .from('newsletter_campaigns')
         .select('*')
-        .order('sent_at', { ascending: false, nullsFirst: false })
-        .limit(50)
+        .order('created_at', { ascending: false })
+        .limit(100)
+
+  const campaigns = (camps ?? []) as NewsletterCampaign[]
 
   return (
     <div className="p-8">
@@ -39,10 +43,12 @@ export default async function NewsletterPage() {
         collective.
       </p>
 
-      <div className="mt-8 max-w-5xl">
+      <div className="mt-8 max-w-6xl">
         <NewsletterClient
           subscribers={(subs ?? []) as NewsletterSubscriber[]}
-          campaigns={(camps ?? []) as NewsletterCampaign[]}
+          drafts={campaigns.filter((c) => !c.sent_at)}
+          sent={campaigns.filter((c) => c.sent_at)}
+          previewUnsubscribeUrl={PREVIEW_UNSUBSCRIBE_URL}
           tableMissing={tableMissing}
         />
       </div>

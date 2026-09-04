@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache'
 import { liveAdminClient } from '@/lib/supabase/admin'
 import { FROM_EMAIL, OWNER_EMAIL, isResendConfigured, resend } from '@/lib/resend'
 import {
-  renderNewsletterHtml,
+  buildNewsletterEmailHtml,
   renderNewsletterText,
   unsubscribeUrl,
 } from '@/lib/newsletter'
@@ -17,33 +17,11 @@ export interface SendResult {
   delivered?: number
 }
 
-/**
- * Wrap the operator's body in the villa's email shell.
- *
- * Every recipient gets their own unsubscribe link, which is why the newsletter
- * is sent one message per person rather than as a single email with everyone
- * in copy. Sending it in copy would also expose the whole list to every
- * subscriber.
- */
-function buildHtml(subject: string, body: string, unsubUrl: string): string {
-  return `<!doctype html><html><body style="margin:0;background:#FAFAF8;padding:24px 0">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center">
-<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;background:#FFFFFF;border:1px solid #E3E5E1;border-radius:14px;padding:32px;font-family:Helvetica,Arial,sans-serif;color:#1A2A3A;font-size:15px">
-<tr><td>
-<p style="margin:0 0 4px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#A88B3D">Villa Paradise Tahiti</p>
-<h1 style="margin:0 0 22px;font-size:24px;font-weight:600;color:#1A2A3A">${subject
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')}</h1>
-${renderNewsletterHtml(body)}
-<hr style="border:0;border-top:1px solid #E3E5E1;margin:28px 0 14px">
-<p style="margin:0;font-size:12px;color:#8A949E">
-You are receiving this because you subscribed to The Slow Letter.
-<a href="${unsubUrl}" style="color:#8A949E">Unsubscribe in one click</a>.
-</p>
-</td></tr></table>
-</td></tr></table>
-</body></html>`
+export interface DraftResult {
+  ok: boolean
+  error?: string
+  /** The row this draft now lives in, so the composer can keep updating it. */
+  id?: string
 }
 
 /** One send. Returns false on any failure so the caller can count. */
@@ -60,7 +38,9 @@ async function sendOne(
       from: FROM_EMAIL,
       to,
       subject,
-      html: buildHtml(subject, body, unsubUrl),
+      // The same builder the admin preview uses, so what was approved is what
+      // leaves. Two renderers would drift apart on the first change to either.
+      html: buildNewsletterEmailHtml(subject, body, unsubUrl),
       text: renderNewsletterText(body, unsubUrl),
       // Lets Gmail and Outlook show their own unsubscribe control, which keeps
       // people from reporting the newsletter as spam just to make it stop.
@@ -76,7 +56,74 @@ async function sendOne(
 }
 
 /**
- * Send the draft to the owner only, to see what it looks like in a real inbox.
+ * Save the composer as a draft, or update the draft already open.
+ *
+ * A draft is a campaign row with `sent_at` still null. Same table as the sent
+ * ones on purpose: the operator writes, saves, comes back, sends, and the row
+ * keeps its identity throughout rather than being copied from one place to
+ * another.
+ */
+export async function saveNewsletterDraft(
+  id: string | null,
+  subject: string,
+  body: string,
+): Promise<DraftResult> {
+  if (!subject.trim() && !body.trim()) {
+    return { ok: false, error: 'Rien à enregistrer : le brouillon est vide.' }
+  }
+
+  if (id) {
+    // Guard on `sent_at`: a sent newsletter is a record of what went out and
+    // must never be rewritten by a later edit.
+    const { data, error } = await liveAdminClient
+      .from('newsletter_campaigns')
+      .update({ subject: subject.trim(), body: body.trim() })
+      .eq('id', id)
+      .is('sent_at', null)
+      .select('id')
+      .maybeSingle()
+    if (error) return { ok: false, error: error.message }
+    if (!data) {
+      return {
+        ok: false,
+        error: 'Ce brouillon a déjà été envoyé : il ne peut plus être modifié.',
+      }
+    }
+    revalidatePath('/admin/newsletter')
+    return { ok: true, id }
+  }
+
+  const { data, error } = await liveAdminClient
+    .from('newsletter_campaigns')
+    // Explicit zeros: a draft has gone to nobody, and saying so beats relying
+    // on the column defaults to fill in what the type demands.
+    .insert({
+      subject: subject.trim(),
+      body: body.trim(),
+      recipients_count: 0,
+      delivered_count: 0,
+    })
+    .select('id')
+    .maybeSingle()
+  if (error) return { ok: false, error: error.message }
+  revalidatePath('/admin/newsletter')
+  return { ok: true, id: data?.id }
+}
+
+/** Discard a draft. Refuses to touch anything already sent. */
+export async function deleteNewsletterDraft(id: string): Promise<DraftResult> {
+  const { error } = await liveAdminClient
+    .from('newsletter_campaigns')
+    .delete()
+    .eq('id', id)
+    .is('sent_at', null)
+  if (error) return { ok: false, error: error.message }
+  revalidatePath('/admin/newsletter')
+  return { ok: true }
+}
+
+/**
+ * Send the draft to the owner only, to see it in a real inbox.
  * Writes no campaign row: a test is not a send.
  */
 export async function sendNewsletterTest(
@@ -102,8 +149,12 @@ export async function sendNewsletterTest(
  * a burst that trips the limit would fail silently for part of the list. The
  * campaign row records what was attempted and what got through, so a partial
  * send is visible instead of being mistaken for a full one.
+ *
+ * When a draft is open, that row becomes the sent one. The text is therefore
+ * kept exactly as it went out, which is what makes the archive trustworthy.
  */
 export async function sendNewsletter(
+  draftId: string | null,
   subject: string,
   body: string,
 ): Promise<SendResult> {
@@ -122,9 +173,7 @@ export async function sendNewsletter(
   if (error) return { ok: false, error: error.message }
 
   const list = (data ?? []) as Array<{ email: string; unsubscribe_token: string }>
-  if (list.length === 0) {
-    return { ok: false, error: 'Aucun abonné pour le moment.' }
-  }
+  if (list.length === 0) return { ok: false, error: 'Aucun abonné pour le moment.' }
 
   let delivered = 0
   const BATCH = 10
@@ -137,14 +186,24 @@ export async function sendNewsletter(
     delivered += results.filter(Boolean).length
   }
 
-  await liveAdminClient.from('newsletter_campaigns').insert({
+  const record = {
     subject: subject.trim(),
     body: body.trim(),
     recipients_count: list.length,
     delivered_count: delivered,
     sent_at: new Date().toISOString(),
     sent_by: OWNER_EMAIL,
-  })
+  }
+
+  if (draftId) {
+    await liveAdminClient
+      .from('newsletter_campaigns')
+      .update(record)
+      .eq('id', draftId)
+      .is('sent_at', null)
+  } else {
+    await liveAdminClient.from('newsletter_campaigns').insert(record)
+  }
 
   revalidatePath('/admin/newsletter')
   return { ok: true, attempted: list.length, delivered }
