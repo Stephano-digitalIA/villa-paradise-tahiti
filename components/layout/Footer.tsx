@@ -64,7 +64,17 @@ export function Footer() {
                 &copy; {currentYear} Villa Paradise Tahiti. All rights reserved.
               </p>
               <p className="mt-1 font-sans text-xs text-pearl/40">
-                Designed by TahitiTechDigital
+                Designed by{' '}
+                <a
+                  href="https://tahititechdigital.com"
+                  target="_blank"
+                  // noopener strips the new tab's handle back to this page;
+                  // noreferrer keeps our URL out of their analytics.
+                  rel="noopener noreferrer"
+                  className="underline underline-offset-2 transition-colors hover:text-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-midnight"
+                >
+                  TahitiTechDigital
+                </a>
               </p>
             </div>
 
