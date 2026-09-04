@@ -32,12 +32,28 @@ interface GalleryGridProps {
 
 export function GalleryGrid({ images }: GalleryGridProps) {
   const [activeCategory, setActiveCategory] = useState<GalleryCategory | 'all'>('all')
+  const [activeRoom, setActiveRoom] = useState<number | 'all'>('all')
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
 
+  // Rooms that actually have photos, in order. Built from the data rather than
+  // hardcoded 1 to 5, so a room with nothing in it shows no empty chip.
+  const rooms = useMemo(() => {
+    const found = new Set<number>()
+    for (const img of images) {
+      if (img.category === 'bedroom' && typeof img.room === 'number') found.add(img.room)
+    }
+    return [...found].sort((a, b) => a - b)
+  }, [images])
+
   const filteredImages = useMemo(() => {
-    if (activeCategory === 'all') return images
-    return images.filter((img) => img.category === activeCategory)
-  }, [images, activeCategory])
+    const byCategory =
+      activeCategory === 'all'
+        ? images
+        : images.filter((img) => img.category === activeCategory)
+    // A room only narrows the bedroom category; elsewhere it means nothing.
+    if (activeCategory !== 'bedroom' || activeRoom === 'all') return byCategory
+    return byCategory.filter((img) => img.room === activeRoom)
+  }, [images, activeCategory, activeRoom])
 
   const openLightbox = (index: number) => setLightboxIndex(index)
   const closeLightbox = () => setLightboxIndex(null)
@@ -58,7 +74,10 @@ export function GalleryGrid({ images }: GalleryGridProps) {
               type="button"
               role="tab"
               aria-selected={isActive}
-              onClick={() => setActiveCategory(cat.value)}
+              onClick={() => {
+                setActiveCategory(cat.value)
+                if (cat.value !== 'bedroom') setActiveRoom('all')
+              }}
               className={cn(
                 'rounded-full border px-4 py-2 font-sans text-xs font-semibold uppercase tracking-wider2 transition-all duration-200 ease-luxe',
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-pearl',
@@ -72,6 +91,37 @@ export function GalleryGrid({ images }: GalleryGridProps) {
           )
         })}
       </div>
+
+      {/* ─── Room chips, second level under Bedrooms ─────────────────── */}
+      {activeCategory === 'bedroom' && rooms.length > 0 ? (
+        <div
+          role="tablist"
+          aria-label="Filter bedrooms by room"
+          className="mt-3 flex flex-wrap items-center justify-center gap-2"
+        >
+          {(['all', ...rooms] as Array<number | 'all'>).map((room) => {
+            const isActive = room === activeRoom
+            return (
+              <button
+                key={room}
+                type="button"
+                role="tab"
+                aria-selected={isActive}
+                onClick={() => setActiveRoom(room)}
+                className={cn(
+                  'rounded-full border px-3.5 py-1.5 font-sans text-xs font-medium transition-all duration-200',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-pearl',
+                  isActive
+                    ? 'border-gold bg-gold/10 text-midnight'
+                    : 'border-pearl-400 bg-pearl text-midnight-400 hover:border-gold hover:text-midnight',
+                )}
+              >
+                {room === 'all' ? 'All rooms' : `Bedroom ${room}`}
+              </button>
+            )
+          })}
+        </div>
+      ) : null}
 
       {/* ─── Masonry grid (CSS columns) ──────────────────────────────── */}
       <div

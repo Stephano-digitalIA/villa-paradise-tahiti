@@ -137,17 +137,60 @@ export async function updateGalleryOrder(
  * `caption` is what visitors read, under the photo and in the lightbox.
  * `alt` stays the accessibility text, and doubles as the caption's fallback
  * when no caption is set, so no photo is ever left without a description.
+ *
+ * Both also carry a French source, kept in `translations` like every other
+ * content table. English is what the site publishes; the French is the
+ * operator's own version, and the field to translate from.
+ *
+ * `room_number` says which bedroom a photo shows, so the gallery can group
+ * them by room.
  */
-export async function updateGalleryText(
-  items: Array<{ id: string; alt: string; caption: string }>,
-): Promise<void> {
-  await Promise.all(
-    items.map(({ id, alt, caption }) =>
-      adminClient
-        .from('gallery_items')
-        .update({ alt: alt.trim(), caption: caption.trim() })
-        .eq('id', id),
+export interface GalleryTextInput {
+  id: string
+  alt: string
+  caption: string
+  /** French source for `alt` and `caption`. Stored in the translations map. */
+  altFr: string
+  captionFr: string
+  /** 1 to 5 for a bedroom photo, null everywhere else. */
+  roomNumber: number | null
+}
+
+export async function updateGalleryText(items: GalleryTextInput[]): Promise<void> {
+  const full = items.map(({ id, alt, caption, altFr, captionFr, roomNumber }) => ({
+    id,
+    row: {
+      alt: alt.trim(),
+      caption: caption.trim(),
+      room_number: roomNumber,
+      translations: { alt: altFr.trim(), caption: captionFr.trim() },
+    },
+  }))
+
+  const results = await Promise.all(
+    full.map(({ id, row }) =>
+      adminClient.from('gallery_items').update(row).eq('id', id),
     ),
   )
+
+  // Migration 018 adds `room_number` and `translations`, and this project has
+  // no migration runner, so the admin has to keep working before the SQL is
+  // applied. On that one error, retry with the columns that have always
+  // existed rather than losing the edit entirely. Same defensive shape as the
+  // other content actions written ahead of their migration.
+  const missingColumn = results.some(
+    (r) => r.error && /room_number|translations/.test(r.error.message),
+  )
+  if (missingColumn) {
+    await Promise.all(
+      items.map(({ id, alt, caption }) =>
+        adminClient
+          .from('gallery_items')
+          .update({ alt: alt.trim(), caption: caption.trim() })
+          .eq('id', id),
+      ),
+    )
+  }
+
   REVALIDATE()
 }

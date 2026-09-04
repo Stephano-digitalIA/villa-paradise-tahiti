@@ -40,6 +40,27 @@ const CATEGORY_VARIANT: Record<GalleryCategory, 'default' | 'info' | 'success' |
   experiences: 'default',
 }
 
+type TextState = {
+  alt: string
+  caption: string
+  altFr: string
+  captionFr: string
+  roomNumber: number | null
+}
+
+/** Rooms the villa actually has. Mirrors the CHECK in migration 018. */
+const ROOMS = [1, 2, 3, 4, 5] as const
+
+function textStateOf(i: GalleryItem): TextState {
+  return {
+    alt: i.alt ?? '',
+    caption: i.caption ?? '',
+    altFr: i.translations?.alt ?? '',
+    captionFr: i.translations?.caption ?? '',
+    roomNumber: i.room_number ?? null,
+  }
+}
+
 type Props = { initialItems: GalleryItem[] }
 
 export function GalleryClient({ initialItems }: Props) {
@@ -47,22 +68,32 @@ export function GalleryClient({ initialItems }: Props) {
   const [filterCat, setFilterCat] = useState<GalleryCategory | 'all'>('all')
   const [isPending, startTransition] = useTransition()
   const [uploadError, setUploadError] = useState<string | null>(null)
-  const [orderMap, setOrderMap] = useState<Record<string, number>>(
-    Object.fromEntries(initialItems.map((i) => [i.id, i.sort_order])),
-  )
   // Descriptions are edited in place. `caption` is what the site shows; `alt`
   // is the accessibility text and the caption's fallback.
-  const [textMap, setTextMap] = useState<Record<string, { alt: string; caption: string }>>(
-    Object.fromEntries(
-      initialItems.map((i) => [i.id, { alt: i.alt ?? '', caption: i.caption ?? '' }]),
-    ),
+  const [textMap, setTextMap] = useState<Record<string, TextState>>(
+    Object.fromEntries(initialItems.map((i) => [i.id, textStateOf(i)])),
   )
   const [savedNotice, setSavedNotice] = useState(false)
+  // Order is edited by dragging. `order` holds the ids of the live photos in
+  // the order shown; sort_order is derived from the index on save, so the
+  // numbers stay contiguous instead of drifting apart after a few moves.
+  const [order, setOrder] = useState<string[]>(
+    initialItems.filter((i) => !i.deleted_at).map((i) => i.id),
+  )
+  const [dragId, setDragId] = useState<string | null>(null)
+  const [overId, setOverId] = useState<string | null>(null)
 
   const live = useMemo(() => items.filter((i) => !i.deleted_at), [items])
   const trashed = useMemo(() => items.filter((i) => i.deleted_at), [items])
 
   const filtered = filterCat === 'all' ? live : live.filter((i) => i.category === filterCat)
+  // Render in the dragged order. Photos absent from `order` (uploaded since the
+  // page loaded) fall to the end rather than disappearing.
+  const ordered = [...filtered].sort((a, b) => {
+    const ia = order.indexOf(a.id)
+    const ib = order.indexOf(b.id)
+    return (ia === -1 ? Infinity : ia) - (ib === -1 ? Infinity : ib)
+  })
 
   function handleUpload(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -79,11 +110,49 @@ export function GalleryClient({ initialItems }: Props) {
     })
   }
 
-  function handleTextChange(id: string, field: 'alt' | 'caption', value: string) {
+  const EMPTY: TextState = {
+    alt: '',
+    caption: '',
+    altFr: '',
+    captionFr: '',
+    roomNumber: null,
+  }
+
+  function handleTextChange(
+    id: string,
+    field: 'alt' | 'caption' | 'altFr' | 'captionFr',
+    value: string,
+  ) {
     setTextMap((prev) => ({
       ...prev,
-      [id]: { ...(prev[id] ?? { alt: '', caption: '' }), [field]: value },
+      [id]: { ...(prev[id] ?? EMPTY), [field]: value },
     }))
+  }
+
+  function handleRoomChange(id: string, value: string) {
+    const roomNumber = value === '' ? null : Number(value)
+    setTextMap((prev) => ({ ...prev, [id]: { ...(prev[id] ?? EMPTY), roomNumber } }))
+  }
+
+  /* ---- Drag and drop ------------------------------------------------------
+     Native HTML5 drag events rather than a library: the whole interaction is
+     four handlers and one array move, and a dependency would be more code to
+     carry than the feature. */
+
+  function handleDrop(targetId: string) {
+    if (!dragId || dragId === targetId) {
+      setDragId(null)
+      setOverId(null)
+      return
+    }
+    setOrder((prev) => {
+      const next = prev.filter((id) => id !== dragId)
+      const at = next.indexOf(targetId)
+      next.splice(at, 0, dragId)
+      return next
+    })
+    setDragId(null)
+    setOverId(null)
   }
 
   function handleTrash(id: string) {
@@ -109,28 +178,42 @@ export function GalleryClient({ initialItems }: Props) {
     })
   }
 
-  function handleOrderChange(id: string, val: string) {
-    const n = parseInt(val, 10)
-    if (!isNaN(n)) setOrderMap((prev) => ({ ...prev, [id]: n }))
-  }
-
   function handleSave() {
-    const order = live.map((i) => ({ id: i.id, sort_order: orderMap[i.id] ?? i.sort_order }))
-    const texts = live.map((i) => ({
-      id: i.id,
-      alt: textMap[i.id]?.alt ?? i.alt ?? '',
-      caption: textMap[i.id]?.caption ?? i.caption ?? '',
-    }))
+    // Position in the dragged order is the source of truth; anything not in
+    // it (a photo added since load) keeps its stored number.
+    const sortUpdates = live.map((i) => {
+      const at = order.indexOf(i.id)
+      return { id: i.id, sort_order: at === -1 ? i.sort_order : at }
+    })
+    const texts = live.map((i) => {
+      const t = textMap[i.id] ?? textStateOf(i)
+      return {
+        id: i.id,
+        alt: t.alt,
+        caption: t.caption,
+        altFr: t.altFr,
+        captionFr: t.captionFr,
+        // A room only means something for a bedroom photo.
+        roomNumber: i.category === 'bedrooms' ? t.roomNumber : null,
+      }
+    })
     setSavedNotice(false)
     startTransition(async () => {
-      await updateGalleryOrder(order)
+      await updateGalleryOrder(sortUpdates)
       await updateGalleryText(texts)
       setItems((prev) =>
-        prev.map((i) =>
-          textMap[i.id]
-            ? { ...i, alt: textMap[i.id].alt.trim(), caption: textMap[i.id].caption.trim() }
-            : i,
-        ),
+        prev.map((i) => {
+          const t = textMap[i.id]
+          if (!t) return i
+          return {
+            ...i,
+            alt: t.alt.trim(),
+            caption: t.caption.trim(),
+            room_number: i.category === 'bedrooms' ? t.roomNumber : null,
+            translations: { alt: t.altFr.trim(), caption: t.captionFr.trim() },
+            sort_order: order.indexOf(i.id) === -1 ? i.sort_order : order.indexOf(i.id),
+          }
+        }),
       )
       setSavedNotice(true)
       setTimeout(() => setSavedNotice(false), 3000)
@@ -241,12 +324,34 @@ export function GalleryClient({ initialItems }: Props) {
       ) : (
         <>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-            {filtered.map((item) => (
+            {ordered.map((item) => (
               <div
                 key={item.id}
-                className="group overflow-hidden rounded-xl border border-pearl-400 bg-white shadow-sm"
+                draggable
+                onDragStart={() => setDragId(item.id)}
+                onDragEnd={() => {
+                  setDragId(null)
+                  setOverId(null)
+                }}
+                onDragOver={(e) => {
+                  // Without preventDefault the browser refuses the drop.
+                  e.preventDefault()
+                  if (overId !== item.id) setOverId(item.id)
+                }}
+                onDrop={(e) => {
+                  e.preventDefault()
+                  handleDrop(item.id)
+                }}
+                className={
+                  'group overflow-hidden rounded-xl border bg-white shadow-sm transition ' +
+                  (dragId === item.id
+                    ? 'opacity-40 border-gold'
+                    : overId === item.id
+                      ? 'border-gold ring-2 ring-gold/40'
+                      : 'border-pearl-400')
+                }
               >
-                <div className="relative h-36 w-full overflow-hidden bg-pearl-300">
+                <div className="relative h-36 w-full cursor-grab overflow-hidden bg-pearl-300 active:cursor-grabbing">
                   <Image
                     src={item.image_url}
                     alt={item.alt}
@@ -254,41 +359,85 @@ export function GalleryClient({ initialItems }: Props) {
                     className="object-cover transition-transform duration-300 group-hover:scale-105"
                     sizes="200px"
                   />
+                  <span
+                    aria-hidden="true"
+                    className="absolute left-2 top-2 rounded-md bg-midnight/70 px-1.5 py-0.5 font-sans text-[10px] font-medium text-pearl opacity-0 transition-opacity group-hover:opacity-100"
+                  >
+                    Glisser pour déplacer
+                  </span>
+                  <span className="absolute right-2 top-2 rounded-md bg-midnight/70 px-1.5 py-0.5 font-sans text-[10px] font-medium text-pearl">
+                    {order.indexOf(item.id) === -1 ? '?' : order.indexOf(item.id) + 1}
+                  </span>
                 </div>
                 <div className="p-3 space-y-2">
                   <Badge variant={CATEGORY_VARIANT[item.category]} size="sm">
                     {CATEGORY_LABEL[item.category]}
                   </Badge>
+
+                  {item.category === 'bedrooms' ? (
+                    <div>
+                      <label
+                        htmlFor={`room-${item.id}`}
+                        className="font-sans text-[11px] font-medium text-midnight-400"
+                      >
+                        Quelle chambre
+                      </label>
+                      <select
+                        id={`room-${item.id}`}
+                        value={textMap[item.id]?.roomNumber ?? ''}
+                        onChange={(e) => handleRoomChange(item.id, e.target.value)}
+                        className="mt-1 w-full rounded-md border border-pearl-400 bg-pearl px-2 py-1 font-sans text-xs text-midnight focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold/30"
+                      >
+                        <option value="">Non précisée</option>
+                        {ROOMS.map((n) => (
+                          <option key={n} value={n}>
+                            Chambre {n}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  ) : null}
                   <div>
                     <label className="font-sans text-[11px] font-medium text-midnight-400">
-                      Description affichée sur le site
+                      Description, anglais (affichée sur le site)
                     </label>
                     <textarea
                       rows={2}
                       value={textMap[item.id]?.caption ?? ''}
                       onChange={(e) => handleTextChange(item.id, 'caption', e.target.value)}
                       placeholder="Vide : le texte alternatif est affiché à la place"
-                      className="mt-1 w-full rounded-md border border-pearl-400 bg-pearl px-2 py-1 font-sans text-xs text-midnight placeholder:text-midnight-300 focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold/30"
+                      className="mt-1 w-full rounded-md border border-gold-300 bg-gold-50/50 px-2 py-1 font-sans text-xs text-midnight placeholder:text-midnight-300 focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold/30"
+                    />
+                    <label className="mt-1.5 block font-sans text-[11px] font-medium text-midnight-400">
+                      Description, français
+                    </label>
+                    <textarea
+                      rows={2}
+                      value={textMap[item.id]?.captionFr ?? ''}
+                      onChange={(e) => handleTextChange(item.id, 'captionFr', e.target.value)}
+                      placeholder="Traduction, non publiée"
+                      className="mt-1 w-full rounded-md border border-midnight-200 bg-midnight-50/50 px-2 py-1 font-sans text-xs text-midnight placeholder:text-midnight-300 focus:border-midnight-400 focus:outline-none focus:ring-1 focus:ring-midnight-300"
                     />
                   </div>
                   <div>
                     <label className="font-sans text-[11px] font-medium text-midnight-400">
-                      Texte alternatif (accessibilité)
+                      Texte alternatif, anglais (accessibilité)
                     </label>
                     <textarea
                       rows={2}
                       value={textMap[item.id]?.alt ?? ''}
                       onChange={(e) => handleTextChange(item.id, 'alt', e.target.value)}
-                      className="mt-1 w-full rounded-md border border-pearl-400 bg-pearl px-2 py-1 font-sans text-xs text-midnight focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold/30"
+                      className="mt-1 w-full rounded-md border border-gold-300 bg-gold-50/50 px-2 py-1 font-sans text-xs text-midnight focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold/30"
                     />
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <label className="font-sans text-xs text-midnight-400">Ordre</label>
-                    <input
-                      type="number"
-                      value={orderMap[item.id] ?? item.sort_order}
-                      onChange={(e) => handleOrderChange(item.id, e.target.value)}
-                      className="w-14 rounded-md border border-pearl-400 bg-pearl px-2 py-1 font-sans text-xs text-midnight focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold/30"
+                    <label className="mt-1.5 block font-sans text-[11px] font-medium text-midnight-400">
+                      Texte alternatif, français
+                    </label>
+                    <textarea
+                      rows={2}
+                      value={textMap[item.id]?.altFr ?? ''}
+                      onChange={(e) => handleTextChange(item.id, 'altFr', e.target.value)}
+                      placeholder="Traduction, non publiée"
+                      className="mt-1 w-full rounded-md border border-midnight-200 bg-midnight-50/50 px-2 py-1 font-sans text-xs text-midnight placeholder:text-midnight-300 focus:border-midnight-400 focus:outline-none focus:ring-1 focus:ring-midnight-300"
                     />
                   </div>
                   <button

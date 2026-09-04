@@ -89,6 +89,15 @@ export type GalleryItem = {
   active: boolean
   /** Soft-delete (trash): null = live, timestamp = trashed. undefined before migration 013. */
   deleted_at?: string | null
+  /**
+   * Which bedroom the photo shows, 1 to 5. Null for every other category.
+   * A room sits below a category rather than beside it, so it is its own
+   * column instead of more values in the category CHECK. Undefined before
+   * migration 018.
+   */
+  room_number?: number | null
+  /** Admin-only FR source per translatable field (`alt`, `caption`). Undefined before migration 018. */
+  translations?: Record<string, string>
   created_at: string
 }
 

@@ -48,6 +48,7 @@ async function loadGalleryImages(): Promise<GalleryImage[]> {
     // the caption, so they appeared with no text at all. `||` and not `??`:
     // an unset caption comes back as '' from the column default, not null.
     caption: (g.caption ?? '').trim() || (g.alt ?? '').trim() || undefined,
+    room: g.room_number ?? undefined,
   }))
 }
 

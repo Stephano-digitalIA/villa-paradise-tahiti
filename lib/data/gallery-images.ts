@@ -23,6 +23,12 @@ export interface GalleryImage {
   width: number
   height: number
   caption?: string
+  /**
+   * Which bedroom the photo shows, 1 to 5. Only set on `bedroom` photos, and
+   * only once an operator has assigned it in the admin. Undefined means the
+   * photo still appears under Bedrooms, just not under a specific room.
+   */
+  room?: number
 }
 
 export const galleryCategories: { value: GalleryCategory | 'all'; label: string }[] = [
