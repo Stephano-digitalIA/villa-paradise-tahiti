@@ -10,7 +10,7 @@
  *     funds movement.
  *   - `PAYMENT.CAPTURE.DENIED`     → log only (TODO: alert).
  *
- * Note on emailData reconstruction: unlike Stripe we cannot stash arbitrary
+ * Note on emailData reconstruction: we cannot stash arbitrary
  * metadata on a PayPal order — only `custom_id`, `reference_id`,
  * `invoice_id`, and `description`, all of which carry just the reservation
  * ref. The capture event therefore knows the amount and nothing else: no
@@ -165,13 +165,13 @@ function nightsBetween(checkIn: string | null, checkOut: string | null): number 
 /**
  * Build the confirmation email from the persisted reservation.
  *
- * PayPal cannot round-trip arbitrary metadata the way Stripe does — the
+ * PayPal cannot round-trip arbitrary metadata: the
  * only field that survives the redirect is `custom_id` (the reservation
- * ref). So where the Stripe webhook reads `session.metadata`, this one
+ * ref). So rather than reading metadata back off the event, this one
  * reads the row the checkout route already wrote. Without it the guest
  * receives an email with blank dates and zeroed amounts.
  *
- * Money follows the same contract as the Stripe path: the breakdown stays
+ * Money follows one contract: the breakdown stays
  * in canonical USD and `exchangeRate` carries the rate frozen at order
  * time, so `formatMoney` renders the guest's currency consistently with
  * what the checkout page showed.
@@ -357,7 +357,7 @@ export async function POST(request: Request) {
           }
 
           if (res?.check_in && res?.check_out) {
-            // Final race guard — same logic as the Stripe webhook.
+            // Final race guard.
             const availability = await checkAvailability(res.check_in, res.check_out, {
               excludeReservationRef: reservationRef,
             })

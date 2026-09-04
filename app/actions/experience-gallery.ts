@@ -1,8 +1,8 @@
 'use server'
 
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
 
-import { adminClient } from '@/lib/supabase/admin'
+import { adminClient, PUBLIC_CONTENT_TAG } from '@/lib/supabase/admin'
 import { deleteFile, uploadFile } from '@/lib/supabase/storage'
 
 type Result = { ok: true } | { ok: false; error: string }
@@ -11,10 +11,16 @@ const BUCKET = 'experiences-media'
 const GALLERY_PATH_PREFIX = 'gallery/'
 
 function revalidate(experienceId: string, experienceSlug?: string | null) {
+  // Drop the cached public read first. Revalidating a path only re-renders
+// it, and the re-render would be served the same cached Supabase response.
+  revalidateTag(PUBLIC_CONTENT_TAG)
   revalidatePath(`/admin/content/experiences/${experienceId}`)
   if (experienceSlug) {
     revalidatePath(`/experiences/${experienceSlug}`)
   }
+  // Drop the cached public read first. Revalidating a path only re-renders
+// it, and the re-render would be served the same cached Supabase response.
+  revalidateTag(PUBLIC_CONTENT_TAG)
   revalidatePath('/experiences')
 }
 

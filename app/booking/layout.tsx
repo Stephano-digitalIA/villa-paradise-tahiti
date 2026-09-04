@@ -36,7 +36,7 @@ export default function BookingLayout({ children }: BookingLayoutProps) {
         <div className="mx-auto flex w-full max-w-7xl flex-col items-center justify-between gap-3 px-4 sm:flex-row sm:px-6 lg:px-8">
           <div className="flex items-center gap-2 text-xs text-midnight-400">
             <Lock className="h-3 w-3 text-gold" aria-hidden="true" />
-            <span>Secure checkout · Encrypted via Stripe & PayPal</span>
+            <span>Secure checkout · Encrypted via PayPal</span>
           </div>
           <nav
             aria-label="Booking footer"

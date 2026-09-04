@@ -1,7 +1,7 @@
 /**
  * POST /api/checkout — Phase E2.
  *
- * Replaces the Phase D2 stub with a real Stripe / PayPal orchestration.
+ * Creates the reservation, then hands the charge to PayPal.
  * Pipeline:
  *
  *   1. Parse + Zod-validate the payload (booking + customer).
@@ -9,7 +9,6 @@
  *      settings — **never trust client-supplied amounts**.
  *   3. Generate a reservation reference.
  *   4. Branch by `customer.paymentMethod`:
- *      - `stripe` → create a hosted Checkout Session, return its URL.
  *      - `paypal` → create an Orders v2 record, return the approve link.
  *   5. If the respective gateway isn't configured, fall back to the Phase
  *      D2 stub behaviour: pretend the booking succeeded and redirect the
@@ -17,7 +16,6 @@
  *      preview environments fully exercisable without real secrets.
  *
  * Response shapes (all 200 unless noted):
- *   - Real Stripe:   `{ url, sessionId, reservationId, paymentMethod: 'stripe' }`
  *   - Real PayPal:   `{ url: approveUrl, orderId, reservationId, paymentMethod: 'paypal' }`
  *   - Mock fallback: `{ redirectUrl, reservationId, paymentMethod, mock: true }`
  *   - 400 / 422 / 500 on failure.
@@ -42,7 +40,6 @@ import {
 } from '@/lib/booking'
 import { checkAvailability } from '@/lib/booking/availability'
 import { convertUsdToEur } from '@/lib/currency'
-import { createStripeCheckoutSession, isStripeConfigured } from '@/lib/stripe'
 import { createPayPalOrder, isPayPalConfigured } from '@/lib/paypal'
 import { sanityFetch } from '@/lib/sanity/fetcher'
 import {
@@ -245,16 +242,10 @@ export async function POST(request: Request) {
     reservationId,
   }
 
-  // Payment routing. The "Credit / debit card" option maps to Stripe, but when
-  // Stripe isn't configured we route the card through PayPal — its guest
-  // checkout accepts credit/debit cards without a PayPal account. Persist the
-  // processor that actually handles the money so the webhook (which matches on
-  // reservation_ref) and the admin records reconcile with reality.
-  const routeCardThroughPayPal =
-    customer.paymentMethod === 'stripe' && !isStripeConfigured() && isPayPalConfigured()
-  const effectiveMethod: 'stripe' | 'paypal' = routeCardThroughPayPal
-    ? 'paypal'
-    : customer.paymentMethod
+  // Both visible options are settled by PayPal. "Credit / debit card" exists
+  // as its own choice because PayPal's guest checkout takes a card without an
+  // account, and a guest who has no PayPal account needs to see that before
+  // committing. The distinction is presentational; the processor is one.
 
   /* ----- Persist to DB (best-effort — never blocks checkout) ------------ */
   try {
@@ -299,7 +290,9 @@ export async function POST(request: Request) {
       deposit_amount: chargeAmount,
       balance_amount: breakdown.total - chargeAmount,
       selected_experiences: booking.selectedExperiences as unknown as import('@/lib/supabase/types').SelectedExperienceSnapshot[],
-      payment_method: effectiveMethod,
+      // The option the guest picked. The processor is always PayPal now, and
+      // the currency columns below already record the charge side.
+      payment_method: customer.paymentMethod,
       payment_status: 'pending',
       // Currency ledger: USD columns above stay canonical; these record what
       // the guest is actually charged and at which frozen rate.
@@ -318,56 +311,8 @@ export async function POST(request: Request) {
     // Continue — DB failure must not block checkout
   }
 
-  /* ----- Stripe branch (card option that keeps Stripe) ------------------ */
-  // Reached only when the guest picked the card option AND Stripe is configured
-  // (otherwise `effectiveMethod` was flipped to 'paypal' above to route the
-  // card through PayPal).
-  if (effectiveMethod === 'stripe') {
-    if (!isStripeConfigured()) {
-      // Neither Stripe nor PayPal is available to take the card. Mock only off
-      // production; on the live site refuse rather than fake a paid booking.
-      if (mockCheckoutAllowed()) {
-        return NextResponse.json({
-          reservationId,
-          redirectUrl: `/booking/success?ref=${encodeURIComponent(reservationId)}`,
-          paymentMethod: 'stripe' as const,
-          mock: true,
-        })
-      }
-      return NextResponse.json(
-        {
-          error:
-            'Card payments are temporarily unavailable. Please choose PayPal or contact us to complete your booking.',
-        },
-        { status: 503 },
-      )
-    }
-
-    const result = await createStripeCheckoutSession({
-      reservationId,
-      customer,
-      booking: state,
-      breakdown,
-      lineItems,
-      metadata,
-      chargeAmount: chargeAmountCurrency,
-      currency,
-      exchangeRate,
-      paymentLabel,
-    })
-    if ('error' in result) {
-      return NextResponse.json({ error: result.error }, { status: 500 })
-    }
-    return NextResponse.json({
-      url: result.url,
-      sessionId: result.sessionId,
-      reservationId,
-      paymentMethod: 'stripe' as const,
-    })
-  }
-
-  /* ----- PayPal branch (native PayPal + routed card payments) ----------- */
-  if (effectiveMethod === 'paypal') {
+  /* ----- PayPal branch (settles both visible options) ------------------- */
+  {
     if (!isPayPalConfigured()) {
       if (mockCheckoutAllowed()) {
         return NextResponse.json({

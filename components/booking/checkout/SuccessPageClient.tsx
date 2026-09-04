@@ -12,7 +12,7 @@
  *    page the Provider may not even be in the tree (success is a leaf
  *    page wrapped in its own minimal layout).
  *
- * Phase E will likely receive `?session_id=` from Stripe instead of our
+ * The processor may return its own reference instead of our
  * stub's `?ref=` — keep this component tolerant: it accepts both.
  */
 
@@ -30,7 +30,7 @@ import { CONTACT_EMAIL } from '@/lib/constants'
 export function SuccessPageClient() {
   const searchParams = useSearchParams()
   // We accept either our stub's `ref` or a future `session_id` (Phase E /
-  // Stripe Checkout). Whatever shows up first wins; never crash on absence.
+  // the processor). Whatever shows up first wins; never crash on absence.
   const reservationId =
     searchParams.get('ref') ?? searchParams.get('session_id') ?? null
   const [clearedAt] = useState(() => Date.now())

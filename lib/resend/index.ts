@@ -3,7 +3,7 @@
  *
  * Public surface consumed by:
  *   - `app/api/contact/route.ts`           (Phase E1)
- *   - `app/api/checkout/route.ts`          (Phase E2 — Stripe/PayPal webhook)
+ *   - `app/api/checkout/route.ts`          (PayPal webhook)
  *
  * Always import from `@/lib/resend` rather than reaching into submodules.
  */

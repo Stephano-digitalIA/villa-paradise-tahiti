@@ -1,7 +1,7 @@
 /**
  * PayPal webhook signature verification — Villa Paradise Tahiti (Phase E2).
  *
- * PayPal's signature verification differs from Stripe's: there's no local
+ * PayPal's signature verification has no local
  * HMAC. Instead, PayPal exposes a `/v1/notifications/verify-webhook-signature`
  * endpoint that takes the original request headers, the parsed event body
  * (yes, the body, not the raw string) and the configured `webhook_id`, and

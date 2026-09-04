@@ -1,10 +1,16 @@
 'use server'
 
-import { revalidatePath } from 'next/cache'
-import { adminClient } from '@/lib/supabase/admin'
+import { revalidatePath, revalidateTag } from 'next/cache'
+import { adminClient, PUBLIC_CONTENT_TAG } from '@/lib/supabase/admin'
 
 const REVALIDATE = () => {
+  // Drop the cached public read first. Revalidating a path only re-renders
+// it, and the re-render would be served the same cached Supabase response.
+  revalidateTag(PUBLIC_CONTENT_TAG)
   revalidatePath('/admin/content/blog')
+  // Drop the cached public read first. Revalidating a path only re-renders
+// it, and the re-render would be served the same cached Supabase response.
+  revalidateTag(PUBLIC_CONTENT_TAG)
   revalidatePath('/', 'layout')
 }
 

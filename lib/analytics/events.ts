@@ -24,7 +24,7 @@ function track(eventName: string, params?: GtagEventParams) {
   window.gtag('event', eventName, params ?? {})
 }
 
-export type PaymentMethod = 'stripe' | 'paypal'
+export type PaymentMethod = 'card' | 'paypal'
 
 /**
  * Business-level analytics surface. Add new helpers here as new flows

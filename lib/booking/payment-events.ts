@@ -4,14 +4,14 @@
  * Both webhooks record every processed event in `payment_events` before
  * doing anything else, so a crash mid-handler still leaves a trace. At
  * that point the reservation's UUID isn't known: the processors only
- * carry the human-readable `reservation_ref` (Stripe in its metadata,
+ * carry the human-readable `reservation_ref` (PayPal in its `custom_id`,
  * PayPal in `custom_id`), and `payment_events.reservation_id` is a
  * foreign key to `reservations.id`.
  *
  * Both handlers used to insert `reservation_id: null` and leave it that
  * way, which meant the admin reservation detail page — it filters on
  * `reservation_id` — always rendered "no payment events recorded", for
- * Stripe and PayPal alike. This resolves the ref once the reservation is
+ * This resolves the ref once the reservation is
  * known and backfills the row.
  */
 

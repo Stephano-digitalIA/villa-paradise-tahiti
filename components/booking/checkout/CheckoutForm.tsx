@@ -10,7 +10,6 @@
  *    are not yelled at on first keystroke.
  *  - On submit, POSTs `{ booking, customer }` to `/api/checkout`. The
  *    stub returns a `redirectUrl` (Phase D2). Phase E will swap that for
- *    a Stripe Checkout Session URL — the client navigates there exactly
  *    the same way.
  *  - Focus management: on submission error the first invalid field is
  *    focused automatically (`shouldFocusError: true`, RHF default).
@@ -25,7 +24,6 @@
  * Phase E will replace the call site of `fetch('/api/checkout')` to:
  *   const res = await fetch('/api/checkout', { method: 'POST', body })
  *   const { url } = await res.json()
- *   window.location.href = url   // Stripe-hosted page
  */
 
 import { useState, useId } from 'react'
@@ -269,7 +267,7 @@ export function CheckoutForm({ initialProfile }: CheckoutFormProps) {
         url?: string
       }
 
-      // Phase E will return a third-party hosted URL (Stripe Checkout
+      // The API returns a PayPal-hosted URL (
       // Session, PayPal Orders, …). Until then we use the Next router
       // for an in-app navigation to /booking/success.
       if (payload.url) {
@@ -605,13 +603,13 @@ export function CheckoutForm({ initialProfile }: CheckoutFormProps) {
         >
           <legend className="sr-only">Payment method</legend>
           <PaymentOption
-            id="pay-stripe"
-            value="stripe"
+            id="pay-card"
+            value="card"
             label="Credit / debit card"
             description="Visa, Mastercard, Amex — no account needed"
-            checked={paymentMethod === 'stripe'}
+            checked={paymentMethod === 'card'}
             onSelect={() =>
-              setValue('paymentMethod', 'stripe', { shouldValidate: true })
+              setValue('paymentMethod', 'card', { shouldValidate: true })
             }
             icon={<CreditCard className="h-5 w-5" aria-hidden="true" />}
             register={register('paymentMethod')}
@@ -802,7 +800,7 @@ function PaymentAmountOption({
 
 interface PaymentOptionProps {
   id: string
-  value: 'stripe' | 'paypal'
+  value: 'card' | 'paypal'
   label: string
   description: string
   icon: React.ReactNode

@@ -13,7 +13,7 @@ import { SuccessPageClient } from '@/components/booking/checkout'
  *    mount) live in `SuccessPageClient`, wrapped in `<Suspense>` per
  *    the Next.js 14 requirement for `useSearchParams()`.
  *
- * Phase E note: when Stripe is wired in, the success URL becomes
+ * The success URL is
  *   `${SITE}/booking/success?session_id={CHECKOUT_SESSION_ID}`
  * — `SuccessPageClient` already accepts both `?ref=` (current stub) and
  * `?session_id=` for forward compatibility.

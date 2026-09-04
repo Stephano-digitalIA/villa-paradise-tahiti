@@ -5,7 +5,7 @@
  * (https://developers.google.com/analytics/devguides/collection/protocol/ga4).
  *
  * Why this exists:
- *   Webhook handlers (Stripe / PayPal confirmation in Phase E2/E3) run
+ *   Webhook handlers (PayPal confirmation in Phase E2/E3) run
  *   server-side and don't have access to `window.gtag`, so they can't
  *   fire the `purchase` event that GA4 expects after a successful
  *   payment. They can POST to this endpoint instead.

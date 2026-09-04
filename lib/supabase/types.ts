@@ -306,7 +306,7 @@ export type PaymentStatus =
   | 'cancelled'
   | 'refunded'
 
-export type PaymentMethod = 'stripe' | 'paypal' | 'manual'
+export type PaymentMethod = 'card' | 'paypal' | 'manual'
 
 export type SelectedExperienceSnapshot = {
   slug: string
@@ -349,8 +349,6 @@ export type Reservation = {
   payment_status: PaymentStatus
   deposit_paid_at: string | null
   balance_paid_at: string | null
-  stripe_session_id: string | null
-  stripe_payment_intent_id: string | null
   paypal_order_id: string | null
   check_in_confirmed_at: string | null
   check_out_confirmed_at: string | null

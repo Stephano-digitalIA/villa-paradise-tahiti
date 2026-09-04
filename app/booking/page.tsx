@@ -18,7 +18,7 @@ import {
  *  - State is then handed off to the client `<BookingProvider>` which
  *    powers a live, localStorage-backed price calculator.
  *  - The "Continue to checkout" CTA points to `/booking/checkout`,
- *    which Phase D2 will build (client form → Stripe / PayPal).
+ *    which Phase D2 will build (client form → PayPal).
  *
  * Sources: docs/04-fonctionnalites.md §1, docs/05-contenu-pages.md (booking).
  */

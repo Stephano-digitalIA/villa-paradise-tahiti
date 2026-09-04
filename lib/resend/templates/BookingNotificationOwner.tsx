@@ -54,7 +54,7 @@ function formatDate(iso: string): string {
 
 interface Props {
   data: BookingConfirmationData
-  paymentMethod: 'stripe' | 'paypal'
+  paymentMethod: 'card' | 'paypal'
   siteUrl: string
 }
 
@@ -138,7 +138,7 @@ export function BookingNotificationOwner({
           >
             Paid via{' '}
             <strong style={{ color: COLORS.midnight }}>
-              {paymentMethod === 'stripe' ? 'Stripe' : 'PayPal'}
+              {paymentMethod === 'card' ? 'Credit / debit card' : 'PayPal'}
             </strong>{' '}
             · {money(breakdown.depositAmount)} deposit collected
           </Text>

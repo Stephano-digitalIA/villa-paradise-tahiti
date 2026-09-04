@@ -569,7 +569,7 @@ export const mockPosts: Post[] = [
       ),
       block('2. The currency is the CFP Franc — but USD works in many places', 'h3'),
       block(
-        "Officially the currency is the XPF (French Pacific Franc). Most hotels, restaurants and tour operators accept USD or credit cards. We accept USD for villa payments via Stripe or PayPal.",
+        "Officially the currency is the XPF (French Pacific Franc). Most hotels, restaurants and tour operators accept USD or credit cards. We accept USD for villa payments via PayPal.",
       ),
       block('3. Jet lag is real, but in your favor', 'h3'),
       block(
@@ -707,7 +707,7 @@ export const mockFaqs: FAQ[] = [
     category: 'payment',
     order: 10,
     question: 'What payment methods are accepted?',
-    answer: 'We accept credit/debit cards via Stripe (Visa, Mastercard, American Express) and PayPal. Both options charge in USD.',
+    answer: 'We accept credit and debit cards (Visa, Mastercard, American Express) and PayPal. Card payments are handled through PayPal, so no PayPal account is needed.',
   },
   {
     _id: 'faq-10',

@@ -1,7 +1,7 @@
 /**
  * Resend domain types — Villa Paradise Tahiti (Phase E1).
  *
- * Surface that Phase E2 (Stripe / PayPal webhook → confirmation emails)
+ * Surface that Phase E2 (PayPal webhook → confirmation emails)
  * will consume. Keep these types framework-agnostic — they must be
  * importable from API routes, background workers, and tests alike.
  */
@@ -33,7 +33,7 @@ export type EmailResult =
  * Data needed to render the post-payment confirmation email (guest + owner).
  *
  * Phase E2 will build this from:
- *   - The Stripe / PayPal webhook payload (reservation id, payment status).
+ *   - The PayPal webhook payload (reservation id, payment status).
  *   - The persisted booking state (dates, guests, experiences).
  *   - The Sanity-driven price breakdown.
  *
@@ -45,7 +45,7 @@ export interface BookingConfirmationData {
   reservationId: string
   /**
    * Currency the amounts should be DISPLAYED in. Combined with `exchangeRate`:
-   *  - Stripe path: breakdown numbers are USD, `exchangeRate` is the real rate.
+   *  - Card path: breakdown numbers are USD, `exchangeRate` is the real rate.
    *  - PayPal path: numbers already in the charged currency, `exchangeRate` = 1.
    * Both format correctly via `formatMoney(value, currency, exchangeRate)`.
    * Defaults to USD when absent.

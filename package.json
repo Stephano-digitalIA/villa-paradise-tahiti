@@ -38,7 +38,6 @@
     "remark-gfm": "^4.0.1",
     "resend": "^4.8.0",
     "sanity": "^3.99.0",
-    "stripe": "^18.5.0",
     "tailwind-merge": "^2.3.0",
     "zod": "^4.4.3"
   },

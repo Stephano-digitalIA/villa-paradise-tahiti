@@ -10,7 +10,7 @@
  *  - **We do NOT clear localStorage here**. Users who back out should be
  *    able to come straight back to /booking/checkout with their cart
  *    intact.
- *  - Phase E will pass through Stripe's `?session_id=` on the cancel URL;
+ *  - The cancel URL may carry a processor reference;
  *    we accept it for forward compatibility but the page works without
  *    any query string at all.
  */

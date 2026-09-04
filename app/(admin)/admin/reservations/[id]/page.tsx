@@ -166,7 +166,7 @@ export default async function ReservationDetailPage({ params }: PageProps) {
         </div>
       </div>
 
-      {/* Cancelling does not move any money: PayPal and Stripe are never
+      {/* Cancelling does not move any money: PayPal is never
           called. The guest has been emailed that we will arrange their
           refund, so someone has to actually do it — this is the only place
           that says so. */}
@@ -186,7 +186,7 @@ export default async function ReservationDetailPage({ params }: PageProps) {
           <p className="mt-2 font-sans text-sm text-midnight-400">
             L&apos;annulation libère les dates et prévient le client, mais elle
             ne rembourse rien. Le remboursement se fait depuis le tableau de
-            bord {r.payment_method === 'paypal' ? 'PayPal' : 'Stripe'}
+            bord {r.payment_method === 'paypal' ? 'PayPal' : 'Carte bancaire'}
             {r.paypal_order_id ? ` (commande ${r.paypal_order_id})` : ''}.
           </p>
           <p className="mt-2 font-sans text-sm text-midnight-400">

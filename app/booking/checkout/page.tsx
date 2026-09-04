@@ -29,7 +29,7 @@ import {
 export const metadata: Metadata = {
   title: 'Checkout — Villa Paradise Tahiti',
   description:
-    'Confirm your details and pay your deposit to secure your villa stay in Tahiti. Secure checkout via Stripe and PayPal.',
+    'Confirm your details and pay your deposit to secure your villa stay in Tahiti. Secure checkout via PayPal.',
   robots: {
     // Funnel page — personal cart state, no SEO value.
     index: false,

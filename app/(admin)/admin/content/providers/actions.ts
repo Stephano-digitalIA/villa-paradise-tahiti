@@ -1,9 +1,16 @@
 'use server'
 
-import { revalidatePath } from 'next/cache'
-import { adminClient } from '@/lib/supabase/admin'
+import { revalidatePath, revalidateTag } from 'next/cache'
+import { adminClient, PUBLIC_CONTENT_TAG } from '@/lib/supabase/admin'
 
-const REVALIDATE = () => revalidatePath('/admin/content/providers')
+const REVALIDATE = () => {
+  // Providers surface inside the experiences pages, so drop the cached public
+  // read too. Revalidating a path only re-renders it, and the re-render would
+  // be served the same cached Supabase response.
+  revalidateTag(PUBLIC_CONTENT_TAG)
+  revalidatePath('/admin/content/providers')
+  revalidatePath('/experiences')
+}
 
 function parseProvider(formData: FormData) {
   const servicesRaw = formData.get('services') as string

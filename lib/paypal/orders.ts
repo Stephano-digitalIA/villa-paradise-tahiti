@@ -8,7 +8,7 @@
  *     after PayPal sends the user back to our `return_url` (we also run
  *     it again in the webhook for fire-and-forget reliability).
  *
- * Same shape as the Stripe helpers: a discriminated `{ ... } | { error }`
+ * A discriminated `{ ... } | { error }`
  * return — never throws across the boundary, so the API route can render
  * a clean error to the visitor.
  */
@@ -95,7 +95,7 @@ interface PayPalOrderResponse {
  * cross-reference it with the Resend payload built from the metadata.
  *
  * Note: PayPal does **not** support arbitrary string metadata the way
- * Stripe does. We attach the reservation id to `custom_id`, the
+ * a processor with a metadata bag would. We attach the reservation id to `custom_id`, the
  * `reference_id`, and `invoice_id` for the highest chance of recovery —
  * customer-visible fields (`reference_id`) are also surfaced on the
  * approval screen, so we keep them clean.

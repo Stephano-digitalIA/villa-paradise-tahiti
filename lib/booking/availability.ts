@@ -4,9 +4,9 @@
  *   1. GET /api/booking/availability   (public, surfaces blocked ranges
  *                                       to the date picker)
  *   2. POST /api/checkout              (refuses 409 if dates already taken,
- *                                       BEFORE creating a Stripe/PayPal
+ *                                       BEFORE creating a PayPal
  *                                       session and a pending reservation)
- *   3. Stripe / PayPal webhooks        (last-line race guard before
+ *   3. PayPal webhooks        (last-line race guard before
  *                                       inserting the direct_booking row
  *                                       in blocked_dates)
  *
@@ -81,7 +81,7 @@ export interface CheckAvailabilityOptions {
  * How long an unpaid reservation holds its dates.
  *
  * `/api/checkout` writes the reservation as `pending` before redirecting
- * to Stripe or PayPal, so the dates are held during the payment. Nothing
+ * to PayPal, so the dates are held during the payment. Nothing
  * ever settles that row when the guest walks away, and an abandoned cart
  * used to hold its week off the market forever — one visitor clicking
  * "continue to payment" and closing the tab was enough.

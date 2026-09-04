@@ -134,11 +134,11 @@ export async function sendBookingConfirmationGuest(
 
 /**
  * Owner-facing notification, dispatched after a successful payment.
- * Always carries the payment method so Thierry can spot Stripe vs PayPal
+ * Always carries the payment method so Thierry can spot card vs PayPal
  * at a glance in his inbox.
  */
 export async function sendBookingNotificationOwner(
-  data: BookingConfirmationData & { paymentMethod: 'stripe' | 'paypal' },
+  data: BookingConfirmationData & { paymentMethod: 'card' | 'paypal' },
 ): Promise<EmailResult> {
   const { paymentMethod, ...rest } = data
   return sendEmail({

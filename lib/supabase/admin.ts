@@ -81,11 +81,25 @@ export const contentClient = createSupabaseClient<Database>(
       persistSession: false,
     },
     global: {
-      fetch: (input, init) =>
-        fetch(input, {
+      fetch: (input, init) => {
+        // Built through the Headers API, never by spreading `init.headers`:
+        // supabase-js may hand over a Headers instance, and spreading one
+        // yields an empty object, dropping the apikey and Authorization
+        // headers. Every read then fails with "No API key found in request".
+        const headers = new Headers(init?.headers)
+        // Next derives the Data Cache key from the request, headers included,
+        // and not from the options below. Entries written before this client
+        // existed carry no tag, never expire, and cannot be revalidated: a FAQ
+        // corrected weeks ago was still being served with its old text.
+        // Bumping this constant changes the key and abandons them. Raise it
+        // again only if the cache is ever poisoned the same way.
+        headers.set('x-content-cache', '2')
+        return fetch(input, {
           ...init,
+          headers,
           next: { revalidate: 60, tags: [PUBLIC_CONTENT_TAG] },
-        }),
+        })
+      },
     },
   },
 )

@@ -12,8 +12,12 @@ import type {
   BlockedDate,
 } from './types'
 
-// Public queries use adminClient (no cookies required, safe at build time).
-const supabase = adminClient
+// Public queries read through `contentClient`: no cookies required, safe at
+// build time, and tagged so an admin save drops the entry instead of leaving a
+// snapshot in place. `adminClient` cached these reads with no expiry, and
+// Netlify restores .next/cache between builds, so the snapshot outlived every
+// deploy: a FAQ corrected weeks ago was still being served with its old text.
+const supabase = contentClient
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Settings
@@ -23,7 +27,7 @@ const supabase = adminClient
  * Returns the single settings row, or null on error / missing row.
  */
 export async function getSettings(): Promise<Settings | null> {
-  // supabase = adminClient (aliased above)
+  // supabase = contentClient (aliased above)
   const { data, error } = await supabase
     .from('settings')
     .select('*')
@@ -44,7 +48,7 @@ export async function getSettings(): Promise<Settings | null> {
  * Returns the single villa row, or null on error / missing row.
  */
 export async function getVilla(): Promise<Villa | null> {
-  // supabase = adminClient (aliased above)
+  // supabase = contentClient (aliased above)
   // Defensive `limit(1)` + order: villa is a singleton, but if a stray duplicate
   // row ever exists, `maybeSingle()` alone would error and silently fall back to
   // mock data. Take the most-recently-updated row instead.
@@ -71,10 +75,7 @@ export async function getVilla(): Promise<Villa | null> {
  * Ordered by sort_order ASC.
  */
 export async function getGalleryItems(category?: string): Promise<GalleryItem[]> {
-  // Read through `contentClient`, not the shared `supabase` alias: this feeds
-  // the public gallery, so a caption edited in the admin has to reach the page
-  // rather than sit behind a Data Cache entry that outlives the deploy.
-  let query = contentClient
+  let query = supabase
     .from('gallery_items')
     .select('*')
     .eq('active', true)
@@ -114,7 +115,7 @@ export async function getExperiences(
   opts: GetExperiencesOptions = {},
 ): Promise<Experience[]> {
   const { category, featured, active = true } = opts
-  // supabase = adminClient (aliased above)
+  // supabase = contentClient (aliased above)
 
   let query = supabase
     .from('experiences')
@@ -146,7 +147,7 @@ export async function getExperiences(
  * Returns null if not found or on error.
  */
 export async function getExperienceBySlug(slug: string): Promise<Experience | null> {
-  // supabase = adminClient (aliased above)
+  // supabase = contentClient (aliased above)
   const { data, error } = await supabase
     .from('experiences')
     .select('*, provider:excursion_providers(id, name, website, instagram)')
@@ -196,7 +197,7 @@ export async function getRelatedExperiences(
   category: ExperienceCategory,
   limit = 3,
 ): Promise<Experience[]> {
-  // supabase = adminClient (aliased above)
+  // supabase = contentClient (aliased above)
   const { data, error } = await supabase
     .from('experiences')
     .select('*')
@@ -229,7 +230,7 @@ export type GetReviewsOptions = {
  */
 export async function getReviews(opts: GetReviewsOptions = {}): Promise<Review[]> {
   const { featured, source, limit } = opts
-  // supabase = adminClient (aliased above)
+  // supabase = contentClient (aliased above)
 
   let query = supabase
     .from('reviews')
@@ -270,7 +271,7 @@ export type GetPostsOptions = {
  */
 export async function getPosts(opts: GetPostsOptions = {}): Promise<Post[]> {
   const { publishedOnly = true } = opts
-  // supabase = adminClient (aliased above)
+  // supabase = contentClient (aliased above)
 
   let query = supabase
     .from('posts')
@@ -297,7 +298,7 @@ export async function getPosts(opts: GetPostsOptions = {}): Promise<Post[]> {
  * Returns a single published post by slug, or null if not found / on error.
  */
 export async function getPostBySlug(slug: string): Promise<Post | null> {
-  // supabase = adminClient (aliased above)
+  // supabase = contentClient (aliased above)
   const now = new Date().toISOString()
 
   const { data, error } = await supabase
@@ -324,7 +325,7 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
  * Ordered by category ASC, sort_order ASC.
  */
 export async function getFAQs(category?: string): Promise<FAQ[]> {
-  // supabase = adminClient (aliased above)
+  // supabase = contentClient (aliased above)
 
   let query = supabase
     .from('faqs')
@@ -355,7 +356,7 @@ export async function getFAQs(category?: string): Promise<FAQ[]> {
  * Ordered by blocked_from ASC.
  */
 export async function getBlockedDates(): Promise<BlockedDate[]> {
-  // supabase = adminClient (aliased above)
+  // supabase = contentClient (aliased above)
   const today = new Date().toISOString().slice(0, 10) // YYYY-MM-DD
 
   const { data, error } = await supabase

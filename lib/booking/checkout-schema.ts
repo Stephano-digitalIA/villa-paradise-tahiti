@@ -9,8 +9,9 @@
  * Design notes:
  *  - Field copy and constraints target the **US** market (cf.
  *    `docs/03-cible-marche-us.md`) — short, clear, non-jargon.
- *  - The `paymentMethod` enum mirrors the payment processors we plan to
- *    wire in Phase E (Stripe + PayPal). The same shape works for both.
+ *  - `paymentMethod` records which option the guest picked, not which
+ *    processor runs. Both are settled by PayPal: its guest checkout takes a
+ *    card without an account.
  *  - `acceptTerms` / `acceptCancellation` use `z.literal(true)` so the
  *    submit button cannot be bypassed by sending `false` from the client.
  *  - Optional fields stay truly optional — `arrivalFlight`, `zipCode`,
@@ -102,7 +103,7 @@ export const checkoutSchema = z.object({
     .max(40)
     .optional()
     .or(z.literal('')),
-  paymentMethod: z.enum(['stripe', 'paypal'], {
+  paymentMethod: z.enum(['card', 'paypal'], {
     message: 'Choose a payment method',
   }),
   paymentOption: z.enum(['deposit', 'custom', 'full'], {

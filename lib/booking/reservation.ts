@@ -7,16 +7,16 @@
  *    surfaced in confirmation emails, ticket support, and the success page.
  *  - `buildLineItems(state, breakdown, catalog)` — turns the booking state
  *    into a flat list of `{ name, description, amountUSD, quantity }` lines.
- *    Stripe's `line_items` and PayPal's `purchase_units` consume it after a
+ *    PayPal's `purchase_units` consume it after a
  *    small adapter layer.
  *  - `buildBookingMetadata(state, customer)` — flattens the booking into a
- *    string-only key/value map suitable for Stripe metadata
+ *    string-only key/value map suitable for processor metadata
  *    (max 50 keys, max 500 chars per value). The webhook handler reads
  *    this back to reconstruct the `BookingConfirmationData` shape that
  *    Phase E1's email helpers expect.
  *
  * Design notes:
- *  - **Strings only** for metadata: Stripe rejects nested objects and
+ *  - **Strings only** for metadata: payment processors reject nested objects and
  *    coerces numbers / booleans inconsistently. We stringify aggressively
  *    here so the webhook can round-trip with `Number(...)` / `JSON.parse`.
  *  - **Truncation guard**: the per-value 500-char limit matters mostly for
@@ -24,7 +24,7 @@
  *    safe even with a long cart.
  *  - **Catalog-aware titles**: when an experience selection only carries a
  *    slug + title (no full Sanity record), we still try to enrich from
- *    the supplied `experienceCatalog` so the line item shown on the Stripe
+ *    the supplied `experienceCatalog` so the line item shown on the payment
  *    Checkout page matches what the user saw in the calculator.
  */
 
@@ -56,9 +56,9 @@ export function generateReservationId(): string {
 /**
  * A normalized line item, payment-processor-agnostic.
  *
- *  - `amountUSD` is in **whole USD** (e.g. `690` for $690.00). Stripe wants
+ *  - `amountUSD` is in **whole USD** (e.g. `690` for $690.00). The processor wants
  *    cents (multiply by 100), PayPal wants `.toFixed(2)` strings. Both
- *    conversions live in the respective adapters in `lib/stripe` / `lib/paypal`.
+ *    conversions live in the adapter in `lib/paypal`.
  *  - `quantity` already accounts for `priceUnit` semantics — callers
  *    multiply directly (`amountUSD × quantity`).
  */
@@ -104,7 +104,7 @@ function findCatalogEntry(
  *
  * Composition (in order):
  *  1. Villa nightly fee — `nights` × `nightlyRate`. Single line with the
- *     nightly rate as the unit price; Stripe / PayPal then show
+ *     nightly rate as the unit price; PayPal then shows
  *     `quantity × unit` on the receipt automatically.
  *  2. Cleaning fee — flat single line, when `nights > 0`.
  *  3. One line per selected experience, with quantity-aware unit price.
@@ -164,11 +164,11 @@ export function buildLineItems(
 }
 
 /* ---------------------------------------------------------------------------
- * Booking metadata (string-only, Stripe-compatible)
+ * Booking metadata (string-only, processor-compatible)
  * ------------------------------------------------------------------------- */
 
 /**
- * Cap a metadata value to Stripe's 500-char per-value limit, with a visible
+ * Cap a metadata value to 500 chars per value, with a visible
  * truncation marker to aid debugging if it ever hits.
  */
 function clampValue(value: string, max = 500): string {
@@ -177,10 +177,10 @@ function clampValue(value: string, max = 500): string {
 }
 
 /**
- * Flatten the booking state + customer into a Stripe-compatible metadata
- * object. Every value is a string — Stripe enforces this.
+ * Flatten the booking state + customer into a processor-compatible metadata
+ * object. Every value is a string, which processors enforce.
  *
- * Keys (deliberately short to stay within Stripe's 50-key / 500-char-each
+ * Keys (deliberately short to stay within a 50-key / 500-char-each
  * constraints, even with a long cart):
  *
  *   firstName, lastName, email, phone, country, city

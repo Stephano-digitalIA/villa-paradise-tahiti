@@ -2,7 +2,7 @@
  * BookingConfirmationGuest — React Email template (Phase E1).
  *
  * Sent to the guest after a successful payment (Phase E2 will trigger it
- * from the Stripe / PayPal webhook handler). Tone: luxury US, warm but
+ * from the PayPal webhook handler). Tone: luxury US, warm but
  * understated. Keeps the email parseable on any mail client by leaning on
  * React Email's `Container`, `Section`, `Text` primitives instead of raw
  * `<div>` soups.

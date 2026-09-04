@@ -1,7 +1,7 @@
 'use server'
 
-import { revalidatePath } from 'next/cache'
-import { adminClient } from '@/lib/supabase/admin'
+import { revalidatePath, revalidateTag } from 'next/cache'
+import { adminClient, PUBLIC_CONTENT_TAG } from '@/lib/supabase/admin'
 import type { Villa } from '@/lib/supabase/types'
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -82,7 +82,16 @@ export async function updateVilla(formData: FormData): Promise<void> {
     if (retryError) throw new Error(retryError.message)
   }
 
+  // Drop the cached public read first. Revalidating a path only re-renders
+// it, and the re-render would be served the same cached Supabase response.
+  revalidateTag(PUBLIC_CONTENT_TAG)
   revalidatePath('/admin/content/villa')
+  // Drop the cached public read first. Revalidating a path only re-renders
+// it, and the re-render would be served the same cached Supabase response.
+  revalidateTag(PUBLIC_CONTENT_TAG)
   revalidatePath('/villa')
+  // Drop the cached public read first. Revalidating a path only re-renders
+// it, and the re-render would be served the same cached Supabase response.
+  revalidateTag(PUBLIC_CONTENT_TAG)
   revalidatePath('/', 'layout')
 }
