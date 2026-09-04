@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { adminClient } from '@/lib/supabase/admin'
+import { liveAdminClient } from '@/lib/supabase/admin'
 import {
   VILLA_TIME_ZONE,
   formatInstantDate,
@@ -31,7 +31,10 @@ export default async function InquiriesPage({
 }: {
   searchParams: { filter?: string }
 }) {
-  const { data: inquiries } = await adminClient
+  // liveAdminClient, not adminClient: `force-dynamic` makes the render
+  // dynamic without opting the Supabase fetch out of the Data Cache, so a
+  // deleted or newly replied inquiry would keep showing from a snapshot.
+  const { data: inquiries } = await liveAdminClient
     .from('contact_inquiries')
     .select('*')
     .order('created_at', { ascending: false })

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useTransition } from 'react'
-import { markInquiryReplied } from '@/app/actions/inquiries'
+import { markInquiryReplied, deleteInquiry } from '@/app/actions/inquiries'
 
 type Props = {
   inquiryId: string
@@ -48,6 +48,8 @@ function composeHref(email: string, guestName: string, message: string): string 
 /**
  * Inquiry actions — "Répondre" + "Marquer comme répondu".
  *
+ * "Supprimer" removes the inquiry for good, behind a second click.
+ *
  * "Répondre" ONLY opens a prefilled Gmail compose tab; it does NOT change the
  * replied flag. Marking is kept 100% manual through the separate "Marquer comme
  * répondu" button (for replies handled by email, phone, or any other channel).
@@ -56,6 +58,9 @@ export function InquiryActions({ inquiryId, email, guestName, message, replied }
   const [isPending, startTransition] = useTransition()
   const [isReplied, setIsReplied] = useState(replied)
   const [error, setError] = useState<string | null>(null)
+  // Deleting is irreversible and the row holds the only copy of the message,
+  // so the button asks a second time rather than acting on the first click.
+  const [confirmingDelete, setConfirmingDelete] = useState(false)
 
   function flagReplied() {
     if (isReplied) return
@@ -64,6 +69,18 @@ export function InquiryActions({ inquiryId, email, guestName, message, replied }
       const result = await markInquiryReplied(inquiryId)
       if (result.error) setError(result.error)
       else setIsReplied(true)
+    })
+  }
+
+  function remove() {
+    setError(null)
+    startTransition(async () => {
+      const result = await deleteInquiry(inquiryId)
+      if (result.error) {
+        setError(result.error)
+        setConfirmingDelete(false)
+      }
+      // On success the server action revalidates the list and the row goes.
     })
   }
 
@@ -103,6 +120,36 @@ export function InquiryActions({ inquiryId, email, guestName, message, replied }
           className="rounded-xl border border-pearl-400 bg-white px-4 py-2 font-sans text-sm font-medium text-midnight transition-colors hover:border-midnight disabled:opacity-50"
         >
           {isPending ? 'Mise à jour…' : 'Marquer comme répondu'}
+        </button>
+      )}
+
+      {confirmingDelete ? (
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={remove}
+            disabled={isPending}
+            className="rounded-xl bg-coral px-4 py-2 font-sans text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-50"
+          >
+            {isPending ? 'Suppression…' : 'Confirmer la suppression'}
+          </button>
+          <button
+            type="button"
+            onClick={() => setConfirmingDelete(false)}
+            disabled={isPending}
+            className="rounded-xl border border-pearl-400 bg-white px-3 py-2 font-sans text-sm text-midnight-400 transition-colors hover:border-midnight disabled:opacity-50"
+          >
+            Annuler
+          </button>
+        </div>
+      ) : (
+        <button
+          type="button"
+          onClick={() => setConfirmingDelete(true)}
+          disabled={isPending}
+          className="rounded-xl border border-coral/30 bg-coral/5 px-4 py-2 font-sans text-sm font-medium text-coral transition-colors hover:bg-coral/10 disabled:opacity-50"
+        >
+          Supprimer
         </button>
       )}
 
