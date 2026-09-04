@@ -11,6 +11,7 @@ import {
   restoreGalleryItem,
   deleteGalleryItemPermanently,
   updateGalleryOrder,
+  updateGalleryText,
 } from './actions'
 
 const CATEGORIES: GalleryCategory[] = [
@@ -49,6 +50,14 @@ export function GalleryClient({ initialItems }: Props) {
   const [orderMap, setOrderMap] = useState<Record<string, number>>(
     Object.fromEntries(initialItems.map((i) => [i.id, i.sort_order])),
   )
+  // Descriptions are edited in place. `caption` is what the site shows; `alt`
+  // is the accessibility text and the caption's fallback.
+  const [textMap, setTextMap] = useState<Record<string, { alt: string; caption: string }>>(
+    Object.fromEntries(
+      initialItems.map((i) => [i.id, { alt: i.alt ?? '', caption: i.caption ?? '' }]),
+    ),
+  )
+  const [savedNotice, setSavedNotice] = useState(false)
 
   const live = useMemo(() => items.filter((i) => !i.deleted_at), [items])
   const trashed = useMemo(() => items.filter((i) => i.deleted_at), [items])
@@ -68,6 +77,13 @@ export function GalleryClient({ initialItems }: Props) {
         setUploadError(err instanceof Error ? err.message : 'Échec du téléversement')
       }
     })
+  }
+
+  function handleTextChange(id: string, field: 'alt' | 'caption', value: string) {
+    setTextMap((prev) => ({
+      ...prev,
+      [id]: { ...(prev[id] ?? { alt: '', caption: '' }), [field]: value },
+    }))
   }
 
   function handleTrash(id: string) {
@@ -98,10 +114,26 @@ export function GalleryClient({ initialItems }: Props) {
     if (!isNaN(n)) setOrderMap((prev) => ({ ...prev, [id]: n }))
   }
 
-  function handleSaveOrder() {
-    const updates = live.map((i) => ({ id: i.id, sort_order: orderMap[i.id] ?? i.sort_order }))
+  function handleSave() {
+    const order = live.map((i) => ({ id: i.id, sort_order: orderMap[i.id] ?? i.sort_order }))
+    const texts = live.map((i) => ({
+      id: i.id,
+      alt: textMap[i.id]?.alt ?? i.alt ?? '',
+      caption: textMap[i.id]?.caption ?? i.caption ?? '',
+    }))
+    setSavedNotice(false)
     startTransition(async () => {
-      await updateGalleryOrder(updates)
+      await updateGalleryOrder(order)
+      await updateGalleryText(texts)
+      setItems((prev) =>
+        prev.map((i) =>
+          textMap[i.id]
+            ? { ...i, alt: textMap[i.id].alt.trim(), caption: textMap[i.id].caption.trim() }
+            : i,
+        ),
+      )
+      setSavedNotice(true)
+      setTimeout(() => setSavedNotice(false), 3000)
     })
   }
 
@@ -227,7 +259,29 @@ export function GalleryClient({ initialItems }: Props) {
                   <Badge variant={CATEGORY_VARIANT[item.category]} size="sm">
                     {CATEGORY_LABEL[item.category]}
                   </Badge>
-                  <p className="font-sans text-xs text-midnight-400 line-clamp-1">{item.alt}</p>
+                  <div>
+                    <label className="font-sans text-[11px] font-medium text-midnight-400">
+                      Description affichée sur le site
+                    </label>
+                    <textarea
+                      rows={2}
+                      value={textMap[item.id]?.caption ?? ''}
+                      onChange={(e) => handleTextChange(item.id, 'caption', e.target.value)}
+                      placeholder="Vide : le texte alternatif est affiché à la place"
+                      className="mt-1 w-full rounded-md border border-pearl-400 bg-pearl px-2 py-1 font-sans text-xs text-midnight placeholder:text-midnight-300 focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold/30"
+                    />
+                  </div>
+                  <div>
+                    <label className="font-sans text-[11px] font-medium text-midnight-400">
+                      Texte alternatif (accessibilité)
+                    </label>
+                    <textarea
+                      rows={2}
+                      value={textMap[item.id]?.alt ?? ''}
+                      onChange={(e) => handleTextChange(item.id, 'alt', e.target.value)}
+                      className="mt-1 w-full rounded-md border border-pearl-400 bg-pearl px-2 py-1 font-sans text-xs text-midnight focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold/30"
+                    />
+                  </div>
                   <div className="flex items-center gap-2">
                     <label className="font-sans text-xs text-midnight-400">Ordre</label>
                     <input
@@ -249,9 +303,14 @@ export function GalleryClient({ initialItems }: Props) {
               </div>
             ))}
           </div>
-          <div className="flex justify-end">
-            <Button variant="outline" size="sm" onClick={handleSaveOrder} disabled={isPending}>
-              {isPending ? 'Enregistrement…' : 'Enregistrer l\'ordre'}
+          <div className="sticky bottom-0 flex items-center justify-end gap-3 border-t border-pearl-400 bg-pearl/80 py-3 backdrop-blur">
+            {savedNotice ? (
+              <span className="font-sans text-xs text-leaf">
+                Enregistré. Les descriptions sont en ligne.
+              </span>
+            ) : null}
+            <Button variant="primary" size="sm" onClick={handleSave} disabled={isPending}>
+              {isPending ? 'Enregistrement…' : 'Enregistrer les descriptions et l\'ordre'}
             </Button>
           </div>
         </>

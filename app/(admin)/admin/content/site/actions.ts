@@ -2,7 +2,7 @@
 
 import { revalidatePath, revalidateTag } from 'next/cache'
 
-import { adminClient, SITE_CONTENT_TAG } from '@/lib/supabase/admin'
+import { adminClient, PUBLIC_CONTENT_TAG } from '@/lib/supabase/admin'
 import { SITE_CONTENT_KEYS } from '@/lib/content/registry'
 
 export interface SiteContentInput {
@@ -55,7 +55,7 @@ export async function saveSiteContent(
   // Drop the cached `site_content` read first. Revalidating the paths alone
   // only re-renders them, and the re-render was being served the same cached
   // Supabase response, so saved copy never reached the site.
-  revalidateTag(SITE_CONTENT_TAG)
+  revalidateTag(PUBLIC_CONTENT_TAG)
 
   revalidatePath('/')
   revalidatePath('/rates')

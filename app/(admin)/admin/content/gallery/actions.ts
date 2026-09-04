@@ -1,12 +1,15 @@
 'use server'
 
-import { revalidatePath } from 'next/cache'
-import { adminClient } from '@/lib/supabase/admin'
+import { revalidatePath, revalidateTag } from 'next/cache'
+import { adminClient, PUBLIC_CONTENT_TAG } from '@/lib/supabase/admin'
 import { uploadFile } from '@/lib/supabase/storage'
 import type { GalleryCategory } from '@/lib/supabase/types'
 
 const REVALIDATE = () => {
   // Admin list + every public surface that shows gallery photos.
+  // Drop the cached read first: revalidating the paths only re-renders them,
+  // and the re-render would be served the same cached Supabase response.
+  revalidateTag(PUBLIC_CONTENT_TAG)
   revalidatePath('/admin/content/gallery')
   revalidatePath('/gallery')
   revalidatePath('/villa')
@@ -117,6 +120,33 @@ export async function updateGalleryOrder(
   await Promise.all(
     items.map(({ id, sort_order }) =>
       adminClient.from('gallery_items').update({ sort_order }).eq('id', id),
+    ),
+  )
+  REVALIDATE()
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// updateGalleryText: edit the two texts attached to a photo
+// ─────────────────────────────────────────────────────────────────────────────
+/**
+ * Both texts were write-once: `alt` could only be typed at upload and `caption`
+ * had no field at all, while the public gallery displays the caption. So a
+ * description written in the admin never reached the site, and could not even
+ * be corrected afterwards.
+ *
+ * `caption` is what visitors read, under the photo and in the lightbox.
+ * `alt` stays the accessibility text, and doubles as the caption's fallback
+ * when no caption is set, so no photo is ever left without a description.
+ */
+export async function updateGalleryText(
+  items: Array<{ id: string; alt: string; caption: string }>,
+): Promise<void> {
+  await Promise.all(
+    items.map(({ id, alt, caption }) =>
+      adminClient
+        .from('gallery_items')
+        .update({ alt: alt.trim(), caption: caption.trim() })
+        .eq('id', id),
     ),
   )
   REVALIDATE()

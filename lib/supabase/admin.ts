@@ -48,11 +48,15 @@ export const liveAdminClient = createSupabaseClient<Database>(
   },
 )
 
-/** Cache tag for the editable-copy table. Revalidated when the admin saves. */
-export const SITE_CONTENT_TAG = 'site-content'
+/**
+ * Cache tag shared by every public read of operator-managed content.
+ * Any admin save revalidates it, which costs one extra refetch on the other
+ * tables and removes a whole class of "I saved it and nothing changed".
+ */
+export const PUBLIC_CONTENT_TAG = 'public-content'
 
 /**
- * Client for reading the public copy in `site_content`.
+ * Client for reading operator-managed content on public pages.
  *
  * `adminClient` cached this read forever, and Netlify restores `.next/cache`
  * between builds, so the snapshot outlived every deploy: copy saved in the
@@ -80,7 +84,7 @@ export const contentClient = createSupabaseClient<Database>(
       fetch: (input, init) =>
         fetch(input, {
           ...init,
-          next: { revalidate: 60, tags: [SITE_CONTENT_TAG] },
+          next: { revalidate: 60, tags: [PUBLIC_CONTENT_TAG] },
         }),
     },
   },

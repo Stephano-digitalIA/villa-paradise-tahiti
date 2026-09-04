@@ -1,4 +1,4 @@
-import { adminClient } from './admin'
+import { adminClient, contentClient } from './admin'
 import type {
   Settings,
   Villa,
@@ -71,8 +71,10 @@ export async function getVilla(): Promise<Villa | null> {
  * Ordered by sort_order ASC.
  */
 export async function getGalleryItems(category?: string): Promise<GalleryItem[]> {
-  // supabase = adminClient (aliased above)
-  let query = supabase
+  // Read through `contentClient`, not the shared `supabase` alias: this feeds
+  // the public gallery, so a caption edited in the admin has to reach the page
+  // rather than sit behind a Data Cache entry that outlives the deploy.
+  let query = contentClient
     .from('gallery_items')
     .select('*')
     .eq('active', true)

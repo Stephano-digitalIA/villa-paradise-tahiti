@@ -43,7 +43,11 @@ async function loadGalleryImages(): Promise<GalleryImage[]> {
     category: CATEGORY_MAP[g.category] ?? 'exterior',
     width: g.width ?? 1400,
     height: g.height ?? 1050,
-    caption: g.caption ?? undefined,
+    // Fall back to the alt text so every photo carries a visible description.
+    // Photos uploaded from the admin only ever got an alt, and the page shows
+    // the caption, so they appeared with no text at all. `||` and not `??`:
+    // an unset caption comes back as '' from the column default, not null.
+    caption: (g.caption ?? '').trim() || (g.alt ?? '').trim() || undefined,
   }))
 }
 

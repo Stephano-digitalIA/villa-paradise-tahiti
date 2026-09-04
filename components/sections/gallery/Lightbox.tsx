@@ -178,7 +178,8 @@ export function Lightbox({ images, initialIndex, isOpen, onClose }: LightboxProp
           className="max-h-[80vh] w-auto rounded-lg object-contain shadow-elevated animate-fade-in"
         />
         <figcaption className="mt-4 max-w-2xl text-center font-sans text-body-sm text-pearl/80">
-          {image.caption ?? image.alt}
+          {/* `||` and not `??`: an empty caption is '' and must still fall back. */}
+          {image.caption || image.alt}
           <span className="ml-3 text-eyebrow tracking-wider2 text-pearl/50">
             {index + 1} / {images.length}
           </span>
