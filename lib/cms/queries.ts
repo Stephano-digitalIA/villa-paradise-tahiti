@@ -2,7 +2,7 @@
  * GROQ queries.
  *
  * Pure string constants — easy to read, easy to test, easy to copy/paste
- * into Sanity Vision. Each query mirrors the shape declared in `./types.ts`
+ * as keys. Each query mirrors the shape declared in `./types.ts`
  * so callers can type the response strictly.
  */
 

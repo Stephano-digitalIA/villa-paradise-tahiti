@@ -2,7 +2,7 @@
  * Seed `excursion_providers` with 7 plausible Tahiti partners, then
  * wire each existing experience to its provider via `provider_id`.
  *
- * Why: the Sanity mock leaves the provider field empty on every
+ * Why: the fixtures leave the provider field empty on every
  * experience, so the `excursion_providers` table stays empty after the
  * main seed. This script gives Thierry a realistic starting set that
  * matches the experience descriptions (marine biologist guide,

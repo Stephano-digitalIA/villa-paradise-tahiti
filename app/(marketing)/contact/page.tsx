@@ -13,8 +13,8 @@ import {
   ContactInfo,
   ContactStats,
 } from '@/components/sections/contact'
-import { sanityFetch } from '@/lib/sanity/fetcher'
-import { settingsQuery, type Settings } from '@/lib/sanity'
+import { cmsFetch } from '@/lib/cms/fetcher'
+import { settingsQuery, type Settings } from '@/lib/cms'
 import { SITE_URL, absoluteUrl, buildMetadata } from '@/lib/seo'
 import { getSiteContent } from '@/lib/content'
 import type { ContactFormLabels } from '@/lib/content/contact'
@@ -42,7 +42,7 @@ export const metadata: Metadata = buildMetadata({
 })
 
 export default async function ContactPage() {
-  const settings = await sanityFetch<Settings | null>(settingsQuery)
+  const settings = await cmsFetch<Settings | null>(settingsQuery)
   const t = await getSiteContent()
 
   const formLabels: ContactFormLabels = {

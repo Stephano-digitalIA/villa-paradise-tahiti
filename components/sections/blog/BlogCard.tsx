@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { ArrowUpRight } from 'lucide-react'
 
 import { Badge } from '@/components/ui'
-import { urlForImage, type Post } from '@/lib/sanity'
+import { urlForImage, type Post } from '@/lib/cms'
 
 function formatDate(iso: string): string {
   try {

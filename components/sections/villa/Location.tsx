@@ -1,7 +1,7 @@
 import { MapPin, Plane, Utensils, Waves } from 'lucide-react'
 
 import { Container, Section } from '@/components/ui'
-import type { Villa } from '@/lib/sanity'
+import type { Villa } from '@/lib/cms'
 import { getSiteContent } from '@/lib/content'
 
 interface LocationProps {

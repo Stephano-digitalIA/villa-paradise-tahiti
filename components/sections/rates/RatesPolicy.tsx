@@ -1,6 +1,6 @@
 import { Container, Section } from '@/components/ui'
 import { PortableTextRenderer } from '@/components/sections/_shared/PortableTextRenderer'
-import type { Settings } from '@/lib/sanity'
+import type { Settings } from '@/lib/cms'
 import { getSiteContent } from '@/lib/content'
 
 interface RatesPolicyProps {

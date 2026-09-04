@@ -1,13 +1,13 @@
 import type { Metadata } from 'next'
 
 import { BookingPageClient, BookingProvider } from '@/components/booking'
-import { sanityFetch } from '@/lib/sanity/fetcher'
+import { cmsFetch } from '@/lib/cms/fetcher'
 import {
   experiencesQuery,
   settingsQuery,
   type Experience,
   type Settings,
-} from '@/lib/sanity'
+} from '@/lib/cms'
 
 /**
  * /booking — Villa Paradise Tahiti calculator (Phase D1).
@@ -36,8 +36,8 @@ export const metadata: Metadata = {
 
 export default async function BookingPage() {
   const [experiences, settings] = await Promise.all([
-    sanityFetch<Experience[]>(experiencesQuery),
-    sanityFetch<Settings>(settingsQuery),
+    cmsFetch<Experience[]>(experiencesQuery),
+    cmsFetch<Settings>(settingsQuery),
   ])
 
   return (

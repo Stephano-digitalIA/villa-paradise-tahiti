@@ -1,5 +1,5 @@
 import { Container, Section } from '@/components/ui'
-import type { Villa } from '@/lib/sanity'
+import type { Villa } from '@/lib/cms'
 
 import { PortableTextRenderer } from '../_shared/PortableTextRenderer'
 
@@ -9,7 +9,7 @@ interface VillaDescriptionProps {
 
 /**
  * Villa description section — renders the long-form Portable Text body
- * stored in Sanity using the shared `PortableTextRenderer`.
+ * stored as portable text, using the shared `PortableTextRenderer`.
  */
 export function VillaDescription({ villa }: VillaDescriptionProps) {
   return (

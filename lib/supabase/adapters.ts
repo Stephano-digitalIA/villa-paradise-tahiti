@@ -2,13 +2,13 @@
 // lib/supabase/adapters.ts
 //
 // Transforms Supabase snake_case rows into the camelCase shapes that the
-// existing marketing-page components expect (previously provided by Sanity).
+// the marketing-page components expect.
 //
 // Rules:
 //  - Original row is spread first so no database field is lost.
 //  - Compatibility aliases are added ON TOP — they do not replace the source
 //    columns, so any code that already reads snake_case keeps working.
-//  - Image shaping mirrors SanityImage: { url, alt, caption? }.
+//  - Image shaping mirrors CmsImage: { url, alt, caption? }.
 // ─────────────────────────────────────────────────────────────────────────────
 
 import type {
@@ -28,7 +28,7 @@ import type {
 export function adaptVilla(v: Villa) {
   return {
     ...v,
-    // Compatibility aliases for components expecting Sanity shape
+    // Aliases for components expecting the camelCase shape
     heroImage: v.hero_image_url
       ? { url: v.hero_image_url, alt: v.hero_image_alt ?? '' }
       : null,
@@ -65,8 +65,8 @@ export function adaptVilla(v: Villa) {
 export function adaptExperience(e: Experience) {
   return {
     ...e,
-    // Sanity-shaped stable id. The DB column is `id`; components key on `_id`
-    // (the Sanity shape). Without this the React list key is undefined.
+    // Stable id. The DB column is `id`; components key on `_id`
+    // Without this the React list key is undefined.
     _id: e.id,
     shortDescription: e.short_description,
     coverImage: e.cover_image_url
@@ -79,7 +79,7 @@ export function adaptExperience(e: Experience) {
     seasonal: e.seasonal,
     seasonStart: e.season_start,
     seasonEnd: e.season_end,
-    // Normalize slug to Sanity shape: { current: string }
+    // Normalize slug to { current: string }
     slug: { current: e.slug },
     seo: {
       metaTitle: e.seo_title,
@@ -95,7 +95,7 @@ export function adaptExperience(e: Experience) {
 export function adaptReview(r: Review) {
   return {
     ...r,
-    // Sanity-shaped stable id (DB column is `id`); components key on `_id`.
+    // Stable id (DB column is `id`); components key on `_id`.
     _id: r.id,
     authorName: r.author_name,
     authorLocation: r.author_location,
@@ -112,7 +112,7 @@ export function adaptReview(r: Review) {
 export function adaptPost(p: Post) {
   return {
     ...p,
-    // Sanity-shaped stable id (DB column is `id`); components key on `_id`.
+    // Stable id (DB column is `id`); components key on `_id`.
     _id: p.id,
     excerpt: p.excerpt,
     coverImage: p.cover_image_url
@@ -127,7 +127,7 @@ export function adaptPost(p: Post) {
           bio: p.author_bio,
         }
       : null,
-    // Normalize slug to Sanity shape: { current: string }
+    // Normalize slug to { current: string }
     slug: { current: p.slug },
     seo: {
       metaTitle: p.seo_title,
@@ -143,7 +143,7 @@ export function adaptPost(p: Post) {
 export function adaptFAQ(f: FAQ) {
   return {
     ...f,
-    // Sanity-shaped stable id (DB column is `id`); FaqAccordion keys AND
+    // Stable id (DB column is `id`); FaqAccordion keys AND
     // toggles on `_id` — undefined here makes every FAQ share one key, so
     // opening one opens all. Mapping it fixes a real functional bug.
     _id: f.id,
@@ -194,7 +194,7 @@ export function adaptSettings(s: Settings) {
 export function adaptGalleryItem(g: GalleryItem) {
   return {
     ...g,
-    // Shape the image the same way as SanityImage so gallery components
+    // Shape the image the same way as CmsImage so gallery components
     // that call urlForImage / read .url and .alt keep working.
     url: g.image_url,
     alt: g.alt,

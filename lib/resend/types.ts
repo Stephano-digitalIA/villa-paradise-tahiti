@@ -35,7 +35,7 @@ export type EmailResult =
  * Phase E2 will build this from:
  *   - The PayPal webhook payload (reservation id, payment status).
  *   - The persisted booking state (dates, guests, experiences).
- *   - The Sanity-driven price breakdown.
+ *   - The price breakdown.
  *
  * Monetary fields are **whole USD numbers** to match
  * `lib/booking/types.ts → PriceBreakdown`. Do not pass cents here.

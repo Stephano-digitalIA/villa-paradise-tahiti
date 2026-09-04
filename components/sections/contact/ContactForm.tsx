@@ -33,7 +33,7 @@ import {
  * Submission: in this phase we only `console.log` the payload and switch
  * to a "thank you" success state. Phase E will replace the handler body
  * with a `fetch('/api/contact', { method: 'POST', body: JSON.stringify(data) })`
- * call (Resend transactional email + Sanity inquiry record).
+ * call (Resend transactional email + inquiry record).
  *
  * Accessibility:
  *  - Each field has a real `<label htmlFor>` (no placeholders-as-labels).

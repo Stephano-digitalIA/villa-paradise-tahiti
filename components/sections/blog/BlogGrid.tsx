@@ -1,6 +1,6 @@
 import { Container, Section } from '@/components/ui'
 import { BlogCard } from './BlogCard'
-import type { Post } from '@/lib/sanity'
+import type { Post } from '@/lib/cms'
 
 interface BlogGridProps {
   posts: Post[]

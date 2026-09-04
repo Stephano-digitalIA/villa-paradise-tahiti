@@ -1,7 +1,7 @@
 import Image from 'next/image'
 
 import { Container, Section } from '@/components/ui'
-import { urlForImage, type PostAuthor } from '@/lib/sanity'
+import { urlForImage, type PostAuthor } from '@/lib/cms'
 
 interface BlogAuthorBioProps {
   author: PostAuthor

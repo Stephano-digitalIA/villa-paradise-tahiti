@@ -1,7 +1,7 @@
 /**
- * lib/sanity/fetcher.ts — Supabase bridge
+ * lib/cms/fetcher.ts: Supabase bridge
  *
- * This module keeps the original `sanityFetch<T>(query, params?, options?)`
+ * This module keeps the original `cmsFetch<T>(query, params?, options?)`
  * call signature so every page that imports it continues to compile unchanged.
  *
  * Internally it routes each GROQ query constant (from ./queries.ts) to the
@@ -61,13 +61,13 @@ import {
 } from './queries'
 
 /* ---------------------------------------------------------------------------
- * Types (kept for callers that imported SanityFetchOptions)
+ * Types
  * ------------------------------------------------------------------------- */
 
-export interface SanityFetchOptions {
-  /** Retained for API compatibility — currently unused. */
+export interface CmsFetchOptions {
+  /** Retained for API compatibility, currently unused. */
   revalidate?: number | false
-  /** Retained for API compatibility — currently unused. */
+  /** Retained for API compatibility, currently unused. */
   tags?: string[]
 }
 
@@ -76,16 +76,16 @@ export interface SanityFetchOptions {
  * ------------------------------------------------------------------------- */
 
 /**
- * Fetch content by GROQ query string, routed to Supabase instead of Sanity.
+ * Fetch content by query constant, routed to Supabase.
  *
  * Routes are matched by strict equality against the query constants exported
- * from `./queries.ts` — the same mechanism that the old mock dispatcher used,
+ * from `./queries.ts`, the same mechanism that the old mock dispatcher used,
  * which means all existing call sites continue to work without modification.
  */
-export async function sanityFetch<T>(
+export async function cmsFetch<T>(
   query: string,
   params: Record<string, unknown> = {},
-  _options: SanityFetchOptions = {},
+  _options: CmsFetchOptions = {},
 ): Promise<T> {
   /* --- Settings ---------------------------------------------------------- */
   if (query === settingsQuery) {
@@ -164,15 +164,15 @@ export async function sanityFetch<T>(
     return mockFaqs as unknown as T
   }
 
-  /* --- Gallery (not a GROQ query — direct call, kept for completeness) --- */
+  /* --- Gallery (not a query constant: direct call, kept for completeness) --- */
   if (query.includes('gallery')) {
     const data = await getGalleryItems()
     if (data.length) return data.map(adaptGalleryItem) as T
     return [] as unknown as T
   }
 
-  // Unknown query — warn and return null rather than throwing, mirroring the
+  // Unknown query: warn and return null rather than throwing, mirroring the
   // old mock behaviour so pages that hit an unmapped branch degrade gracefully.
-  console.warn('[sanityFetch] Unmapped query — returning null.\n', query.substring(0, 120))
+  console.warn('[cmsFetch] Unmapped query, returning null.\n', query.substring(0, 120))
   return null as T
 }

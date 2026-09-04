@@ -6,7 +6,7 @@ import type { ReactNode } from 'react'
 /**
  * ChromeGate — hides marketing chrome (Header/Footer/SkipToContent) on
  * routes that should render their own full-screen UI, namely the embedded
- * Sanity Studio at `/studio` (and its sub-paths).
+ * embedded studio that used to live at `/studio`.
  *
  * Rationale: Next.js App Router enforces a single root layout; we can't
  * branch Header/Footer based on the route at the layout level without

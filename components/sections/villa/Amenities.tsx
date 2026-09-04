@@ -1,7 +1,7 @@
 import { Check } from 'lucide-react'
 
 import { Container, Section } from '@/components/ui'
-import type { Villa } from '@/lib/sanity'
+import type { Villa } from '@/lib/cms'
 
 interface AmenitiesProps {
   villa: Villa
@@ -10,7 +10,7 @@ interface AmenitiesProps {
 /**
  * Amenities section — full list grouped into Indoor / Outdoor / Services.
  *
- * The Sanity schema currently stores amenities as a flat string array. We
+ * Amenities are stored as a flat string array. We
  * derive the group of each entry from a curated keyword map; unmatched
  * entries fall into "Services" so nothing is lost when the list grows.
  */

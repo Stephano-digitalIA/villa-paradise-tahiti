@@ -1,21 +1,21 @@
 import type { MetadataRoute } from 'next'
 
 import { SITE_URL } from '@/lib/seo'
-import { sanityFetch } from '@/lib/sanity/fetcher'
+import { cmsFetch } from '@/lib/cms/fetcher'
 import {
   experiencesQuery,
   postsQuery,
   type Experience,
   type Post,
-} from '@/lib/sanity'
+} from '@/lib/cms'
 
 /**
  * `/sitemap.xml` — generated dynamically at build / revalidation time.
  *
  * Composition:
  *  1. Static marketing pages (homepage + 8 secondary + 3 legal).
- *  2. Every active experience detail page from Sanity.
- *  3. Every published blog post from Sanity.
+ *  2. Every active experience detail page.
+ *  3. Every published blog post.
  *
  * Conventions:
  *  - Priorities follow Google's recommendation: 1.0 for the homepage,
@@ -62,8 +62,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Dynamic data — done in parallel so the sitemap build stays snappy.
   const [experiences, posts] = await Promise.all([
-    sanityFetch<Experience[]>(experiencesQuery).catch(() => [] as Experience[]),
-    sanityFetch<Post[]>(postsQuery).catch(() => [] as Post[]),
+    cmsFetch<Experience[]>(experiencesQuery).catch(() => [] as Experience[]),
+    cmsFetch<Post[]>(postsQuery).catch(() => [] as Post[]),
   ])
 
   const experienceRoutes: MetadataRoute.Sitemap = (experiences ?? []).map(

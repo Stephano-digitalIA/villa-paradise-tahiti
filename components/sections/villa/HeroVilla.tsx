@@ -1,7 +1,7 @@
 import Image from 'next/image'
 
 import { Container } from '@/components/ui'
-import type { Villa } from '@/lib/sanity'
+import type { Villa } from '@/lib/cms'
 
 interface HeroVillaProps {
   villa: Villa

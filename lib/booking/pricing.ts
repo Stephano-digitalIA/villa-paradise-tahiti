@@ -33,7 +33,7 @@ import type {
 /**
  * Seasonal nightly rates in USD.
  * Mirrors `RatesGrid.tsx` — keep both in sync.
- * TODO: pull from Sanity (settings.seasonalRates) once Thierry confirms.
+ * These are the fallback; the live values come from the settings row.
  */
 export const SEASONAL_RATES: Record<Season, number> = {
   low: 590,
@@ -247,7 +247,7 @@ export interface PricingSettings {
 
 /**
  * Input shape for `toPricingSettings` — a structural duck-type that is
- * satisfied by both the Sanity `Settings` type and `AdaptedSettings`. Only
+ * satisfied by both the `Settings` type and `AdaptedSettings`. Only
  * the fields actually read by the function are listed, all optional, so
  * callers can pass either type without needing an explicit cast.
  */
@@ -256,7 +256,7 @@ export interface SettingsInput {
   defaultDepositPercent?: number
   defaultNightlyRateUSD?: number | null
   cleaningFeeUSD?: number | null
-  /** Supabase-only: seasonal rate tiers from the settings row. Absent on Sanity Settings. */
+  /** Seasonal rate tiers from the settings row. Absent on the base Settings type. */
   rate_low_usd?: number | null
   rate_high_usd?: number | null
   rate_peak_usd?: number | null
@@ -265,7 +265,7 @@ export interface SettingsInput {
 }
 
 /**
- * Narrow a settings object (Sanity shape or AdaptedSettings) into the
+ * Narrow a settings object (base shape or AdaptedSettings) into the
  * `PricingSettings` object consumed by `computeBreakdown`.
  */
 export function toPricingSettings(

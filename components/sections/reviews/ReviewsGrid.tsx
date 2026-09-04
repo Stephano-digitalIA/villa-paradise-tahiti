@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react'
 import { Container, Section } from '@/components/ui'
 import { StarRating } from '@/components/sections/_shared/StarRating'
 import { cn } from '@/lib/utils'
-import type { Review, ReviewSource } from '@/lib/sanity'
+import type { Review, ReviewSource } from '@/lib/cms'
 
 const FILTERS: ReadonlyArray<{ label: string; value: 'all' | ReviewSource }> = [
   { label: 'All Reviews', value: 'all' },

@@ -1,6 +1,6 @@
 import { Container, Section } from '@/components/ui'
 import { PortableTextRenderer } from '@/components/sections/_shared/PortableTextRenderer'
-import type { Post } from '@/lib/sanity'
+import type { Post } from '@/lib/cms'
 
 interface BlogArticleBodyProps {
   post: Post

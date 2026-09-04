@@ -2,11 +2,11 @@ import Link from 'next/link'
 import { ArrowRight, Quote, Star } from 'lucide-react'
 
 import { Container, Section } from '@/components/ui'
-import { sanityFetch } from '@/lib/sanity/fetcher'
+import { cmsFetch } from '@/lib/cms/fetcher'
 import {
   featuredReviewsQuery,
   type Review,
-} from '@/lib/sanity'
+} from '@/lib/cms'
 
 /**
  * Reviews glimpse section — Homepage.
@@ -15,7 +15,7 @@ import {
  * Server component — fetches at render time.
  */
 export async function ReviewsGlimpse() {
-  const reviews = await sanityFetch<Review[]>(featuredReviewsQuery)
+  const reviews = await cmsFetch<Review[]>(featuredReviewsQuery)
   if (!reviews || reviews.length === 0) return null
 
   const featured = reviews.slice(0, 4)

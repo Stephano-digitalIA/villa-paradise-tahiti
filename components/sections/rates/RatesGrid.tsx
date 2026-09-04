@@ -3,7 +3,7 @@ import { Badge } from '@/components/ui'
 import { Price } from '@/components/currency'
 import { SEASONAL_RATES } from '@/lib/booking/pricing'
 import type { Season } from '@/lib/booking/types'
-import type { Settings } from '@/lib/sanity'
+import type { Settings } from '@/lib/cms'
 import { getSiteContent } from '@/lib/content'
 
 interface SeasonRate {

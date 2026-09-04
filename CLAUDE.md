@@ -23,20 +23,27 @@ npx tsx --env-file=.env.local scripts/<name>.ts
 
 Path alias: `@/*` → repo root (e.g. `@/lib/booking`).
 
-## The single most important thing: data does NOT come from Sanity
+## The content layer: `lib/cms`, backed by Supabase
 
-Despite the name, **`sanityFetch()` reads from Supabase, not Sanity.** The README/docs (and the `lib/sanity/` folder name) are stale — the data layer was migrated to Supabase.
+`cmsFetch()` reads Supabase. The folder was called `lib/sanity` and really did
+talk to Sanity once; the Sanity SDK, its Studio route and its client have been
+removed, and the folder is now `lib/cms`. Not to be confused with `lib/content`,
+which is the override layer for editable page copy.
 
-- `lib/sanity/fetcher.ts` matches each GROQ query *constant* (from `lib/sanity/queries.ts`) to a Supabase query function in `lib/supabase/queries.ts`, then runs the row through `lib/supabase/adapters.ts` to produce the camelCase, Sanity-shaped object the components expect.
-- It falls back to `lib/sanity/mock-data.ts` **only when Supabase returns null/empty**. With real Supabase creds in `.env.local`, the live site always uses Supabase; the mock is never shown.
-- `NEXT_PUBLIC_SANITY_PROJECT_ID=mock` — Sanity Studio (`/studio`) is effectively unused.
+- `lib/cms/fetcher.ts` matches each GROQ query *constant* (from
+  `lib/cms/queries.ts`) to a Supabase query function in
+  `lib/supabase/queries.ts`, then runs the row through
+  `lib/supabase/adapters.ts` to produce the camelCase object the components
+  expect. The GROQ strings are now just keys; nothing parses them.
+- It falls back to `lib/cms/mock-data.ts` **only when Supabase returns
+  null/empty**. With real Supabase creds the live site always uses Supabase.
 
 Consequences when editing **content** (villa description, amenities, reviews, experiences, settings):
-- **Editing `lib/sanity/mock-data.ts` or `supabase/seed.sql` does NOT change what's live** — those are only the fallback/seed. The live value lives in a Supabase table row.
+- **Editing `lib/cms/mock-data.ts` or `supabase/seed.sql` does NOT change what's live**. Those are only the fallback/seed. The live value lives in a Supabase table row.
 - To change live content: use the admin UI at `/admin/content/*`, **or** write a targeted script (see `scripts/update-villa-*.ts`) that updates the specific column. Then mirror the change in `mock-data.ts` + `seed.sql` to keep the fallback consistent.
 - **Adapter gotcha:** if an adapter (e.g. `adaptVilla`) doesn't map a DB column, that field silently becomes `undefined` and disappears from the UI — even though the column and mock both have it. When a field "won't show", check the adapter first.
 
-`/gallery` is the exception: gallery captions/images come from the static `lib/data/gallery-images.ts`, not Supabase.
+`/gallery` reads Supabase like the rest; `lib/data/gallery-images.ts` is only the fallback used when the table comes back empty.
 
 ## Next.js Data Cache gotcha (dev)
 
@@ -54,7 +61,7 @@ Includes seasonal rates (low/high/peak — keep in sync with `components/section
 
 - `middleware.ts` refreshes the Supabase SSR session cookie on every request and **authorizes** `/admin/*`: it verifies the caller is a row in `admin_users` (RLS self-read via the user's session), not just that a session cookie exists. This matters because admin and customer sign-ins share one Supabase session, so a signed-in customer holds a valid cookie; `admin_users` membership is what grants admin access. Non-admins are bounced (unauthenticated → `/admin/auth`; authenticated-but-not-admin → `/`, preserving their customer session). The admin API routes (`/api/admin/*`) repeat the same `admin_users` check independently. `/admin/auth` is intentionally left open to avoid a redirect loop. The admin page layouts do **not** re-check membership, so the middleware is the authoritative gate for admin pages.
 - **`NEXT_PUBLIC_SUPABASE_URL` + `NEXT_PUBLIC_SUPABASE_ANON_KEY` are required or every route 500s** (the middleware constructs a Supabase client unconditionally). Server-side queries also need `SUPABASE_SERVICE_ROLE_KEY`.
-- ⚠️ `.env.example` does **not** list the Supabase vars even though they're mandatory. Copy it to `.env.local` and add the three Supabase keys. The other integrations (Stripe, PayPal, Resend, Sanity, iCal, GA/Hotjar) all have mock fallbacks documented in the README and degrade gracefully when their keys are absent.
+- ⚠️ `.env.example` does **not** list the Supabase vars even though they're mandatory. Copy it to `.env.local` and add the three Supabase keys. The other integrations (PayPal, Resend, Anthropic, iCal, GA/Hotjar) all have mock fallbacks and degrade gracefully when their keys are absent.
 
 ## Supabase schema & migrations
 
@@ -67,7 +74,7 @@ Public page copy is hardcoded English inside `components/sections/<page>/*`. The
 
 ## Structure (route groups)
 
-`app/` App Router: `(marketing)/` public pages, `(legal)/` policies, `(admin)/admin/*` Supabase-gated back-office, `booking/` the funnel (+ `checkout`, `success/cancel`, `paypal/return`), `api/` endpoints (checkout, contact, ical, stripe/paypal webhooks, track), `studio/` (unused Sanity embed). Homepage is `app/page.tsx`, assembled from `components/sections/home/*`. Payments: Stripe Checkout + PayPal Orders v2; emails via Resend (React Email templates in `lib/resend/`).
+`app/` App Router: `(marketing)/` public pages, `(legal)/` policies, `(admin)/admin/*` Supabase-gated back-office, `booking/` the funnel (+ `checkout`, `success/cancel`, `paypal/return`), `api/` endpoints (checkout, contact, ical, paypal webhook, newsletter, cron, track). Homepage is `app/page.tsx`, assembled from `components/sections/home/*`. Payments: PayPal Orders v2, which settles both visible options since its guest checkout takes a card without an account; emails via Resend (React Email templates in `lib/resend/`).
 
 ## Deployment
 

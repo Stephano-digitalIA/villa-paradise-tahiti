@@ -21,7 +21,7 @@ import { Badge } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { calculateExperienceLineTotal } from '@/lib/booking'
 import { useCurrency } from '@/components/currency'
-import type { Experience, PriceUnit } from '@/lib/sanity'
+import type { Experience, PriceUnit } from '@/lib/cms'
 
 import { useBooking } from './BookingProvider'
 

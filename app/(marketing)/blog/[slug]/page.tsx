@@ -11,13 +11,13 @@ import { BlogArticleCta } from '@/components/sections/blog/BlogArticleCta'
 import { BlogArticleHero } from '@/components/sections/blog/BlogArticleHero'
 import { BlogAuthorBio } from '@/components/sections/blog/BlogAuthorBio'
 import { BlogRelated } from '@/components/sections/blog/BlogRelated'
-import { sanityFetch } from '@/lib/sanity/fetcher'
+import { cmsFetch } from '@/lib/cms/fetcher'
 import {
   postBySlugQuery,
   postsQuery,
   urlForImage,
   type Post,
-} from '@/lib/sanity'
+} from '@/lib/cms'
 import { SITE_URL, absoluteUrl, buildMetadata } from '@/lib/seo'
 
 interface BlogPostPageProps {
@@ -26,11 +26,11 @@ interface BlogPostPageProps {
 
 /**
  * Generate the static set of /blog/[slug] paths at build time.
- * In mock mode this reads the local fixtures; with real Sanity it hits
+ * Reads Supabase, falling back to the local fixtures when it returns
  * the API. Either way the surface stays the same.
  */
 export async function generateStaticParams() {
-  const posts = await sanityFetch<Post[]>(postsQuery)
+  const posts = await cmsFetch<Post[]>(postsQuery)
   return posts.map((post) => ({ slug: post.slug.current }))
 }
 
@@ -41,7 +41,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({
   params,
 }: BlogPostPageProps): Promise<Metadata> {
-  const post = await sanityFetch<Post | null>(postBySlugQuery, {
+  const post = await cmsFetch<Post | null>(postBySlugQuery, {
     slug: params.slug,
   })
 
@@ -86,7 +86,7 @@ export async function generateMetadata({
  * to the journal index.
  */
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
-  const post = await sanityFetch<Post | null>(postBySlugQuery, {
+  const post = await cmsFetch<Post | null>(postBySlugQuery, {
     slug: params.slug,
   })
 
@@ -95,8 +95,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   }
 
   // Fetch the rest to pick related posts. Cheap with both the mock and
-  // real Sanity (already cached after the first call thanks to ISR).
-  const allPosts = await sanityFetch<Post[]>(postsQuery)
+  // Supabase (already cached after the first call thanks to ISR).
+  const allPosts = await cmsFetch<Post[]>(postsQuery)
   const related = allPosts.filter((p) => p._id !== post._id).slice(0, 2)
 
   return (

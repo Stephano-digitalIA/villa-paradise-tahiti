@@ -1,6 +1,6 @@
 import { Container, Section } from '@/components/ui'
 import { FaqAccordion } from './FaqAccordion'
-import type { FAQ, FaqCategory } from '@/lib/sanity'
+import type { FAQ, FaqCategory } from '@/lib/cms'
 
 interface FaqGroupsProps {
   faqs: FAQ[]

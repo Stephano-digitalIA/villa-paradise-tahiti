@@ -16,8 +16,8 @@ import {
   VillaDescription,
 } from '@/components/sections/villa'
 import { SITE_URL, absoluteUrl, buildMetadata } from '@/lib/seo'
-import { sanityFetch } from '@/lib/sanity/fetcher'
-import { villaQuery, type Villa } from '@/lib/sanity'
+import { cmsFetch } from '@/lib/cms/fetcher'
+import { villaQuery, type Villa } from '@/lib/cms'
 
 export const metadata: Metadata = buildMetadata({
   title: 'The Villa — Villa Paradise Tahiti',
@@ -44,7 +44,7 @@ export const metadata: Metadata = buildMetadata({
  * Structured data: VacationRental (primary product) + BreadcrumbList.
  */
 export default async function VillaPage() {
-  const villa = await sanityFetch<Villa | null>(villaQuery)
+  const villa = await cmsFetch<Villa | null>(villaQuery)
   if (!villa) notFound()
 
   return (

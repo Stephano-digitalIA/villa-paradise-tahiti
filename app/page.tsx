@@ -18,9 +18,9 @@ import {
 } from '@/components/sections/home'
 import { HeroVideo } from '@/components/sections/home/HeroVideo'
 import { buildMetadata } from '@/lib/seo'
-import { sanityFetch } from '@/lib/sanity/fetcher'
-import { villaQuery, type Villa } from '@/lib/sanity'
-import { mockVilla } from '@/lib/sanity'
+import { cmsFetch } from '@/lib/cms/fetcher'
+import { villaQuery, type Villa } from '@/lib/cms'
+import { mockVilla } from '@/lib/cms'
 
 export const metadata: Metadata = buildMetadata({
   title: 'Villa Paradise Tahiti — Luxury Villa & the Tahiti Hotel Alternative',
@@ -30,7 +30,7 @@ export const metadata: Metadata = buildMetadata({
 })
 
 export default async function HomePage() {
-  const villa = await sanityFetch<Villa | null>(villaQuery)
+  const villa = await cmsFetch<Villa | null>(villaQuery)
   const videoUrl = mockVilla.heroVideoUrl
   const posterUrl = mockVilla.heroImage.url ?? ''
 

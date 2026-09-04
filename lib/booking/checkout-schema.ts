@@ -18,7 +18,7 @@
  *    `specialRequests`, `acceptMarketing`, `phone` style: the form must not
  *    block on details a US guest may want to skip.
  *
- * Keep this file framework-agnostic (no React, no Sanity) — server routes
+ * Keep this file framework-agnostic (no React, no data layer): server routes
  * and CLI scripts must be able to import it.
  */
 

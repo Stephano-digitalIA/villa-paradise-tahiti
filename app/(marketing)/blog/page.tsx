@@ -4,8 +4,8 @@ import { JsonLd, blogSchema, breadcrumbSchema } from '@/components/seo'
 import { BlogGrid } from '@/components/sections/blog/BlogGrid'
 import { BlogHero } from '@/components/sections/blog/BlogHero'
 import { BlogNewsletter } from '@/components/sections/blog/BlogNewsletter'
-import { sanityFetch } from '@/lib/sanity/fetcher'
-import { postsQuery, type Post } from '@/lib/sanity'
+import { cmsFetch } from '@/lib/cms/fetcher'
+import { postsQuery, type Post } from '@/lib/cms'
 import { SITE_URL, absoluteUrl, buildMetadata } from '@/lib/seo'
 
 export const metadata: Metadata = buildMetadata({
@@ -26,7 +26,7 @@ export const metadata: Metadata = buildMetadata({
  * page registers as a proper container of `Article` items.
  */
 export default async function BlogIndexPage() {
-  const posts = await sanityFetch<Post[]>(postsQuery)
+  const posts = await cmsFetch<Post[]>(postsQuery)
 
   return (
     <>

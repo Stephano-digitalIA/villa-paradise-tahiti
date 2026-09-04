@@ -3,21 +3,21 @@ import Image from 'next/image'
 import { ArrowRight, BedDouble, Bath, Users, Maximize } from 'lucide-react'
 
 import { Container, Section } from '@/components/ui'
-import { sanityFetch } from '@/lib/sanity/fetcher'
-import { villaQuery, type Villa } from '@/lib/sanity'
+import { cmsFetch } from '@/lib/cms/fetcher'
+import { villaQuery, type Villa } from '@/lib/cms'
 import { getSiteContent } from '@/lib/content'
 
 /**
  * Villa preview section — Homepage.
  *
  * Editorial 2-column block (image + text on desktop, stacked on mobile).
- * Pulls the villa name, tagline and headline stats from Sanity, then
+ * Pulls the villa name, tagline and headline stats from the database, then
  * sends the visitor to `/villa` for the full deep-dive.
  *
- * Server component — `await sanityFetch` resolves at render time.
+ * Server component: `await cmsFetch` resolves at render time.
  */
 export async function VillaPreview() {
-  const villa = await sanityFetch<Villa | null>(villaQuery)
+  const villa = await cmsFetch<Villa | null>(villaQuery)
   if (!villa) return null
 
   const t = await getSiteContent()

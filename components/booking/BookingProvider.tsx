@@ -5,7 +5,7 @@
  *
  * Architecture:
  *  - The parent **server** page fetches `experiences` + `settings` from
- *    Sanity once and passes them as props.
+ *    the database once and passes them as props.
  *  - This Provider exposes the **client-only** mutable booking state plus
  *    a derived `breakdown` and validation result.
  *  - State changes are mirrored to `localStorage` with a 300ms debounce so
@@ -28,7 +28,7 @@ import {
   type ReactNode,
 } from 'react'
 
-import type { Experience, Settings } from '@/lib/sanity'
+import type { Experience, Settings } from '@/lib/cms'
 import {
   computeBreakdown,
   loadBookingState,
@@ -58,9 +58,9 @@ export interface AvailabilityConflict {
 }
 
 export interface BookingContextValue {
-  /** Sanity-provided list of available experiences (filtered upstream). */
+  /** List of available experiences (filtered upstream). */
   experiences: Experience[]
-  /** Sanity settings — pricing knobs, deposit %, etc. */
+  /** Settings: pricing knobs, deposit percentage, and so on. */
   settings: Settings | null
   /** Current mutable state — never mutate directly, always use the actions. */
   state: BookingState

@@ -1,14 +1,14 @@
 /**
  * Mock data — Villa Paradise Tahiti.
  *
- * Used whenever `NEXT_PUBLIC_SANITY_PROJECT_ID` is absent or equals `"mock"`.
+ * Used whenever a Supabase read comes back null or empty. Formerly keyed on `"mock"`.
  * Phase C will build out the public pages against these fixtures so the
- * site can be shipped before any real Sanity project exists.
+ * site still renders when the database is unreachable or empty.
  *
  * Conventions:
  *  - Every image uses a stable Unsplash URL with a query-string-encoded
- *    transformation list. Replace later by Sanity uploads.
- *  - Slugs and IDs follow the same shape Sanity will return so swapping is
+ *    transformation list.
+ *  - Slugs and IDs follow the shape the adapters produce so swapping is
  *    transparent for downstream code.
  *  - Long-form text fields (description, body, answer, policy) are plain
  *    Markdown strings, rendered via ReactMarkdown / PortableTextRenderer.
@@ -29,7 +29,7 @@ import { CONTACT_EMAIL } from '@/lib/constants'
  * Helpers
  * ------------------------------------------------------------------------- */
 
-/** Build a Sanity-shaped image stub with an embedded URL for mock mode. */
+/** Build an image stub with an embedded URL, for the fallback fixtures. */
 function img(url: string, alt: string, caption?: string) {
   return {
     _type: 'image' as const,

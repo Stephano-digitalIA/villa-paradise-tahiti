@@ -4,20 +4,20 @@ import { ArrowRight } from 'lucide-react'
 
 import { Button, Container, Section } from '@/components/ui'
 import { Price } from '@/components/currency'
-import { sanityFetch } from '@/lib/sanity/fetcher'
+import { cmsFetch } from '@/lib/cms/fetcher'
 import {
   featuredExperiencesQuery,
   type Experience,
-} from '@/lib/sanity'
+} from '@/lib/cms'
 
 /**
  * Experiences teaser section — Homepage.
  *
- * Renders the top featured experiences from Sanity as a 3-up card grid.
+ * Renders the top featured experiences as a 3-up card grid.
  * Server component — fetches at render time, no hydration cost.
  */
 export async function ExperiencesTeaser() {
-  const experiences = await sanityFetch<Experience[]>(featuredExperiencesQuery)
+  const experiences = await cmsFetch<Experience[]>(featuredExperiencesQuery)
   if (!experiences || experiences.length === 0) return null
 
   const featured = experiences.slice(0, 4)

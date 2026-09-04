@@ -4,8 +4,8 @@ import { JsonLd, breadcrumbSchema, faqPageSchema } from '@/components/seo'
 import { FaqContactCta } from '@/components/sections/faq/FaqContactCta'
 import { FaqHero } from '@/components/sections/faq/FaqHero'
 import { FaqSearchableGroups } from '@/components/sections/faq/FaqSearchableGroups'
-import { sanityFetch } from '@/lib/sanity/fetcher'
-import { faqsQuery, type FAQ } from '@/lib/sanity'
+import { cmsFetch } from '@/lib/cms/fetcher'
+import { faqsQuery, type FAQ } from '@/lib/cms'
 import { SITE_URL, absoluteUrl, buildMetadata } from '@/lib/seo'
 
 export const metadata: Metadata = buildMetadata({
@@ -36,7 +36,7 @@ function answerToPlain(answer: string | undefined): string {
  * /faq — Topical disclosure list.
  *
  * Data flow:
- *  1. `sanityFetch(faqsQuery)` returns all entries pre-sorted by category
+ *  1. `cmsFetch(faqsQuery)` returns all entries pre-sorted by category
  *     and `order` (handled in the mock fallback too).
  *  2. `FaqGroups` re-buckets and re-orders by display priority.
  *  3. Each category gets its own accordion (`FaqAccordion`).
@@ -45,7 +45,7 @@ function answerToPlain(answer: string | undefined): string {
  * flattened to plain text — eligible for Google's FAQ rich result.
  */
 export default async function FaqPage() {
-  const faqs = await sanityFetch<FAQ[]>(faqsQuery)
+  const faqs = await cmsFetch<FAQ[]>(faqsQuery)
 
   const faqEntries = (faqs ?? [])
     .map((faq) => ({

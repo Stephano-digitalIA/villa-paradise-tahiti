@@ -1,6 +1,6 @@
 import { Mail, MapPin, Phone } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import type { Settings } from '@/lib/sanity'
+import type { Settings } from '@/lib/cms'
 import { CONTACT_EMAIL } from '@/lib/constants'
 import { getSiteContent } from '@/lib/content'
 

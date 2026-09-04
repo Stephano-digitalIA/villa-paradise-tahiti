@@ -9,8 +9,8 @@ import { ReviewsCta } from '@/components/sections/reviews/ReviewsCta'
 import { ReviewsGrid } from '@/components/sections/reviews/ReviewsGrid'
 import { ReviewsHero } from '@/components/sections/reviews/ReviewsHero'
 import { ReviewsStats } from '@/components/sections/reviews/ReviewsStats'
-import { sanityFetch } from '@/lib/sanity/fetcher'
-import { reviewsQuery, type Review } from '@/lib/sanity'
+import { cmsFetch } from '@/lib/cms/fetcher'
+import { reviewsQuery, type Review } from '@/lib/cms'
 import { SITE_URL, absoluteUrl, buildMetadata } from '@/lib/seo'
 
 export const metadata: Metadata = buildMetadata({
@@ -23,7 +23,7 @@ export const metadata: Metadata = buildMetadata({
 /**
  * /reviews — Trust hub.
  *
- * Aggregates Sanity reviews into:
+ * Aggregates reviews into:
  *  1. Hero with average rating
  *  2. Stats strip (rating, count, repeat guests, response time)
  *  3. Filterable card grid (by source)
@@ -36,7 +36,7 @@ export const metadata: Metadata = buildMetadata({
  * powers the Google star snippet on the rental's listing.
  */
 export default async function ReviewsPage() {
-  const reviews = await sanityFetch<Review[]>(reviewsQuery)
+  const reviews = await cmsFetch<Review[]>(reviewsQuery)
 
   // Aggregate stats — derived from the live review set so they stay in sync.
   const totalReviews = reviews.length
@@ -46,7 +46,7 @@ export default async function ReviewsPage() {
       : 0
 
   // Marketing-facing total. We floor the figure to 47 to signal scale even
-  // when only a subset of reviews has been migrated into Sanity yet.
+  // when only a subset of reviews has been migrated yet.
   const displayTotal = Math.max(totalReviews, 47)
   const aggregate = aggregateRatingSchema(reviews, displayTotal)
 

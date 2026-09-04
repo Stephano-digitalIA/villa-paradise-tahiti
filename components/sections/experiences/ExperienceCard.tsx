@@ -5,7 +5,7 @@ import { Clock, Users } from 'lucide-react'
 import { Badge, Card, CardContent } from '@/components/ui'
 import { Price } from '@/components/currency'
 import { cn } from '@/lib/utils'
-import { urlForImage, type Experience } from '@/lib/sanity'
+import { urlForImage, type Experience } from '@/lib/cms'
 
 /**
  * ExperienceCard — visual card for the experiences listing.

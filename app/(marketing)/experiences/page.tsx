@@ -8,11 +8,11 @@ import {
   breadcrumbSchema,
   collectionPageSchema,
 } from '@/components/seo'
-import { sanityFetch } from '@/lib/sanity/fetcher'
+import { cmsFetch } from '@/lib/cms/fetcher'
 import {
   experiencesQuery,
   type Experience,
-} from '@/lib/sanity'
+} from '@/lib/cms'
 import { bookingHref } from '@/lib/navigation'
 import { SITE_URL, absoluteUrl, buildMetadata } from '@/lib/seo'
 
@@ -20,7 +20,7 @@ import { SITE_URL, absoluteUrl, buildMetadata } from '@/lib/seo'
  * /experiences — Catalog page for curated experiences.
  *
  *  - Hero introduces the section.
- *  - The data layer comes from `experiencesQuery` (Sanity in prod,
+ *  - The data layer comes from `experiencesQuery` (Supabase,
  *    fixtures in mock mode).
  *  - The `<ExperienceList />` client component owns the category filter
  *    chips so the rest of the page stays as a server component.
@@ -35,7 +35,7 @@ export const metadata: Metadata = buildMetadata({
 })
 
 export default async function ExperiencesPage() {
-  const experiences = await sanityFetch<Experience[]>(experiencesQuery)
+  const experiences = await cmsFetch<Experience[]>(experiencesQuery)
 
   return (
     <>

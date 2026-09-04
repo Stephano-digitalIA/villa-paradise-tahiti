@@ -3,7 +3,7 @@
  *
  * Sent to the owner inbox (Thierry) whenever a guest reservation is
  * confirmed. Optimized for fast scanning on mobile: large reservation id,
- * key dates, total, and a CTA back to the Sanity Studio so the owner can
+ * key dates, total, and a CTA back to the admin so the owner can
  * see the record in context.
  */
 

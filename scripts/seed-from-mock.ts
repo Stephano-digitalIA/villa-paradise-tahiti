@@ -1,8 +1,8 @@
 /**
- * Seed Supabase from lib/sanity/mock-data.ts.
+ * Seed Supabase from lib/cms/mock-data.ts.
  *
  * Why: the admin reads/writes Supabase but the public site reads the
- * Sanity mock (because `NEXT_PUBLIC_SANITY_PROJECT_ID=mock`). This script
+ * bundled fixtures. This script
  * mirrors the mock content into the Supabase tables so the admin shows
  * the same content the visitor sees, and the operator can edit it.
  *
@@ -25,7 +25,7 @@ import {
   mockReviews,
   mockSettings,
   mockVilla,
-} from '../lib/sanity/mock-data'
+} from '../lib/cms/mock-data'
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
 const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY
@@ -137,7 +137,7 @@ console.log('\n── 3. Experiences ──────────────�
     seasonal: e.seasonal ?? false,
     season_start: e.seasonStart ?? null,
     season_end: e.seasonEnd ?? null,
-    provider_id: null, // Sanity mock has no provider FK — operator can wire later in admin
+    provider_id: null, // the fixtures carry no provider FK; wire it in the admin
     highlights: e.highlights ?? [],
     popularity: e.popularity ?? 50,
     featured: e.featured ?? false,

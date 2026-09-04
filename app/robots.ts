@@ -8,7 +8,7 @@ import { SITE_URL } from '@/lib/seo'
  * Allow everything except internal surfaces that have no SEO value and
  * could leak sensitive endpoints to crawlers:
  *  - `/api/*` — webhook + helper routes (no public payload).
- *  - `/studio/*` — Sanity Studio (auth-gated UI).
+ *  - `/studio/*`: kept so old crawler entries stay disallowed.
  *  - `/booking/checkout`, `/booking/success`, `/booking/cancel` — flow
  *    terminals reachable only from the booking funnel itself.
  *

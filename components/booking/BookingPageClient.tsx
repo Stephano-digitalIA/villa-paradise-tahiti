@@ -4,7 +4,7 @@
  * BookingPageClient — composes the calculator UI inside the Provider.
  *
  * Kept as a separate client component so the route's `page.tsx` can stay
- * a server component (Sanity fetching + metadata). The Suspense boundary
+ * a server component (data fetching + metadata). The Suspense boundary
  * is required by Next 14 around any `useSearchParams()` consumer.
  */
 

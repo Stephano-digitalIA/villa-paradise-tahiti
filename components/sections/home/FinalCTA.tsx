@@ -5,7 +5,7 @@ import { Star } from 'lucide-react'
 import { Button, Container } from '@/components/ui'
 import { bookingHref } from '@/lib/navigation'
 import { getSiteContent } from '@/lib/content'
-import { mockVilla } from '@/lib/sanity'
+import { mockVilla } from '@/lib/cms'
 
 /**
  * Final CTA banner — Homepage.

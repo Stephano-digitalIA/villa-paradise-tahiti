@@ -8,7 +8,7 @@ import {
 } from 'lucide-react'
 
 import { Container, Section } from '@/components/ui'
-import type { Villa } from '@/lib/sanity'
+import type { Villa } from '@/lib/cms'
 
 interface SpecsGridProps {
   villa: Villa

@@ -4,8 +4,8 @@ import { ConsentGate } from '@/components/analytics'
 import { AuthProvider } from '@/components/auth/AuthProvider'
 import { CurrencyProvider } from '@/components/currency'
 import { ChromeGate, Footer, Header, SkipToContent } from '@/components/layout'
-import { sanityFetch } from '@/lib/sanity/fetcher'
-import { settingsQuery, type Settings } from '@/lib/sanity'
+import { cmsFetch } from '@/lib/cms/fetcher'
+import { settingsQuery, type Settings } from '@/lib/cms'
 import { cn } from '@/lib/utils'
 import { SITE_KEYWORDS } from '@/lib/seo'
 import './globals.css'
@@ -52,7 +52,7 @@ export default async function RootLayout({
   // from a cookie inside the provider (the middleware doesn't forward arbitrary
   // cookies to the server render), so the rate is always correct and only the
   // symbol may briefly flash to EUR on a returning EUR visitor's first paint.
-  const settings = await sanityFetch<Settings | null>(settingsQuery).catch(() => null)
+  const settings = await cmsFetch<Settings | null>(settingsQuery).catch(() => null)
   const usdToEurRate = settings?.usdToEurRate ?? 0.88
 
   return (

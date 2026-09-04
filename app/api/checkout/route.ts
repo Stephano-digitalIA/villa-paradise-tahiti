@@ -5,7 +5,7 @@
  * Pipeline:
  *
  *   1. Parse + Zod-validate the payload (booking + customer).
- *   2. Recompute the price breakdown server-side using the live Sanity
+ *   2. Recompute the price breakdown server-side using the live
  *      settings — **never trust client-supplied amounts**.
  *   3. Generate a reservation reference.
  *   4. Branch by `customer.paymentMethod`:
@@ -21,7 +21,7 @@
  *   - 400 / 422 / 500 on failure.
  *
  * Side effects to add later:
- *   - Persisting the reservation to a real store (Sanity, Airtable, DB)
+ *   - Persisting the reservation to Supabase
  *     before redirecting. Today the metadata is the source of truth and
  *     the webhook rebuilds the email payload from it.
  */
@@ -41,13 +41,13 @@ import {
 import { checkAvailability } from '@/lib/booking/availability'
 import { convertUsdToEur } from '@/lib/currency'
 import { createPayPalOrder, isPayPalConfigured } from '@/lib/paypal'
-import { sanityFetch } from '@/lib/sanity/fetcher'
+import { cmsFetch } from '@/lib/cms/fetcher'
 import {
   experiencesQuery,
   settingsQuery,
   type Experience,
   type Settings,
-} from '@/lib/sanity'
+} from '@/lib/cms'
 import { adminClient } from '@/lib/supabase/admin'
 
 /* ---------------------------------------------------------------------------
@@ -128,15 +128,15 @@ export async function POST(request: Request) {
   let settings: Settings | null = null
   let experienceCatalog: Experience[] = []
   try {
-    settings = await sanityFetch<Settings | null>(settingsQuery, {}, { revalidate: 60 })
-    experienceCatalog = (await sanityFetch<Experience[] | null>(
+    settings = await cmsFetch<Settings | null>(settingsQuery, {}, { revalidate: 60 })
+    experienceCatalog = (await cmsFetch<Experience[] | null>(
       experiencesQuery,
       {},
       { revalidate: 60 },
     )) ?? []
   } catch (err) {
     // eslint-disable-next-line no-console
-    console.error('[api/checkout] sanity fetch failed', err)
+    console.error('[api/checkout] settings fetch failed', err)
     // Continue — `toPricingSettings` handles a null settings gracefully
     // and the catalog is only used for enrichment of line items.
   }

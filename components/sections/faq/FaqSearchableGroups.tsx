@@ -5,7 +5,7 @@ import { Search, X } from 'lucide-react'
 
 import { Container, Section } from '@/components/ui'
 import { FaqGroups } from './FaqGroups'
-import type { FAQ } from '@/lib/sanity'
+import type { FAQ } from '@/lib/cms'
 
 interface FaqSearchableGroupsProps {
   faqs: FAQ[]

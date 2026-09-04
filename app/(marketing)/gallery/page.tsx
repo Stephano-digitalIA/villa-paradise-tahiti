@@ -62,7 +62,7 @@ async function loadGalleryImages(): Promise<GalleryImage[]> {
  * Image data comes from Supabase (`gallery_items`);
  * `lib/data/gallery-images.ts` is only the fallback when the table is empty.
  * CATEGORY_MAP translates the DB category onto the filter chips: the rest of
- * the UI is data-shape agnostic so we can drop in a Sanity feed later
+ * the UI is data-shape agnostic so the source can change later
  * without touching this file.
  */
 

@@ -17,20 +17,20 @@ import {
 } from '@/components/seo'
 import { bookingHref } from '@/lib/navigation'
 import { SITE_URL, absoluteUrl, buildMetadata } from '@/lib/seo'
-import { sanityFetch } from '@/lib/sanity/fetcher'
+import { cmsFetch } from '@/lib/cms/fetcher'
 import {
   experienceBySlugQuery,
   experiencesQuery,
   urlForImage,
   type Experience,
-} from '@/lib/sanity'
+} from '@/lib/cms'
 
 /**
  * /experiences/[slug] — Detail page for a single curated experience.
  *
  *  - Statically generated for every active experience via
  *    `generateStaticParams` so prod pages serve from the edge.
- *  - SEO metadata pulls from Sanity `seo.metaTitle/metaDescription`
+ *  - SEO metadata pulls from `seo.metaTitle/metaDescription`
  *    if defined, otherwise falls back to the experience title/short
  *    description.
  *  - Renders the long-form description via `PortableTextRenderer` (ReactMarkdown).
@@ -49,12 +49,12 @@ interface RouteParams {
 /* ─── Static generation ──────────────────────────────────────────────── */
 
 export async function generateStaticParams() {
-  const experiences = await sanityFetch<Experience[]>(experiencesQuery)
+  const experiences = await cmsFetch<Experience[]>(experiencesQuery)
   return (experiences ?? []).map((e) => ({ slug: e.slug.current }))
 }
 
 export async function generateMetadata({ params }: RouteParams): Promise<Metadata> {
-  const experience = await sanityFetch<Experience | null>(experienceBySlugQuery, {
+  const experience = await cmsFetch<Experience | null>(experienceBySlugQuery, {
     slug: params.slug,
   })
 
@@ -130,7 +130,7 @@ function formatSeason(experience: Experience): string | null {
 /* ─── Page ───────────────────────────────────────────────────────────── */
 
 export default async function ExperienceDetailPage({ params }: RouteParams) {
-  const experience = await sanityFetch<Experience | null>(experienceBySlugQuery, {
+  const experience = await cmsFetch<Experience | null>(experienceBySlugQuery, {
     slug: params.slug,
   })
 
@@ -143,7 +143,7 @@ export default async function ExperienceDetailPage({ params }: RouteParams) {
   const galleryImages = await getExperienceGalleryBySlug(params.slug)
 
   // Fetch related experiences (same category, exclude current, limit 3).
-  const allExperiences = await sanityFetch<Experience[]>(experiencesQuery)
+  const allExperiences = await cmsFetch<Experience[]>(experiencesQuery)
   const relatedExperiences = (allExperiences ?? [])
     .filter((e) => e.category === experience.category && e._id !== experience._id)
     .slice(0, 3)

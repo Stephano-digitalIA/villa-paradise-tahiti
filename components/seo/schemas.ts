@@ -24,22 +24,22 @@ import type {
   Experience,
   Post,
   Review,
-  SanityImage,
+  CmsImage,
   Villa,
-} from '@/lib/sanity/types'
-import { urlForImage } from '@/lib/sanity/image'
+} from '@/lib/cms/types'
+import { urlForImage } from '@/lib/cms/image'
 
 /* ---------------------------------------------------------------------------
  * Shared building blocks
  * ------------------------------------------------------------------------- */
 
-/** Safely resolve a Sanity image to an absolute URL — empty string when missing. */
-function imageUrl(image: SanityImage | undefined | null): string {
+/** Safely resolve an image to an absolute URL, empty string when missing. */
+function imageUrl(image: CmsImage | undefined | null): string {
   if (!image) return ''
-  // Prefer the direct `url` (mock mode) or `asset.url` (Sanity expansion).
+  // Prefer the direct `url`, then `asset.url`.
   const direct = image.url ?? image.asset?.url
   if (direct) return direct
-  // Fall back to the URL builder (production Sanity with reference assets).
+  // Fall back to the URL builder.
   return urlForImage(image).width(1600).height(900).fit('crop').url()
 }
 
@@ -298,7 +298,7 @@ export function breadcrumbSchema(items: BreadcrumbItem[]): Record<string, unknow
 export function aggregateRatingSchema(
   reviews: Review[],
   /** Optional override — useful when the marketing copy says "100+ reviews" while
-   * we only have a subset migrated into Sanity. */
+   * we only have a subset migrated. */
   displayCount?: number,
 ): Record<string, unknown> | null {
   if (!reviews.length) return null

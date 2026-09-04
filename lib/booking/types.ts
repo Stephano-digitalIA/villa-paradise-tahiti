@@ -21,7 +21,7 @@
  * the edge with `formatUSD`.
  */
 
-import type { PriceUnit } from '@/lib/sanity'
+import type { PriceUnit } from '@/lib/cms'
 
 /* ---------------------------------------------------------------------------
  * Selected experience line

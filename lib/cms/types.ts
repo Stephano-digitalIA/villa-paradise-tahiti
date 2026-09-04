@@ -1,16 +1,16 @@
 /**
- * Sanity content types — Villa Paradise Tahiti.
+ * Content types — Villa Paradise Tahiti.
  *
- * Hand-rolled TypeScript interfaces mirroring the Sanity schemas in
- * `sanity/schemas/`. Hand-rolling (vs generated) keeps the surface small,
- * stable, and intentional — generated types from `sanity-codegen` can be
+ * Hand-rolled TypeScript interfaces mirroring the tables read by
+ * the admin. Hand-rolling (vs generated) keeps the surface small,
+ * stable, and intentional — generated types can be
  * added later when the schemas stabilise post-launch.
  *
  * Conventions:
  *  - Long-form text fields (description, body, answer, policy) are plain
  *    Markdown strings — sourced from Supabase, rendered via ReactMarkdown.
  *  - Images expose a stable shape so `urlForImage(image)` works regardless
- *    of whether the source is a real Sanity asset or a mock.
+ *    of whether the source is a stored image or a fixture.
  *  - All copy fields are English (US market).
  */
 
@@ -18,11 +18,11 @@
  * Primitives
  * ------------------------------------------------------------------------- */
 
-export interface SanityImage {
+export interface CmsImage {
   _type?: 'image'
   alt?: string
   caption?: string
-  /** Mock-mode escape hatch — a direct URL to use instead of a real Sanity asset. */
+  /** A direct URL to the stored image —  */
   url?: string
   asset?: {
     _ref?: string
@@ -31,15 +31,15 @@ export interface SanityImage {
   }
 }
 
-export interface SanitySlug {
+export interface CmsSlug {
   _type?: 'slug'
   current: string
 }
 
-export interface SanitySeo {
+export interface CmsSeo {
   metaTitle?: string
   metaDescription?: string
-  ogImage?: SanityImage
+  ogImage?: CmsImage
 }
 
 /* ---------------------------------------------------------------------------
@@ -67,7 +67,7 @@ export interface VillaLocation {
   lng?: number
 }
 
-export interface VillaGalleryItem extends SanityImage {
+export interface VillaGalleryItem extends CmsImage {
   category?: 'exterior' | 'interior' | 'pool' | 'lagoon' | 'bedrooms' | 'night'
 }
 
@@ -78,12 +78,12 @@ export interface Villa {
   tagline: string
   description: string
   heroVideoUrl?: string
-  heroImage: SanityImage
+  heroImage: CmsImage
   gallery?: VillaGalleryItem[]
   specs: VillaSpecs
   amenities?: string[]
   location?: VillaLocation
-  seo?: SanitySeo
+  seo?: CmsSeo
 }
 
 /* ---------------------------------------------------------------------------
@@ -110,12 +110,12 @@ export interface Experience {
   _id: string
   _type: 'experience'
   title: string
-  slug: SanitySlug
+  slug: CmsSlug
   category: ExperienceCategory
   shortDescription: string
   description: string
-  coverImage: SanityImage
-  gallery?: SanityImage[]
+  coverImage: CmsImage
+  gallery?: CmsImage[]
   duration: string
   priceUSD: number
   priceUnit: PriceUnit
@@ -130,7 +130,7 @@ export interface Experience {
   popularity: number
   featured: boolean
   active: boolean
-  seo?: SanitySeo
+  seo?: CmsSeo
 }
 
 /* ---------------------------------------------------------------------------
@@ -161,7 +161,7 @@ export interface Review {
   _type: 'review'
   authorName: string
   authorLocation?: string
-  authorPhoto?: SanityImage
+  authorPhoto?: CmsImage
   rating: 1 | 2 | 3 | 4 | 5
   title: string
   body: string
@@ -181,7 +181,7 @@ export interface Review {
 
 export interface PostAuthor {
   name: string
-  photo?: SanityImage
+  photo?: CmsImage
   bio?: string
 }
 
@@ -189,15 +189,15 @@ export interface Post {
   _id: string
   _type: 'post'
   title: string
-  slug: SanitySlug
+  slug: CmsSlug
   excerpt: string
-  coverImage: SanityImage
+  coverImage: CmsImage
   body: string
   author?: PostAuthor
   tags?: string[]
   publishedAt: string
   readingTimeMin?: number
-  seo?: SanitySeo
+  seo?: CmsSeo
 }
 
 /* ---------------------------------------------------------------------------

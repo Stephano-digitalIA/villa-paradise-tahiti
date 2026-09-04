@@ -5,7 +5,7 @@ import { ChevronDown } from 'lucide-react'
 
 import { PortableTextRenderer } from '@/components/sections/_shared/PortableTextRenderer'
 import { cn } from '@/lib/utils'
-import type { FAQ } from '@/lib/sanity'
+import type { FAQ } from '@/lib/cms'
 
 interface FaqAccordionProps {
   /** All FAQ items inside a single category — assumed already sorted by `order`. */

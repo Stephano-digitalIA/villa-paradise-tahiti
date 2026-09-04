@@ -23,7 +23,7 @@
  *    the `experiences` JSON. We trim experience titles to keep the payload
  *    safe even with a long cart.
  *  - **Catalog-aware titles**: when an experience selection only carries a
- *    slug + title (no full Sanity record), we still try to enrich from
+ *    slug + title (no full record), we still try to enrich from
  *    the supplied `experienceCatalog` so the line item shown on the payment
  *    Checkout page matches what the user saw in the calculator.
  */
@@ -71,7 +71,7 @@ export interface ReservationLineItem {
 
 /**
  * Minimal shape of an experience entry that `buildLineItems` can enrich a
- * selection with. We accept whatever the caller has — full Sanity Experience
+ * selection with. We accept whatever the caller has: a full Experience
  * or just `{ slug, title }` — keeping the function easy to unit-test.
  */
 export interface ExperienceCatalogEntry {
@@ -82,7 +82,7 @@ export interface ExperienceCatalogEntry {
 
 /**
  * Resolve the slug string out of a catalog entry, regardless of whether the
- * caller supplied a Sanity slug object or a plain string.
+ * caller supplied a slug object or a plain string.
  */
 function resolveSlug(entry: ExperienceCatalogEntry): string | undefined {
   if (typeof entry.slug === 'string') return entry.slug

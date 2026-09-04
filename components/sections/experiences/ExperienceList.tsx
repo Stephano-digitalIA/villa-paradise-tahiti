@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import { cn } from '@/lib/utils'
-import type { Experience, ExperienceCategory } from '@/lib/sanity'
+import type { Experience, ExperienceCategory } from '@/lib/cms'
 import { ExperienceCard } from './ExperienceCard'
 
 /**
