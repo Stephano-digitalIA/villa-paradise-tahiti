@@ -453,12 +453,45 @@ export type SiteContent = {
   updated_at: string
 }
 
+/** One address on the newsletter list. Single opt-in: a row is live at once. */
+export type NewsletterSubscriber = {
+  id: string
+  /** Lower-cased and trimmed on write, so the unique index really dedupes. */
+  email: string
+  status: 'subscribed' | 'unsubscribed'
+  /** Authenticates a one-click unsubscribe without asking for a login. */
+  unsubscribe_token: string
+  source: string
+  created_at: string
+  unsubscribed_at: string | null
+}
+
+/** One newsletter that was actually sent. A test send never writes a row. */
+export type NewsletterCampaign = {
+  id: string
+  subject: string
+  body: string
+  recipients_count: number
+  delivered_count: number
+  sent_at: string | null
+  sent_by: string | null
+  created_at: string
+}
+
 export type Database = {
   public: {
     Tables: {
       settings: TableDef<Settings, Partial<Settings>>
       villa: TableDef<Villa, Partial<Villa>>
       site_content: TableDef<SiteContent, Partial<SiteContent>>
+      newsletter_subscribers: TableDef<
+        NewsletterSubscriber,
+        InsertOf<Omit<NewsletterSubscriber, 'id' | 'created_at'>>
+      >
+      newsletter_campaigns: TableDef<
+        NewsletterCampaign,
+        InsertOf<Omit<NewsletterCampaign, 'id' | 'created_at'>>
+      >
       gallery_items: TableDef<GalleryItem, InsertOf<Omit<GalleryItem, 'id' | 'created_at'>>>
       excursion_providers: TableDef<
         ExcursionProvider,

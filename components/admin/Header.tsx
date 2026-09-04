@@ -43,6 +43,7 @@ const SEGMENT_LABELS: Record<string, string> = {
   reviews: 'Avis',
   villa: 'Villa',
   inquiries: 'Demandes',
+  newsletter: 'Newsletter',
   new: 'Nouveau',
   reservations: 'Réservations',
   settings: 'Paramètres',

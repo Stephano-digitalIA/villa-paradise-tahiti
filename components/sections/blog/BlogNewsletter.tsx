@@ -1,12 +1,14 @@
 import { Mail } from 'lucide-react'
-import { Button, Container, Input, Section } from '@/components/ui'
+
+import { Container, Section } from '@/components/ui'
+import { NewsletterForm } from './NewsletterForm'
 
 /**
- * BlogNewsletter — soft email capture for the journal index.
+ * BlogNewsletter: email capture for the journal index.
  *
- * Currently non-functional — the form has no action. Phase E will wire
- * it up to Resend / a Supabase function. We keep the UI here so layout
- * decisions stay stable.
+ * The section stays a server component; `NewsletterForm` is the only client
+ * part. It posts to /api/newsletter/subscribe, which saves the address and
+ * sends a welcome email.
  */
 export function BlogNewsletter() {
   return (
@@ -26,27 +28,7 @@ export function BlogNewsletter() {
           marketing fluff — unsubscribe in one click.
         </p>
 
-        <form
-          className="mx-auto mt-8 flex w-full max-w-md flex-col gap-3 sm:flex-row"
-          // TODO Phase E — wire to Resend audience API.
-          action="#"
-          method="post"
-        >
-          <label htmlFor="newsletter-email" className="sr-only">
-            Email address
-          </label>
-          <Input
-            id="newsletter-email"
-            type="email"
-            name="email"
-            required
-            placeholder="you@example.com"
-            className="flex-1"
-          />
-          <Button type="submit" variant="primary" size="md">
-            Subscribe
-          </Button>
-        </form>
+        <NewsletterForm />
 
         <p className="mt-4 font-sans text-caption text-midnight-400">
           By subscribing, you agree to our{' '}

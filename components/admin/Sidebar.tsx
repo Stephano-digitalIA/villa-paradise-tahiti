@@ -189,6 +189,7 @@ const navItems: NavItem[] = [
   { label: 'Calendrier', href: '/admin/calendar', icon: <CalendarIcon /> },
   { label: 'Contenu', href: '/admin/content', icon: <ContentIcon /> },
   { label: 'Demandes', href: '/admin/inquiries', icon: <InquiriesIcon /> },
+  { label: 'Newsletter', href: '/admin/newsletter', icon: <InquiriesIcon /> },
   { label: 'Paramètres', href: '/admin/settings', icon: <SettingsIcon /> },
 ]
 
