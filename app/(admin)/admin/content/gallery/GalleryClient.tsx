@@ -86,6 +86,7 @@ export function GalleryClient({ initialItems }: Props) {
   // Id of the photo currently being translated, or 'all' for the bulk run.
   const [translating, setTranslating] = useState<string | null>(null)
   const [translateError, setTranslateError] = useState<string | null>(null)
+  const [deleteError, setDeleteError] = useState<string | null>(null)
 
   const live = useMemo(() => items.filter((i) => !i.deleted_at), [items])
   const trashed = useMemo(() => items.filter((i) => i.deleted_at), [items])
@@ -260,9 +261,13 @@ export function GalleryClient({ initialItems }: Props) {
 
   function handlePermanentDelete(id: string, imageUrl: string) {
     if (!confirm('Supprimer DÉFINITIVEMENT cette photo ? Le fichier sera effacé et irrécupérable.')) return
+    setDeleteError(null)
     startTransition(async () => {
-      await deleteGalleryItemPermanently(id, imageUrl)
+      const result = await deleteGalleryItemPermanently(id, imageUrl)
+      // The row is gone either way; only the file removal can fail, so the
+      // photo leaves the list and the warning is shown alongside.
       setItems((prev) => prev.filter((i) => i.id !== id))
+      if (result.error) setDeleteError(result.error)
     })
   }
 
@@ -594,6 +599,14 @@ export function GalleryClient({ initialItems }: Props) {
               Photos masquées du site. Restaure-les, ou supprime-les définitivement (le fichier
               sera alors effacé du stockage et irrécupérable).
             </p>
+            {deleteError ? (
+              <p
+                role="alert"
+                className="mt-3 rounded-xl border border-coral/30 bg-coral/5 px-4 py-2.5 font-sans text-sm text-coral"
+              >
+                {deleteError}
+              </p>
+            ) : null}
           </div>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
             {trashed.map((item) => (

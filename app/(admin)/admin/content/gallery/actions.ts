@@ -93,22 +93,68 @@ export async function restoreGalleryItem(id: string): Promise<void> {
 // ─────────────────────────────────────────────────────────────────────────────
 // deleteGalleryItemPermanently — DELETE row + remove file from Storage (final)
 // ─────────────────────────────────────────────────────────────────────────────
+/**
+ * Storage path for a photo, or null when there is no file of ours to remove.
+ *
+ * Two kinds of URL live in this column. Uploads are absolute Supabase Storage
+ * URLs containing `/object/public/villa-media/`. The photos seeded with the
+ * site are relative paths like `/images/villa/interior-bathroom.webp`: those
+ * files ship in the repo under `public/`, so there is nothing in Storage to
+ * delete and nothing this action should touch.
+ *
+ * `new URL()` throws on a relative path, which is exactly what broke this:
+ * the exception escaped the server action and the admin showed
+ * "Application error: a server-side exception has occurred", with no clue
+ * that the row had in fact already been deleted.
+ */
+function storagePathOf(imageUrl: string): string | null {
+  let pathname: string
+  try {
+    pathname = new URL(imageUrl).pathname
+  } catch {
+    // Relative path: a bundled file, not one of ours in Storage.
+    return null
+  }
+  const parts = pathname.split('/object/public/villa-media/')
+  return parts[1] ? decodeURIComponent(parts[1]) : null
+}
+
+/**
+ * Delete the row for good, and the stored file with it when there is one.
+ *
+ * Returns an error rather than throwing. A thrown error in a server action
+ * reaches the browser as an opaque digest, which tells the operator nothing
+ * and hides whether anything happened.
+ *
+ * The row goes first: it is what makes the photo disappear from the site. A
+ * failure to remove the file afterwards leaves an orphan in the bucket, which
+ * costs a little storage and nothing else, so it is reported without undoing
+ * the delete.
+ */
 export async function deleteGalleryItemPermanently(
   id: string,
   imageUrl: string,
-): Promise<void> {
+): Promise<{ error?: string }> {
   const { error } = await adminClient.from('gallery_items').delete().eq('id', id)
-  if (error) throw new Error(error.message)
+  if (error) return { error: error.message }
 
-  // Extract storage path from URL
-  const url = new URL(imageUrl)
-  const pathSegments = url.pathname.split('/object/public/villa-media/')
-  if (pathSegments[1]) {
-    const { adminClient: admin } = await import('@/lib/supabase/admin')
-    await admin.storage.from('villa-media').remove([pathSegments[1]])
+  const path = storagePathOf(imageUrl)
+  if (path) {
+    const { error: storageError } = await adminClient.storage
+      .from('villa-media')
+      .remove([path])
+    if (storageError) {
+      REVALIDATE()
+      return {
+        error:
+          'Photo retirée du site, mais le fichier n’a pas pu être effacé du stockage : ' +
+          storageError.message,
+      }
+    }
   }
 
   REVALIDATE()
+  return {}
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
