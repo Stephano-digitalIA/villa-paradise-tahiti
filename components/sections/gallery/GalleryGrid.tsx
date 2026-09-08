@@ -9,6 +9,7 @@ import {
   type GalleryImage,
 } from '@/lib/data/gallery-images'
 import { Lightbox } from './Lightbox'
+import { sendPulse } from '@/components/analytics/Pulse'
 
 /**
  * GalleryGrid — orchestrates the gallery experience.
@@ -96,7 +97,15 @@ export function GalleryGrid({ images }: GalleryGridProps) {
     [sections],
   )
 
-  const openLightbox = (index: number) => setLightboxIndex(index)
+  const openLightbox = (index: number) => {
+    setLightboxIndex(index)
+    // Which photos people actually open, so the admin can show what draws
+    // attention. The label is the alt text, never anything about the visitor.
+    const image = lightboxImages[index]
+    if (image) {
+      sendPulse({ path: '/gallery', kind: 'photo_view', label: image.alt || image.id })
+    }
+  }
   const closeLightbox = () => setLightboxIndex(null)
 
   return (

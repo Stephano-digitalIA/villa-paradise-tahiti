@@ -485,12 +485,34 @@ export type NewsletterCampaign = {
   created_at: string
 }
 
+/**
+ * One measured event. Deliberately holds nothing that identifies a person:
+ * no cookie, no IP, no user agent. `visitor_day` is a truncated hash salted
+ * with the date, so it cannot be linked across days by anyone.
+ */
+export type AnalyticsEvent = {
+  id: number
+  kind: string
+  path: string
+  label: string | null
+  source: 'direct' | 'search' | 'social' | 'referral'
+  referrer_host: string | null
+  country: string | null
+  device: 'mobile' | 'tablet' | 'desktop'
+  visitor_day: string
+  occurred_at: string
+}
+
 export type Database = {
   public: {
     Tables: {
       settings: TableDef<Settings, Partial<Settings>>
       villa: TableDef<Villa, Partial<Villa>>
       site_content: TableDef<SiteContent, Partial<SiteContent>>
+      analytics_events: TableDef<
+        AnalyticsEvent,
+        InsertOf<Omit<AnalyticsEvent, 'id' | 'occurred_at'>>
+      >
       newsletter_subscribers: TableDef<
         NewsletterSubscriber,
         InsertOf<Omit<NewsletterSubscriber, 'id' | 'created_at'>>

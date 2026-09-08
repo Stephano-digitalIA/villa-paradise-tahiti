@@ -44,6 +44,7 @@ const SEGMENT_LABELS: Record<string, string> = {
   villa: 'Villa',
   inquiries: 'Demandes',
   newsletter: 'Newsletter',
+  analytics: 'Audience',
   new: 'Nouveau',
   reservations: 'Réservations',
   settings: 'Paramètres',

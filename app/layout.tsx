@@ -4,6 +4,7 @@ import { ConsentGate } from '@/components/analytics'
 import { AuthProvider } from '@/components/auth/AuthProvider'
 import { CurrencyProvider } from '@/components/currency'
 import { ChromeGate, Footer, Header, SkipToContent } from '@/components/layout'
+import { Pulse } from '@/components/analytics/Pulse'
 import { cmsFetch } from '@/lib/cms/fetcher'
 import { settingsQuery, type Settings } from '@/lib/cms'
 import { cn } from '@/lib/utils'
@@ -74,6 +75,9 @@ export default async function RootLayout({
               <Footer />
             </ChromeGate>
             <ConsentGate />
+            {/* Cookie-free audience count. Outside ChromeGate on purpose: the
+                booking funnel hides the chrome but still needs measuring. */}
+            <Pulse />
           </CurrencyProvider>
         </AuthProvider>
       </body>

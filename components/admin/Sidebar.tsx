@@ -183,6 +183,7 @@ function SettingsIcon() {
 
 const navItems: NavItem[] = [
   { label: 'Tableau de bord', href: '/admin', icon: <DashboardIcon /> },
+  { label: 'Audience', href: '/admin/analytics', icon: <DashboardIcon /> },
   { label: 'Réservations', href: '/admin/reservations', icon: <ReservationsIcon /> },
   { label: 'Clients', href: '/admin/clients', icon: <ClientsIcon /> },
   { label: 'Prestations', href: '/admin/content/experiences', icon: <SparklesIcon /> },
