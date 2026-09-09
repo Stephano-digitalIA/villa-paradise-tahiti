@@ -222,6 +222,50 @@ function buildEmailDataFromReservation(
  * Handler
  * ------------------------------------------------------------------------- */
 
+/**
+ * Settle a payment-plan instalment.
+ *
+ * Instalments 2 and 3 are paid from an emailed link, and their order carries
+ * `REF#2` or `REF#3` as the reference. Instalment 1 rides the ordinary
+ * checkout, so its reference is the plain booking ref and it is recognised by
+ * sequence instead.
+ *
+ * Marking the row here rather than when the link is opened is deliberate: an
+ * approval URL is not a payment, and a guest who abandons on PayPal must still
+ * owe the money.
+ *
+ * Returns true when the whole plan is settled, so the caller can promote the
+ * reservation to fully paid.
+ */
+async function settleInstalment(
+  reservationRef: string,
+  sequence: 1 | 2 | 3,
+): Promise<boolean> {
+  const { data: reservation } = await adminClient
+    .from('reservations')
+    .select('id')
+    .eq('reservation_ref', reservationRef)
+    .maybeSingle()
+  if (!reservation?.id) return false
+
+  await adminClient
+    .from('payment_schedule')
+    .update({ status: 'paid', paid_at: new Date().toISOString() })
+    .eq('reservation_id', reservation.id)
+    .eq('sequence', sequence)
+    // Never re-settle a row: a webhook can be delivered more than once, and
+    // the second delivery must not rewrite the date money actually arrived.
+    .eq('status', 'pending')
+
+  const { data: rows } = await adminClient
+    .from('payment_schedule')
+    .select('status')
+    .eq('reservation_id', reservation.id)
+
+  const all = (rows ?? []) as Array<{ status: string }>
+  return all.length > 0 && all.every((r) => r.status === 'paid')
+}
+
 export async function POST(request: Request) {
   const { event, verified } = await verifyPayPalWebhook(request)
 
@@ -302,8 +346,41 @@ export async function POST(request: Request) {
 
       // Resolve the reservationRef from enriched lookup or capture fields
       // PayPal carries it in purchase_units[0].custom_id (mapped to capture.custom_id)
-      const reservationRef =
+      const rawRef =
         enriched?.reservationId ?? capture.custom_id ?? capture.invoice_id ?? null
+
+      // An instalment order carries `REF#2`. Split it back apart: the ref is
+      // what every table keys on, the suffix says which instalment paid.
+      const hashAt = rawRef?.indexOf('#') ?? -1
+      const reservationRef =
+        rawRef && hashAt > 0 ? rawRef.slice(0, hashAt) : rawRef
+      // Only 1, 2 or 3 are real. Anything else in the suffix is a forged or
+      // mangled reference and must not reach a query.
+      const parsedSequence =
+        rawRef && hashAt > 0 ? Number(rawRef.slice(hashAt + 1)) : null
+      const instalmentSequence: 1 | 2 | 3 | null =
+        parsedSequence === 1 || parsedSequence === 2 || parsedSequence === 3
+          ? parsedSequence
+          : null
+
+      // Instalment 2 or 3: settle that row, and stop. The reservation was
+      // already marked paid by instalment 1, and overwriting deposit_paid_at
+      // with today's date would lose when the booking was actually secured.
+      if (reservationRef && instalmentSequence) {
+        try {
+          const complete = await settleInstalment(reservationRef, instalmentSequence)
+          if (complete) {
+            await adminClient
+              .from('reservations')
+              .update({ payment_status: 'fully_paid' })
+              .eq('reservation_ref', reservationRef)
+          }
+        } catch (err) {
+          // eslint-disable-next-line no-console
+          console.error('[paypal:webhook] instalment settle failed:', err)
+        }
+        return NextResponse.json({ received: true, instalment: instalmentSequence })
+      }
 
       let emailData = buildEmailDataFromCapture(capture, enriched)
 
@@ -323,6 +400,10 @@ export async function POST(request: Request) {
                 : null,
             })
             .eq('reservation_ref', reservationRef)
+
+          // A plan's first instalment is paid through the ordinary checkout,
+          // so this is where it gets settled. No-op when there is no plan.
+          await settleInstalment(reservationRef, 1)
         } catch (err) {
           // eslint-disable-next-line no-console
           console.error('[paypal:webhook] reservation update failed:', err)

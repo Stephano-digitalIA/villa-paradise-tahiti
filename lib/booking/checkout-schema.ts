@@ -106,7 +106,7 @@ export const checkoutSchema = z.object({
   paymentMethod: z.enum(['card', 'paypal'], {
     message: 'Choose a payment method',
   }),
-  paymentOption: z.enum(['deposit', 'custom', 'full'], {
+  paymentOption: z.enum(['deposit', 'plan', 'custom', 'full'], {
     message: 'Choose a payment option',
   }),
   customAmountUSD: z.number().positive('Enter a valid amount').optional(),

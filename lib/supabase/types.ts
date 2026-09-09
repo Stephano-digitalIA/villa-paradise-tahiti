@@ -503,12 +503,36 @@ export type AnalyticsEvent = {
   occurred_at: string
 }
 
+/**
+ * One instalment of a three-payment plan. Amounts are USD, like every other
+ * money column; the currency actually charged lives on the reservation.
+ */
+export type PaymentScheduleItem = {
+  id: string
+  reservation_id: string
+  sequence: 1 | 2 | 3
+  label: string
+  amount: number
+  /** ISO date, `YYYY-MM-DD`. */
+  due_date: string
+  status: 'pending' | 'paid' | 'cancelled'
+  paid_at: string | null
+  /** Authenticates the emailed payment link without asking for a login. */
+  pay_token: string
+  reminded_at: string | null
+  created_at: string
+}
+
 export type Database = {
   public: {
     Tables: {
       settings: TableDef<Settings, Partial<Settings>>
       villa: TableDef<Villa, Partial<Villa>>
       site_content: TableDef<SiteContent, Partial<SiteContent>>
+      payment_schedule: TableDef<
+        PaymentScheduleItem,
+        InsertOf<Omit<PaymentScheduleItem, 'id' | 'created_at'>>
+      >
       analytics_events: TableDef<
         AnalyticsEvent,
         InsertOf<Omit<AnalyticsEvent, 'id' | 'occurred_at'>>

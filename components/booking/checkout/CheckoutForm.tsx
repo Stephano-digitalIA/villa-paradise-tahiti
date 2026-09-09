@@ -55,6 +55,7 @@ import {
 } from '@/lib/booking/checkout-schema'
 
 import { useBooking } from '../BookingProvider'
+import { buildSchedule } from '@/lib/booking/schedule'
 
 /* ---------------------------------------------------------------------------
  * Section header — visual rhythm between groups of fields.
@@ -227,6 +228,11 @@ export function CheckoutForm({ initialProfile }: CheckoutFormProps) {
   })
 
   const paymentMethod = watch('paymentMethod')
+
+  // The same function the server runs, so the three figures shown here are the
+  // ones that get written. Null when arrival is too near for a plan to make
+  // sense, and the option simply does not appear.
+  const plan = state.checkIn ? buildSchedule(breakdown.total, state.checkIn) : null
   const paymentOption = watch('paymentOption')
   const customAmountUSD = watch('customAmountUSD')
   const specialRequestsLength = (watch('specialRequests') ?? '').length
@@ -515,6 +521,19 @@ export function CheckoutForm({ initialProfile }: CheckoutFormProps) {
             register={register('paymentOption')}
           />
 
+          {plan ? (
+            <PaymentAmountOption
+              id="po-plan"
+              value="plan"
+              label="Pay in 3"
+              description={`${format(plan[0].amount)} today, ${format(plan[1].amount)} on ${plan[1].dueDate}, ${format(plan[2].amount)} 30 days before arrival`}
+              amount={format(plan[0].amount)}
+              checked={paymentOption === 'plan'}
+              onSelect={() => setValue('paymentOption', 'plan', { shouldValidate: true })}
+              register={register('paymentOption')}
+            />
+          ) : null}
+
           <PaymentAmountOption
             id="po-custom"
             value="custom"
@@ -732,7 +751,7 @@ export function CheckoutForm({ initialProfile }: CheckoutFormProps) {
 
 interface PaymentAmountOptionProps {
   id: string
-  value: 'deposit' | 'custom' | 'full'
+  value: 'deposit' | 'plan' | 'custom' | 'full'
   label: string
   description: string
   amount?: string

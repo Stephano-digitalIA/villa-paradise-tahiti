@@ -49,6 +49,8 @@ import {
   type Settings,
 } from '@/lib/cms'
 import { adminClient } from '@/lib/supabase/admin'
+import { buildSchedule, type Instalment } from '@/lib/booking/schedule'
+import { newPayToken } from '@/lib/booking/pay-token'
 
 /* ---------------------------------------------------------------------------
  * Request schema
@@ -197,7 +199,25 @@ export async function POST(request: Request) {
   let chargeAmount: number
   let paymentLabel: string
 
-  if (paymentOption === 'full') {
+  // Built once and reused: the amount charged today must be the first
+  // instalment of the very schedule that gets written after payment, or the
+  // guest pays one figure and owes another.
+  let schedule: Instalment[] | null = null
+
+  if (paymentOption === 'plan') {
+    schedule = buildSchedule(breakdown.total, booking.checkIn ?? '')
+    if (!schedule) {
+      return NextResponse.json(
+        {
+          error:
+            'The instalment plan is not available for these dates. Please choose another payment option.',
+        },
+        { status: 422 },
+      )
+    }
+    chargeAmount = schedule[0].amount
+    paymentLabel = 'Instalment 1 of 3'
+  } else if (paymentOption === 'full') {
     chargeAmount = breakdown.total
     paymentLabel = 'Full Payment'
   } else if (paymentOption === 'custom') {
@@ -304,6 +324,42 @@ export async function POST(request: Request) {
     if (insertErr) {
       // eslint-disable-next-line no-console
       console.error('[api/checkout] reservation insert failed', { reservationId, error: insertErr })
+    }
+
+    // Write the plan alongside the reservation, so the reminder job and the
+    // admin have a calendar to read. Instalment 1 stays pending here: the
+    // guest has approved nothing yet, and the webhook is what marks it paid.
+    if (schedule && !insertErr) {
+      const { data: row } = await adminClient
+        .from('reservations')
+        .select('id')
+        .eq('reservation_ref', reservationId)
+        .maybeSingle()
+
+      if (row?.id) {
+        const { error: scheduleErr } = await adminClient
+          .from('payment_schedule')
+          .insert(
+            schedule.map((i) => ({
+              reservation_id: row.id,
+              sequence: i.sequence,
+              label: i.label,
+              amount: i.amount,
+              due_date: i.dueDate,
+              status: 'pending' as const,
+              pay_token: newPayToken(),
+              paid_at: null,
+              reminded_at: null,
+            })),
+          )
+        if (scheduleErr) {
+          // eslint-disable-next-line no-console
+          console.error('[api/checkout] schedule insert failed', {
+            reservationId,
+            error: scheduleErr,
+          })
+        }
+      }
     }
   } catch (err) {
     // eslint-disable-next-line no-console
