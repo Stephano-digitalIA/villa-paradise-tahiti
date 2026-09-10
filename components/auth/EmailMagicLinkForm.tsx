@@ -1,10 +1,11 @@
 'use client'
 
-import { useState, type FormEvent } from 'react'
+import { useCallback, useState, type FormEvent } from 'react'
 import { CheckCircle2, Mail } from 'lucide-react'
 
 import { Button, Input } from '@/components/ui'
 import { createImplicitClient } from '@/lib/supabase/client'
+import { Turnstile, turnstileEnabled } from './Turnstile'
 
 interface EmailMagicLinkFormProps {
   /** Path to land on once signed in. Internal path, never a URL. */
@@ -21,6 +22,12 @@ export function EmailMagicLinkForm({
   const [email, setEmail] = useState('')
   const [status, setStatus] = useState<Status>('idle')
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
+  // Proof from Turnstile that a person, not a script, is asking for a link.
+  // Supabase verifies it server-side and refuses the request without it once
+  // the CAPTCHA is switched on in the project settings.
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null)
+  const onCaptcha = useCallback((token: string) => setCaptchaToken(token), [])
+  const onCaptchaExpire = useCallback(() => setCaptchaToken(null), [])
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -42,8 +49,16 @@ export function EmailMagicLinkForm({
 
     const { error } = await createImplicitClient().auth.signInWithOtp({
       email,
-      options: { emailRedirectTo: completeUrl },
+      options: {
+        emailRedirectTo: completeUrl,
+        ...(captchaToken ? { captchaToken } : {}),
+      },
     })
+
+    // A token is single-use. Whatever the outcome, the widget has to be
+    // solved again before another attempt, which is also what stops a script
+    // from replaying one solved challenge in a loop.
+    setCaptchaToken(null)
 
     if (error) {
       setStatus('error')
@@ -115,12 +130,13 @@ export function EmailMagicLinkForm({
             className="pl-9"
           />
         </div>
+        <Turnstile onToken={onCaptcha} onExpire={onCaptchaExpire} />
         <Button
           type="submit"
           variant="outline"
           size="lg"
           className="w-full"
-          disabled={status === 'sending' || !email}
+          disabled={status === 'sending' || !email || (turnstileEnabled && !captchaToken)}
         >
           {status === 'sending' ? 'Sending link…' : 'Email me a sign-in link'}
         </Button>
