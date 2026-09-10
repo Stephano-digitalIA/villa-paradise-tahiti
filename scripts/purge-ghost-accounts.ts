@@ -15,6 +15,11 @@
  *   npx tsx --env-file=.env.local scripts/purge-ghost-accounts.ts
  * Apply:
  *   npx tsx --env-file=.env.local scripts/purge-ghost-accounts.ts --apply
+ *
+ * `--include-confirmed` also takes the accounts whose email was "confirmed"
+ * without anyone ever signing in. Corporate mail gateways open every link in
+ * an incoming message to scan it, which confirms the account on the bot's
+ * behalf. The sign-in and customers checks still apply.
  */
 import { createClient } from '@supabase/supabase-js'
 
@@ -25,6 +30,7 @@ const mask = (email: string) => email.replace(/^(.{2}).*(@.*)$/, '$1***$2')
 
 async function main() {
   const apply = process.argv.includes('--apply')
+  const includeConfirmed = process.argv.includes('--include-confirmed')
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY
   if (!url || !key) throw new Error('Missing Supabase env vars.')
@@ -48,7 +54,7 @@ async function main() {
     const email = (u.email ?? '').toLowerCase()
     return (
       new Date(u.created_at).getTime() >= since &&
-      !u.email_confirmed_at &&
+      (includeConfirmed || !u.email_confirmed_at) &&
       !u.last_sign_in_at &&
       email !== '' &&
       !protectedEmails.has(email)
@@ -69,11 +75,11 @@ async function main() {
   console.log('')
   console.log('Epargnes dans la fenetre, pour controle :')
   for (const u of spared) {
-    const why = u.email_confirmed_at
-      ? 'confirme'
-      : u.last_sign_in_at
-        ? 'connecte'
-        : 'present dans clients/admins'
+    const why = u.last_sign_in_at
+      ? 'connecte'
+      : protectedEmails.has((u.email ?? '').toLowerCase())
+        ? 'present dans clients/admins'
+        : 'confirme'
     console.log('   ', mask(u.email ?? '?').padEnd(30), why)
   }
 
