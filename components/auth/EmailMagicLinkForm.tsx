@@ -26,6 +26,9 @@ export function EmailMagicLinkForm({
   // Supabase verifies it server-side and refuses the request without it once
   // the CAPTCHA is switched on in the project settings.
   const [captchaToken, setCaptchaToken] = useState<string | null>(null)
+  // Bumped after every attempt: a new key remounts the widget, which is how
+  // Turnstile issues a fresh token once the previous one has been spent.
+  const [captchaRound, setCaptchaRound] = useState(0)
   const onCaptcha = useCallback((token: string) => setCaptchaToken(token), [])
   const onCaptchaExpire = useCallback(() => setCaptchaToken(null), [])
 
@@ -59,6 +62,7 @@ export function EmailMagicLinkForm({
     // solved again before another attempt, which is also what stops a script
     // from replaying one solved challenge in a loop.
     setCaptchaToken(null)
+    setCaptchaRound((n) => n + 1)
 
     if (error) {
       setStatus('error')
@@ -130,7 +134,7 @@ export function EmailMagicLinkForm({
             className="pl-9"
           />
         </div>
-        <Turnstile onToken={onCaptcha} onExpire={onCaptchaExpire} />
+        <Turnstile key={captchaRound} onToken={onCaptcha} onExpire={onCaptchaExpire} />
         <Button
           type="submit"
           variant="outline"

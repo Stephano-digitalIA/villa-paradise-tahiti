@@ -1,12 +1,13 @@
 'use client'
 
-import { Suspense, useEffect, useState, type FormEvent } from 'react'
+import { Suspense, useCallback, useEffect, useState, type FormEvent } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Eye, EyeOff, Lock, Mail } from 'lucide-react'
 
 import { verifyAdminMembership } from '@/app/actions/admin-auth'
 import { createClient, createImplicitClient } from '@/lib/supabase/client'
 import { Button, Input } from '@/components/ui'
+import { Turnstile, turnstileEnabled } from '@/components/auth/Turnstile'
 
 function GoogleIcon() {
   return (
@@ -175,6 +176,20 @@ function PasswordSignInForm() {
   )
   const [error, setError] = useState<string | null>(null)
   const [showPassword, setShowPassword] = useState(false)
+  // Once the CAPTCHA is switched on in Supabase, every password sign-in and
+  // every reset request needs a Turnstile token too, not only the guest
+  // magic link. Without this the admin would be locked out of the site.
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null)
+  const [captchaRound, setCaptchaRound] = useState(0)
+  const onCaptcha = useCallback((token: string) => setCaptchaToken(token), [])
+  const onCaptchaExpire = useCallback(() => setCaptchaToken(null), [])
+  const captchaMissing = turnstileEnabled && !captchaToken
+
+  /** A token is single-use: spend it, then ask for a new widget. */
+  function spendCaptcha() {
+    setCaptchaToken(null)
+    setCaptchaRound((n) => n + 1)
+  }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -190,7 +205,9 @@ function PasswordSignInForm() {
     const { data, error: signInError } = await supabase.auth.signInWithPassword({
       email: email.trim(),
       password,
+      ...(captchaToken ? { options: { captchaToken } } : {}),
     })
+    spendCaptcha()
 
     if (signInError || !data.user) {
       setStatus('idle')
@@ -225,6 +242,10 @@ function PasswordSignInForm() {
       setError('Enter your email above first, then click "Forgot password"')
       return
     }
+    if (captchaMissing) {
+      setError('Please complete the verification below first')
+      return
+    }
     setError(null)
     // Implicit flow, like the Google button above. PKCE stores a code verifier
     // in the browser that made the request, and a recovery link is opened
@@ -238,8 +259,10 @@ function PasswordSignInForm() {
         // Land on our own reset page, which establishes the recovery session
         // and shows a "new password" form (supabase.auth.updateUser).
         redirectTo: window.location.origin + '/admin/auth/reset',
+        ...(captchaToken ? { captchaToken } : {}),
       },
     )
+    spendCaptcha()
     if (recoveryError) {
       setError(recoveryError.message)
       return
@@ -334,12 +357,14 @@ function PasswordSignInForm() {
         </button>
       </div>
 
+      <Turnstile key={captchaRound} onToken={onCaptcha} onExpire={onCaptchaExpire} />
+
       <Button
         type="submit"
         variant="outline"
         size="lg"
         className="w-full"
-        disabled={status === 'submitting' || !email || !password}
+        disabled={status === 'submitting' || !email || !password || captchaMissing}
       >
         {status === 'submitting' ? 'Signing in…' : 'Sign in'}
       </Button>
