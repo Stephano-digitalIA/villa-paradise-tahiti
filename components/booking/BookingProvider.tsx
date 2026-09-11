@@ -246,16 +246,12 @@ export function BookingProvider({ experiences, settings, children }: BookingProv
     setState((s) => ({ ...s, checkOut: date }))
   }, [])
 
+  // Experience quantities are deliberately not touched here. How many people
+  // join an outing is independent of how many stay at the villa: two of eight
+  // guests may book the dinner. The guest count is only the starting value
+  // when an experience is first added.
   const setGuests = useCallback((count: number) => {
-    setState((s) => {
-      const guests = clampGuests(count)
-      // Per-person lines default to the guest count and follow it, unless
-      // the guest set a number themselves: not everyone joins every outing.
-      const selectedExperiences = s.selectedExperiences.map((e) =>
-        e.priceUnit === 'per_person' && !e.quantityEdited ? { ...e, quantity: guests } : e,
-      )
-      return { ...s, guests, selectedExperiences }
-    })
+    setState((s) => ({ ...s, guests: clampGuests(count) }))
   }, [])
 
   const setSpecialRequests = useCallback((value: string) => {
@@ -300,7 +296,7 @@ export function BookingProvider({ experiences, settings, children }: BookingProv
       ...s,
       selectedExperiences: s.selectedExperiences.map((e) =>
         e.slug === slug && e.priceUnit !== 'flat'
-          ? { ...e, quantity: Math.max(1, Math.floor(quantity)), quantityEdited: true }
+          ? { ...e, quantity: Math.max(1, Math.floor(quantity)) }
           : e,
       ),
     }))
