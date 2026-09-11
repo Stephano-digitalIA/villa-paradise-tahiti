@@ -62,9 +62,9 @@ export const ORG_CONTACT = {
 
 /** Social profile URLs surfaced via Organization `sameAs`. */
 export const ORG_SAME_AS: readonly string[] = [
-  'https://instagram.com/villaparadisetahiti',
-  'https://facebook.com/villaparadisetahiti',
-  'https://pinterest.com/villaparadisetahiti',
+  // Only profiles that exist. Facebook and Pinterest were placeholders and
+  // pointed at nothing; add them back here when the pages are created.
+  'https://www.instagram.com/villa.paradise.tahiti/',
 ]
 
 /**

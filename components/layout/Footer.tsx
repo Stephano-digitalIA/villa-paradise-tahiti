@@ -3,6 +3,8 @@ import { Facebook, Instagram, MessageCircle, Palmtree } from 'lucide-react'
 import { Container } from '@/components/ui'
 import { exploreNav, informationNav, legalNav, type NavLink } from '@/lib/navigation'
 import { cn } from '@/lib/utils'
+import { cmsFetch } from '@/lib/cms/fetcher'
+import { settingsQuery, type Settings } from '@/lib/cms'
 
 /**
  * Footer — Pied de page principal.
@@ -18,7 +20,14 @@ import { cn } from '@/lib/utils'
 
 const currentYear = new Date().getFullYear()
 
-export function Footer() {
+export async function Footer() {
+  // Social profiles come from Admin > Réglages. An icon only shows when its
+  // URL is set: a dead "#" link is worse than no link.
+  const settings = await cmsFetch<Settings | null>(settingsQuery).catch(() => null)
+  const instagram = settings?.socialLinks?.instagram?.trim() || null
+  const facebook = settings?.socialLinks?.facebook?.trim() || null
+  const whatsapp = (settings?.whatsappNumber ?? '68989210053').replace(/\D/g, '')
+
   return (
     <footer className="bg-midnight text-pearl/80">
       <Container as="div" className="py-16 lg:py-20">
@@ -80,18 +89,22 @@ export function Footer() {
 
             {/* Icônes sociales */}
             <div className="flex items-center gap-2">
+              {instagram ? (
+                <SocialLink
+                  href={instagram}
+                  label="Instagram"
+                  icon={<Instagram className="h-4 w-4" aria-hidden="true" />}
+                />
+              ) : null}
+              {facebook ? (
+                <SocialLink
+                  href={facebook}
+                  label="Facebook"
+                  icon={<Facebook className="h-4 w-4" aria-hidden="true" />}
+                />
+              ) : null}
               <SocialLink
-                href="#"
-                label="Instagram"
-                icon={<Instagram className="h-4 w-4" aria-hidden="true" />}
-              />
-              <SocialLink
-                href="#"
-                label="Facebook"
-                icon={<Facebook className="h-4 w-4" aria-hidden="true" />}
-              />
-              <SocialLink
-                href="https://wa.me/68989210053"
+                href={`https://wa.me/${whatsapp}`}
                 label="WhatsApp"
                 icon={<MessageCircle className="h-4 w-4" aria-hidden="true" />}
               />
