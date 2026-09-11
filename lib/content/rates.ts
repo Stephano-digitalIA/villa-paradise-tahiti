@@ -144,15 +144,15 @@ export const RATES_CONTENT_DEFAULTS: Readonly<Record<string, string>> = {
     'Prices apply to the entire villa (sleeps 8). A 5-night minimum stay applies in low and high season; 7 nights during the peak holiday weeks.',
   'rates.grid.unit': 'per night',
   'rates.grid.low.name': 'Low Season',
-  'rates.grid.low.window': 'Jan 5 – Mar 31 · Oct 1 – Dec 15',
+  'rates.grid.low.window': 'January 5 – 31 · February · March · October · November · December 1 – 15',
   'rates.grid.low.blurb':
     'Soft trade winds, fewer travelers and the most generous pricing of the year. Our favorite period.',
   'rates.grid.high.name': 'High Season',
-  'rates.grid.high.window': 'April – June · September',
+  'rates.grid.high.window': 'April · May · June · September',
   'rates.grid.high.blurb':
     'Whale-watching season, dry sunny days, golden hour at the pool.',
   'rates.grid.peak.name': 'Peak Holidays',
-  'rates.grid.peak.window': 'July – August · Dec 16 – Jan 4',
+  'rates.grid.peak.window': 'July · August · December 16 – 31 · January 1 – 4',
   'rates.grid.peak.blurb':
     'Villa Paradise Tahiti is the best place to celebrate your Christmas and New Year holidays.',
   'rates.grid.badge_popular': 'Most booked',

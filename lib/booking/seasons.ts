@@ -30,7 +30,7 @@ export interface SeasonWindow {
 /** The owner's calendar (September 2026). Used when the database has none. */
 export const DEFAULT_SEASON_WINDOWS: SeasonWindow[] = [
   { season: 'peak', from: '07-01', to: '08-31' },
-  { season: 'peak', from: '12-16', to: '01-04', label: 'Dec 16 – Jan 4 (festive season)' },
+  { season: 'peak', from: '12-16', to: '01-04' },
   { season: 'high', from: '04-01', to: '06-30' },
   { season: 'high', from: '09-01', to: '09-30' },
   { season: 'low', from: '01-05', to: '03-31' },
@@ -98,20 +98,26 @@ const MONTHS = [
 ]
 const DAYS_IN_MONTH = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 
-function short(month: number): string {
-  return MONTHS[month - 1].slice(0, 3)
-}
-
-/** "July – September" for whole months, "Dec 20 – Jan 5" otherwise. */
+/**
+ * Every month of the window, named, so a guest scanning the card sees "May"
+ * rather than having to infer it from "April – June". Months only partly
+ * covered carry their day range: "January 5 – 31 · February · March".
+ */
 function describeWindow(w: SeasonWindow): string {
   if (w.label) return w.label
   const [fm, fd] = w.from.split('-').map(Number)
   const [tm, td] = w.to.split('-').map(Number)
-  const wholeMonths = fd === 1 && td >= DAYS_IN_MONTH[tm - 1] - 1
-  if (wholeMonths) {
-    return fm === tm ? MONTHS[fm - 1] : `${MONTHS[fm - 1]} – ${MONTHS[tm - 1]}`
+  const parts: string[] = []
+  let m = fm
+  for (let guard = 0; guard < 12; guard++) {
+    const first = m === fm ? fd : 1
+    const last = m === tm ? td : DAYS_IN_MONTH[m - 1]
+    const whole = first === 1 && last >= DAYS_IN_MONTH[m - 1] - 1
+    parts.push(whole ? MONTHS[m - 1] : `${MONTHS[m - 1]} ${first} – ${last}`)
+    if (m === tm) break
+    m = m === 12 ? 1 : m + 1
   }
-  return `${short(fm)} ${fd} – ${short(tm)} ${td}`
+  return parts.join(' · ')
 }
 
 /**
