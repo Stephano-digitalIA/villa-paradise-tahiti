@@ -61,6 +61,15 @@ export interface CreatePayPalOrderParams {
   paymentLabel: string
   customer: { email: string }
   metadata: Record<string, string>
+  /**
+   * Which PayPal page the guest lands on. `GUEST_CHECKOUT` opens the card
+   * form for someone without an account (the "Credit / debit card" button);
+   * `LOGIN` opens the PayPal sign-in. Left unset, PayPal decides, and with a
+   * prefilled email it tends to pick the login page, so a card payer never
+   * sees the card form. A preference, not a guarantee: PayPal can still
+   * override it by country or risk.
+   */
+  landingPage?: 'GUEST_CHECKOUT' | 'LOGIN' | 'NO_PREFERENCE'
 }
 
 export type CreatePayPalOrderResult =
@@ -103,7 +112,8 @@ interface PayPalOrderResponse {
 export async function createPayPalOrder(
   params: CreatePayPalOrderParams,
 ): Promise<CreatePayPalOrderResult> {
-  const { reservationId, chargeAmount, currency, paymentLabel, customer, metadata } = params
+  const { reservationId, chargeAmount, currency, paymentLabel, customer, metadata, landingPage } =
+    params
 
   if (!chargeAmount || chargeAmount <= 0) {
     return { error: 'Charge amount is zero — refusing to create PayPal order.' }
@@ -136,6 +146,7 @@ export async function createPayPalOrder(
           brand_name: 'Villa Paradise Tahiti',
           shipping_preference: 'NO_SHIPPING',
           user_action: 'PAY_NOW',
+          landing_page: landingPage ?? 'NO_PREFERENCE',
           return_url: `${siteUrl}/booking/paypal/return?ref=${encodeURIComponent(reservationId)}`,
           cancel_url: `${siteUrl}/booking/cancel?ref=${encodeURIComponent(reservationId)}`,
           payment_method_preference: 'IMMEDIATE_PAYMENT_REQUIRED',

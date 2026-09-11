@@ -92,6 +92,9 @@ export async function POST(request: Request) {
     paymentLabel: `Instalment ${item.sequence} of 3`,
     customer: { email: stay?.customers?.email ?? '' },
     metadata: { instalmentId: item.id, sequence: String(item.sequence) },
+    // From an emailed link we do not know which button the guest prefers;
+    // the card form serves both, since it also offers a PayPal sign-in.
+    landingPage: 'GUEST_CHECKOUT',
   })
 
   if ('error' in result) {

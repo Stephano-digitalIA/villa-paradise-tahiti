@@ -414,6 +414,9 @@ export async function POST(request: Request) {
       paymentLabel,
       customer: { email: customer.email },
       metadata,
+      // The button the guest pressed decides the PayPal page: card payers go
+      // straight to the card form, PayPal users to the sign-in.
+      landingPage: customer.paymentMethod === 'card' ? 'GUEST_CHECKOUT' : 'LOGIN',
     })
     if ('error' in result) {
       return NextResponse.json({ error: result.error }, { status: 500 })
