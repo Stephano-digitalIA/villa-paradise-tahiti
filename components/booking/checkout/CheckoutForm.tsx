@@ -55,7 +55,7 @@ import {
 } from '@/lib/booking/checkout-schema'
 
 import { useBooking } from '../BookingProvider'
-import { buildSchedule } from '@/lib/booking/schedule'
+import { buildSchedule, MIN_DAYS_FOR_PLAN } from '@/lib/booking/schedule'
 import { formatStayDate } from '@/lib/format/date'
 
 /* ---------------------------------------------------------------------------
@@ -537,7 +537,20 @@ export function CheckoutForm({ initialProfile }: CheckoutFormProps) {
               onSelect={() => setValue('paymentOption', 'plan', { shouldValidate: true })}
               register={register('paymentOption')}
             />
-          ) : null}
+          ) : (
+            // Shown greyed out rather than hidden: a guest who has read about
+            // the plan on the site would otherwise wonder where it went.
+            <PaymentAmountOption
+              id="po-plan"
+              value="plan"
+              label="Pay in 3"
+              description={`30% today, 40% mid-way, 30% before arrival. Available when check-in is at least ${MIN_DAYS_FOR_PLAN} days away.`}
+              checked={false}
+              onSelect={() => undefined}
+              register={register('paymentOption')}
+              disabled
+            />
+          )}
 
           <PaymentAmountOption
             id="po-custom"
@@ -764,6 +777,8 @@ interface PaymentAmountOptionProps {
   onSelect: () => void
   register: ReturnType<UseFormRegister<CheckoutFormData>>
   children?: React.ReactNode
+  /** Not selectable; the description says why. */
+  disabled?: boolean
 }
 
 function PaymentAmountOption({
@@ -776,15 +791,18 @@ function PaymentAmountOption({
   onSelect,
   register,
   children,
+  disabled = false,
 }: PaymentAmountOptionProps) {
   return (
     <label
       htmlFor={id}
-      onClick={onSelect}
+      onClick={disabled ? undefined : onSelect}
+      aria-disabled={disabled || undefined}
       className={cn(
-        'flex cursor-pointer flex-col gap-0 rounded-xl border bg-pearl p-4 text-left transition-all',
-        'hover:border-gold hover:shadow-soft',
-        'focus-within:ring-2 focus-within:ring-gold/30',
+        'flex flex-col gap-0 rounded-xl border bg-pearl p-4 text-left transition-all',
+        disabled
+          ? 'cursor-not-allowed border-pearl-400 opacity-60'
+          : 'cursor-pointer hover:border-gold hover:shadow-soft focus-within:ring-2 focus-within:ring-gold/30',
         checked ? 'border-gold bg-gold/5 shadow-soft' : 'border-pearl-400',
       )}
     >
@@ -794,6 +812,7 @@ function PaymentAmountOption({
           id={id}
           value={value}
           className="sr-only"
+          disabled={disabled}
           {...register}
         />
         <span
