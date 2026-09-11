@@ -27,15 +27,14 @@ export interface SeasonWindow {
   label?: string
 }
 
-/** Mirrors the rules the pricing engine applied before windows existed. */
+/** The owner's calendar (September 2026). Used when the database has none. */
 export const DEFAULT_SEASON_WINDOWS: SeasonWindow[] = [
-  { season: 'peak', from: '12-20', to: '01-05', label: 'Christmas & New Year' },
-  { season: 'peak', from: '03-28', to: '04-05', label: 'Easter' },
-  { season: 'high', from: '07-01', to: '09-30' },
-  { season: 'high', from: '12-01', to: '12-19' },
-  { season: 'high', from: '01-06', to: '01-31' },
-  { season: 'low', from: '05-01', to: '06-30' },
-  { season: 'low', from: '10-01', to: '11-30' },
+  { season: 'peak', from: '07-01', to: '08-31' },
+  { season: 'peak', from: '12-16', to: '01-04', label: 'Dec 16 – Jan 4 (festive season)' },
+  { season: 'high', from: '04-01', to: '06-30' },
+  { season: 'high', from: '09-01', to: '09-30' },
+  { season: 'low', from: '01-05', to: '03-31' },
+  { season: 'low', from: '10-01', to: '12-15' },
 ]
 
 const SEASONS: Season[] = ['low', 'high', 'peak']

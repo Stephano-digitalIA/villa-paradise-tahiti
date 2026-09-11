@@ -52,17 +52,17 @@ export default async function RatesPage() {
           {
             name: 'Low Season',
             priceUSD: rates.low,
-            season: describeSeasonWindows(windows, 'low') || 'May – June, October – November',
+            season: describeSeasonWindows(windows, 'low') || 'Jan 5 – Mar 31, Oct 1 – Dec 15',
           },
           {
             name: 'High Season',
             priceUSD: rates.high,
-            season: describeSeasonWindows(windows, 'high') || 'July – September, December – early January',
+            season: describeSeasonWindows(windows, 'high') || 'April – June, September',
           },
           {
             name: 'Peak Holidays',
             priceUSD: rates.peak,
-            season: describeSeasonWindows(windows, 'peak') || 'Christmas week, New Year, Easter',
+            season: describeSeasonWindows(windows, 'peak') || 'July – August, Dec 16 – Jan 4',
           },
         ])}
       />

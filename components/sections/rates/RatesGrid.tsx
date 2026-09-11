@@ -55,7 +55,7 @@ export async function RatesGrid({ settings = null }: { settings?: Settings | nul
       key: 'low',
       badge: 'standard',
       unit,
-      window: period('low') || t('rates.grid.low.window', 'May – June · October – November'),
+      window: period('low') || t('rates.grid.low.window', 'Jan 5 – Mar 31 · Oct 1 – Dec 15'),
       blurb: t(
         'rates.grid.low.blurb',
         'Soft trade winds, fewer travelers and the most generous pricing of the year. Our favorite period.',
@@ -66,7 +66,7 @@ export async function RatesGrid({ settings = null }: { settings?: Settings | nul
       key: 'high',
       badge: 'popular',
       unit,
-      window: period('high') || t('rates.grid.high.window', 'July – September · December – early January'),
+      window: period('high') || t('rates.grid.high.window', 'April – June · September'),
       blurb: t(
         'rates.grid.high.blurb',
         'Whale-watching season, dry sunny days, golden hour at the pool.',
@@ -77,7 +77,7 @@ export async function RatesGrid({ settings = null }: { settings?: Settings | nul
       key: 'peak',
       badge: 'peak',
       unit,
-      window: period('peak') || t('rates.grid.peak.window', 'Christmas week · New Year · Easter'),
+      window: period('peak') || t('rates.grid.peak.window', 'July – August · Dec 16 – Jan 4'),
       blurb: t(
         'rates.grid.peak.blurb',
         'Villa Paradise Tahiti is the best place to celebrate your Christmas and New Year holidays.',
