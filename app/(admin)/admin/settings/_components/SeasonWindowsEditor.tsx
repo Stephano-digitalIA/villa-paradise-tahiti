@@ -30,9 +30,15 @@ const SEASON_LABEL: Record<Season, string> = {
 
 const SEASON_ORDER: Season[] = ['peak', 'high', 'low']
 
-/** `MM-DD` to the `<input type="date">` value of an arbitrary leap year. */
+/**
+ * `MM-DD` to an `<input type="date">` value. The year shown is the current
+ * one, purely for reading comfort: only month and day are stored, and the
+ * window repeats every year.
+ */
+const DISPLAY_YEAR = new Date().getFullYear()
+
 function toDateValue(mmdd: string): string {
-  return mmdd ? `2024-${mmdd}` : ''
+  return mmdd ? `${DISPLAY_YEAR}-${mmdd}` : ''
 }
 
 function toMmdd(dateValue: string): string {
@@ -63,7 +69,8 @@ export function SeasonWindowsEditor({ initial }: { initial: SeasonWindow[] }) {
       <input type="hidden" name="season_windows" value={JSON.stringify(complete)} />
 
       <p className="font-sans text-xs text-midnight-400">
-        Périodes de l'année, reprises chaque année. Les dates non couvertes sont en
+        Périodes de l'année, reprises chaque année : seuls le jour et le mois comptent,
+        l'année affichée dans les champs n'a aucun effet. Les dates non couvertes sont en
         basse saison. En cas de chevauchement, très haute saison prime sur haute, qui
         prime sur basse. Pâques change de date : ajuster cette ligne une fois par an.
       </p>
@@ -146,7 +153,7 @@ export function SeasonWindowsEditor({ initial }: { initial: SeasonWindow[] }) {
       </button>
 
       {/* What the rates page will print, so the operator sees the effect
-          before saving. The year in the date inputs is a display artefact. */}
+          before saving. */}
       <div className="rounded-xl bg-sand/60 p-3 font-sans text-xs text-midnight-400">
         <p className="mb-1 font-semibold text-midnight">Aperçu sur la page Rates</p>
         {SEASON_ORDER.slice()
