@@ -60,11 +60,11 @@ export function PriceSummary({ className }: PriceSummaryProps) {
         <div className="flex items-center justify-between gap-2">
           <h3 className="font-heading text-h3-luxe font-medium text-midnight">
             {hasNights ? (
-              <>
+              <span>
                 {breakdown.nights} {breakdown.nights === 1 ? 'night' : 'nights'}
-              </>
+              </span>
             ) : (
-              <>Build your stay</>
+              <span>Build your stay</span>
             )}
           </h3>
           <SeasonBadge season={breakdown.season} />

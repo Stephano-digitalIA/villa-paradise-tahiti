@@ -29,7 +29,7 @@ export function MinNightsAlert({ minNights, selectedNights }: MinNightsAlertProp
       <p className="font-sans">
         Minimum stay is{' '}
         <strong className="font-semibold">{minNights} nights</strong>. Please add{' '}
-        {missing} {label} to continue.
+        <span>{missing} {label}</span> to continue.
       </p>
     </div>
   )

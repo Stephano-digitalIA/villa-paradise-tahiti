@@ -4,6 +4,7 @@ import { ConsentGate } from '@/components/analytics'
 import { AuthProvider } from '@/components/auth/AuthProvider'
 import { CurrencyProvider } from '@/components/currency'
 import { ChromeGate, Footer, Header, SkipToContent } from '@/components/layout'
+import { TranslationGuard } from '@/components/layout/TranslationGuard'
 import { Pulse } from '@/components/analytics/Pulse'
 import { cmsFetch } from '@/lib/cms/fetcher'
 import { settingsQuery, type Settings } from '@/lib/cms'
@@ -61,6 +62,9 @@ export default async function RootLayout({
       lang="en"
       className={cn(cormorant.variable, playfair.variable, inter.variable)}
     >
+      <head>
+        <TranslationGuard />
+      </head>
       <body className="min-h-screen bg-pearl font-sans text-midnight antialiased">
         <AuthProvider>
           <CurrencyProvider rate={usdToEurRate}>
