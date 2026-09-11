@@ -267,7 +267,11 @@ export async function POST(request: Request) {
   // account, and a guest who has no PayPal account needs to see that before
   // committing. The distinction is presentational; the processor is one.
 
-  /* ----- Persist to DB (best-effort — never blocks checkout) ------------ */
+  /* ----- Persist to DB: the reservation must exist before any money moves --- */
+  // Failing closed here is deliberate. An earlier version carried on to
+  // PayPal when the insert failed, and a guest paid for a stay that existed
+  // nowhere: no dates blocked, nothing in the admin, no email. A retry
+  // message is the lesser evil.
   try {
     // UPSERT customer — email is the unique identifier
     const { data: customerRow } = await adminClient
@@ -310,9 +314,10 @@ export async function POST(request: Request) {
       deposit_amount: chargeAmount,
       balance_amount: breakdown.total - chargeAmount,
       selected_experiences: booking.selectedExperiences as unknown as import('@/lib/supabase/types').SelectedExperienceSnapshot[],
-      // The option the guest picked. The processor is always PayPal now, and
-      // the currency columns below already record the charge side.
-      payment_method: customer.paymentMethod,
+      // The processor, not the button. "Credit / debit card" is PayPal's
+      // guest checkout, and the column only accepts paypal / stripe / manual:
+      // writing "card" here was rejected and the reservation never existed.
+      payment_method: 'paypal',
       payment_status: 'pending',
       // Currency ledger: USD columns above stay canonical; these record what
       // the guest is actually charged and at which frozen rate.
@@ -324,6 +329,10 @@ export async function POST(request: Request) {
     if (insertErr) {
       // eslint-disable-next-line no-console
       console.error('[api/checkout] reservation insert failed', { reservationId, error: insertErr })
+      return NextResponse.json(
+        { error: 'We could not save your reservation. Please try again in a moment.' },
+        { status: 500 },
+      )
     }
 
     // Write the plan alongside the reservation, so the reminder job and the
@@ -358,13 +367,24 @@ export async function POST(request: Request) {
             reservationId,
             error: scheduleErr,
           })
+          // Same rule: a plan without its schedule would collect the first
+          // instalment and never ask for the others. Undo and let the guest
+          // retry rather than charge.
+          await adminClient.from('reservations').delete().eq('id', row.id)
+          return NextResponse.json(
+            { error: 'We could not save your payment plan. Please try again in a moment.' },
+            { status: 500 },
+          )
         }
       }
     }
   } catch (err) {
     // eslint-disable-next-line no-console
     console.error('[api/checkout] supabase persist failed:', err)
-    // Continue — DB failure must not block checkout
+    return NextResponse.json(
+      { error: 'We could not save your reservation. Please try again in a moment.' },
+      { status: 500 },
+    )
   }
 
   /* ----- PayPal branch (settles both visible options) ------------------- */
