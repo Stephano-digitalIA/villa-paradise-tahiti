@@ -78,6 +78,19 @@ export interface BookingConfirmationData {
     title: string
     quantity: number
   }>
+  /**
+   * Payment plan, present when the guest chose to pay in instalments. The
+   * first is paid at booking; the others carry the personal payment link
+   * the guest will also be reminded of by email before each due date.
+   */
+  schedule?: Array<{
+    sequence: number
+    amount: number
+    /** ISO `YYYY-MM-DD`. */
+    dueDate: string
+    status: 'pending' | 'paid' | 'cancelled'
+    payUrl: string
+  }>
 }
 
 /* ---------------------------------------------------------------------------

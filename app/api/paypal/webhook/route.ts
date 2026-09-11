@@ -35,6 +35,7 @@ import { checkAvailability } from '@/lib/booking/availability'
 import { previousIsoDay } from '@/lib/booking/availability-client'
 import { linkPaymentEventToReservation } from '@/lib/booking/payment-events'
 import { adminClient } from '@/lib/supabase/admin'
+import { SITE_URL } from '@/lib/seo'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -266,6 +267,45 @@ async function settleInstalment(
   return all.length > 0 && all.every((r) => r.status === 'paid')
 }
 
+/**
+ * The payment plan for the confirmation email, or undefined when the booking
+ * was not paid in instalments. Each row carries its own payment link, so the
+ * guest can pay ahead of the reminder if they wish.
+ */
+async function loadScheduleForEmail(
+  reservationRef: string,
+): Promise<BookingConfirmationData['schedule']> {
+  const { data: reservation } = await adminClient
+    .from('reservations')
+    .select('id')
+    .eq('reservation_ref', reservationRef)
+    .maybeSingle()
+  if (!reservation?.id) return undefined
+
+  const { data: rows } = await adminClient
+    .from('payment_schedule')
+    .select('sequence, amount, due_date, status, pay_token')
+    .eq('reservation_id', reservation.id)
+    .order('sequence', { ascending: true })
+
+  const plan = (rows ?? []) as Array<{
+    sequence: number
+    amount: number
+    due_date: string
+    status: 'pending' | 'paid' | 'cancelled'
+    pay_token: string
+  }>
+  if (plan.length < 2) return undefined
+
+  return plan.map((row) => ({
+    sequence: row.sequence,
+    amount: row.amount,
+    dueDate: row.due_date,
+    status: row.status,
+    payUrl: `${SITE_URL}/booking/pay/${encodeURIComponent(row.pay_token)}`,
+  }))
+}
+
 export async function POST(request: Request) {
   const { event, verified } = await verifyPayPalWebhook(request)
 
@@ -429,6 +469,7 @@ export async function POST(request: Request) {
 
           if (res) {
             emailData = buildEmailDataFromReservation(res, emailData)
+            emailData.schedule = await loadScheduleForEmail(reservationRef)
           } else {
             // eslint-disable-next-line no-console
             console.warn(

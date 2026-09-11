@@ -72,6 +72,8 @@ export function BookingConfirmationGuest({ data, siteUrl }: Props) {
     data
   const money = (value: number) =>
     formatMoney(value, data.currency ?? 'USD', data.exchangeRate ?? 1)
+  const schedule = data.schedule && data.schedule.length > 1 ? data.schedule : null
+  const paidInFull = !schedule && breakdown.balanceAmount <= 0
 
   return (
     <Html>
@@ -241,15 +243,92 @@ export function BookingConfirmationGuest({ data, siteUrl }: Props) {
               value={money(breakdown.total)}
               strong
             />
-            <DetailRow
-              label="Deposit paid"
-              value={money(breakdown.depositAmount)}
-            />
-            <DetailRow
-              label="Balance due (30 days before arrival)"
-              value={money(breakdown.balanceAmount)}
-            />
+            {schedule ? (
+              schedule.map((step) => (
+                <DetailRow
+                  key={step.sequence}
+                  label={
+                    step.status === 'paid'
+                      ? `Payment ${step.sequence} of ${schedule.length} · paid`
+                      : `Payment ${step.sequence} of ${schedule.length} · due ${formatDate(step.dueDate)}`
+                  }
+                  value={money(step.amount)}
+                />
+              ))
+            ) : paidInFull ? (
+              <DetailRow label="Paid in full" value={money(breakdown.total)} />
+            ) : (
+              <>
+                <DetailRow
+                  label="Deposit paid"
+                  value={money(breakdown.depositAmount)}
+                />
+                <DetailRow
+                  label="Balance due (30 days before arrival)"
+                  value={money(breakdown.balanceAmount)}
+                />
+              </>
+            )}
           </Section>
+
+          {/* Instalment plan: what is left, when, and where to pay it */}
+          {schedule ? (
+            <>
+              <Hr style={{ borderColor: COLORS.sand, margin: '24px 0' }} />
+              <Section>
+                <Text
+                  style={{
+                    fontSize: '12px',
+                    letterSpacing: '0.2em',
+                    textTransform: 'uppercase',
+                    color: COLORS.gold,
+                    margin: '0 0 12px',
+                  }}
+                >
+                  Your Payment Plan
+                </Text>
+                <Text
+                  style={{
+                    fontSize: '15px',
+                    lineHeight: 1.6,
+                    color: COLORS.midnight,
+                    margin: '0 0 12px',
+                  }}
+                >
+                  Your stay is paid in {schedule.length} instalments. The first is
+                  settled today. We will email you a reminder{' '}
+                  <strong>7 days before each of the next ones</strong>, with the
+                  same personal links below. Nothing is charged automatically:
+                  each payment goes through only when you click and confirm.
+                </Text>
+                {schedule
+                  .filter((step) => step.status !== 'paid')
+                  .map((step) => (
+                    <Text
+                      key={step.sequence}
+                      style={{
+                        fontSize: '14px',
+                        lineHeight: 1.6,
+                        color: COLORS.midnight,
+                        margin: '0 0 8px',
+                      }}
+                    >
+                      <strong>
+                        Payment {step.sequence} of {schedule.length}
+                      </strong>{' '}
+                      · {money(step.amount)} · due {formatDate(step.dueDate)}
+                      <br />
+                      <Link
+                        href={step.payUrl}
+                        style={{ color: COLORS.lagoon, textDecoration: 'underline' }}
+                      >
+                        Pay this instalment
+                      </Link>
+                    </Text>
+                  ))}
+              </Section>
+            </>
+          ) : null}
 
           {/* What's next */}
           <Hr style={{ borderColor: COLORS.sand, margin: '24px 0' }} />
