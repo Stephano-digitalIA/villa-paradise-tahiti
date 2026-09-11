@@ -31,6 +31,8 @@ export const MIN_DAYS_FOR_PLAN = 60
 export interface Instalment {
   sequence: 1 | 2 | 3
   label: string
+  /** Whole-number share of the total, for display: 30, 40, 30. */
+  sharePercent: number
   amount: number
   /** ISO date, `YYYY-MM-DD`. The first one is always today. */
   dueDate: string
@@ -99,18 +101,21 @@ export function buildSchedule(
     {
       sequence: 1,
       label: 'À la réservation',
+      sharePercent: Math.round(FIRST_SHARE * 100),
       amount: fromCents(firstCents),
       dueDate: isoDay(today),
     },
     {
       sequence: 2,
       label: 'Deuxième versement',
+      sharePercent: Math.round(SECOND_SHARE * 100),
       amount: fromCents(secondCents),
       dueDate: isoDay(midDue),
     },
     {
       sequence: 3,
       label: 'Solde, 30 jours avant l’arrivée',
+      sharePercent: 100 - Math.round(FIRST_SHARE * 100) - Math.round(SECOND_SHARE * 100),
       amount: fromCents(thirdCents),
       dueDate: isoDay(finalDue),
     },

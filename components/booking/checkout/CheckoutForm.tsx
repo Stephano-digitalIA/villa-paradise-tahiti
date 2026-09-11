@@ -56,6 +56,7 @@ import {
 
 import { useBooking } from '../BookingProvider'
 import { buildSchedule } from '@/lib/booking/schedule'
+import { formatStayDate } from '@/lib/format/date'
 
 /* ---------------------------------------------------------------------------
  * Section header — visual rhythm between groups of fields.
@@ -526,7 +527,11 @@ export function CheckoutForm({ initialProfile }: CheckoutFormProps) {
               id="po-plan"
               value="plan"
               label="Pay in 3"
-              description={`${format(plan[0].amount)} today, ${format(plan[1].amount)} on ${plan[1].dueDate}, ${format(plan[2].amount)} 30 days before arrival`}
+              description={[
+                `${plan[0].sharePercent}% today (${format(plan[0].amount)})`,
+                `${plan[1].sharePercent}% on ${formatStayDate(plan[1].dueDate, 'en-US', { month: 'short', day: 'numeric', year: 'numeric' })} (${format(plan[1].amount)})`,
+                `${plan[2].sharePercent}% 30 days before arrival (${format(plan[2].amount)})`,
+              ].join(', ')}
               amount={format(plan[0].amount)}
               checked={paymentOption === 'plan'}
               onSelect={() => setValue('paymentOption', 'plan', { shouldValidate: true })}
