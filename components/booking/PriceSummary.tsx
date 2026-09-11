@@ -61,7 +61,7 @@ export function PriceSummary({ className }: PriceSummaryProps) {
           <h3 className="font-heading text-h3-luxe font-medium text-midnight">
             {hasNights ? (
               <span>
-                {breakdown.nights} {breakdown.nights === 1 ? 'night' : 'nights'}
+                {`${breakdown.nights} ${breakdown.nights === 1 ? 'night' : 'nights'}`}
               </span>
             ) : (
               <span>Build your stay</span>

@@ -544,7 +544,7 @@ export function CheckoutForm({ initialProfile }: CheckoutFormProps) {
                     <span className="font-heading text-base font-semibold text-midnight">
                       {isToday ? 'Due today' : step.when}
                       <span className="ml-2 font-sans text-xs font-normal text-midnight-400">
-                        {step.sharePercent}%
+                        {`${step.sharePercent}%`}
                       </span>
                     </span>
                     <span className="font-sans text-xs text-midnight-400">

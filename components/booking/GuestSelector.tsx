@@ -42,7 +42,7 @@ export function GuestSelector({ className }: GuestSelectorProps) {
               className="font-sans text-body-md font-semibold text-midnight"
               aria-live="polite"
             >
-              {value} {value === 1 ? 'guest' : 'guests'}
+              {`${value} ${value === 1 ? 'guest' : 'guests'}`}
             </p>
             <p className="font-sans text-xs text-midnight-400">
               Whole-villa rental — no shared spaces.

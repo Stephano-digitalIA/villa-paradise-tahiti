@@ -164,12 +164,12 @@ export function DateRangePicker() {
             {nights > 0 ? (
               <span>
                 <span className="font-semibold text-midnight">
-                  {nights} {nights === 1 ? 'night' : 'nights'}
+                  {`${nights} ${nights === 1 ? 'night' : 'nights'}`}
                 </span>{' '}
                 selected.
               </span>
             ) : state.checkIn ? (
-              <span>Pick at least {breakdown.minNights} nights.</span>
+              <span>{`Pick at least ${breakdown.minNights} nights.`}</span>
             ) : (
               <span>Pick a check-in date first.</span>
             )}

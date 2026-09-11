@@ -124,7 +124,7 @@ export function CheckoutSummary({ className }: CheckoutSummaryProps) {
         {breakdown.longStayDiscountApplied ? (
           <div className="flex items-baseline justify-between gap-3 text-body-sm">
             <span className="font-sans text-leaf">
-              Long-stay discount ({breakdown.longStayDiscountPercent}% · {breakdown.longStayMinNights}+ nights)
+              {`Long-stay discount (${breakdown.longStayDiscountPercent}% · ${breakdown.longStayMinNights}+ nights)`}
             </span>
             <span className="font-sans font-semibold text-leaf">
               −{format(breakdown.longStayDiscount)}
@@ -172,10 +172,11 @@ export function CheckoutSummary({ className }: CheckoutSummaryProps) {
               className="flex items-baseline justify-between gap-3 border-t border-midnight/10 pt-3 text-body-sm"
             >
               <span className="font-sans text-midnight-400">
-                {step.sharePercent}% ·{' '}
-                {step.dueDate
-                  ? formatStayDate(step.dueDate, 'en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-                  : step.when}
+                {`${step.sharePercent}% · ${
+                  step.dueDate
+                    ? formatStayDate(step.dueDate, 'en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+                    : step.when
+                }`}
               </span>
               <span className="font-sans font-semibold text-midnight-400">{format(step.amount)}</span>
             </div>
