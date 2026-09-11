@@ -1,8 +1,9 @@
 'use client'
 
-import { Minus, Plus, Users } from 'lucide-react'
+import { Users } from 'lucide-react'
 
 import { useBooking } from './BookingProvider'
+import { Stepper } from './Stepper'
 
 const MIN_GUESTS = 1
 const MAX_GUESTS = 8
@@ -21,9 +22,6 @@ interface GuestSelectorProps {
 export function GuestSelector({ className }: GuestSelectorProps) {
   const { state, setGuests } = useBooking()
   const value = state.guests
-
-  const dec = () => setGuests(Math.max(MIN_GUESTS, value - 1))
-  const inc = () => setGuests(Math.min(MAX_GUESTS, value + 1))
 
   return (
     <div className={className}>
@@ -50,32 +48,15 @@ export function GuestSelector({ className }: GuestSelectorProps) {
           </div>
         </div>
 
-        <div className="flex items-center gap-2" role="group" aria-label="Guest count">
-          <button
-            type="button"
-            onClick={dec}
-            disabled={value <= MIN_GUESTS}
-            aria-label="Decrease guests"
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-lagoon/30 text-midnight transition-all hover:border-gold hover:text-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-pearl disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-lagoon/30 disabled:hover:text-midnight"
-          >
-            <Minus className="h-4 w-4" aria-hidden="true" />
-          </button>
-          <span
-            className="w-6 text-center font-heading text-base font-semibold text-midnight"
-            aria-hidden="true"
-          >
-            {value}
-          </span>
-          <button
-            type="button"
-            onClick={inc}
-            disabled={value >= MAX_GUESTS}
-            aria-label="Increase guests"
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-lagoon/30 text-midnight transition-all hover:border-gold hover:text-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-pearl disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-lagoon/30 disabled:hover:text-midnight"
-          >
-            <Plus className="h-4 w-4" aria-hidden="true" />
-          </button>
-        </div>
+        <Stepper
+          value={value}
+          min={MIN_GUESTS}
+          max={MAX_GUESTS}
+          onChange={setGuests}
+          label="Guest count"
+          decreaseLabel="Decrease guests"
+          increaseLabel="Increase guests"
+        />
       </div>
     </div>
   )

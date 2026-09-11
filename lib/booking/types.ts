@@ -41,6 +41,12 @@ export interface SelectedExperience {
   priceUSD: number
   priceUnit: PriceUnit
   quantity: number
+  /**
+   * True once the guest set the quantity themselves. Not everyone staying
+   * joins every experience, so a hand-set number is never overwritten when
+   * the guest count changes; only untouched per-person lines follow it.
+   */
+  quantityEdited?: boolean
 }
 
 /* ---------------------------------------------------------------------------

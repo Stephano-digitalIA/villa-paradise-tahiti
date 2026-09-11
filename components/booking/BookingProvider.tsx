@@ -247,7 +247,15 @@ export function BookingProvider({ experiences, settings, children }: BookingProv
   }, [])
 
   const setGuests = useCallback((count: number) => {
-    setState((s) => ({ ...s, guests: clampGuests(count) }))
+    setState((s) => {
+      const guests = clampGuests(count)
+      // Per-person lines default to the guest count and follow it, unless
+      // the guest set a number themselves: not everyone joins every outing.
+      const selectedExperiences = s.selectedExperiences.map((e) =>
+        e.priceUnit === 'per_person' && !e.quantityEdited ? { ...e, quantity: guests } : e,
+      )
+      return { ...s, guests, selectedExperiences }
+    })
   }, [])
 
   const setSpecialRequests = useCallback((value: string) => {
@@ -292,7 +300,7 @@ export function BookingProvider({ experiences, settings, children }: BookingProv
       ...s,
       selectedExperiences: s.selectedExperiences.map((e) =>
         e.slug === slug && e.priceUnit !== 'flat'
-          ? { ...e, quantity: Math.max(1, Math.floor(quantity)) }
+          ? { ...e, quantity: Math.max(1, Math.floor(quantity)), quantityEdited: true }
           : e,
       ),
     }))

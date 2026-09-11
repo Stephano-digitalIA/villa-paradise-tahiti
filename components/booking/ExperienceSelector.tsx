@@ -15,7 +15,7 @@
  */
 
 import Image from 'next/image'
-import { Minus, Plus, Check } from 'lucide-react'
+import { Check } from 'lucide-react'
 
 import { Badge } from '@/components/ui'
 import { cn } from '@/lib/utils'
@@ -24,6 +24,7 @@ import { useCurrency } from '@/components/currency'
 import type { Experience, PriceUnit } from '@/lib/cms'
 
 import { useBooking } from './BookingProvider'
+import { Stepper } from './Stepper'
 
 /* ---------------------------------------------------------------------------
  * Helpers
@@ -87,14 +88,6 @@ function ExperienceLine({ experience }: LineProps) {
 
   const toggle = () => toggleExperience(experience)
 
-  const decrement = () => {
-    if (!selected) return
-    setExperienceQuantity(slug, Math.max(minQty, qty - 1))
-  }
-  const increment = () => {
-    if (!selected) return
-    setExperienceQuantity(slug, Math.min(maxQty, qty + 1))
-  }
 
   return (
     <li
@@ -181,36 +174,15 @@ function ExperienceLine({ experience }: LineProps) {
 
             {isSelected && experience.priceUnit !== 'flat' ? (
               <div className="flex items-center gap-3">
-                <div
-                  className="flex items-center gap-1"
-                  role="group"
-                  aria-label={`Quantity for ${experience.title}`}
-                >
-                  <button
-                    type="button"
-                    onClick={decrement}
-                    disabled={qty <= minQty}
-                    aria-label="Decrease quantity"
-                    className="flex h-8 w-8 items-center justify-center rounded-full border border-lagoon/30 text-midnight transition-all hover:border-gold hover:text-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-lagoon/30 disabled:hover:text-midnight"
-                  >
-                    <Minus className="h-3.5 w-3.5" aria-hidden="true" />
-                  </button>
-                  <span
-                    className="min-w-[1.75rem] text-center font-heading text-sm font-semibold text-midnight"
-                    aria-live="polite"
-                  >
-                    {qty}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={increment}
-                    disabled={qty >= maxQty}
-                    aria-label="Increase quantity"
-                    className="flex h-8 w-8 items-center justify-center rounded-full border border-lagoon/30 text-midnight transition-all hover:border-gold hover:text-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-lagoon/30 disabled:hover:text-midnight"
-                  >
-                    <Plus className="h-3.5 w-3.5" aria-hidden="true" />
-                  </button>
-                </div>
+                <Stepper
+                  value={qty}
+                  min={minQty}
+                  max={maxQty}
+                  onChange={(next) => setExperienceQuantity(slug, next)}
+                  label={`Quantity for ${experience.title}`}
+                  decreaseLabel="Decrease quantity"
+                  increaseLabel="Increase quantity"
+                />
                 <span className="font-sans text-body-sm font-semibold text-midnight">
                   {format(lineTotal)}
                 </span>
