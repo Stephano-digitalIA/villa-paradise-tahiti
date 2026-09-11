@@ -1,0 +1,127 @@
+/**
+ * Rate seasons as date windows, set from Admin > Réglages.
+ *
+ * A window is a yearly recurring range, `MM-DD` to `MM-DD` inclusive, tagged
+ * with the season it belongs to. A window may wrap the year end (`12-20` to
+ * `01-05`). Any date no window covers is low season, so the operator only
+ * has to describe the exceptions.
+ *
+ * Priority when windows overlap: peak beats high beats low. That lets a
+ * broad "July to September is high" sit under a narrower "Easter week is
+ * peak" without the operator having to carve holes.
+ *
+ * Easter moves every year; the operator adjusts that window once a year.
+ *
+ * Pure module: used by the pricing engine (client and server), the rates
+ * page and the admin editor.
+ */
+import type { Season } from './types'
+
+export interface SeasonWindow {
+  season: Season
+  /** `MM-DD`, inclusive. */
+  from: string
+  /** `MM-DD`, inclusive. May be earlier than `from` when the window wraps. */
+  to: string
+  /** Optional wording for the rates page, e.g. "Easter". */
+  label?: string
+}
+
+/** Mirrors the rules the pricing engine applied before windows existed. */
+export const DEFAULT_SEASON_WINDOWS: SeasonWindow[] = [
+  { season: 'peak', from: '12-20', to: '01-05', label: 'Christmas & New Year' },
+  { season: 'peak', from: '03-28', to: '04-05', label: 'Easter' },
+  { season: 'high', from: '07-01', to: '09-30' },
+  { season: 'high', from: '12-01', to: '12-19' },
+  { season: 'high', from: '01-06', to: '01-31' },
+  { season: 'low', from: '05-01', to: '06-30' },
+  { season: 'low', from: '10-01', to: '11-30' },
+]
+
+const SEASONS: Season[] = ['low', 'high', 'peak']
+const MMDD = /^(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/
+
+/** Validate whatever the database holds. Anything malformed is dropped. */
+export function parseSeasonWindows(raw: unknown): SeasonWindow[] {
+  if (!Array.isArray(raw)) return []
+  const out: SeasonWindow[] = []
+  for (const item of raw) {
+    if (!item || typeof item !== 'object') continue
+    const w = item as Record<string, unknown>
+    const season = w.season
+    const from = typeof w.from === 'string' ? w.from.slice(-5) : ''
+    const to = typeof w.to === 'string' ? w.to.slice(-5) : ''
+    if (!SEASONS.includes(season as Season)) continue
+    if (!MMDD.test(from) || !MMDD.test(to)) continue
+    out.push({
+      season: season as Season,
+      from,
+      to,
+      ...(typeof w.label === 'string' && w.label.trim() ? { label: w.label.trim() } : {}),
+    })
+  }
+  return out
+}
+
+/** `MM-DD` to a comparable number, e.g. "07-15" -> 715. */
+function key(mmdd: string): number {
+  const [m, d] = mmdd.split('-').map(Number)
+  return m * 100 + d
+}
+
+function covers(window: SeasonWindow, mmdd: string): boolean {
+  const k = key(mmdd)
+  const a = key(window.from)
+  const b = key(window.to)
+  return a <= b ? k >= a && k <= b : k >= a || k <= b
+}
+
+/**
+ * The season of an ISO date under the given windows. Low when nothing
+ * matches, so the operator describes only the exceptions.
+ */
+export function seasonForDate(iso: string, windows: SeasonWindow[]): Season {
+  const mmdd = iso.slice(5, 10)
+  if (!MMDD.test(mmdd)) return 'low'
+  for (const season of ['peak', 'high', 'low'] as const) {
+    if (windows.some((w) => w.season === season && covers(w, mmdd))) return season
+  }
+  return 'low'
+}
+
+/* ---------------------------------------------------------------------------
+ * Wording for the rates page
+ * ------------------------------------------------------------------------- */
+
+const MONTHS = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December',
+]
+const DAYS_IN_MONTH = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+
+function short(month: number): string {
+  return MONTHS[month - 1].slice(0, 3)
+}
+
+/** "July – September" for whole months, "Dec 20 – Jan 5" otherwise. */
+function describeWindow(w: SeasonWindow): string {
+  if (w.label) return w.label
+  const [fm, fd] = w.from.split('-').map(Number)
+  const [tm, td] = w.to.split('-').map(Number)
+  const wholeMonths = fd === 1 && td >= DAYS_IN_MONTH[tm - 1] - 1
+  if (wholeMonths) {
+    return fm === tm ? MONTHS[fm - 1] : `${MONTHS[fm - 1]} – ${MONTHS[tm - 1]}`
+  }
+  return `${short(fm)} ${fd} – ${short(tm)} ${td}`
+}
+
+/**
+ * The windows of one season as a sentence for the rates card, e.g.
+ * "May – June · October – November". Empty when the season has no window.
+ */
+export function describeSeasonWindows(windows: SeasonWindow[], season: Season): string {
+  return windows
+    .filter((w) => w.season === season)
+    .map(describeWindow)
+    .join(' · ')
+}

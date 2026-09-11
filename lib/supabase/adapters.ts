@@ -1,3 +1,4 @@
+import { parseSeasonWindows } from '@/lib/booking/seasons'
 // ─────────────────────────────────────────────────────────────────────────────
 // lib/supabase/adapters.ts
 //
@@ -168,6 +169,7 @@ export function adaptSettings(s: Settings) {
     whatsappNumber: s.whatsapp_number,
     defaultMinNights: s.default_min_nights,
     defaultDepositPercent: s.default_deposit_percent,
+    seasonWindows: parseSeasonWindows(s.season_windows),
     defaultNightlyRateUSD: s.default_nightly_rate_usd ?? 690,
     cleaningFeeUSD: s.cleaning_fee_usd ?? 150,
     // USD → EUR rate for the public currency switcher (admin-managed).

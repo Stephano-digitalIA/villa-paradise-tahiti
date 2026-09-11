@@ -3,6 +3,7 @@ import { Badge } from '@/components/ui'
 import { Price } from '@/components/currency'
 import { SEASONAL_RATES } from '@/lib/booking/pricing'
 import type { Season } from '@/lib/booking/types'
+import { describeSeasonWindows } from '@/lib/booking/seasons'
 import type { Settings } from '@/lib/cms'
 import { getSiteContent } from '@/lib/content'
 
@@ -42,13 +43,19 @@ export async function RatesGrid({ settings = null }: { settings?: Settings | nul
   const t = await getSiteContent()
   const unit = t('rates.grid.unit', 'per night')
 
+  // Periods come from the season windows set in Admin > Réglages, the same
+  // ones the pricing engine applies, so the card can never contradict the
+  // price a guest is quoted. The Contenu text is only the fallback.
+  const windows = settings?.seasonWindows ?? []
+  const period = (key: Season) => describeSeasonWindows(windows, key)
+
   const seasons: SeasonRate[] = [
     {
       name: t('rates.grid.low.name', 'Low Season'),
       key: 'low',
       badge: 'standard',
       unit,
-      window: t('rates.grid.low.window', 'May – June · October – November'),
+      window: period('low') || t('rates.grid.low.window', 'May – June · October – November'),
       blurb: t(
         'rates.grid.low.blurb',
         'Soft trade winds, fewer travelers and the most generous pricing of the year. Our favorite period.',
@@ -59,7 +66,7 @@ export async function RatesGrid({ settings = null }: { settings?: Settings | nul
       key: 'high',
       badge: 'popular',
       unit,
-      window: t('rates.grid.high.window', 'July – September · December – early January'),
+      window: period('high') || t('rates.grid.high.window', 'July – September · December – early January'),
       blurb: t(
         'rates.grid.high.blurb',
         'Whale-watching season, dry sunny days, golden hour at the pool.',
@@ -70,7 +77,7 @@ export async function RatesGrid({ settings = null }: { settings?: Settings | nul
       key: 'peak',
       badge: 'peak',
       unit,
-      window: t('rates.grid.peak.window', 'Christmas week · New Year · Easter'),
+      window: period('peak') || t('rates.grid.peak.window', 'Christmas week · New Year · Easter'),
       blurb: t(
         'rates.grid.peak.blurb',
         'Villa Paradise Tahiti is the best place to celebrate your Christmas and New Year holidays.',

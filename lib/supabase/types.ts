@@ -26,7 +26,8 @@ export type Settings = {
   long_stay_discount_percent: number | null
   /** USD → EUR exchange rate for the public currency switcher. Admin-managed. */
   usd_to_eur_rate: number | null
-  season_windows: Array<{ from: string; to: string; label: string }>
+  /** Rate seasons as yearly `MM-DD` windows; see lib/booking/seasons.ts. */
+  season_windows: Array<{ season?: string; from: string; to: string; label?: string }> | null
   cancellation_policy: string | null
   terms_of_service: string | null
   privacy_policy: string | null

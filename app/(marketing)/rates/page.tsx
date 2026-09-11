@@ -13,6 +13,7 @@ import { RatesPolicy } from '@/components/sections/rates/RatesPolicy'
 import { cmsFetch } from '@/lib/cms/fetcher'
 import { settingsQuery, type Settings } from '@/lib/cms'
 import { SEASONAL_RATES } from '@/lib/booking/pricing'
+import { describeSeasonWindows } from '@/lib/booking/seasons'
 import { SITE_URL, absoluteUrl, buildMetadata } from '@/lib/seo'
 
 export const metadata: Metadata = buildMetadata({
@@ -35,6 +36,7 @@ export const metadata: Metadata = buildMetadata({
  */
 export default async function RatesPage() {
   const settings = await cmsFetch<Settings | null>(settingsQuery)
+  const windows = settings?.seasonWindows ?? []
 
   // Live seasonal rates: Supabase settings override, else the SEASONAL_RATES fallback.
   const rates = {
@@ -50,17 +52,17 @@ export default async function RatesPage() {
           {
             name: 'Low Season',
             priceUSD: rates.low,
-            season: 'May – June, October – November',
+            season: describeSeasonWindows(windows, 'low') || 'May – June, October – November',
           },
           {
             name: 'High Season',
             priceUSD: rates.high,
-            season: 'July – September, December – early January',
+            season: describeSeasonWindows(windows, 'high') || 'July – September, December – early January',
           },
           {
             name: 'Peak Holidays',
             priceUSD: rates.peak,
-            season: 'Christmas week, New Year, Easter',
+            season: describeSeasonWindows(windows, 'peak') || 'Christmas week, New Year, Easter',
           },
         ])}
       />

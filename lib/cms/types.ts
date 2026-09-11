@@ -1,3 +1,5 @@
+import type { SeasonWindow } from '@/lib/booking/seasons'
+
 /**
  * Content types — Villa Paradise Tahiti.
  *
@@ -257,5 +259,7 @@ export interface Settings {
   rate_low_usd?: number | null
   rate_high_usd?: number | null
   rate_peak_usd?: number | null
+  /** Rate seasons as yearly windows, from Admin > Réglages. Empty = legacy month rules. */
+  seasonWindows?: SeasonWindow[]
   bookingTermsUrl?: string
 }

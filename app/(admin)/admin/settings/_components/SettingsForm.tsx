@@ -7,6 +7,8 @@ import type { Settings } from '@/lib/supabase/types'
 import { saveSettings } from '@/app/actions/settings'
 import { cn } from '@/lib/utils'
 import { CONTACT_EMAIL } from '@/lib/constants'
+import { parseSeasonWindows } from '@/lib/booking/seasons'
+import { SeasonWindowsEditor } from './SeasonWindowsEditor'
 
 type Props = {
   initialSettings: Partial<Settings> | null
@@ -173,6 +175,8 @@ export function SettingsForm({ initialSettings }: Props) {
       rate_peak_usd: num('rate_peak_usd'),
       long_stay_min_nights: num('long_stay_min_nights'),
       long_stay_discount_percent: num('long_stay_discount_percent'),
+      // Seasons: the editor keeps its list in a hidden JSON field.
+      season_windows: parseSeasonWindows(JSON.parse(str('season_windows') ?? '[]')),
       // Contact
       contact_email: str('contact_email'),
       contact_phone: str('contact_phone'),
@@ -256,7 +260,7 @@ export function SettingsForm({ initialSettings }: Props) {
           />
           <div className="flex flex-col gap-1.5">
             <NumberInput
-              label="Tarif basse saison (mai–juin, oct–nov)"
+              label="Tarif basse saison"
               name="rate_low_usd"
               defaultValue={s.rate_low_usd}
               min={0}
@@ -266,7 +270,7 @@ export function SettingsForm({ initialSettings }: Props) {
           </div>
           <div className="flex flex-col gap-1.5">
             <NumberInput
-              label="Tarif haute saison (juil–sept, 1–19 déc)"
+              label="Tarif haute saison"
               name="rate_high_usd"
               defaultValue={s.rate_high_usd}
               min={0}
@@ -276,7 +280,7 @@ export function SettingsForm({ initialSettings }: Props) {
           </div>
           <div className="flex flex-col gap-1.5">
             <NumberInput
-              label="Tarif très haute saison (20 déc–5 jan, Pâques)"
+              label="Tarif très haute saison"
               name="rate_peak_usd"
               defaultValue={s.rate_peak_usd}
               min={0}
@@ -312,6 +316,14 @@ export function SettingsForm({ initialSettings }: Props) {
             unit="EUR / USD"
             accent
           />
+        </div>
+      </div>
+
+      {/* Section 1b: seasons. Drives both the calculator and the /rates page. */}
+      <div className={CARD_CLASS}>
+        <SectionTitle>Saisons tarifaires</SectionTitle>
+        <div className="mt-6">
+          <SeasonWindowsEditor initial={parseSeasonWindows(s.season_windows)} />
         </div>
       </div>
 

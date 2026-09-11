@@ -20,7 +20,7 @@
 import { AlertCircle } from 'lucide-react'
 
 import { DateField } from '@/components/ui'
-import { todayISO, addDaysISO, calculateNights, getNightlyRate } from '@/lib/booking'
+import { todayISO, addDaysISO, calculateNights } from '@/lib/booking'
 import { useCurrency } from '@/components/currency'
 
 import { useBooking } from './BookingProvider'
@@ -129,7 +129,7 @@ export function DateRangePicker() {
               <>
                 Rate:{' '}
                 <span className="font-semibold text-midnight">
-                  {format(getNightlyRate(state.checkIn))}
+                  {format(breakdown.nightlyRate)}
                 </span>{' '}
                 / night
               </>

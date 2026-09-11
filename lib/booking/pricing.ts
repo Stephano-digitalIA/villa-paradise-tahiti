@@ -19,6 +19,7 @@
  *  - Mock `Settings` for fallback rates / cleaning / deposit percent.
  */
 
+import { seasonForDate, type SeasonWindow } from './seasons'
 import type {
   BookingState,
   PriceBreakdown,
@@ -165,9 +166,18 @@ export function calculateNights(
  * computus algorithm is overkill here — the marketing copy itself only
  * says "Easter week".
  */
-export function getSeason(checkIn: string | null | undefined): Season | null {
+export function getSeason(
+  checkIn: string | null | undefined,
+  windows?: SeasonWindow[],
+): Season | null {
   const date = parseISODate(checkIn ?? null)
   if (!date) return null
+
+  // Windows set in Admin > Réglages win over the month rules below, which
+  // only remain as the fallback for a database with none configured.
+  if (windows && windows.length > 0) {
+    return seasonForDate(date.toISOString().slice(0, 10), windows)
+  }
 
   const month = date.getUTCMonth() + 1 // 1..12
   const day = date.getUTCDate() // 1..31
@@ -243,6 +253,8 @@ export interface PricingSettings {
   long_stay_min_nights?: number | null
   /** When present, overrides LONG_STAY_DISCOUNT_PERCENT. */
   long_stay_discount_percent?: number | null
+  /** Rate seasons set by the operator. Empty or absent: legacy month rules. */
+  seasonWindows?: SeasonWindow[]
 }
 
 /**
@@ -262,6 +274,7 @@ export interface SettingsInput {
   rate_peak_usd?: number | null
   long_stay_min_nights?: number | null
   long_stay_discount_percent?: number | null
+  seasonWindows?: SeasonWindow[]
 }
 
 /**
@@ -282,6 +295,7 @@ export function toPricingSettings(
     rate_peak_usd: settings?.rate_peak_usd,
     long_stay_min_nights: settings?.long_stay_min_nights,
     long_stay_discount_percent: settings?.long_stay_discount_percent,
+    seasonWindows: settings?.seasonWindows,
   }
 }
 
@@ -315,7 +329,7 @@ export function computeBreakdown(
   }
 
   const nights = calculateNights(state.checkIn, state.checkOut)
-  const season = getSeason(state.checkIn)
+  const season = getSeason(state.checkIn, settings.seasonWindows)
   const nightlyRate = season
     ? effectiveRates[season]
     : (settings.defaultNightlyRateUSD ?? FALLBACK_NIGHTLY_RATE)
