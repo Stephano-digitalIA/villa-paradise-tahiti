@@ -300,10 +300,13 @@ export function aggregateRatingSchema(
   /** Optional override — useful when the marketing copy says "100+ reviews" while
    * we only have a subset migrated. */
   displayCount?: number,
+  /** Same idea for the average: the published figure, when the stored reviews
+   * are only a sample. Must match what the page shows. */
+  displayRating?: number,
 ): Record<string, unknown> | null {
   if (!reviews.length) return null
   const ratingValue =
-    reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+    displayRating ?? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
   const reviewCount = displayCount ?? reviews.length
 
   return {

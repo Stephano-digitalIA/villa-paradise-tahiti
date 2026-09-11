@@ -1,7 +1,8 @@
 /**
  * Three-instalment payment plan, on the model used by the large rental
- * platforms: a quarter at booking, a quarter part-way through the wait, the
- * rest thirty days before arrival.
+ * platforms: 30% at booking, 40% part-way through the wait, the remaining
+ * 30% thirty days before arrival. The first share matches the ordinary
+ * deposit, so choosing the plan costs the guest nothing more up front.
  *
  * Nobody lends anything here. The guest pays the villa directly, in stages,
  * which is what makes a four-thousand-dollar stay booked six months ahead
@@ -13,9 +14,9 @@
  */
 import { toCents, fromCents } from './pricing'
 
-/** Share of the total taken at booking, and again mid-way. */
-const FIRST_SHARE = 0.25
-const SECOND_SHARE = 0.25
+/** Share of the total taken at booking, then mid-way. The rest is the last. */
+const FIRST_SHARE = 0.3
+const SECOND_SHARE = 0.4
 
 /** The last instalment falls due this many days before arrival. */
 export const FINAL_DUE_DAYS_BEFORE = 30

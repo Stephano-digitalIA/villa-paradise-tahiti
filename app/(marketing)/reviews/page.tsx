@@ -16,7 +16,7 @@ import { SITE_URL, absoluteUrl, buildMetadata } from '@/lib/seo'
 export const metadata: Metadata = buildMetadata({
   title: 'Guest Reviews — Villa Paradise Tahiti',
   description:
-    'See what our guests say about Villa Paradise. 4.9/5 from 47 verified reviews on Airbnb, VRBO and Google. Real stories, unedited.',
+    'See what our guests say about Villa Paradise. 4.96/5 from 147 verified reviews on Airbnb, VRBO and Google. Real stories, unedited.',
   path: '/reviews',
 })
 
@@ -35,20 +35,19 @@ export const metadata: Metadata = buildMetadata({
  * Structured data: AggregateRating tied to the VacationRental @id so it
  * powers the Google star snippet on the rental's listing.
  */
+const PUBLISHED_RATING = 4.96
+const PUBLISHED_REVIEW_COUNT = 147
+
 export default async function ReviewsPage() {
   const reviews = await cmsFetch<Review[]>(reviewsQuery)
 
-  // Aggregate stats — derived from the live review set so they stay in sync.
-  const totalReviews = reviews.length
-  const averageRating =
-    totalReviews > 0
-      ? reviews.reduce((sum, r) => sum + r.rating, 0) / totalReviews
-      : 0
-
-  // Marketing-facing total. We floor the figure to 47 to signal scale even
-  // when only a subset of reviews has been migrated yet.
-  const displayTotal = Math.max(totalReviews, 47)
-  const aggregate = aggregateRatingSchema(reviews, displayTotal)
+  // Published figures. The reviews stored here are a sample of what the villa
+  // has collected across Airbnb, VRBO and Google; the numbers shown are the
+  // owner's consolidated record (updated September 2026). Kept in one place so
+  // the hero, the stats strip and the Google snippet can never disagree.
+  const displayTotal = Math.max(reviews.length, PUBLISHED_REVIEW_COUNT)
+  const averageRating = PUBLISHED_RATING
+  const aggregate = aggregateRatingSchema(reviews, displayTotal, averageRating)
 
   return (
     <>

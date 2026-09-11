@@ -23,6 +23,7 @@ export const RATES_CONTENT_GROUPS: ContentGroup[] = [
       { key: 'rates.hero.title1', label: 'Titre, ligne 1 (italique)' },
       { key: 'rates.hero.title2', label: 'Titre, ligne 2 (doré)' },
       { key: 'rates.hero.subtitle', label: 'Sous-titre', multiline: true, rows: 4 },
+      { key: 'rates.hero.cta', label: 'Bouton « Calculer mon séjour »' },
     ],
   },
   {
@@ -135,6 +136,7 @@ export const RATES_CONTENT_DEFAULTS: Readonly<Record<string, string>> = {
   'rates.hero.title2': 'year-round magic.',
   'rates.hero.subtitle':
     'One villa, three seasons, zero surprises. The rates below are our published direct rates: always lower than what you will find on Airbnb, VRBO or any aggregator. No service fees, no commissions stacked on top.',
+  'rates.hero.cta': 'Calculate my stay',
   // Grille saisonnière
   'rates.grid.eyebrow': 'Nightly rates',
   'rates.grid.title': 'Pricing by season',

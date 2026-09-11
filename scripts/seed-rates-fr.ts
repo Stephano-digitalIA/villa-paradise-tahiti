@@ -80,6 +80,7 @@ const FRENCH: ReadonlyArray<readonly [string, string]> = [
   ["rates.cta.title2", "pour les dates de votre choix"],
   ["rates.cta.subtitle", "Choisissez votre date d'arrivée, le nombre de voyageurs et les expériences qui vous tentent. Nous affichons le total exact, en dollars, sans frais cachés."],
   ["rates.cta.primary", "Calculer mon séjour"],
+  ["rates.hero.cta", "Calculer mon séjour"],
   ["rates.cta.secondary", "Demander les disponibilités"],
   ["rates.cta.trust", "Meilleur tarif garanti · Remboursement à 100 % en cas d'annulation à plus de 60 jours · Paiement sécurisé par PayPal"],
 ]

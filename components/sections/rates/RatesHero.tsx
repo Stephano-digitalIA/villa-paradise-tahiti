@@ -1,4 +1,8 @@
-import { Container, Section } from '@/components/ui'
+import Link from 'next/link'
+import { ArrowRight } from 'lucide-react'
+
+import { Button, Container, Section } from '@/components/ui'
+import { bookingHref } from '@/lib/navigation'
 import { getSiteContent } from '@/lib/content'
 
 /**
@@ -34,6 +38,16 @@ export async function RatesHero() {
               'One villa, three seasons, zero surprises. The rates below are our published direct rates: always lower than what you will find on Airbnb, VRBO or any aggregator. No service fees, no commissions stacked on top.',
             )}
           </p>
+
+          {/* The same call to action as the closing block, brought up here so a
+              visitor who already knows the season does not scroll the whole
+              page to reach the calculator. */}
+          <Button asChild variant="primary" size="lg" className="mt-10">
+            <Link href={bookingHref}>
+              {t('rates.hero.cta', 'Calculate my stay')}
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </Link>
+          </Button>
         </div>
       </Container>
     </Section>
