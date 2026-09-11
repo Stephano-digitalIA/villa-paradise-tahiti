@@ -128,3 +128,96 @@ export function describeSchedule(instalments: Instalment[]): string {
     .map((i) => `${i.amount.toLocaleString('en-US', { maximumFractionDigits: 0 })}`)
     .join(' + ')
 }
+
+/* ---------------------------------------------------------------------------
+ * Payment timeline shown at checkout
+ * ------------------------------------------------------------------------- */
+
+export interface TimelineStep {
+  /** 1-based position in the timeline. */
+  sequence: number
+  /** Whole-number share of the total. */
+  sharePercent: number
+  amount: number
+  /** ISO date, or null when the step is due today. */
+  dueDate: string | null
+  /** Short wording for the "when" column. */
+  when: string
+}
+
+export interface PaymentTimeline {
+  /** What the server is asked to do; matches `checkout-schema.ts`. */
+  option: 'plan' | 'deposit' | 'full'
+  steps: TimelineStep[]
+}
+
+/**
+ * The payment steps for a stay, with no choice left to the guest.
+ *
+ * The plan is the normal case: three instalments, 30/40/30. When arrival is
+ * too near for three, the timeline shrinks rather than disappearing:
+ *   - 30 to 59 days out: the deposit today, the balance thirty days before
+ *     arrival (the classic flow, chased by email);
+ *   - under 30 days: everything today, since the balance would already be
+ *     due.
+ *
+ * Amounts come from the pricing breakdown so the deposit shown here is the
+ * one the server charges.
+ */
+export function buildPaymentTimeline(
+  breakdown: { total: number; depositAmount: number; balanceAmount: number },
+  checkIn: string,
+  today: Date = new Date(),
+): PaymentTimeline {
+  const plan = buildSchedule(breakdown.total, checkIn, today)
+  if (plan) {
+    return {
+      option: 'plan',
+      steps: plan.map((i) => ({
+        sequence: i.sequence,
+        sharePercent: i.sharePercent,
+        amount: i.amount,
+        dueDate: i.sequence === 1 ? null : i.dueDate,
+        when:
+          i.sequence === 1
+            ? 'Today'
+            : i.sequence === 2
+              ? 'Mid-way'
+              : `${FINAL_DUE_DAYS_BEFORE} days before arrival`,
+      })),
+    }
+  }
+
+  const arrival = new Date(`${checkIn}T00:00:00Z`)
+  const daysOut = Number.isNaN(arrival.getTime()) ? 0 : daysBetween(today, arrival)
+  if (daysOut > FINAL_DUE_DAYS_BEFORE && breakdown.balanceAmount > 0) {
+    const total = breakdown.total || 1
+    const depositPercent = Math.round((breakdown.depositAmount / total) * 100)
+    return {
+      option: 'deposit',
+      steps: [
+        {
+          sequence: 1,
+          sharePercent: depositPercent,
+          amount: breakdown.depositAmount,
+          dueDate: null,
+          when: 'Today',
+        },
+        {
+          sequence: 2,
+          sharePercent: 100 - depositPercent,
+          amount: breakdown.balanceAmount,
+          dueDate: isoDay(addDays(arrival, -FINAL_DUE_DAYS_BEFORE)),
+          when: `${FINAL_DUE_DAYS_BEFORE} days before arrival`,
+        },
+      ],
+    }
+  }
+
+  return {
+    option: 'full',
+    steps: [
+      { sequence: 1, sharePercent: 100, amount: breakdown.total, dueDate: null, when: 'Today' },
+    ],
+  }
+}

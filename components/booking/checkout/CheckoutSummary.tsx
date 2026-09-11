@@ -21,6 +21,8 @@ import { calculateExperienceLineTotal } from '@/lib/booking'
 import { useCurrency } from '@/components/currency'
 
 import { useBooking } from '../BookingProvider'
+import { buildPaymentTimeline } from '@/lib/booking/schedule'
+import { formatStayDate } from '@/lib/format/date'
 import { SeasonBadge } from '../SeasonBadge'
 
 interface CheckoutSummaryProps {
@@ -28,9 +30,10 @@ interface CheckoutSummaryProps {
 }
 
 export function CheckoutSummary({ className }: CheckoutSummaryProps) {
-  const { state, breakdown, settings } = useBooking()
+  const { state, breakdown } = useBooking()
   const { format, currency, rate } = useCurrency()
-  const depositPercent = settings?.defaultDepositPercent ?? 30
+  // Same timeline as section 4 of the form, so the two never disagree.
+  const timeline = state.checkIn ? buildPaymentTimeline(breakdown, state.checkIn) : null
 
   return (
     <aside
@@ -145,8 +148,8 @@ export function CheckoutSummary({ className }: CheckoutSummaryProps) {
         </span>
       </div>
 
-      {/* ─── Deposit / balance card ────────────────────────────────── */}
-      {breakdown.nights > 0 ? (
+      {/* ─── Payment timeline card ─────────────────────────────────── */}
+      {breakdown.nights > 0 && timeline ? (
         <div className="flex flex-col gap-3 rounded-xl bg-sand/60 p-4">
           <div className="flex items-baseline justify-between gap-3">
             <div className="flex flex-col">
@@ -154,21 +157,29 @@ export function CheckoutSummary({ className }: CheckoutSummaryProps) {
                 Due today
               </span>
               <span className="font-sans text-xs text-midnight-400">
-                Deposit · {depositPercent}%
+                {timeline.steps.length > 1
+                  ? `${timeline.steps[0].sharePercent}% · Pay in ${timeline.steps.length}`
+                  : 'Full amount'}
               </span>
             </div>
             <span className="font-heading text-2xl font-semibold text-midnight">
-              {format(breakdown.depositAmount)}
+              {format(timeline.steps[0].amount)}
             </span>
           </div>
-          <div className="flex items-baseline justify-between gap-3 border-t border-midnight/10 pt-3 text-body-sm">
-            <span className="font-sans text-midnight-400">
-              Balance · 30 days before arrival
-            </span>
-            <span className="font-sans font-semibold text-midnight-400">
-              {format(breakdown.balanceAmount)}
-            </span>
-          </div>
+          {timeline.steps.slice(1).map((step) => (
+            <div
+              key={step.sequence}
+              className="flex items-baseline justify-between gap-3 border-t border-midnight/10 pt-3 text-body-sm"
+            >
+              <span className="font-sans text-midnight-400">
+                {step.sharePercent}% ·{' '}
+                {step.dueDate
+                  ? formatStayDate(step.dueDate, 'en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+                  : step.when}
+              </span>
+              <span className="font-sans font-semibold text-midnight-400">{format(step.amount)}</span>
+            </div>
+          ))}
 
           {/* Devise de débit. Le choix fait dans le header devient la devise
               réellement débitée (voir app/api/checkout/route.ts), ce que rien

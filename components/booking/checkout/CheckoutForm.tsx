@@ -26,7 +26,7 @@
  *   const { url } = await res.json()
  */
 
-import { useState, useId } from 'react'
+import { useEffect, useState, useId } from 'react'
 
 export interface CheckoutInitialProfile {
   firstName: string
@@ -55,7 +55,7 @@ import {
 } from '@/lib/booking/checkout-schema'
 
 import { useBooking } from '../BookingProvider'
-import { buildSchedule, MIN_DAYS_FOR_PLAN } from '@/lib/booking/schedule'
+import { buildPaymentTimeline } from '@/lib/booking/schedule'
 import { formatStayDate } from '@/lib/format/date'
 
 /* ---------------------------------------------------------------------------
@@ -230,13 +230,19 @@ export function CheckoutForm({ initialProfile }: CheckoutFormProps) {
 
   const paymentMethod = watch('paymentMethod')
 
-  // The same function the server runs, so the three figures shown here are the
-  // ones that get written. Null when arrival is too near for a plan to make
-  // sense, and the option simply does not appear.
-  const plan = state.checkIn ? buildSchedule(breakdown.total, state.checkIn) : null
-  const paymentOption = watch('paymentOption')
-  const customAmountUSD = watch('customAmountUSD')
+  // The guest does not choose how to pay: the stay is paid in instalments,
+  // three when there is time, fewer when arrival is near. Built with the same
+  // function the server runs, so the figures shown are the ones written.
+  const timeline = state.checkIn
+    ? buildPaymentTimeline(breakdown, state.checkIn)
+    : buildPaymentTimeline(breakdown, '1970-01-01')
+  const dueToday = timeline.steps[0]
   const specialRequestsLength = (watch('specialRequests') ?? '').length
+
+  // The hidden field carries the timeline's option to the server.
+  useEffect(() => {
+    setValue('paymentOption', timeline.option, { shouldValidate: true })
+  }, [timeline.option, setValue])
 
 
   const onSubmit = async (data: CheckoutFormData) => {
@@ -295,17 +301,11 @@ export function CheckoutForm({ initialProfile }: CheckoutFormProps) {
     }
   }
 
-  // Label shown on the submit button — reflects the actual charge.
-  const chargeLabel: string = (() => {
-    if (paymentOption === 'full') {
-      return `Pay ${format(breakdown.total)} in full`
-    }
-    if (paymentOption === 'custom') {
-      const amt = customAmountUSD && customAmountUSD > 0 ? format(customAmountUSD) : 'your amount'
-      return `Pay ${amt}`
-    }
-    return `Pay ${format(breakdown.depositAmount)} deposit`
-  })()
+  // Label shown on the submit button, reflecting the actual charge.
+  const chargeLabel =
+    timeline.steps.length > 1
+      ? `Pay ${format(dueToday.amount)} today`
+      : `Pay ${format(dueToday.amount)} in full`
 
   return (
     <form
@@ -494,126 +494,75 @@ export function CheckoutForm({ initialProfile }: CheckoutFormProps) {
         </div>
       </section>
 
-      {/* ─── 4 · Payment amount ─────────────────────────────────────── */}
+      {/* ─── 4 · Payment schedule ───────────────────────────────────── */}
       <section
         aria-labelledby="section-payment-amount"
         className="flex flex-col gap-5 border-t border-pearl-400 pt-8"
       >
         <SectionHeader
           step={4}
-          title="Payment amount"
-          description="Choose how much you'd like to pay today. The remaining balance is due 30 days before arrival."
+          title={
+            timeline.steps.length === 3
+              ? 'Pay in 3'
+              : timeline.steps.length === 2
+                ? 'Pay in 2'
+                : 'Payment'
+          }
+          description={
+            timeline.steps.length === 3
+              ? 'Your stay is paid in three instalments. Only the first is charged today; the next two come with a personal payment link by email.'
+              : timeline.steps.length === 2
+                ? 'Arrival is under 60 days away, so your stay is paid in two: the deposit today, the balance thirty days before arrival.'
+                : 'Arrival is under 30 days away, so the full amount is due today.'
+          }
         />
 
-        <fieldset
-          aria-invalid={errors.paymentOption ? true : undefined}
-          className="flex flex-col gap-3"
-        >
-          <legend className="sr-only">Payment amount</legend>
+        <input type="hidden" {...register('paymentOption')} />
 
-          <PaymentAmountOption
-            id="po-deposit"
-            value="deposit"
-            label="Deposit (30%)"
-            description="Minimum required to confirm your reservation"
-            amount={format(breakdown.depositAmount)}
-            checked={paymentOption === 'deposit'}
-            onSelect={() => setValue('paymentOption', 'deposit', { shouldValidate: true })}
-            register={register('paymentOption')}
-          />
-
-          {plan ? (
-            <PaymentAmountOption
-              id="po-plan"
-              value="plan"
-              label="Pay in 3"
-              description={[
-                `${plan[0].sharePercent}% today (${format(plan[0].amount)})`,
-                `${plan[1].sharePercent}% on ${formatStayDate(plan[1].dueDate, 'en-US', { month: 'short', day: 'numeric', year: 'numeric' })} (${format(plan[1].amount)})`,
-                `${plan[2].sharePercent}% 30 days before arrival (${format(plan[2].amount)})`,
-              ].join(', ')}
-              amount={format(plan[0].amount)}
-              checked={paymentOption === 'plan'}
-              onSelect={() => setValue('paymentOption', 'plan', { shouldValidate: true })}
-              register={register('paymentOption')}
-            />
-          ) : (
-            // Shown greyed out rather than hidden: a guest who has read about
-            // the plan on the site would otherwise wonder where it went.
-            <PaymentAmountOption
-              id="po-plan"
-              value="plan"
-              label="Pay in 3"
-              description={`30% today, 40% mid-way, 30% before arrival. Available when check-in is at least ${MIN_DAYS_FOR_PLAN} days away.`}
-              checked={false}
-              onSelect={() => undefined}
-              register={register('paymentOption')}
-              disabled
-            />
-          )}
-
-          <PaymentAmountOption
-            id="po-custom"
-            value="custom"
-            label="Custom amount"
-            description="Pay more than the deposit — balance adjusted accordingly"
-            checked={paymentOption === 'custom'}
-            onSelect={() => setValue('paymentOption', 'custom', { shouldValidate: true })}
-            register={register('paymentOption')}
-          >
-            {paymentOption === 'custom' ? (
-              <div className="mt-3 flex flex-col gap-1.5">
-                <label
-                  htmlFor="co-customAmountUSD"
-                  className="text-eyebrow text-xs font-medium uppercase tracking-widest2 text-midnight-400"
+        <ol className="flex flex-col gap-3">
+          {timeline.steps.map((step) => {
+            const isToday = step.sequence === 1
+            return (
+              <li
+                key={step.sequence}
+                className={cn(
+                  'flex items-start gap-3 rounded-xl border p-4',
+                  isToday ? 'border-gold bg-gold/5 shadow-soft' : 'border-pearl-400 bg-pearl',
+                )}
+              >
+                <span
+                  aria-hidden="true"
+                  className={cn(
+                    'mt-0.5 flex h-6 w-6 flex-none items-center justify-center rounded-full text-xs font-semibold',
+                    isToday ? 'bg-gold text-midnight' : 'bg-midnight/10 text-midnight',
+                  )}
                 >
-                  Amount to pay today (USD)
-                </label>
-                <div className="relative">
-                  <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center font-sans text-midnight-400">
-                    $
+                  {step.sequence}
+                </span>
+                <div className="flex min-w-0 flex-1 items-baseline justify-between gap-3">
+                  <div className="flex flex-col gap-0.5">
+                    <span className="font-heading text-base font-semibold text-midnight">
+                      {isToday ? 'Due today' : step.when}
+                      <span className="ml-2 font-sans text-xs font-normal text-midnight-400">
+                        {step.sharePercent}%
+                      </span>
+                    </span>
+                    <span className="font-sans text-xs text-midnight-400">
+                      {isToday
+                        ? 'Charged now to confirm your reservation'
+                        : step.dueDate
+                          ? `Due ${formatStayDate(step.dueDate, 'en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`
+                          : ''}
+                    </span>
+                  </div>
+                  <span className="flex-none font-heading text-base font-semibold text-midnight">
+                    {format(step.amount)}
                   </span>
-                  <input
-                    id="co-customAmountUSD"
-                    type="number"
-                    min={breakdown.depositAmount}
-                    max={breakdown.total}
-                    step="0.01"
-                    placeholder={String(breakdown.depositAmount)}
-                    aria-invalid={errors.customAmountUSD ? true : undefined}
-                    className={cn(
-                      'flex h-12 w-full rounded-lg border border-lagoon/20 bg-pearl pl-7 pr-3 font-sans text-body-md text-midnight',
-                      'transition-colors duration-200',
-                      'focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/30',
-                      errors.customAmountUSD && 'border-coral focus:border-coral focus:ring-coral/30',
-                    )}
-                    {...register('customAmountUSD', { valueAsNumber: true })}
-                  />
                 </div>
-                <p className="font-sans text-xs text-midnight-400">
-                  Min {formatUSD(breakdown.depositAmount)} · Max {formatUSD(breakdown.total)}
-                </p>
-                {typeof errors.customAmountUSD?.message === 'string' ? (
-                  <p role="alert" className="flex items-center gap-1.5 text-xs font-medium text-coral">
-                    <AlertCircle className="h-3 w-3 flex-none" aria-hidden="true" />
-                    {errors.customAmountUSD.message}
-                  </p>
-                ) : null}
-              </div>
-            ) : null}
-          </PaymentAmountOption>
-
-          <PaymentAmountOption
-            id="po-full"
-            value="full"
-            label="Pay in full"
-            description="No balance due — simplify your pre-arrival admin"
-            amount={format(breakdown.total)}
-            checked={paymentOption === 'full'}
-            onSelect={() => setValue('paymentOption', 'full', { shouldValidate: true })}
-            register={register('paymentOption')}
-          />
-        </fieldset>
+              </li>
+            )
+          })}
+        </ol>
 
         {typeof errors.paymentOption?.message === 'string' ? (
           <p role="alert" className="flex items-center gap-1.5 text-xs font-medium text-coral">
@@ -762,84 +711,6 @@ export function CheckoutForm({ initialProfile }: CheckoutFormProps) {
 /* ---------------------------------------------------------------------------
  * Sub-components — payment option card + checkbox
  * ------------------------------------------------------------------------- */
-
-/* ---------------------------------------------------------------------------
- * Payment amount option card
- * ------------------------------------------------------------------------- */
-
-interface PaymentAmountOptionProps {
-  id: string
-  value: 'deposit' | 'plan' | 'custom' | 'full'
-  label: string
-  description: string
-  amount?: string
-  checked: boolean
-  onSelect: () => void
-  register: ReturnType<UseFormRegister<CheckoutFormData>>
-  children?: React.ReactNode
-  /** Not selectable; the description says why. */
-  disabled?: boolean
-}
-
-function PaymentAmountOption({
-  id,
-  value,
-  label,
-  description,
-  amount,
-  checked,
-  onSelect,
-  register,
-  children,
-  disabled = false,
-}: PaymentAmountOptionProps) {
-  return (
-    <label
-      htmlFor={id}
-      onClick={disabled ? undefined : onSelect}
-      aria-disabled={disabled || undefined}
-      className={cn(
-        'flex flex-col gap-0 rounded-xl border bg-pearl p-4 text-left transition-all',
-        disabled
-          ? 'cursor-not-allowed border-pearl-400 opacity-60'
-          : 'cursor-pointer hover:border-gold hover:shadow-soft focus-within:ring-2 focus-within:ring-gold/30',
-        checked ? 'border-gold bg-gold/5 shadow-soft' : 'border-pearl-400',
-      )}
-    >
-      <div className="flex items-start gap-3">
-        <input
-          type="radio"
-          id={id}
-          value={value}
-          className="sr-only"
-          disabled={disabled}
-          {...register}
-        />
-        <span
-          aria-hidden="true"
-          className={cn(
-            'mt-0.5 flex h-5 w-5 flex-none items-center justify-center rounded-full border',
-            checked ? 'border-gold bg-gold' : 'border-pearl-500 bg-pearl',
-          )}
-        >
-          {checked ? <span className="h-2 w-2 rounded-full bg-midnight" /> : null}
-        </span>
-        <div className="flex min-w-0 flex-1 items-baseline justify-between gap-3">
-          <div className="flex flex-col gap-0.5">
-            <span className="font-heading text-base font-semibold text-midnight">{label}</span>
-            <span className="font-sans text-xs text-midnight-400">{description}</span>
-          </div>
-          {amount ? (
-            <span className="flex-none font-heading text-base font-semibold text-midnight">
-              {amount}
-            </span>
-          ) : null}
-        </div>
-      </div>
-      {children}
-    </label>
-  )
-}
 
 interface PaymentOptionProps {
   id: string
