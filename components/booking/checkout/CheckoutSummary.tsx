@@ -34,6 +34,7 @@ export function CheckoutSummary({ className }: CheckoutSummaryProps) {
   const { format, currency, rate } = useCurrency()
   // Same timeline as section 4 of the form, so the two never disagree.
   const timeline = state.checkIn ? buildPaymentTimeline(breakdown, state.checkIn) : null
+  const payInFull = !timeline || timeline.steps.length < 2 || state.payInFull === true
 
   return (
     <aside
@@ -157,16 +158,16 @@ export function CheckoutSummary({ className }: CheckoutSummaryProps) {
                 Due today
               </span>
               <span className="font-sans text-xs text-midnight-400">
-                {timeline.steps.length > 1
-                  ? `${timeline.steps[0].sharePercent}% · Pay in ${timeline.steps.length}`
-                  : 'Full amount'}
+                {payInFull
+                  ? 'Full amount'
+                  : `${timeline.steps[0].sharePercent}% · Pay in ${timeline.steps.length}`}
               </span>
             </div>
             <span className="font-heading text-2xl font-semibold text-midnight">
-              {format(timeline.steps[0].amount)}
+              {format(payInFull ? breakdown.total : timeline.steps[0].amount)}
             </span>
           </div>
-          {timeline.steps.slice(1).map((step) => (
+          {(payInFull ? [] : timeline.steps.slice(1)).map((step) => (
             <div
               key={step.sequence}
               className="flex items-baseline justify-between gap-3 border-t border-midnight/10 pt-3 text-body-sm"

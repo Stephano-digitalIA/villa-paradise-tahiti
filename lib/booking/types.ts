@@ -58,6 +58,8 @@ export interface BookingState {
   selectedExperiences: SelectedExperience[]
   /** Optional free-text request — read in D2's checkout form. */
   specialRequests?: string
+  /** True when the guest chose to pay the whole stay today instead of in instalments. */
+  payInFull?: boolean
 }
 
 /* ---------------------------------------------------------------------------

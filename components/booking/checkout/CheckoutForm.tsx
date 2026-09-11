@@ -207,7 +207,7 @@ interface CheckoutFormProps {
 
 export function CheckoutForm({ initialProfile }: CheckoutFormProps) {
   const router = useRouter()
-  const { state, breakdown } = useBooking()
+  const { state, breakdown, setPayInFull } = useBooking()
   const { format, currency } = useCurrency()
   const [submitError, setSubmitError] = useState<string | null>(null)
   const errorBannerId = useId()
@@ -236,13 +236,16 @@ export function CheckoutForm({ initialProfile }: CheckoutFormProps) {
   const timeline = state.checkIn
     ? buildPaymentTimeline(breakdown, state.checkIn)
     : buildPaymentTimeline(breakdown, '1970-01-01')
-  const dueToday = timeline.steps[0]
+  // A single-step timeline already means everything today; no second card.
+  const canSplit = timeline.steps.length > 1
+  const payInFull = !canSplit || state.payInFull === true
+  const dueToday = payInFull ? breakdown.total : timeline.steps[0].amount
   const specialRequestsLength = (watch('specialRequests') ?? '').length
 
-  // The hidden field carries the timeline's option to the server.
+  // The hidden field carries the chosen option to the server.
   useEffect(() => {
-    setValue('paymentOption', timeline.option, { shouldValidate: true })
-  }, [timeline.option, setValue])
+    setValue('paymentOption', payInFull ? 'full' : timeline.option, { shouldValidate: true })
+  }, [payInFull, timeline.option, setValue])
 
 
   const onSubmit = async (data: CheckoutFormData) => {
@@ -302,10 +305,9 @@ export function CheckoutForm({ initialProfile }: CheckoutFormProps) {
   }
 
   // Label shown on the submit button, reflecting the actual charge.
-  const chargeLabel =
-    timeline.steps.length > 1
-      ? `Pay ${format(dueToday.amount)} today`
-      : `Pay ${format(dueToday.amount)} in full`
+  const chargeLabel = payInFull
+    ? `Pay ${format(dueToday)} in full`
+    : `Pay ${format(dueToday)} today`
 
   return (
     <form
@@ -494,75 +496,75 @@ export function CheckoutForm({ initialProfile }: CheckoutFormProps) {
         </div>
       </section>
 
-      {/* ─── 4 · Payment schedule ───────────────────────────────────── */}
+      {/* ─── 4 · Payment ────────────────────────────────────────────── */}
       <section
         aria-labelledby="section-payment-amount"
         className="flex flex-col gap-5 border-t border-pearl-400 pt-8"
       >
         <SectionHeader
           step={4}
-          title={
-            timeline.steps.length === 3
-              ? 'Pay in 3'
-              : timeline.steps.length === 2
-                ? 'Pay in 2'
-                : 'Payment'
-          }
+          title="Payment"
           description={
             timeline.steps.length === 3
-              ? 'Your stay is paid in three instalments. Only the first is charged today; the next two come with a personal payment link by email.'
+              ? 'Pay in three instalments, or settle the whole stay today. With instalments, only the first is charged now; the next two come with a personal payment link by email.'
               : timeline.steps.length === 2
-                ? 'Arrival is under 60 days away, so your stay is paid in two: the deposit today, the balance thirty days before arrival.'
+                ? 'Arrival is under 60 days away: pay the deposit today and the balance thirty days before arrival, or settle the whole stay now.'
                 : 'Arrival is under 30 days away, so the full amount is due today.'
           }
         />
 
         <input type="hidden" {...register('paymentOption')} />
 
-        <ol className="flex flex-col gap-3">
-          {timeline.steps.map((step) => {
-            const isToday = step.sequence === 1
-            return (
-              <li
-                key={step.sequence}
-                className={cn(
-                  'flex items-start gap-3 rounded-xl border p-4',
-                  isToday ? 'border-gold bg-gold/5 shadow-soft' : 'border-pearl-400 bg-pearl',
-                )}
-              >
-                <span
-                  aria-hidden="true"
-                  className={cn(
-                    'mt-0.5 flex h-6 w-6 flex-none items-center justify-center rounded-full text-xs font-semibold',
-                    isToday ? 'bg-gold text-midnight' : 'bg-midnight/10 text-midnight',
-                  )}
-                >
-                  {step.sequence}
-                </span>
-                <div className="flex min-w-0 flex-1 items-baseline justify-between gap-3">
-                  <div className="flex flex-col gap-0.5">
-                    <span className="font-heading text-base font-semibold text-midnight">
-                      {isToday ? 'Due today' : step.when}
-                      <span className="ml-2 font-sans text-xs font-normal text-midnight-400">
-                        {`${step.sharePercent}%`}
+        <div role="radiogroup" aria-label="Payment" className="flex flex-col gap-3">
+          {canSplit ? (
+            <PaymentChoice
+              selected={!payInFull}
+              onSelect={() => setPayInFull(false)}
+              title={`Pay in ${timeline.steps.length}`}
+              amount={format(timeline.steps[0].amount)}
+              amountHint="today"
+            >
+              <ol className="mt-3 flex flex-col gap-2 border-t border-midnight/10 pt-3">
+                {timeline.steps.map((step) => {
+                  const isToday = step.sequence === 1
+                  return (
+                    <li key={step.sequence} className="flex items-start gap-3">
+                      <span
+                        aria-hidden="true"
+                        className={cn(
+                          'mt-0.5 flex h-5 w-5 flex-none items-center justify-center rounded-full text-[11px] font-semibold',
+                          isToday ? 'bg-gold text-midnight' : 'bg-midnight/10 text-midnight',
+                        )}
+                      >
+                        {step.sequence}
                       </span>
-                    </span>
-                    <span className="font-sans text-xs text-midnight-400">
-                      {isToday
-                        ? 'Charged now to confirm your reservation'
-                        : step.dueDate
-                          ? `Due ${formatStayDate(step.dueDate, 'en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`
-                          : ''}
-                    </span>
-                  </div>
-                  <span className="flex-none font-heading text-base font-semibold text-midnight">
-                    {format(step.amount)}
-                  </span>
-                </div>
-              </li>
-            )
-          })}
-        </ol>
+                      <div className="flex min-w-0 flex-1 items-baseline justify-between gap-3">
+                        <span className="font-sans text-sm text-midnight">
+                          {isToday
+                            ? `Today · ${step.sharePercent}%`
+                            : step.dueDate
+                              ? `${step.when} · ${step.sharePercent}% · due ${formatStayDate(step.dueDate, 'en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`
+                              : `${step.when} · ${step.sharePercent}%`}
+                        </span>
+                        <span className="flex-none font-sans text-sm font-semibold text-midnight">
+                          {format(step.amount)}
+                        </span>
+                      </div>
+                    </li>
+                  )
+                })}
+              </ol>
+            </PaymentChoice>
+          ) : null}
+
+          <PaymentChoice
+            selected={payInFull}
+            onSelect={() => setPayInFull(true)}
+            title="Pay in full"
+            description="The whole stay settled today, nothing left to pay before arrival."
+            amount={format(breakdown.total)}
+          />
+        </div>
 
         {typeof errors.paymentOption?.message === 'string' ? (
           <p role="alert" className="flex items-center gap-1.5 text-xs font-medium text-coral">
@@ -711,6 +713,75 @@ export function CheckoutForm({ initialProfile }: CheckoutFormProps) {
 /* ---------------------------------------------------------------------------
  * Sub-components — payment option card + checkbox
  * ------------------------------------------------------------------------- */
+
+/* ---------------------------------------------------------------------------
+ * Payment choice card (instalments vs full)
+ * ------------------------------------------------------------------------- */
+
+interface PaymentChoiceProps {
+  selected: boolean
+  onSelect: () => void
+  title: string
+  description?: string
+  amount: string
+  /** Small word after the amount, e.g. "today". */
+  amountHint?: string
+  children?: React.ReactNode
+}
+
+function PaymentChoice({
+  selected,
+  onSelect,
+  title,
+  description,
+  amount,
+  amountHint,
+  children,
+}: PaymentChoiceProps) {
+  return (
+    <div
+      role="radio"
+      aria-checked={selected}
+      tabIndex={0}
+      onClick={onSelect}
+      onKeyDown={(e) => {
+        if (e.key === ' ' || e.key === 'Enter') {
+          e.preventDefault()
+          onSelect()
+        }
+      }}
+      className={cn(
+        'flex cursor-pointer flex-col rounded-xl border bg-pearl p-4 text-left transition-all',
+        'hover:border-gold hover:shadow-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/30',
+        selected ? 'border-gold bg-gold/5 shadow-soft' : 'border-pearl-400',
+      )}
+    >
+      <div className="flex items-start gap-3">
+        <span
+          aria-hidden="true"
+          className={cn(
+            'mt-0.5 flex h-5 w-5 flex-none items-center justify-center rounded-full border',
+            selected ? 'border-gold bg-gold' : 'border-pearl-500 bg-pearl',
+          )}
+        >
+          {selected ? <span className="h-2 w-2 rounded-full bg-midnight" /> : null}
+        </span>
+        <div className="flex min-w-0 flex-1 items-baseline justify-between gap-3">
+          <div className="flex flex-col gap-0.5">
+            <span className="font-heading text-base font-semibold text-midnight">{title}</span>
+            {description ? (
+              <span className="font-sans text-xs text-midnight-400">{description}</span>
+            ) : null}
+          </div>
+          <span className="flex-none font-heading text-base font-semibold text-midnight">
+            {amountHint ? `${amount} ${amountHint}` : amount}
+          </span>
+        </div>
+      </div>
+      {children}
+    </div>
+  )
+}
 
 interface PaymentOptionProps {
   id: string

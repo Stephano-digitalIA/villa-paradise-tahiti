@@ -86,6 +86,7 @@ export interface BookingContextValue {
   setCheckOut: (date: string | null) => void
   setGuests: (count: number) => void
   setSpecialRequests: (value: string) => void
+  setPayInFull: (value: boolean) => void
   addExperience: (experience: Experience, quantity?: number) => void
   removeExperience: (slug: string) => void
   setExperienceQuantity: (slug: string, quantity: number) => void
@@ -253,6 +254,10 @@ export function BookingProvider({ experiences, settings, children }: BookingProv
     setState((s) => ({ ...s, specialRequests: value }))
   }, [])
 
+  const setPayInFull = useCallback((value: boolean) => {
+    setState((s) => ({ ...s, payInFull: value }))
+  }, [])
+
   const addExperience = useCallback(
     (experience: Experience, quantity?: number) => {
       setState((s) => {
@@ -340,6 +345,7 @@ export function BookingProvider({ experiences, settings, children }: BookingProv
       setCheckOut,
       setGuests,
       setSpecialRequests,
+      setPayInFull,
       addExperience,
       removeExperience,
       setExperienceQuantity,
@@ -360,6 +366,7 @@ export function BookingProvider({ experiences, settings, children }: BookingProv
       setCheckOut,
       setGuests,
       setSpecialRequests,
+      setPayInFull,
       addExperience,
       removeExperience,
       setExperienceQuantity,
