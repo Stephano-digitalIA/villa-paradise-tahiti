@@ -2,6 +2,7 @@ import { Container, Section } from '@/components/ui'
 import { PortableTextRenderer } from '@/components/sections/_shared/PortableTextRenderer'
 import type { Settings } from '@/lib/cms'
 import { getSiteContent } from '@/lib/content'
+import { fillPlaceholders, ratesCopyValues } from '@/lib/content/placeholders'
 
 interface RatesPolicyProps {
   settings: Settings | null
@@ -17,9 +18,16 @@ interface RatesPolicyProps {
  * published defaults and must mirror `RATES_CONTENT_DEFAULTS`.
  */
 export async function RatesPolicy({ settings }: RatesPolicyProps) {
-  const t = await getSiteContent()
+  const raw = await getSiteContent()
   const depositPercent = settings?.defaultDepositPercent ?? 30
   const minNights = settings?.defaultMinNights ?? 5
+  const values = ratesCopyValues({
+    minNights,
+    longStayNights: settings?.long_stay_min_nights,
+    longStayPercent: settings?.long_stay_discount_percent,
+    depositPercent,
+  })
+  const t = (key: string, fallback: string) => fillPlaceholders(raw(key, fallback), values)
   const cancellation = settings?.defaultCancellationPolicy
 
   const tiers = [
@@ -74,7 +82,7 @@ export async function RatesPolicy({ settings }: RatesPolicyProps) {
                   {t('rates.policy.label_minstay', 'Minimum stay')}
                 </dt>
                 <dd className="font-sans text-body-sm font-semibold text-midnight">
-                  {minNights} {t('rates.policy.value_minstay', 'nights (7 in peak)')}
+                  {`${minNights} ${t('rates.policy.value_minstay', 'nights')}`}
                 </dd>
               </div>
               <div className="flex items-baseline justify-between pb-1">

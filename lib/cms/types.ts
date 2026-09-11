@@ -259,6 +259,9 @@ export interface Settings {
   rate_low_usd?: number | null
   rate_high_usd?: number | null
   rate_peak_usd?: number | null
+  /** Long-stay discount, from the settings row. */
+  long_stay_min_nights?: number | null
+  long_stay_discount_percent?: number | null
   /** Rate seasons as yearly windows, from Admin > Réglages. Empty = legacy month rules. */
   seasonWindows?: SeasonWindow[]
   bookingTermsUrl?: string

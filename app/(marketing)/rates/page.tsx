@@ -11,7 +11,7 @@ import { RatesHero } from '@/components/sections/rates/RatesHero'
 import { RatesInclusions } from '@/components/sections/rates/RatesInclusions'
 import { RatesPolicy } from '@/components/sections/rates/RatesPolicy'
 import { cmsFetch } from '@/lib/cms/fetcher'
-import { settingsQuery, type Settings } from '@/lib/cms'
+import { settingsQuery, villaQuery, type Settings } from '@/lib/cms'
 import { SEASONAL_RATES } from '@/lib/booking/pricing'
 import { describeSeasonWindows } from '@/lib/booking/seasons'
 import { SITE_URL, absoluteUrl, buildMetadata } from '@/lib/seo'
@@ -36,6 +36,7 @@ export const metadata: Metadata = buildMetadata({
  */
 export default async function RatesPage() {
   const settings = await cmsFetch<Settings | null>(settingsQuery)
+  const villa = await cmsFetch<{ specs?: { maxGuests?: number } } | null>(villaQuery).catch(() => null)
   const windows = settings?.seasonWindows ?? []
 
   // Live seasonal rates: Supabase settings override, else the SEASONAL_RATES fallback.
@@ -73,7 +74,7 @@ export default async function RatesPage() {
         ])}
       />
       <RatesHero />
-      <RatesGrid settings={settings} />
+      <RatesGrid settings={settings} maxGuests={villa?.specs?.maxGuests} />
       <RatesInclusions />
       <RatesPolicy settings={settings} />
       <RatesCta />

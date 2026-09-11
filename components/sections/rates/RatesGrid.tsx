@@ -4,6 +4,7 @@ import { Price } from '@/components/currency'
 import { SEASONAL_RATES } from '@/lib/booking/pricing'
 import type { Season } from '@/lib/booking/types'
 import { describeSeasonWindows } from '@/lib/booking/seasons'
+import { fillPlaceholders, ratesCopyValues } from '@/lib/content/placeholders'
 import type { Settings } from '@/lib/cms'
 import { getSiteContent } from '@/lib/content'
 
@@ -39,8 +40,24 @@ function seasonPrice(key: Season, settings: Settings | null): number {
  * tiers, ascending, with the "popular" middle tier visually emphasised via a
  * luxe ring.
  */
-export async function RatesGrid({ settings = null }: { settings?: Settings | null }) {
-  const t = await getSiteContent()
+export async function RatesGrid({
+  settings = null,
+  maxGuests,
+}: {
+  settings?: Settings | null
+  /** Villa capacity, for "{maxGuests}" in the copy. */
+  maxGuests?: number | null
+}) {
+  const raw = await getSiteContent()
+  // Numbers in the copy come from Réglages, never from the text itself.
+  const values = ratesCopyValues({
+    minNights: settings?.defaultMinNights,
+    maxGuests,
+    longStayNights: settings?.long_stay_min_nights,
+    longStayPercent: settings?.long_stay_discount_percent,
+    depositPercent: settings?.defaultDepositPercent,
+  })
+  const t = (key: string, fallback: string) => fillPlaceholders(raw(key, fallback), values)
   const unit = t('rates.grid.unit', 'per night')
 
   // Periods come from the season windows set in Admin > Réglages, the same
@@ -96,7 +113,7 @@ export async function RatesGrid({ settings = null }: { settings?: Settings | nul
           <p className="max-w-prose font-sans text-body-md text-midnight-400">
             {t(
               'rates.grid.intro',
-              'Prices apply to the entire villa (sleeps 8). A 5-night minimum stay applies in low and high season; 7 nights during the peak holiday weeks.',
+              'Prices apply to the entire villa (sleeps {maxGuests}). A {minNights}-night minimum stay applies.',
             )}
           </p>
         </div>
@@ -158,7 +175,7 @@ export async function RatesGrid({ settings = null }: { settings?: Settings | nul
         <p className="mt-10 text-center font-sans text-body-sm italic text-midnight-400">
           {t(
             'rates.grid.footnote',
-            'Stays of 14+ nights qualify for a 10% extended-stay discount. Mention it when you enquire.',
+            'Stays of {longStayNights}+ nights qualify for a {longStayPercent}% extended-stay discount. Mention it when you enquire.',
           )}
         </p>
       </Container>

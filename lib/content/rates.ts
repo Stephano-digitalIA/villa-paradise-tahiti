@@ -31,7 +31,7 @@ export const RATES_CONTENT_GROUPS: ContentGroup[] = [
     fields: [
       { key: 'rates.grid.eyebrow', label: 'Sur-titre' },
       { key: 'rates.grid.title', label: 'Titre de section' },
-      { key: 'rates.grid.intro', label: 'Intro', multiline: true, rows: 3 },
+      { key: 'rates.grid.intro', label: 'Intro (variables : {minNights}, {maxGuests}, {depositPercent})', multiline: true, rows: 3 },
       { key: 'rates.grid.unit', label: 'Unité affichée sous le prix' },
       { key: 'rates.grid.low.name', label: 'Basse saison, nom' },
       { key: 'rates.grid.low.window', label: 'Basse saison, période (utilisé seulement si aucune saison n\'est définie dans Réglages)' },
@@ -44,7 +44,7 @@ export const RATES_CONTENT_GROUPS: ContentGroup[] = [
       { key: 'rates.grid.peak.blurb', label: 'Très haute saison, texte', multiline: true },
       { key: 'rates.grid.badge_popular', label: 'Pastille haute saison' },
       { key: 'rates.grid.badge_peak', label: 'Pastille très haute saison' },
-      { key: 'rates.grid.footnote', label: 'Note de bas de grille', multiline: true },
+      { key: 'rates.grid.footnote', label: 'Note de bas de grille (variables : {longStayNights}, {longStayPercent})', multiline: true },
     ],
   },
   {
@@ -141,7 +141,7 @@ export const RATES_CONTENT_DEFAULTS: Readonly<Record<string, string>> = {
   'rates.grid.eyebrow': 'Nightly rates',
   'rates.grid.title': 'Pricing by season',
   'rates.grid.intro':
-    'Prices apply to the entire villa (sleeps 8). A 5-night minimum stay applies in low and high season; 7 nights during the peak holiday weeks.',
+    'Prices apply to the entire villa (sleeps {maxGuests}). A {minNights}-night minimum stay applies.',
   'rates.grid.unit': 'per night',
   'rates.grid.low.name': 'Low Season',
   'rates.grid.low.window': 'January 5 – 31 · February · March · October · November · December 1 – 15',
@@ -158,7 +158,7 @@ export const RATES_CONTENT_DEFAULTS: Readonly<Record<string, string>> = {
   'rates.grid.badge_popular': 'Most booked',
   'rates.grid.badge_peak': 'Limited',
   'rates.grid.footnote':
-    'Stays of 14+ nights qualify for a 10% extended-stay discount. Mention it when you enquire.',
+    'Stays of {longStayNights}+ nights qualify for a {longStayPercent}% extended-stay discount. Mention it when you enquire.',
   // Inclus dans le séjour
   'rates.inclusions.eyebrow': 'What you get',
   'rates.inclusions.title': 'The price includes your well-being and:',
@@ -201,7 +201,7 @@ export const RATES_CONTENT_DEFAULTS: Readonly<Record<string, string>> = {
   'rates.policy.label_balance': 'Balance due',
   'rates.policy.value_balance': '30 days before arrival',
   'rates.policy.label_minstay': 'Minimum stay',
-  'rates.policy.value_minstay': 'nights (7 in peak)',
+  'rates.policy.value_minstay': 'nights',
   'rates.policy.label_payment': 'Payment methods',
   'rates.policy.value_payment': 'PayPal · Credit and debit cards',
   'rates.policy.cancel_eyebrow': 'Cancellation',
